@@ -1,0 +1,23 @@
+name: Practice
+author: [kezukdev]
+version: 1.0
+description: Akyto practice developed by Kezuk
+main: kezukdev.akyto.Practice
+commands:
+  duel:
+    aliases: [d, duels]
+  settings:
+    aliases: [parameters, parameter, setting]
+  party:
+    aliases: [p, parties, g, group]
+  locations:
+    aliases: [loc]
+  arena:
+    aliases: [map, battlearena, arenas]
+  stats:
+    aliases: [profile, statistics, elo]
+  spectate:
+    aliases: [spec, view]
+  inventory:
+    aliases: [inv, inventories]
+  
