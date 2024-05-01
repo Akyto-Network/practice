@@ -20,4 +20,6 @@ commands:
     aliases: [inv, inventories]
   leaderboard:
     aliases: [lb, leaderb, top, leadertop]
+  party:
+    aliases: [p, group, parties]
   

@@ -41,12 +41,12 @@ public class DuelManager {
 				this.endSingle(players.get(0).equals(uuid) ? players.get(1) : players.get(0));
 				return;
 			}
-			this.main.getUtils().multiArena(uuid, this.main.getUtils().getOpponent(uuid), false);
-			Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponent(uuid)));
+			this.main.getUtils().multiArena(uuid, false);
+			Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponents(uuid).get(0)));
 			this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(this.main.getUtils().getDuelByUUID(uuid).isRanked(), kit);
 			this.main.getUtils().resetPlayer(uuid);
 			final Player player = Bukkit.getPlayer(uuid);
-			player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " + ChatColor.WHITE + (players.get(0).equals(uuid) ? Bukkit.getPlayer(players.get(1)).getName() : Bukkit.getPlayer(players.get(0)).getName()) + (this.main.getUtils().getDuelByUUID(uuid).isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + this.main.getUtils().getProfiles(this.main.getUtils().getOpponent(uuid)).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
+			player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " + ChatColor.WHITE + (players.get(0).equals(uuid) ? Bukkit.getPlayer(players.get(1)).getName() : Bukkit.getPlayer(players.get(0)).getName()) + (this.main.getUtils().getDuelByUUID(uuid).isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + this.main.getUtils().getProfiles(this.main.getUtils().getOpponents(uuid).get(0)).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
 			player.teleport(players.get(0).equals(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
 			this.main.getUtils().addPlayedToData(uuid, kit);
 			this.main.getUtils().getProfiles(uuid).setProfileState(ProfileState.FIGHT);
@@ -74,7 +74,7 @@ public class DuelManager {
 		players.forEach(uuid -> {
 			if (!duel.getSpectator().contains(uuid)) {
 				this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid).removeEnderPearlCooldown();
-				this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, this.main.getUtils().getOpponent(uuid));
+				this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, this.main.getUtils().getOpponents(uuid).get(0));
 			}
 			if (Bukkit.getPlayer(uuid) != null) {
 				Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
@@ -121,8 +121,10 @@ public class DuelManager {
 					this.endMultiple(players.get(0).contains(uuid) ? players.get(1).get(0) : players.get(0).get(0));
 					return;
 				}
-				this.main.getUtils().multiArena(uuid, this.main.getUtils().getOpponent(uuid), false);
-				Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponent(uuid)));
+				this.main.getUtils().getOpponents(uuid).forEach(UUID -> {
+					this.main.getUtils().multiArena(uuid, false);
+				});
+				Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponents(uuid).get(0)));
 				this.main.getUtils().resetPlayer(uuid);
 				final Player player = Bukkit.getPlayer(uuid);
 				if (duel.getDuelPartyType().equals("ffa")) {
