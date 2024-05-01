@@ -7,8 +7,8 @@ import kezukdev.akyto.Practice;
 import kezukdev.akyto.handler.command.ArenaCommand;
 import kezukdev.akyto.handler.command.DuelCommand;
 import kezukdev.akyto.handler.command.InventoryCommand;
+import kezukdev.akyto.handler.command.LeaderboardCommand;
 import kezukdev.akyto.handler.command.LocationsCommand;
-import kezukdev.akyto.handler.command.PartyCommand;
 import kezukdev.akyto.handler.command.SpectateCommand;
 import kezukdev.akyto.handler.command.StatisticsCommand;
 import kezukdev.akyto.handler.listener.EntityListener;
@@ -28,7 +28,7 @@ public class MiscHandler {
 		main.getCommand("spectate").setExecutor(new SpectateCommand(main));
 		main.getCommand("duel").setExecutor(new DuelCommand(main));
 		main.getCommand("stats").setExecutor(new StatisticsCommand(main));
-		main.getCommand("party").setExecutor(new PartyCommand(main));
+		main.getCommand("leaderboard").setExecutor(new LeaderboardCommand(main));
 	}
 
 }

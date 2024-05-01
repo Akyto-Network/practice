@@ -55,6 +55,11 @@
             <version>1.7.10-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+    		<groupId>org.json</groupId>
+    		<artifactId>json</artifactId>
+    		<version>20240303</version>
+		</dependency>
     </dependencies>
 
     <build>

@@ -8,8 +8,6 @@ commands:
     aliases: [d, duels]
   settings:
     aliases: [parameters, parameter, setting]
-  party:
-    aliases: [p, parties, g, group]
   locations:
     aliases: [loc]
   arena:
@@ -20,4 +18,6 @@ commands:
     aliases: [spec, view]
   inventory:
     aliases: [inv, inventories]
+  leaderboard:
+    aliases: [lb, leaderb, top, leadertop]
   

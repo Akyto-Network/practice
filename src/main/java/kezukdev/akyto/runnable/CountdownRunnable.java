@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import kezukdev.akyto.Practice;
@@ -50,6 +51,7 @@ public class CountdownRunnable extends BukkitRunnable {
 							Bukkit.getPlayer(uuid).getInventory().setContents(kit.content());
 							Bukkit.getPlayer(uuid).updateInventory();
 						}
+						Bukkit.getPlayer(uuid).playSound(Bukkit.getPlayer(uuid).getLocation(), Sound.FIREWORK_LARGE_BLAST, 1f, 1f);
 						Bukkit.getPlayer(uuid).sendMessage(ChatColor.DARK_GRAY + "The match has begun" + ChatColor.GRAY + "," + ChatColor.WHITE + " good luck.");
 						if (main.getUtils().getDuelByUUID(players.get(0).get(0)) != null) {
 							main.getUtils().getDuelByUUID(players.get(0).get(0)).timer = new Timer();
@@ -77,6 +79,7 @@ public class CountdownRunnable extends BukkitRunnable {
 				players.forEach(uuids -> {
 					uuids.forEach(uuid -> {
 						if (Bukkit.getPlayer(uuid) != null) {
+							Bukkit.getPlayer(uuid).playSound(Bukkit.getPlayer(uuid).getLocation(), Sound.NOTE_PIANO, 1.5f, 1.5f);
 							Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED.toString() + counter + "s" + ChatColor.GRAY + "...");		
 						}
 					});

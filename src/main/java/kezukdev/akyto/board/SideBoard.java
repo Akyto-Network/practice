@@ -36,7 +36,7 @@ public class SideBoard implements BoardAdapter
 
     @Override
     public String getTitle(final Player player) {
-        return ChatColor.WHITE.toString() + ChatColor.BOLD + "Akyto " + ChatColor.GRAY + "[" + ChatColor.RED + this.plugin.getRegion().toUpperCase() + ChatColor.GRAY + "]";
+        return ChatColor.WHITE.toString() + ChatColor.BOLD + "AKYTO";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class SideBoard implements BoardAdapter
             return null;
         }
         if (pm.getSettings().get(0).booleanValue()) {
-            if (pm.getProfileState().equals(ProfileState.FREE) || pm.getProfileState().equals(ProfileState.QUEUE)) {
+            if (pm.getProfileState().equals(ProfileState.FREE) || pm.getProfileState().equals(ProfileState.QUEUE) || pm.getProfileState().equals(ProfileState.MOD)) {
                 return this.getLobbyBoard(player);
             }
             if (pm.getProfileState().equals(ProfileState.FIGHT)) {
@@ -73,7 +73,7 @@ public class SideBoard implements BoardAdapter
         	board.add(ChatColor.DARK_GRAY + "Members" + ChatColor.GRAY + ": " + ChatColor.WHITE + (party.getMembers().size()-1));
         }
         board.add(" ");
-        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + this.plugin.getRegion().toLowerCase() + ".akyto.club");
+        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");
         board.add(spacer);
         return board;
     }
@@ -122,7 +122,7 @@ public class SideBoard implements BoardAdapter
             }	
         }
         board.add(" ");
-        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + this.plugin.getRegion().toLowerCase() + ".akyto.club");
+        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");
         board.add(spacer);
         return board;
     }
@@ -160,7 +160,7 @@ public class SideBoard implements BoardAdapter
             }	
         }
         board.add(" ");
-        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + this.plugin.getRegion().toLowerCase() + ".akyto.club");
+        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");
         board.add(spacer);
         return board;
     }

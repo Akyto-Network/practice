@@ -9,6 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -97,12 +99,23 @@ public class PlayerListener implements Listener {
 		this.onPlayerLeft(new PlayerQuitEvent(event.getPlayer(), null));
 	}
 	
+	
+    private boolean isPlants(Material material) {
+        return material == Material.CROPS || material == Material.CARROT || material == Material.POTATO || material == Material.NETHER_WARTS || material == Material.COCOA || material == Material.SUGAR_CANE_BLOCK || material == Material.MELON_BLOCK || material == Material.PUMPKIN || material == Material.CACTUS;
+    }
+	
 	@EventHandler
 	public void onInteract(final PlayerInteractEvent event) {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
 		if (event == null || event.getItem() == null || event.getItem().getType().equals(Material.AIR)) return;
 		final Profile data = this.main.getUtils().getProfiles(event.getPlayer().getUniqueId());
 		final Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
+		Block clickedBlock = event.getClickedBlock();
+        if (clickedBlock != null && isPlants(clickedBlock.getType())) {
+            if (player.getLocation().getBlockY() > event.getClickedBlock().getLocation().getBlockY()) {
+                event.setCancelled(true);
+            }
+        }
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (data.getProfileState().equals(ProfileState.FREE)) {
 				if (this.main.getUtils().getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
@@ -123,7 +136,10 @@ public class PlayerListener implements Listener {
 				}
 				if (event.getItem().getType().equals(Material.IRON_SWORD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[0]); }
 				if (event.getItem().getType().equals(Material.DIAMOND_SWORD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[1]); }
-				if (event.getItem().getType().equals(Material.NAME_TAG)) { this.main.getManagerHandler().getPartyManager().createParty(event.getPlayer().getUniqueId()); }
+				if (event.getItem().getType().equals(Material.NAME_TAG)) { 
+					//this.main.getManagerHandler().getPartyManager().createParty(event.getPlayer().getUniqueId());//
+					event.getPlayer().sendMessage(ChatColor.RED + "Currently unavailable for this beta.");
+				}
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }
 				if (event.getItem().getType().equals(Material.SKULL_ITEM)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId())); }
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
@@ -209,6 +225,17 @@ public class PlayerListener implements Listener {
 					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getPlayer().getUniqueId());
 					if (!duelStatistics.isEnderPearlCooldownActive()) {
 						duelStatistics.applyEnderPearlCooldown();
+						new BukkitRunnable() {
+							
+							@Override
+							public void run() {
+								if (main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()) != null) {
+									if (!main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.FINISHING)) {
+										event.getPlayer().sendMessage(ChatColor.RED + "Enderpearl cooldown has expired, you can launch another pearl!");		
+									}
+								}
+							}
+						}.runTaskLaterAsynchronously(main, 320L);
 						return;
 					}
 					event.setUseItemInHand(Result.DENY);
@@ -237,23 +264,6 @@ public class PlayerListener implements Listener {
 	public void PlayerBreakBlockEvent(final BlockBreakEvent event) {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
 		event.setCancelled(true);
-	}
-	
-	@EventHandler
-	public void onTeleport(PlayerTeleportEvent event) {
-		if (event.getCause() == TeleportCause.ENDER_PEARL) {
-            final Location to = event.getTo();
-            if (Sets.immutableEnumSet(Material.THIN_GLASS, Material.IRON_FENCE, Material.FENCE, Material.NETHER_FENCE, Material.FENCE_GATE, Material.ACACIA_STAIRS, Material.BIRCH_WOOD_STAIRS, Material.BRICK_STAIRS, Material.COBBLESTONE_STAIRS, Material.DARK_OAK_STAIRS, Material.JUNGLE_WOOD_STAIRS, Material.NETHER_BRICK_STAIRS, Material.QUARTZ_STAIRS, Material.SANDSTONE_STAIRS, Material.SMOOTH_STAIRS, Material.SPRUCE_WOOD_STAIRS, Material.WOOD_STAIRS).contains(to.getBlock().getType())) {
-                event.setCancelled(true);
-                return;
-            }
-            to.setX(to.getBlockX() + 0.5);
-            to.setZ(to.getBlockZ() + 0.5);
-            event.setTo(to);
-			final Player player = event.getPlayer();
-			final Profile pm = this.main.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId());
-			if (pm.getProfileState() != ProfileState.FIGHT && !this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.PLAYING)) event.setCancelled(true);
-		}
 	}
 	
 	@EventHandler(priority=EventPriority.LOW)
@@ -295,6 +305,9 @@ public class PlayerListener implements Listener {
 	public void PlayerDeathEvent(final PlayerDeathEvent event) {
 		event.setDeathMessage(null);
 		final Location deathLoc = event.getEntity().getLocation();
+		LightningStrike lightning = deathLoc.getWorld().strikeLightningEffect(deathLoc);
+		lightning.setFireTicks(0);
+		event.setDroppedExp(0);
 		event.getDrops().clear();
 		event.getEntity().setLevel(0);
 		event.getEntity().setExp(0);

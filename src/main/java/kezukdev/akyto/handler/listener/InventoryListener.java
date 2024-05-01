@@ -171,8 +171,8 @@ public class InventoryListener implements Listener {
 				profile.getSettings().set(2, profile.getSettings().get(2).booleanValue() ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 2, false);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "Time set to " + (profile.getSettings().get(2).booleanValue() ? ChatColor.BLUE + "night" : ChatColor.YELLOW + "day"));
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setPlayerTime(profile.getSettings().get(2).booleanValue() ? 13400L : 100L, true);
+				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "Time set to " + (profile.getSettings().get(2).booleanValue() ? ChatColor.YELLOW + "day" : ChatColor.BLUE + "night"));
+				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setPlayerTime(profile.getSettings().get(2).booleanValue() ? 0L : 18000L, true);
 				return;
 			}
 		}

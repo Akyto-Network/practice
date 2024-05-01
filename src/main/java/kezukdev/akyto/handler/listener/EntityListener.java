@@ -30,7 +30,6 @@ public class EntityListener implements Listener {
                     player.teleport(location1);
                 }
             }
-            
             public void handleUpdateRotation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
             }
         });

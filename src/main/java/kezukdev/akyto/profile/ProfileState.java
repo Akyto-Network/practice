@@ -6,6 +6,7 @@ public enum ProfileState {
 	QUEUE,
 	FIGHT,
 	EDITOR,
-	SPECTATE;
+	SPECTATE,
+	MOD;
 
 }

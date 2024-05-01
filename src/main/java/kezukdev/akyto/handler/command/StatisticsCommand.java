@@ -18,9 +18,10 @@ public class StatisticsCommand implements CommandExecutor {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (!(sender instanceof Player)) return false;
+		final ProfileState state = this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState();
 		if (args.length == 0) {
-			if (!(sender instanceof Player)) return false;
-			if (!this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FREE)) {
+			if (state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR)) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}
@@ -29,7 +30,7 @@ public class StatisticsCommand implements CommandExecutor {
 		}
 		if (args.length == 1) {
 			if (!(sender instanceof Player)) return false;
-			if (!this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FREE)) {
+			if (state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR)) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}

@@ -20,6 +20,7 @@ com\bizarrealex\aether\scoreboard\cooldown\BoardFormat.class
 kezukdev\akyto\utils\EloUtils.class
 kezukdev\akyto\profile\kiteditor\Edited.class
 com\bizarrealex\aether\AetherOptions.class
+kezukdev\akyto\handler\command\LeaderboardCommand.class
 kezukdev\akyto\handler\listener\PlayerListener$1.class
 kezukdev\akyto\handler\listener\EntityListener$1.class
 kezukdev\akyto\profile\Profile.class
@@ -50,6 +51,7 @@ kezukdev\akyto\utils\database\FileSetup.class
 kezukdev\akyto\handler\command\PartyCommand.class
 kezukdev\akyto\utils\database\MySQL.class
 kezukdev\akyto\handler\manager\PartyManager.class
+kezukdev\akyto\handler\listener\PlayerListener$3.class
 kezukdev\akyto\arena\Arena.class
 kezukdev\akyto\runnable\SumoRunnable.class
 kezukdev\akyto\kit\gametype\Sumo.class

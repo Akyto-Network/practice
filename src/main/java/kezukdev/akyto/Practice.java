@@ -41,6 +41,12 @@ import lombok.Getter;
 @Getter
 public class Practice extends JavaPlugin {
 	
+	private static Practice api;
+	
+	public static Practice getAPI() {
+		return api;
+	}
+	
 	private ManagerHandler managerHandler;
 	private MiscHandler miscHandler;
 	private String hikariPath;
@@ -66,6 +72,7 @@ public class Practice extends JavaPlugin {
 	private FileSetup fileSetup;
 	
 	public void onEnable() {
+		api = this;
 		this.saveDefaultConfig();
 		this.region = this.getConfig().getString("region");
 		this.hikariPath = this.getDataFolder() + "/hikari.properties";

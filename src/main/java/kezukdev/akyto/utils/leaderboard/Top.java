@@ -4,12 +4,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import kezukdev.akyto.Practice;
+import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 
+@Getter
 public class Top {
 
     private int elo_id;
     private Map<String, Integer> topboard = new HashMap<>();
+    private ArrayList<String> loreRanked = new ArrayList<>();
     private ArrayList<String> lore = new ArrayList<>();
 
     public Top(int elo_id, Map<String, int[]> map) {
@@ -39,17 +42,13 @@ public class Top {
         Collections.reverse(entries);
         int x=1;
         for(Map.Entry<String, Integer> entry : entries) {
-            if(x > 3) break;
-            lore.add(ChatColor.DARK_GRAY + "#" + x + " " + ChatColor.RED + entry.getKey() + ChatColor.GRAY + " (" + ChatColor.WHITE + entry.getValue() + ChatColor.GRAY + ")");
-            x++;
+            if(x <= 3) {
+            	loreRanked.add(ChatColor.DARK_GRAY + "#" + x + " " + ChatColor.RED + entry.getKey() + ChatColor.GRAY + " (" + ChatColor.WHITE + entry.getValue() + ChatColor.GRAY + ")");
+            }
+            if(x <= 10) {
+            	lore.add(ChatColor.DARK_GRAY + "#" + x + " " + ChatColor.RED + entry.getKey() + ChatColor.GRAY + " (" + ChatColor.WHITE + entry.getValue() + ChatColor.GRAY + ")");
+            }
+        	x++;
         }
-    }
-
-    public ArrayList<String> getLore() {
-        return lore;
-    }
-
-    public Map<String, Integer> getTopboard() {
-        return topboard;
     }
 }

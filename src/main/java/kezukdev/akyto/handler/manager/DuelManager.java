@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -61,7 +60,9 @@ public class DuelManager {
 	public void endSingle(final UUID winner) {
 		final Duel duel = this.main.getUtils().getDuelByUUID(winner);
 		duel.setWinner(winner);
-		duel.getTimer().cancel();
+		if (duel.getTimer() != null) {
+			duel.getTimer().cancel();	
+		}
 		duel.setState(DuelState.FINISHING);
 		final UUID looser = duel.getFirst().contains(winner) ? duel.getSecond().stream().collect(Collectors.toList()).get(0) : duel.getFirst().stream().collect(Collectors.toList()).get(0);
 		List<UUID> players = new ArrayList<UUID>();

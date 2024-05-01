@@ -44,6 +44,14 @@ public class ItemManager {
 			player.getInventory().setItem(8, this.main.getUtils().createItem(Material.EMERALD, 1, (byte)0, ChatColor.GRAY + "Settings"));
 			player.updateInventory();
 		}
+		if (profile.getProfileState().equals(ProfileState.MOD)) {
+			player.getInventory().setItem(0, this.main.getUtils().createItem(Material.PAPER, 1, (byte)0, ChatColor.YELLOW + "View CPS " + ChatColor.GRAY + "(Right-Click)"));
+			player.getInventory().setItem(1, this.main.getUtils().createItem(Material.PACKED_ICE, 1, (byte)0, ChatColor.YELLOW + "Freeze " + ChatColor.GRAY + "(Right-Click)"));
+			player.getInventory().setItem(4, this.main.getUtils().createItem(Material.NETHER_STAR, 1, (byte)0, ChatColor.YELLOW + "Random Teleport " + ChatColor.GRAY + "(Right-Click)"));
+			player.getInventory().setItem(7, this.main.getUtils().createItem(Material.SKULL_ITEM, 1, (byte)0, ChatColor.YELLOW + "View Stats " + ChatColor.GRAY + "(Right-Click)"));
+			player.getInventory().setItem(8, this.main.getUtils().createItem(Material.REDSTONE_TORCH_ON, 1, (byte)0, ChatColor.RED + "Leave Staff-Mode."));
+			player.updateInventory();
+		}
 		if (profile.getProfileState().equals(ProfileState.QUEUE)) {
 			player.getInventory().setItem(4, this.main.getUtils().createItem(Material.REDSTONE_TORCH_ON, 1, (byte)0, ChatColor.RED + "Leave Queue."));
 			player.updateInventory();
