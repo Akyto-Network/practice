@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.scoreboard.Team;
+
 import kezukdev.akyto.Practice;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +17,7 @@ public class Profile {
 	private List<int[]> stats;
 	private List<Boolean> settings;
 	private List<Boolean> spectateSettings;
+	private Team team;
 	
 	public Profile(final Practice main, final UUID uuid) {
 		this.setProfileState(ProfileState.FREE);

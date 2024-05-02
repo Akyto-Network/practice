@@ -93,31 +93,31 @@ public class PartyManager {
 	}
 	
 	public void joinParty(final UUID inviter, final UUID invited) {
-		if (this.main.getUtils().getPartyByUUID(inviter) == null && Bukkit.getPlayer(inviter) != null) {
-			Bukkit.getPlayer(invited).sendMessage(ChatColor.RED + "Target is not connected or him isn't in any party!");
-			return;
-		}
-		final PartyEntry party = this.main.getUtils().getPartyByUUID(inviter);
-		party.getMembers().add(invited);
-		if (this.main.getUtils().getDuelPartyByUUID(inviter) != null) {
-			this.main.getUtils().getProfiles(invited).setProfileState(ProfileState.SPECTATE);
-			this.main.getUtils().getDuelPartyByUUID(inviter).getSpectator().add(invited);
-			Bukkit.getPlayer(invited).teleport(this.main.getUtils().getDuelPartyByUUID(inviter).getArena().getPosition().get(0).toBukkitLocation());
-			Bukkit.getOnlinePlayers().forEach(player -> {
-				if (this.main.getUtils().getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.FIGHT) || this.main.getUtils().getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
-					player.hidePlayer(Bukkit.getPlayer(invited));
-					Bukkit.getPlayer(invited).hidePlayer(player);
-				}
-				if (this.main.getUtils().getDuelBySpectator(invited).getFirst().contains(player.getUniqueId()) || this.main.getUtils().getDuelBySpectator(invited).getSecond().contains(player.getUniqueId())) {
-					Bukkit.getPlayer(invited).showPlayer(player);
-				}
-			});
-		}
-		party.getMembers().forEach(uuid -> {
-			if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + (Bukkit.getPlayer(invited) != null ? Bukkit.getPlayer(invited).getName() : Bukkit.getOfflinePlayer(invited).getName()) + " join the party!");
-		});
-		this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
-		this.main.getManagerHandler().getItemManager().giveItems(invited, false);
+	    if (this.main.getUtils().getPartyByUUID(inviter) == null || Bukkit.getPlayer(inviter) == null) {
+	        Bukkit.getPlayer(invited).sendMessage(ChatColor.RED + "Target is not connected or him isn't in any party!");
+	        return;
+	    }
+	    final PartyEntry party = this.main.getUtils().getPartyByUUID(inviter);
+	    party.getMembers().add(invited);
+	    if (this.main.getUtils().getDuelPartyByUUID(inviter) != null) {
+	        this.main.getUtils().getProfiles(invited).setProfileState(ProfileState.SPECTATE);
+	        this.main.getUtils().getDuelPartyByUUID(inviter).getSpectator().add(invited);
+	        Bukkit.getPlayer(invited).teleport(this.main.getUtils().getDuelPartyByUUID(inviter).getArena().getPosition().get(0).toBukkitLocation());
+	        Bukkit.getOnlinePlayers().forEach(player -> {
+	            if (this.main.getUtils().getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.FIGHT) || this.main.getUtils().getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
+	                player.hidePlayer(Bukkit.getPlayer(invited));
+	                Bukkit.getPlayer(invited).hidePlayer(player);
+	            }
+	            if (this.main.getUtils().getDuelBySpectator(invited).getFirst().contains(player.getUniqueId()) || this.main.getUtils().getDuelBySpectator(invited).getSecond().contains(player.getUniqueId())) {
+	                Bukkit.getPlayer(invited).showPlayer(player);
+	            }
+	        });
+	    }
+	    party.getMembers().forEach(uuid -> {
+	        if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + (Bukkit.getPlayer(invited) != null ? Bukkit.getPlayer(invited).getName() : Bukkit.getOfflinePlayer(invited).getName()) + " join the party!");
+	    });
+	    this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
+	    this.main.getManagerHandler().getItemManager().giveItems(invited, false);
 	}
 	
 	public void leaveParty(final UUID sender) {

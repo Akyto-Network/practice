@@ -80,17 +80,20 @@ public class InventoryListener implements Listener {
 				}
 			}
 			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3].getName()) || event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[4].getName())) {
-				final List<UUID> shuffle = Lists.newArrayList(this.main.getUtils().getPartyByUUID(event.getWhoClicked().getUniqueId()).getMembers());
-		        Collections.shuffle(shuffle);
-		        int size = shuffle.size();
-		        final List<UUID> firstTeam = Lists.newArrayList();
-		        final List<UUID> secondTeam = Lists.newArrayList();
-		        for (int i = 0; i < size / 2; i++)
-		            firstTeam.add(shuffle.get(i));
-		        for (int i = size / 2; i < size; i++)
-		            secondTeam.add(shuffle.get(i));
-		        new DuelParty(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam), event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3].getName()) ? "ffa" : "split",  Kit.getLadderByID(event.getSlot(), main));
-				
+			    final List<UUID> shuffle = Lists.newArrayList(this.main.getUtils().getPartyByUUID(event.getWhoClicked().getUniqueId()).getMembers());
+			    Collections.shuffle(shuffle);
+			    int size = shuffle.size();
+			    final List<UUID> firstTeam = Lists.newArrayList();
+			    final List<UUID> secondTeam = Lists.newArrayList();
+			    for (int i = 0; i < size / 2; i++) {
+			        firstTeam.add(shuffle.get(i));
+			    }
+			    for (int i = size / 2; i < size; i++) {
+			        secondTeam.add(shuffle.get(i));
+			    }
+			    String duelType = event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3].getName()) ? "ffa" : "split";
+			    Kit kit = Kit.getLadderByID(event.getSlot(), main);
+			    new DuelParty(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam), duelType, kit);
 			}
 			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0].getName())) {
 				this.main.getUtils().sendToEditor(event.getWhoClicked().getUniqueId(), Kit.getLadderByDisplay(event.getCurrentItem().getItemMeta().getDisplayName(), this.main));

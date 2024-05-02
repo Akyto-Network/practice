@@ -8,7 +8,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.kit.KitInterface;
 import kezukdev.akyto.profile.Profile;

@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Lists;
+
 import co.aikar.idb.DB;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
@@ -21,6 +23,7 @@ import kezukdev.akyto.runnable.CountdownRunnable;
 import kezukdev.akyto.runnable.RespawnRunnable;
 import kezukdev.akyto.runnable.SumoRunnable;
 import kezukdev.akyto.utils.EloUtils;
+import kezukdev.akyto.utils.TagUtils;
 import kezukdev.akyto.utils.chat.ComponentJoiner;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
@@ -36,6 +39,7 @@ public class DuelManager {
 	public void startSingle(final List<UUID> players, final Kit kit) {
 		final Arena arena = this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
 		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
+		TagUtils.setupTeams(Arrays.asList(Lists.newArrayList(players.get(0)), Lists.newArrayList(players.get(1))));
 		players.forEach(uuid -> {
 			if (Bukkit.getPlayer(uuid) == null) {
 				this.endSingle(players.get(0).equals(uuid) ? players.get(1) : players.get(0));
@@ -108,6 +112,7 @@ public class DuelManager {
 			}
 			this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid);
 			});
+		TagUtils.clearEntries(Arrays.asList(Lists.newArrayList(winner), Lists.newArrayList(looser)));
 		new RespawnRunnable(Arrays.asList(players), false, this.main).runTaskLater(this.main, 70L);
 	}
 	
@@ -115,11 +120,11 @@ public class DuelManager {
 		final Arena arena = this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
 		final DuelParty duel = this.main.getUtils().getDuelPartyByUUID(players.get(0).get(0));
 		duel.arena = arena;
+		TagUtils.setupTeams(players);
 		players.forEach(uuids -> {
 			uuids.forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) == null) {
-					this.endMultiple(players.get(0).contains(uuid) ? players.get(1).get(0) : players.get(0).get(0));
-					return;
+					main.getUtils().addKill(uuid, null);
 				}
 				this.main.getUtils().getOpponents(uuid).forEach(UUID -> {
 					this.main.getUtils().multiArena(uuid, false);
@@ -151,7 +156,10 @@ public class DuelManager {
 		duel.getTimer().cancel();
 		duel.setState(DuelState.FINISHING);
 		this.main.getUtils().sendPartyComponent(duel.getDuelPartyType(), Arrays.asList(winners, loosers));
-		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid)));
+		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> {
+			this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid);
+		}));
+		TagUtils.clearEntries(Arrays.asList(winners, loosers));
 		new RespawnRunnable(Arrays.asList(winners, loosers), true, this.main).runTaskLater(this.main, 70L);
 	}
 }

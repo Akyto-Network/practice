@@ -17,6 +17,7 @@ kezukdev\akyto\handler\command\DuelCommand.class
 kezukdev\akyto\handler\listener\PlayerListener.class
 com\bizarrealex\aether\scoreboard\BoardEntry.class
 com\bizarrealex\aether\scoreboard\cooldown\BoardFormat.class
+kezukdev\akyto\utils\TagUtils.class
 kezukdev\akyto\utils\EloUtils.class
 kezukdev\akyto\profile\kiteditor\Edited.class
 com\bizarrealex\aether\AetherOptions.class

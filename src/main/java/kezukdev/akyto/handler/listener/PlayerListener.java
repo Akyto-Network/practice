@@ -267,7 +267,7 @@ public class PlayerListener implements Listener {
 	public void PlayerFoodChange(final FoodLevelChangeEvent event) {
 		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getEntity().getUniqueId());
 		if (profile.getProfileState().equals(ProfileState.FIGHT)) {
-			if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo") || this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("soup")) {
+			if ((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo") || this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("soup"))) || (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null && (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getKit().name().equals("soup")))) {
 				event.setCancelled(true);
 				event.setFoodLevel(20);
 				return;	
