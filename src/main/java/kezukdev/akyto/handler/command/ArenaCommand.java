@@ -36,7 +36,7 @@ public class ArenaCommand implements CommandExecutor {
 			return false;
 		}
 		if (args[0].equalsIgnoreCase("create")) {
-			if (args.length > 3 || args.length < 3 || ArenaType.valueOf(args[2].toUpperCase()) == null) {
+			if (args.length != 3) {
 				sender.sendMessage(new String[] {
 						ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------",
 						"",
@@ -48,21 +48,20 @@ public class ArenaCommand implements CommandExecutor {
 						ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------"
 				});
 				return false;
-			}
-			if (this.main.getManagerHandler().getArenaManager().getArena(args[1]) != null) {
+			} else {
+                ArenaType.valueOf(args[2].toUpperCase());
+            }
+            if (this.main.getManagerHandler().getArenaManager().getArena(args[1]) != null) {
 				sender.sendMessage(ChatColor.RED + "Sorry but this arena already exist.");
 				return false;
 			}
-			if (ArenaType.valueOf(args[2].toUpperCase()) == null) {
-				sender.sendMessage(ChatColor.RED + "ArenaType available: NORMAL, SUMO.");
-				return false;
-			}
-			this.main.getArenasMap().putIfAbsent(args[1], new Arena(main, args[1], LocationSerializer.fromBukkitLocation(Bukkit.getPlayer(sender.getName()).getLocation()), LocationSerializer.fromBukkitLocation(Bukkit.getPlayer(sender.getName()).getLocation()), ArenaType.valueOf(args[2].toUpperCase())));
+            ArenaType.valueOf(args[2].toUpperCase());
+            this.main.getArenasMap().putIfAbsent(args[1], new Arena(main, args[1], LocationSerializer.fromBukkitLocation(Bukkit.getPlayer(sender.getName()).getLocation()), LocationSerializer.fromBukkitLocation(Bukkit.getPlayer(sender.getName()).getLocation()), ArenaType.valueOf(args[2].toUpperCase())));
 			sender.sendMessage(ChatColor.GREEN + "You have succesfully create the " + args[1] + " arena into the " + args[2] + " type!");
 			return false;
 		}
 		if (args[0].equalsIgnoreCase("setpos1") || args[0].equalsIgnoreCase("setpos2")) {
-			if (args.length > 2 || args.length < 2) {
+			if (args.length != 2) {
 				sender.sendMessage(new String[] {
 						ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------",
 						"",

@@ -8,8 +8,8 @@ import java.util.*;
 
 public class ConfigFile
 {
-    private File file;
-    private YamlConfiguration configuration;
+    private final File file;
+    private final YamlConfiguration configuration;
     
     public ConfigFile(final JavaPlugin plugin, final String name) {
         this.file = new File(plugin.getDataFolder(), name + ".yml");
@@ -59,7 +59,7 @@ public class ConfigFile
         final List<String> list = this.getStringList(path);
         if (list != null) {
             final int size = list.size();
-            final List<String> toReturn = new ArrayList<String>();
+            final List<String> toReturn = new ArrayList<>();
             for (int i = size - 1; i >= 0; --i) {
                 toReturn.add(list.get(i));
             }
@@ -70,7 +70,7 @@ public class ConfigFile
     
     public List<String> getStringList(final String path) {
         if (this.configuration.contains(path)) {
-            final ArrayList<String> strings = new ArrayList<String>();
+            final ArrayList<String> strings = new ArrayList<>();
             for (final String string : this.configuration.getStringList(path)) {
                 strings.add(ChatColor.translateAlternateColorCodes('&', string));
             }
@@ -81,7 +81,7 @@ public class ConfigFile
     
     public List<String> getStringListOrDefault(final String path, final List<String> toReturn) {
         if (this.configuration.contains(path)) {
-            final ArrayList<String> strings = new ArrayList<String>();
+            final ArrayList<String> strings = new ArrayList<>();
             for (final String string : this.configuration.getStringList(path)) {
                 strings.add(ChatColor.translateAlternateColorCodes('&', string));
             }

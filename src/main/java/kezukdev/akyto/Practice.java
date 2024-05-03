@@ -60,15 +60,13 @@ public class Practice extends JavaPlugin {
     public LocationUtil editor = new LocationUtil("editor");
     private String region;
     
-	private List<Kit> kits = new ArrayList<Kit>();
-	private List<Duel> duels = new ArrayList<Duel>();
-	private List<DuelParty> duelsParty = new ArrayList<DuelParty>();
+	private List<Kit> kits = new ArrayList<>();
+	private List<Duel> duels = new ArrayList<>();
+	private List<DuelParty> duelsParty = new ArrayList<>();
 	private ConcurrentMap<UUID, QueueEntry> queue;
-	private List<Arena> arenas = new ArrayList<Arena>();
-	public List<Arena> getArenas() { return arenas; }
-	private HashMap<String, Arena> arenasMap = new HashMap<String, Arena>();
-	public HashMap<String, Arena> getArenasMap() { return arenasMap; }
-	private DatabaseSetup databaseSetup;
+    private List<Arena> arenas = new ArrayList<>();
+    private HashMap<String, Arena> arenasMap = new HashMap<>();
+    private DatabaseSetup databaseSetup;
 	private FileSetup fileSetup;
 	
 	public void onEnable() {

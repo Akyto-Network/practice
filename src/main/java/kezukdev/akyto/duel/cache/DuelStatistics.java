@@ -20,7 +20,7 @@ public class DuelStatistics {
 	}
 
 	public void applyEnderPearlCooldown() {
-		this.enderpearlCooldown = Long.valueOf(System.currentTimeMillis() + 16 * 1000);
+		this.enderpearlCooldown = System.currentTimeMillis() + 16L * 1000L;
 	}
 
 	public void removeEnderPearlCooldown() {

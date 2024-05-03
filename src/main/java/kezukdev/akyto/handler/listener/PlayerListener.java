@@ -2,8 +2,8 @@ package kezukdev.akyto.handler.listener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -26,13 +26,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import com.google.common.collect.Sets;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
@@ -45,7 +41,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class PlayerListener implements Listener {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public PlayerListener(final Practice main) { this.main = main; }
 	
@@ -75,15 +71,13 @@ public class PlayerListener implements Listener {
 			if (profile.getProfileState().equals(ProfileState.SPECTATE)) {
 				final Duel duel = this.main.getUtils().getDuelBySpectator(event.getPlayer().getUniqueId());
 				duel.getSpectator().remove(event.getPlayer().getUniqueId());
-				Arrays.asList(duel.getFirst().stream().collect(Collectors.toList()), duel.getSecond().stream().collect(Collectors.toList())).forEach(uuids -> uuids.forEach(uuid -> {
-					Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
-				}));
+				Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.")));
 			}
 			if (profile.getProfileState().equals(ProfileState.FIGHT)) {
 				if (this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()) != null) {
 					final Duel duel = this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId());
 					if (!duel.getState().equals(DuelState.FINISHING)) {
-						this.main.getManagerHandler().getDuelManager().endSingle(duel.getFirst().contains(event.getPlayer().getUniqueId()) ? duel.getSecond().stream().collect(Collectors.toList()).get(0) : duel.getFirst().stream().collect(Collectors.toList()).get(0));
+						this.main.getManagerHandler().getDuelManager().endSingle(duel.getFirst().contains(event.getPlayer().getUniqueId()) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));
 					}	
 				}
 				if (this.main.getUtils().getDuelPartyByUUID(event.getPlayer().getUniqueId()) != null) {
@@ -107,7 +101,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onInteract(final PlayerInteractEvent event) {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
-		if (event == null || event.getItem() == null || event.getItem().getType().equals(Material.AIR)) return;
+		if (event.getItem() == null || event.getItem().getType().equals(Material.AIR)) return;
 		final Profile data = this.main.getUtils().getProfiles(event.getPlayer().getUniqueId());
 		final Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
 		Block clickedBlock = event.getClickedBlock();
@@ -163,7 +157,7 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) { 
 					final Duel duel = this.main.getUtils().getDuelBySpectator(event.getPlayer().getUniqueId());
 					duel.getSpectator().remove(event.getPlayer().getUniqueId());
-					Arrays.asList(duel.getFirst().stream().collect(Collectors.toList()), duel.getSecond().stream().collect(Collectors.toList())).forEach(uuids -> uuids.forEach(uuid -> {
+					Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
 						Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
 						event.getPlayer().hidePlayer(Bukkit.getPlayer(uuid));
 					}));
@@ -244,8 +238,7 @@ public class PlayerListener implements Listener {
 					if (item.getType().equals(Material.POTION) && item.getDurability() == 16421) {
 						event.setUseItemInHand(Result.DENY);
 						event.setCancelled(true);
-						return;
-					}
+                    }
 				}
 			}
 		}
@@ -314,13 +307,13 @@ public class PlayerListener implements Listener {
             new BukkitRunnable() {
                 public void run() {
                     try {
-                        final Object nmsPlayer = event.getEntity().getClass().getMethod("getHandle", (Class<?>[])new Class[0]).invoke(event.getEntity(), new Object[0]);
+                        final Object nmsPlayer = event.getEntity().getClass().getMethod("getHandle", new Class[0]).invoke(event.getEntity(), new Object[0]);
                         final Object con = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
                         final Class<?> EntityPlayer = Class.forName(nmsPlayer.getClass().getPackage().getName() + ".EntityPlayer");
                         final Field minecraftServer = con.getClass().getDeclaredField("minecraftServer");
                         minecraftServer.setAccessible(true);
                         final Object mcserver = minecraftServer.get(con);
-                        final Object playerlist = mcserver.getClass().getDeclaredMethod("getPlayerList", (Class<?>[])new Class[0]).invoke(mcserver, new Object[0]);
+                        final Object playerlist = mcserver.getClass().getDeclaredMethod("getPlayerList", new Class[0]).invoke(mcserver, new Object[0]);
                         final Method moveToWorld = playerlist.getClass().getMethod("moveToWorld", EntityPlayer, Integer.TYPE, Boolean.TYPE);
                         moveToWorld.invoke(playerlist, nmsPlayer, 0, false);
                     }
@@ -340,7 +333,7 @@ public class PlayerListener implements Listener {
             }.runTaskLater(main, 19L);
             if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null) {
                 final Duel duel = this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId());
-                this.main.getManagerHandler().getDuelManager().endSingle(event.getEntity().getUniqueId().equals(duel.getFirst().stream().collect(Collectors.toList()).get(0)) ? duel.getSecond().stream().collect(Collectors.toList()).get(0) : duel.getFirst().stream().collect(Collectors.toList()).get(0));	
+                this.main.getManagerHandler().getDuelManager().endSingle(event.getEntity().getUniqueId().equals(new ArrayList<>(duel.getFirst()).get(0)) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));
             }
             if (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null) {
             	this.main.getUtils().addKill(event.getEntity().getUniqueId(), event.getEntity().getKiller() != null ? event.getEntity().getKiller().getUniqueId() : null);

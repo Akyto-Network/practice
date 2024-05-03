@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
@@ -40,26 +39,26 @@ public class DuelParty {
 		this.duelPartyType = duelPartyType;
 		this.first = first;
 		this.second = second;
-		this.spectator = new HashSet<UUID>();
-		this.dropped = new HashSet<UUID>();
+		this.spectator = new HashSet<>();
+		this.dropped = new HashSet<>();
 		if (duelPartyType.equals("split") || duelPartyType.equals("duel")) {
-			this.firstAlives = new HashSet<UUID>();
+			this.firstAlives = new HashSet<>();
 			this.firstAlives.addAll(first);
-			this.secondAlives = new HashSet<UUID>();
+			this.secondAlives = new HashSet<>();
 			this.secondAlives.addAll(second);
 		}
 		if (duelPartyType.equals("ffa")) {
-			this.alives = new HashSet<UUID>();
+			this.alives = new HashSet<>();
 			this.alives.addAll(first);
 			this.alives.addAll(second);
 		}
 		this.kit = kit;
 		this.state = DuelState.STARTING;
         this.duration = 0;
-        this.winner = new ArrayList<UUID>();
+        this.winner = new ArrayList<>();
 		main.getDuelsParty().add(this);
 		Arrays.asList(first, second).forEach(uuids -> uuids.forEach(uuid -> main.getManagerHandler().getProfileManager().getDuelStatistics().put(uuid, new DuelStatistics())));
-		main.getManagerHandler().getDuelManager().startMultiple(Arrays.asList(first.stream().collect(Collectors.toList()), second.stream().collect(Collectors.toList())), kit);
+		main.getManagerHandler().getDuelManager().startMultiple(Arrays.asList(new ArrayList<>(first), new ArrayList<>(second)), kit);
 	}
 
 }

@@ -21,7 +21,7 @@ public class NoDebuff extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY.toString() + "NoDebuff";
+        return ChatColor.DARK_GRAY + "NoDebuff";
     }
 
     @Override
@@ -64,11 +64,11 @@ public class NoDebuff extends Kit implements KitInterface {
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Armor = {boots, leggings, chestplate, helmet};
-        return Armor;
+        ItemStack[] armor = {boots, leggings, chestplate, helmet};
+        return armor;
     }
     
-    public ItemStack potionNdb = new ItemStack(Material.POTION, 1, (short)16421);
+    public final ItemStack potionNdb = new ItemStack(Material.POTION, 1, (short)16421);
 
     @Override
     public ItemStack[] content() {
@@ -76,7 +76,7 @@ public class NoDebuff extends Kit implements KitInterface {
         attackItem.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 3);
         attackItem.addUnsafeEnchantment(Enchantment.FIRE_ASPECT, 2);
         attackItem.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Contents = {
+        ItemStack[] contents = {
         		attackItem,
         		new ItemStack(Material.ENDER_PEARL, 16, (short)0),
         		potionNdb,
@@ -118,7 +118,7 @@ public class NoDebuff extends Kit implements KitInterface {
                 potionNdb,
 
         };
-        return Contents;
+        return contents;
     }
 	
 	@Override

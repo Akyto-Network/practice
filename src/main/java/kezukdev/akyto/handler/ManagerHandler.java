@@ -15,15 +15,15 @@ import lombok.Getter;
 @Getter
 public class ManagerHandler {
 
-	private ProfileManager profileManager;
-	private ItemManager itemManager;
-	private LeaderboardManager leaderboardManager;
-	private InventoryManager inventoryManager;
-	private QueueManager queueManager;
-	private DuelManager duelManager;
-	private ArenaManager arenaManager;
-	private PartyManager partyManager;
-	private RequestManager requestManager;
+	private final ProfileManager profileManager;
+	private final ItemManager itemManager;
+	private final LeaderboardManager leaderboardManager;
+	private final InventoryManager inventoryManager;
+	private final QueueManager queueManager;
+	private final DuelManager duelManager;
+	private final ArenaManager arenaManager;
+	private final PartyManager partyManager;
+	private final RequestManager requestManager;
 	
 	public ManagerHandler(final Practice main) {
 		this.profileManager = new ProfileManager(main);

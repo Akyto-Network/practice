@@ -13,7 +13,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class LeaderboardCommand implements CommandExecutor {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public LeaderboardCommand(final Practice main) {
 		this.main = main;

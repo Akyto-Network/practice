@@ -31,7 +31,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class InventoryListener implements Listener {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public InventoryListener(final Practice main) {
 		this.main = main;
@@ -41,7 +41,7 @@ public class InventoryListener implements Listener {
 	public void onInventoryClick(final InventoryClickEvent event) {
 		if (event == null || event.getClickedInventory() == null || event.getCurrentItem() == null) return;
 		if (event.getWhoClicked().getGameMode().equals(GameMode.CREATIVE)) return;
-		if (event == null || event.getClickedInventory() == null || event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS)) {
+		if (event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS)) {
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
 			return;
@@ -135,7 +135,7 @@ public class InventoryListener implements Listener {
 			}
 			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[2].getName())) {	
 				if (event.getCurrentItem().getType().equals(Material.BOOKSHELF)) {
-					final Map<String, Edited> map = new HashMap<String, Edited>();
+					final Map<String, Edited> map = new HashMap<>();
 					map.put(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId()), new Edited(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId()), event.getWhoClicked().getInventory().getContents(), event.getWhoClicked().getInventory().getArmorContents()));
 					this.main.getManagerHandler().getProfileManager().getEditor().put(event.getWhoClicked().getUniqueId(), map);
 					event.getWhoClicked().closeInventory();
@@ -157,51 +157,51 @@ public class InventoryListener implements Listener {
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
 			if (event.getCurrentItem().getType().equals(Material.PAINTING)) {
-				profile.getSettings().set(0, profile.getSettings().get(0).booleanValue() ? Boolean.FALSE : Boolean.TRUE);
+				profile.getSettings().set(0, profile.getSettings().get(0) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, false);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(0).booleanValue() ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r scoreboard");
+				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(0) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r scoreboard");
 				return;
 			}
 			if (event.getCurrentItem().getType().equals(Material.BLAZE_POWDER)) {
-				profile.getSettings().set(1, profile.getSettings().get(1).booleanValue() ? Boolean.FALSE : Boolean.TRUE);
+				profile.getSettings().set(1, profile.getSettings().get(1) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, false);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(1).booleanValue() ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r duel request");
+				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(1) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r duel request");
 				return;
 			}
 			if (event.getCurrentItem().getType().equals(Material.WATCH)) {
-				profile.getSettings().set(2, profile.getSettings().get(2).booleanValue() ? Boolean.FALSE : Boolean.TRUE);
+				profile.getSettings().set(2, profile.getSettings().get(2) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 2, false);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "Time set to " + (profile.getSettings().get(2).booleanValue() ? ChatColor.YELLOW + "day" : ChatColor.BLUE + "night"));
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setPlayerTime(profile.getSettings().get(2).booleanValue() ? 0L : 18000L, true);
+				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "Time set to " + (profile.getSettings().get(2) ? ChatColor.YELLOW + "day" : ChatColor.BLUE + "night"));
+				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setPlayerTime(profile.getSettings().get(2) ? 0L : 18000L, true);
 				return;
 			}
 		}
 		if (event.getClickedInventory().getName().contains("Settings") && event.getClickedInventory().getName().contains("Spectate")) {
-			if (event == null || event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS) || event.getCurrentItem().getType().equals(Material.AIR)) return;
+			if (event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS) || event.getCurrentItem().getType().equals(Material.AIR)) return;
 			if (event.getCurrentItem().getType().equals(Material.DIAMOND)) {
-				profile.getSpectateSettings().set(0, profile.getSpectateSettings().get(0).booleanValue() ? Boolean.FALSE : Boolean.TRUE);
+				profile.getSpectateSettings().set(0, profile.getSpectateSettings().get(0) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				final Duel duel = this.main.getUtils().getDuelBySpectator(event.getWhoClicked().getUniqueId());
 				if (!duel.getSpectator().isEmpty()) {
 					duel.getSpectator().forEach(spectator -> {
-						if (profile.getSpectateSettings().get(0).booleanValue()) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).showPlayer(Bukkit.getPlayer(spectator));
-						if (!profile.getSpectateSettings().get(0).booleanValue()) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).hidePlayer(Bukkit.getPlayer(spectator));
+						if (profile.getSpectateSettings().get(0)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).showPlayer(Bukkit.getPlayer(spectator));
+						if (!profile.getSpectateSettings().get(0)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).hidePlayer(Bukkit.getPlayer(spectator));
 					});
 				}
 				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, true);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSpectateSettings().get(0).booleanValue() ? ChatColor.GREEN + "show" : ChatColor.RED + "hide") + ChatColor.DARK_GRAY + " other spectators");
+				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSpectateSettings().get(0) ? ChatColor.GREEN + "show" : ChatColor.RED + "hide") + ChatColor.DARK_GRAY + " other spectators");
 				return;
 			}
 			if (event.getCurrentItem().getType().equals(Material.FEATHER)) {
-				profile.getSpectateSettings().set(1, profile.getSpectateSettings().get(1).booleanValue() ? Boolean.FALSE : Boolean.TRUE);
+				profile.getSpectateSettings().set(1, profile.getSpectateSettings().get(1) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
-				if (profile.getSpectateSettings().get(1).booleanValue()) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.1f);
-				if (!profile.getSpectateSettings().get(1).booleanValue()) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.25f);
+				if (profile.getSpectateSettings().get(1)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.1f);
+				if (!profile.getSpectateSettings().get(1)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.25f);
 				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, true);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been set the fly speed to " + (profile.getSpectateSettings().get(1).booleanValue() ? ChatColor.YELLOW + "x1.0" : ChatColor.GOLD + "x2.5"));
+				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been set the fly speed to " + (profile.getSpectateSettings().get(1) ? ChatColor.YELLOW + "x1.0" : ChatColor.GOLD + "x2.5"));
 				return;
 			}
 			if (event.getCurrentItem().getType().equals(Material.EMERALD)) {
@@ -210,7 +210,7 @@ public class InventoryListener implements Listener {
 			}
 		}
 		if (event.getClickedInventory().getName().contains("Spectate") && !event.getClickedInventory().getName().contains("Settings") ) {
-			if (event == null || event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR)) return;
+			if (event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR)) return;
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
 			if (event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS) || event.getCurrentItem().getType().equals(Material.AIR)) return;
@@ -221,7 +221,7 @@ public class InventoryListener implements Listener {
             Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).chat("/spectate " + ChatColor.stripColor(first));
 		}
 		if (event.getClickedInventory().getName().contains("preview's")) {
-			if (event == null || event.getCurrentItem() == null) return;
+			if (event.getCurrentItem() == null) return;
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
 			if (event.getCurrentItem().getType().equals(Material.LEVER)) {

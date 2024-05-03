@@ -15,7 +15,7 @@ import kezukdev.akyto.utils.inventory.BukkitSerialization;
 
 public class FileSetup {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public FileSetup(final Practice main) { 
 		this.main = main;
@@ -29,7 +29,7 @@ public class FileSetup {
 			for (File file : files) {
 				YamlConfiguration configFile = YamlConfiguration.loadConfiguration(file);
 				final String str = file.getName().replace(".yml", "");
-				Map<String, Edited> mapLadder = new HashMap<String, Edited>();
+				Map<String, Edited> mapLadder = new HashMap<>();
 				for (String strs : configFile.getConfigurationSection("ladders").getKeys(false)) {
 					try {
 						mapLadder.putIfAbsent(strs, new Edited(strs, BukkitSerialization.itemStackArrayFromBase64(configFile.getString("ladders." + strs + ".content")), BukkitSerialization.itemStackArrayFromBase64(configFile.getString("ladders." + strs + ".armorContent"))));
@@ -40,12 +40,12 @@ public class FileSetup {
 				this.main.getManagerHandler().getProfileManager().getEditor().putIfAbsent(UUID.fromString(str), mapLadder);
 			}	
 			long endTime = System.currentTimeMillis();
-			System.out.println("[AkytoPractice] Edited-Kit: Succesfuly loaded in " + String.valueOf(endTime - timeUnit) + "ms!");
+			System.out.println("[AkytoPractice] Edited-Kit: Succesfuly loaded in " + (endTime - timeUnit) + "ms!");
 		}
 	}
 
 	public void saveEditor() {
-		if (this.main.getManagerHandler().getProfileManager().getEditor().size() != 0) {
+		if (!this.main.getManagerHandler().getProfileManager().getEditor().isEmpty()) {
 			final long startTime = System.currentTimeMillis();
 			for (UUID uuid : this.main.getManagerHandler().getProfileManager().getEditor().keySet()) {
 				File file = new File(this.main.getDataFolder() + "/players/" + uuid.toString() + ".yml");
@@ -72,7 +72,7 @@ public class FileSetup {
 				}
 			}	
 			final long endTime = System.currentTimeMillis();
-			System.out.println("[AkytoPractice] Edited-Kit: Succesfully saved in: " + String.valueOf(endTime - startTime) + "ms!");
+			System.out.println("[AkytoPractice] Edited-Kit: Succesfully saved in: " + (endTime - startTime) + "ms!");
 		}
 	}
 

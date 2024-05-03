@@ -103,7 +103,7 @@ public class LocationSerializer
     
     @Override
     public String toString() {
-        return new ToStringBuilder((Object)this).append("x", this.x).append("y", this.y).append("z", this.z).append("yaw", this.yaw).append("pitch", this.pitch).append("world", (Object)this.world).append("timestamp", this.timestamp).toString();
+        return new ToStringBuilder(this).append("x", this.x).append("y", this.y).append("z", this.z).append("yaw", this.yaw).append("pitch", this.pitch).append("world", this.world).append("timestamp", this.timestamp).toString();
     }
     
     public long getTimestamp() {

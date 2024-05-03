@@ -12,7 +12,7 @@ import kezukdev.akyto.profile.ProfileState;
 
 public class StatisticsCommand implements CommandExecutor {
 
-	private Practice main;
+	private final Practice main;
 	
 	public StatisticsCommand(final Practice main) { this.main = main; }
 	
@@ -20,8 +20,9 @@ public class StatisticsCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) return false;
 		final ProfileState state = this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState();
+		boolean is_busy = state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR);
 		if (args.length == 0) {
-			if (state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR)) {
+			if (is_busy) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}
@@ -29,8 +30,7 @@ public class StatisticsCommand implements CommandExecutor {
 			return false;
 		}
 		if (args.length == 1) {
-			if (!(sender instanceof Player)) return false;
-			if (state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR)) {
+            if (is_busy) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}

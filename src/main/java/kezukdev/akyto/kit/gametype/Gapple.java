@@ -23,7 +23,7 @@ public class Gapple extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY.toString() + "Gapple";
+        return ChatColor.DARK_GRAY + "Gapple";
     }
 
     @Override
@@ -66,8 +66,8 @@ public class Gapple extends Kit implements KitInterface {
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Armor = {boots, leggings, chestplate, helmet};
-        return Armor;
+        ItemStack[] armor = {boots, leggings, chestplate, helmet};
+        return armor;
     }
 
     @Override
@@ -89,7 +89,7 @@ public class Gapple extends Kit implements KitInterface {
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 4);
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Contents = {
+        ItemStack[] contents = {
         		attackItem,
         		new ItemStack(Material.GOLDEN_APPLE, 64, (byte)1),
         		air,
@@ -131,7 +131,7 @@ public class Gapple extends Kit implements KitInterface {
                 air,
 
         };
-        return Contents;
+        return contents;
     }
 	
 	@Override

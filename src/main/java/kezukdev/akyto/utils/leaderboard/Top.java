@@ -11,9 +11,9 @@ import net.md_5.bungee.api.ChatColor;
 public class Top {
 
     private int elo_id;
-    private Map<String, Integer> topboard = new HashMap<>();
-    private ArrayList<String> loreRanked = new ArrayList<>();
-    private ArrayList<String> lore = new ArrayList<>();
+    private final Map<String, Integer> topboard = new HashMap<>();
+    private final ArrayList<String> loreRanked = new ArrayList<>();
+    private final ArrayList<String> lore = new ArrayList<>();
 
     public Top(int elo_id, Map<String, int[]> map) {
     	this.elo_id = elo_id;
@@ -34,7 +34,7 @@ public class Top {
     }
 
     private void extirpate(Map<String, int[]> map) {
-        map.entrySet().forEach(stringEntry -> topboard.put(stringEntry.getKey(), stringEntry.getValue()[elo_id]));
+        map.forEach((key, value) -> topboard.put(key, value[elo_id]));
     }
 
     private void organise() {

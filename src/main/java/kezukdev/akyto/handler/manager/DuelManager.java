@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -68,11 +67,11 @@ public class DuelManager {
 			duel.getTimer().cancel();	
 		}
 		duel.setState(DuelState.FINISHING);
-		final UUID looser = duel.getFirst().contains(winner) ? duel.getSecond().stream().collect(Collectors.toList()).get(0) : duel.getFirst().stream().collect(Collectors.toList()).get(0);
-		List<UUID> players = new ArrayList<UUID>();
+		final UUID looser = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0);
+		List<UUID> players = new ArrayList<>();
 		players.add(winner);
 		players.add(looser);
-		if (!duel.getSpectator().isEmpty()) players.addAll(duel.getSpectator().stream().collect(Collectors.toList()));
+		if (!duel.getSpectator().isEmpty()) players.addAll(new ArrayList<>(duel.getSpectator()));
 		this.main.getUtils().addWinToData(winner, duel.getKit());
 		this.main.getUtils().clearDrops(winner);
 		players.forEach(uuid -> {
@@ -85,7 +84,7 @@ public class DuelManager {
 				Bukkit.getPlayer(uuid).sendMessage(ChatColor.YELLOW + "Match Information");
 				Bukkit.getPlayer(uuid).spigot().sendMessage(this.main.getUtils().endMessage(winner, looser));
 				if (duel.isRanked()) {
-					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + String.valueOf((int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (main.getManagerHandler().getProfileManager().getProfiles().get(winner).getStats().get(2)[duel.getKit().id()] - main.getManagerHandler().getProfileManager().getProfiles().get(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40)));
+					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (main.getManagerHandler().getProfileManager().getProfiles().get(winner).getStats().get(2)[duel.getKit().id()] - main.getManagerHandler().getProfileManager().getProfiles().get(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
 				}
 				if (!duel.getSpectator().isEmpty()) {
 					Bukkit.getPlayer(uuid).sendMessage(" ");
@@ -121,27 +120,23 @@ public class DuelManager {
 		final DuelParty duel = this.main.getUtils().getDuelPartyByUUID(players.get(0).get(0));
 		duel.arena = arena;
 		TagUtils.setupTeams(players);
-		players.forEach(uuids -> {
-			uuids.forEach(uuid -> {
-				if (Bukkit.getPlayer(uuid) == null) {
-					main.getUtils().addKill(uuid, null);
-				}
-				this.main.getUtils().getOpponents(uuid).forEach(UUID -> {
-					this.main.getUtils().multiArena(uuid, false);
-				});
-				Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponents(uuid).get(0)));
-				this.main.getUtils().resetPlayer(uuid);
-				final Player player = Bukkit.getPlayer(uuid);
-				if (duel.getDuelPartyType().equals("ffa")) {
-					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
-				}
-				player.teleport(players.get(0).contains(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
-				this.main.getUtils().addPlayedToData(uuid, kit);
-				this.main.getUtils().getProfiles(uuid).setProfileState(ProfileState.FIGHT);
-				this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
-				if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
-			});
-		});
+		players.forEach(uuids -> uuids.forEach(uuid -> {
+            if (Bukkit.getPlayer(uuid) == null) {
+                main.getUtils().addKill(uuid, null);
+            }
+            this.main.getUtils().getOpponents(uuid).forEach(UUID -> this.main.getUtils().multiArena(uuid, false));
+            Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponents(uuid).get(0)));
+            this.main.getUtils().resetPlayer(uuid);
+            final Player player = Bukkit.getPlayer(uuid);
+            if (duel.getDuelPartyType().equals("ffa")) {
+                Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
+            }
+            player.teleport(players.get(0).contains(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
+            this.main.getUtils().addPlayedToData(uuid, kit);
+            this.main.getUtils().getProfiles(uuid).setProfileState(ProfileState.FIGHT);
+            this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
+            if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
+        }));
 		if (duel.getDuelPartyType().equals("split") || duel.getDuelPartyType().equals("duel")) {
 			this.main.getUtils().sendSplitMessage(players.get(0), players.get(1), kit);
 		}
@@ -150,15 +145,13 @@ public class DuelManager {
 
 	public void endMultiple(final UUID winner) {
 		final DuelParty duel = this.main.getUtils().getDuelPartyByUUID(winner);
-		final List<UUID> winners = duel.getFirst().contains(winner) ? duel.getFirst().stream().collect(Collectors.toList()) : duel.getSecond().stream().collect(Collectors.toList());
-		final List<UUID> loosers = duel.getFirst().contains(winner) ? duel.getSecond().stream().collect(Collectors.toList()) : duel.getFirst().stream().collect(Collectors.toList());
+		final List<UUID> winners = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getFirst()) : new ArrayList<>(duel.getSecond());
+		final List<UUID> loosers = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 		duel.getWinner().addAll(winners);
 		duel.getTimer().cancel();
 		duel.setState(DuelState.FINISHING);
 		this.main.getUtils().sendPartyComponent(duel.getDuelPartyType(), Arrays.asList(winners, loosers));
-		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> {
-			this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid);
-		}));
+		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid)));
 		TagUtils.clearEntries(Arrays.asList(winners, loosers));
 		new RespawnRunnable(Arrays.asList(winners, loosers), true, this.main).runTaskLater(this.main, 70L);
 	}

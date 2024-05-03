@@ -16,7 +16,7 @@ import kezukdev.akyto.profile.ProfileState;
 
 public class DuelCommand implements CommandExecutor {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public DuelCommand(final Practice main) { this.main = main; }
 
@@ -37,7 +37,7 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "You cannot duel yourself.");
 				return false;
 			}
-			if (!profile.getSettings().get(1).booleanValue()) {
+			if (!profile.getSettings().get(1)) {
 				sender.sendMessage(ChatColor.RED + "You have disable your duel request in your settings!");
 				return false;
 			}
@@ -50,7 +50,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 			final Profile targetProfile = this.main.getUtils().getProfiles(Bukkit.getPlayer(args[0]).getUniqueId());
-			if (!targetProfile.getSettings().get(1).booleanValue()) {
+			if (!targetProfile.getSettings().get(1)) {
 				sender.sendMessage(ChatColor.RED + "This player doesn't accept any duel request!");
 				return false;
 			}

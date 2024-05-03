@@ -2,12 +2,8 @@ package kezukdev.akyto.board;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -27,7 +23,7 @@ import kezukdev.akyto.profile.ProfileState;
 public class SideBoard implements BoardAdapter
 {
     private final Practice plugin;
-    private String spacer = ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------";
+    private final String spacer = ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------";
     DateFormat shortDateFormat = DateFormat.getDateTimeInstance(
             DateFormat.SHORT,
             DateFormat.SHORT);
@@ -43,10 +39,10 @@ public class SideBoard implements BoardAdapter
     public List<String> getScoreboard(final Player player, final Board board, final Set<BoardCooldown> cooldowns) {
         final Profile pm = this.plugin.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId());
         if (pm == null) {
-            this.plugin.getLogger().warning(String.valueOf(player.getName()) + "'s player data is null");
+            this.plugin.getLogger().warning(player.getName() + "'s player data is null");
             return null;
         }
-        if (pm.getSettings().get(0).booleanValue()) {
+        if (pm.getSettings().get(0)) {
             if (pm.getProfileState().equals(ProfileState.FREE) || pm.getProfileState().equals(ProfileState.QUEUE) || pm.getProfileState().equals(ProfileState.MOD)) {
                 return this.getLobbyBoard(player);
             }
@@ -61,7 +57,7 @@ public class SideBoard implements BoardAdapter
     }
 
     private List<String> getLobbyBoard(final Player player) {
-        final List<String> board = new LinkedList<String>();
+        final List<String> board = new LinkedList<>();
         board.add(spacer);
         board.add(ChatColor.DARK_GRAY + "Online" + ChatColor.GRAY + ": " + ChatColor.WHITE + Bukkit.getOnlinePlayers().size());
         board.add(ChatColor.DARK_GRAY + "In Fight" + ChatColor.GRAY + ": " + ChatColor.WHITE + this.plugin.getDuels().size());
@@ -79,7 +75,7 @@ public class SideBoard implements BoardAdapter
     }
 
     private List<String> getGameBoard(final Player player) {
-        final List<String> board = new LinkedList<String>();
+        final List<String> board = new LinkedList<>();
         board.add(spacer);
         if (this.plugin.getUtils().getDuelPartyByUUID(player.getUniqueId()) != null) {
         	final DuelParty duel = this.plugin.getUtils().getDuelPartyByUUID(player.getUniqueId());
@@ -88,8 +84,8 @@ public class SideBoard implements BoardAdapter
         		
         	}
         	if (duel.getDuelPartyType().equals("split") || duel.getDuelPartyType().equals("duel")) {
-        		final String firstName = Bukkit.getPlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)) != null ? Bukkit.getPlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)).getName() : Bukkit.getOfflinePlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)).getName();
-        		final String secondName = Bukkit.getPlayer(duel.getSecond().stream().collect(Collectors.toList()).get(0)) != null ? Bukkit.getPlayer(duel.getSecond().stream().collect(Collectors.toList()).get(0)).getName() : Bukkit.getOfflinePlayer(duel.getSecond().stream().collect(Collectors.toList()).get(0)).getName();
+        		final String firstName = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
+        		final String secondName = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getSecond()).get(0)).getName();
         		board.add(ChatColor.DARK_GRAY + firstName + "'s team" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getFirstAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + duel.getFirst().size());
         		board.add(ChatColor.DARK_GRAY + secondName + "'s team" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getSecondAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + duel.getSecond().size());
         	}
@@ -104,7 +100,7 @@ public class SideBoard implements BoardAdapter
             }	
         }
         if (this.plugin.getUtils().getDuelByUUID(player.getUniqueId()) != null) {
-            final UUID opps = this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getFirst().contains(player.getUniqueId()) ? this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getSecond().stream().collect(Collectors.toList()).get(0) : this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getFirst().stream().collect(Collectors.toList()).get(0);
+            final UUID opps = this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getFirst().contains(player.getUniqueId()) ? new ArrayList<>(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getSecond()).get(0) : new ArrayList<>(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getFirst()).get(0);
             if (this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getState().equals(DuelState.PLAYING) || this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getState().equals(DuelState.STARTING)) {
                 board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(opps) != null ? Bukkit.getPlayer(opps).getName() : Bukkit.getOfflinePlayer(opps).getName()));
                 board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getSingleFormattedDuration(this.plugin.getUtils().getDuelByUUID(player.getUniqueId())));
@@ -128,7 +124,7 @@ public class SideBoard implements BoardAdapter
     }
     
     private List<String> getSpecBoard(final Player player) {
-        final List<String> board = new LinkedList<String>();
+        final List<String> board = new LinkedList<>();
         board.add(spacer);
         if (this.plugin.getUtils().getDuelPartyBySpectator(player.getUniqueId()) != null) {
         	final DuelParty duel = this.plugin.getUtils().getDuelPartyBySpectator(player.getUniqueId());
@@ -137,8 +133,8 @@ public class SideBoard implements BoardAdapter
         		
         	}
         	if (duel.getDuelPartyType().equals("split") || duel.getDuelPartyType().equals("duel")) {
-        		final String firstName = Bukkit.getPlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)) != null ? Bukkit.getPlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)).getName() : Bukkit.getOfflinePlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)).getName();
-        		final String secondName = Bukkit.getPlayer(duel.getSecond().stream().collect(Collectors.toList()).get(0)) != null ? Bukkit.getPlayer(duel.getSecond().stream().collect(Collectors.toList()).get(0)).getName() : Bukkit.getOfflinePlayer(duel.getSecond().stream().collect(Collectors.toList()).get(0)).getName();
+        		final String firstName = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
+        		final String secondName = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getSecond()).get(0)).getName();
         		board.add(ChatColor.DARK_GRAY + firstName + "'s team" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getFirstAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + duel.getFirst().size());
         		board.add(ChatColor.DARK_GRAY + secondName + "'s team" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getSecondAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + duel.getSecond().size());
         	}
@@ -146,8 +142,8 @@ public class SideBoard implements BoardAdapter
         }
         if (this.plugin.getUtils().getDuelBySpectator(player.getUniqueId()) != null) {
             final Duel duel = this.plugin.getUtils().getDuelBySpectator(player.getUniqueId());
-            final String first = Bukkit.getPlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)) != null ? Bukkit.getPlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)).getName() : Bukkit.getOfflinePlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)).getName();
-            final String second = Bukkit.getPlayer(duel.getSecond().stream().collect(Collectors.toList()).get(0)) != null ? Bukkit.getPlayer(duel.getSecond().stream().collect(Collectors.toList()).get(0)).getName() : Bukkit.getOfflinePlayer(duel.getFirst().stream().collect(Collectors.toList()).get(0)).getName();
+            final String first = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
+            final String second = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
             if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
                 board.add(ChatColor.GREEN + first);
                 board.add(ChatColor.DARK_GRAY + "    against");

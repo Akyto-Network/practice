@@ -13,8 +13,8 @@ public class EloUtils {
         final double expectedp = 1.0D / (1.0D + Math.pow(10.0D, (winnersElo - losersElo) / 400.0D));
         final int scoreChange = (int) limit((expectedp * 32.0D), 4, 40);
         main.getManagerHandler().getProfileManager().getProfiles().get(winner).getStats().get(2)[kit.id()] = winnersElo + scoreChange;
-        main.getManagerHandler().getProfileManager().getProfiles().get(looser).getStats().get(2)[kit.id()] = losersElo - scoreChange;;
-	}
+        main.getManagerHandler().getProfileManager().getProfiles().get(looser).getStats().get(2)[kit.id()] = losersElo - scoreChange;
+    }
 	
     public static double limit(double value, double min, double max) {
 		return Math.min(Math.max(value, min), max);

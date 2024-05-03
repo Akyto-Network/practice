@@ -22,7 +22,7 @@ public class Config
                 e.printStackTrace();
             }
         }
-        this.config = (FileConfiguration)YamlConfiguration.loadConfiguration(this.configFile);
+        this.config = YamlConfiguration.loadConfiguration(this.configFile);
     }
     
     public void save() {

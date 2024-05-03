@@ -4,11 +4,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class Edited {
 	
-	private String name;
+	private final String name;
 	public String getName() { return name; }
-	private ItemStack[] content;
+	private final ItemStack[] content;
 	public ItemStack[] getContent() { return content; }
-	private ItemStack[] armorContent;
+	private final ItemStack[] armorContent;
 	public ItemStack[] getArmorContent() { return armorContent; }
 	
 	public Edited(final String name, final ItemStack[] content, final ItemStack[] armorContent) {

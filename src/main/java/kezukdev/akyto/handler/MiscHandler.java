@@ -18,7 +18,7 @@ import kezukdev.akyto.handler.listener.PlayerListener;
 
 public class MiscHandler {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public MiscHandler(final Practice main) {
 		this.main = main;

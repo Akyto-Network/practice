@@ -14,8 +14,8 @@ import kezukdev.akyto.kit.Kit;
 public class RespawnRunnable extends BukkitRunnable {
     
     private final Practice main;
-    private List<List<UUID>> players;
-    private boolean party;
+    private final List<List<UUID>> players;
+    private final boolean party;
     private Duel duel;
     private DuelParty duelParty;
     
@@ -29,17 +29,15 @@ public class RespawnRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        players.forEach(uuids -> {
-        	uuids.forEach(uuid -> {
-            	main.getUtils().sendToSpawn(uuid, true);
-            	Bukkit.getOnlinePlayers().forEach(player -> {
-            		if (Bukkit.getPlayer(uuid) != null) {
-                		player.showPlayer(Bukkit.getPlayer(uuid));
-                		Bukkit.getPlayer(uuid).showPlayer(player);	
-            		}
-            	});
+        players.forEach(uuids -> uuids.forEach(uuid -> {
+            main.getUtils().sendToSpawn(uuid, true);
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                if (Bukkit.getPlayer(uuid) != null) {
+                    player.showPlayer(Bukkit.getPlayer(uuid));
+                    Bukkit.getPlayer(uuid).showPlayer(player);
+                }
             });
-        });
+}));
         if(!party) {
             final boolean ranked = duel.isRanked();
             final Kit kit = duel.getKit();

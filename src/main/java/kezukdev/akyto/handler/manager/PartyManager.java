@@ -24,7 +24,7 @@ public class PartyManager {
 	
 	public PartyManager(final Practice main) {
 		this.main = main;
-		this.partys = new ArrayList<PartyManager.PartyEntry>();
+		this.partys = new ArrayList<>();
 	}
 
 	public void createParty(final UUID creator) {
@@ -137,8 +137,7 @@ public class PartyManager {
 			});
 			this.partys.remove(party);
 			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
-			return;
-		} else {
+        } else {
 			party.getMembers().remove(sender);
 			if (this.main.getUtils().getProfiles(sender) != null) {
 				if (this.main.getUtils().getProfiles(sender).getProfileState().equals(ProfileState.FREE)) {
@@ -165,7 +164,7 @@ public class PartyManager {
 		public PartyEntry(final UUID creator) {
 			this.creator = creator;
 			this.open = false;
-			this.members = new HashSet<UUID>();
+			this.members = new HashSet<>();
 			this.members.add(creator);
 		}
 	}

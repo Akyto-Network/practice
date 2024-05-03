@@ -15,7 +15,7 @@ import kezukdev.akyto.utils.location.LocationSerializer;
 
 public class ArenaManager {
 	
-	private Practice main;
+	private final Practice main;
 	private final Config config;
 	
 	public ArenaManager(final Practice main) { 
@@ -35,7 +35,7 @@ public class ArenaManager {
 	}
 
 	public void saveArenas() {
-		if (this.main.getArenas().size() == 0) return;
+		if (this.main.getArenas().isEmpty()) return;
 		FileConfiguration fileConfig = this.config.getConfig();
 		fileConfig.set("arenas", null);
 		this.main.getArenasMap().forEach((arenaName, arena) -> {

@@ -21,7 +21,7 @@ public class NoEnchant extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY.toString() + "NoEnchant";
+        return ChatColor.DARK_GRAY + "NoEnchant";
     }
 
     @Override
@@ -60,16 +60,16 @@ public class NoEnchant extends Kit implements KitInterface {
         leggings.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Armor = {boots, leggings, chestplate, helmet};
-        return Armor;
+        ItemStack[] armor = {boots, leggings, chestplate, helmet};
+        return armor;
     }
     
-    public ItemStack potionNdb = new ItemStack(Material.POTION, 1, (short)16421);
+    public final ItemStack potionNdb = new ItemStack(Material.POTION, 1, (short)16421);
 
     @Override
     public ItemStack[] content() {
         ItemStack attackItem = new ItemStack(Material.DIAMOND_SWORD);
-        ItemStack[] Contents = {
+        ItemStack[] contents = {
         		attackItem,
         		new ItemStack(Material.ENDER_PEARL, 16, (short)0),
         		potionNdb,
@@ -111,7 +111,7 @@ public class NoEnchant extends Kit implements KitInterface {
                 potionNdb,
 
         };
-        return Contents;
+        return contents;
     }
 	
 	@Override

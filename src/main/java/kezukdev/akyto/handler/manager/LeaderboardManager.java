@@ -14,7 +14,7 @@ public class LeaderboardManager {
 
 	private final Practice main;
 	
-    Top[] top = new Top[99];
+    final Top[] top = new Top[99];
     Top global;
 
     public LeaderboardManager(final Practice main) { this.main = main; }
@@ -59,9 +59,7 @@ public class LeaderboardManager {
 
    public void refresh() {
        Map<String, int[]> map = getTopElo();
-       this.main.getKits().forEach(ladder -> {
-           top[ladder.id()] = new Top(ladder.id(), map); 
-       });
+       this.main.getKits().forEach(ladder -> top[ladder.id()] = new Top(ladder.id(), map));
        global = new Top(map, main);
    }
 

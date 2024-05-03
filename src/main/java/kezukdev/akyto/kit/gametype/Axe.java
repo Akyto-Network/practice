@@ -64,8 +64,8 @@ public class Axe extends Kit implements KitInterface {
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 1);
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Armor = {boots, leggings, chestplate, helmet};
-        return Armor;
+        ItemStack[] armor = {boots, leggings, chestplate, helmet};
+        return armor;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Axe extends Kit implements KitInterface {
     	ItemStack attackItem = new ItemStack(Material.IRON_AXE);
     	attackItem.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 2);
     	attackItem.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Contents = {attackItem,
+        ItemStack[] contents = {attackItem,
                 new ItemStack(Material.GOLDEN_APPLE, 16, (short)0),
                 new ItemStack(Material.POTION, 1, (short)8226),
                 new ItemStack(Material.POTION, 1, (short)16421),
@@ -91,7 +91,7 @@ public class Axe extends Kit implements KitInterface {
                 new ItemStack(Material.POTION, 1, (short)8226),
 
         };
-        return Contents;
+        return contents;
     }
 
 	@Override

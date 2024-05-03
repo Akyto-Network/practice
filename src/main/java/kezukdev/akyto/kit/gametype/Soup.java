@@ -66,18 +66,18 @@ public class Soup extends Kit implements KitInterface {
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
         boots.addUnsafeEnchantment(Enchantment.PROTECTION_FALL, 4);
         boots.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Armor = {boots, leggings, chestplate, helmet};
-        return Armor;
+        ItemStack[] armor = {boots, leggings, chestplate, helmet};
+        return armor;
     }
     
-    public ItemStack potionNdb = new ItemStack(Material.MUSHROOM_SOUP);
+    public final ItemStack potionNdb = new ItemStack(Material.MUSHROOM_SOUP);
 
     @Override
     public ItemStack[] content() {
         ItemStack attackItem = new ItemStack(Material.DIAMOND_SWORD);
         attackItem.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
         attackItem.addUnsafeEnchantment(Enchantment.DURABILITY, 3);
-        ItemStack[] Contents = {
+        ItemStack[] contents = {
         		attackItem,
         		potionNdb,
         		potionNdb,
@@ -119,7 +119,7 @@ public class Soup extends Kit implements KitInterface {
                 potionNdb,
 
         };
-        return Contents;
+        return contents;
     }
 	
 	@Override

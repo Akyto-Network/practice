@@ -1,6 +1,6 @@
 package kezukdev.akyto.utils.inventory;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -14,10 +14,10 @@ import kezukdev.akyto.Practice;
 
 public class MultipageSerializer {
 
-	private Practice main;
+	private final Practice main;
     private Inventory[] inventories;
-    private String inventoryName;
-    private ItemStack icon;
+    private final String inventoryName;
+    private final ItemStack icon;
 
     public MultipageSerializer(final Practice main, List<ItemStack> itemStacks, String inventoryName, ItemStack icon) {
     	this.main = main;
@@ -29,16 +29,16 @@ public class MultipageSerializer {
     public void refresh(List<ItemStack> itemStacks) {
         int var0 = itemStacks.size() <= 36 ? 1 : (itemStacks.size()/36)+1;
         inventories = new Inventory[var0];
-        for(int page = 1; page <= var0; page++) {
+        for (int page = 1; page <= var0; page++) {
             int start = page == 1 ? 0 : (page-1) * 36;
             Inventory inventory = Bukkit.createInventory(null, 9*6, inventoryName);
-            inventory.setItem(45, this.main.getUtils().createItem(Material.LEVER, ChatColor.GRAY + "Previous Page", Arrays.asList(new String(ChatColor.GRAY + "Click here for pack to the previous page."))));
+            inventory.setItem(45, this.main.getUtils().createItem(Material.LEVER, ChatColor.GRAY + "Previous Page", Collections.singletonList(ChatColor.GRAY + "Click here for pack to the previous page.")));
             int nextPage = page + 1;
-            inventory.setItem(53, this.main.getUtils().createItem(Material.ARROW, ChatColor.GRAY + "Next Page" , Arrays.asList(ChatColor.GRAY + "The next page is: " + ChatColor.AQUA + nextPage)));
+            inventory.setItem(53, this.main.getUtils().createItem(Material.ARROW, ChatColor.GRAY + "Next Page" , Collections.singletonList(ChatColor.GRAY + "The next page is: " + ChatColor.AQUA + nextPage)));
             for (int i = 0; i <= 8; i++) inventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte)8));
             inventory.setItem(4, icon);
 
-            if(itemStacks.size() != 0) {
+            if (!itemStacks.isEmpty()) {
                 for (int slot = 9; slot <= 44; slot++) {
                     if (start >= itemStacks.size()) break;
                     inventory.setItem(slot, itemStacks.get(start));

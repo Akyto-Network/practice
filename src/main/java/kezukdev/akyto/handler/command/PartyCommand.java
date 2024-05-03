@@ -11,7 +11,7 @@ import kezukdev.akyto.Practice;
 
 public class PartyCommand implements CommandExecutor {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public PartyCommand(Practice practice) { this.main = practice; }
 	
@@ -45,7 +45,7 @@ public class PartyCommand implements CommandExecutor {
 						sender.sendMessage(ChatColor.RED + "You're not the leader of that party!");
 						return false;
 					}
-					this.main.getUtils().getPartyByUUID(Bukkit.getPlayer(sender.getName()).getUniqueId()).setOpen(this.main.getUtils().getPartyByUUID(Bukkit.getPlayer(sender.getName()).getUniqueId()).isOpen() ? false : true);
+					this.main.getUtils().getPartyByUUID(Bukkit.getPlayer(sender.getName()).getUniqueId()).setOpen(!this.main.getUtils().getPartyByUUID(Bukkit.getPlayer(sender.getName()).getUniqueId()).isOpen());
 					sender.sendMessage(this.main.getUtils().getPartyByUUID(Bukkit.getPlayer(sender.getName()).getUniqueId()).isOpen() ? ChatColor.GREEN + "You've just opened your party to the public!" : ChatColor.RED + "You've just closed your party to the public!");
 					return false;
 				}

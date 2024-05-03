@@ -26,25 +26,23 @@ public class InventoryCommand implements CommandExecutor {
 			sender.sendMessage(ChatColor.GRAY + " * " + ChatColor.RED + "/" + cmd.getName() + " <player>");
 			return false;
 		}
-		if (args.length == 1) {
-			if (this.main.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FIGHT) || this.main.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.EDITOR)) {
-				if (this.main.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FIGHT) && !this.main.getUtils().getDuelByUUID(Bukkit.getPlayer(sender.getName()).getUniqueId()).getState().equals(DuelState.FINISHING)) {
-					sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
-					return false;
-				}
-				if (this.main.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.EDITOR)) {
-					sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
-					return false;
-				}
-			}
-			final UUID targetUUID = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getUniqueId() : Bukkit.getPlayer(args[0]).getUniqueId();
-			if (this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(targetUUID) == null) {
-				sender.sendMessage(ChatColor.GRAY + " * " + ChatColor.WHITE + args[0] + ChatColor.RED + " inventory does not exist.");
-				return false;
-			}
-			Bukkit.getPlayer(sender.getName()).openInventory(this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(targetUUID));
-		}
-		return false;
+        if (this.main.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FIGHT) || this.main.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.EDITOR)) {
+            if (this.main.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FIGHT) && !this.main.getUtils().getDuelByUUID(Bukkit.getPlayer(sender.getName()).getUniqueId()).getState().equals(DuelState.FINISHING)) {
+                sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
+                return false;
+            }
+            if (this.main.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.EDITOR)) {
+                sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
+                return false;
+            }
+        }
+        final UUID targetUUID = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getUniqueId() : Bukkit.getPlayer(args[0]).getUniqueId();
+        if (this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(targetUUID) == null) {
+            sender.sendMessage(ChatColor.GRAY + " * " + ChatColor.WHITE + args[0] + ChatColor.RED + " inventory does not exist.");
+            return false;
+        }
+        Bukkit.getPlayer(sender.getName()).openInventory(this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(targetUUID));
+        return false;
 	}
 
 }

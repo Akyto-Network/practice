@@ -20,11 +20,11 @@ import net.minecraft.server.v1_7_R4.PacketPlayInFlying;
 
 public class EntityListener implements Listener {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public EntityListener(final Practice main) { 
 		this.main = main;
-        kPaper.INSTANCE.addMovementHandler((MovementHandler)new MovementHandler() {
+        kPaper.INSTANCE.addMovementHandler(new MovementHandler() {
             public void handleUpdateLocation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
                 if (main.getUtils().getDuelByUUID(player.getUniqueId()) != null && main.getUtils().getDuelByUUID(player.getUniqueId()).getKit().name().equalsIgnoreCase("sumo") && main.getUtils().getDuelByUUID(player.getUniqueId()).getState().equals(DuelState.STARTING)) {
                     player.teleport(location1);
@@ -39,7 +39,7 @@ public class EntityListener implements Listener {
 	public void onDamage(final EntityDamageEvent event) {
 		if (event.getEntity() instanceof Player) {
 			final Profile data = this.main.getUtils().getProfiles(event.getEntity().getUniqueId());
-			if (data.getProfileState().equals(ProfileState.FIGHT) && data != null) {
+			if (data != null && data.getProfileState().equals(ProfileState.FIGHT)) {
 				if (((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING)) || (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING))) && !event.getCause().equals(DamageCause.CONTACT)) {
 					if ((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo")) || (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo"))) {
 						event.setDamage(0.0f);

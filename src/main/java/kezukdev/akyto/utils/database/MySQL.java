@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class MySQL {
     
-    private Practice main;
+    private final Practice main;
     
     public MySQL(final Practice main) { 
     	this.main = main;
@@ -38,7 +38,7 @@ public class MySQL {
 
                 if (!tables.next()) {
                     // Table doesn't exist
-                    DB.createTransaction(stm -> createPlayerManagerTable(stm));
+                    DB.createTransaction(this::createPlayerManagerTable);
                     System.out.println("The SQL database was successfully installed with tables.");
                 }
 

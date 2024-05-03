@@ -15,7 +15,7 @@ import kezukdev.akyto.profile.ProfileState;
 
 public class ItemManager {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public ItemManager(final Practice main) { this.main = main; }
 	

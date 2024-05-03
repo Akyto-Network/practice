@@ -25,9 +25,9 @@ public class RequestManager {
 	
 	public RequestManager(final Practice main) {
 		this.main = main;
-		this.startRequest = new HashMap<UUID, UUID>();
-		this.partyRequest = new HashMap<UUID, UUID>();
-		this.request = new HashMap<UUID, RequestEntry>();
+		this.startRequest = new HashMap<>();
+		this.partyRequest = new HashMap<>();
+		this.request = new HashMap<>();
 	}
 	
 	public void createPullRequest(final UUID sender, final UUID target) { 
@@ -39,7 +39,7 @@ public class RequestManager {
 		this.request.put(sender, new RequestEntry(target, kit));
 		Bukkit.getPlayer(sender).sendMessage(ChatColor.GREEN + "Your duel request into " + ChatColor.stripColor(kit.displayName()) + " as been sent to " + Bukkit.getPlayer(target).getName());
 		final TextComponent comp = new TextComponent(ChatColor.GREEN + "You have just received a duel request from " + Bukkit.getPlayer(sender).getName() + " into " + ChatColor.stripColor(kit.displayName()));
-		comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY.toString() + "Click to accept the duel request.").create()));
+		comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to accept the duel request.").create()));
 		comp.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/duel accept " + Bukkit.getPlayer(sender).getName()));
 		Bukkit.getPlayer(target).spigot().sendMessage(comp);
 		this.startRequest.remove(sender);
@@ -49,21 +49,21 @@ public class RequestManager {
 		this.partyRequest.put(sender, target);
 		Bukkit.getPlayer(sender).sendMessage(ChatColor.GREEN + "Your party invitation as been sent to " + Bukkit.getPlayer(target).getName());
 		final TextComponent comp = new TextComponent(ChatColor.GREEN + "You have just received a party invitation from " + Bukkit.getPlayer(sender).getName());
-		comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY.toString() + "Click to accept the party invitation.").create()));
+		comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to accept the party invitation.").create()));
 		comp.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/party join " + Bukkit.getPlayer(sender).getName()));
 		Bukkit.getPlayer(target).spigot().sendMessage(comp);
 	}
 	
 	public void removeRequest(final UUID sender) {
-		if (this.partyRequest.containsKey(sender)) this.partyRequest.remove(sender);
-		if (this.startRequest.containsKey(sender)) this.startRequest.remove(sender);
-		if (this.request.containsKey(sender)) this.request.remove(sender);
+        this.partyRequest.remove(sender);
+        this.startRequest.remove(sender);
+        this.request.remove(sender);
 	}
 	
 	@Getter
-	public class RequestEntry {
-		private UUID requested;
-		private Kit kit;
+	public static class RequestEntry {
+		private final UUID requested;
+		private final Kit kit;
 		
 		public RequestEntry(final UUID requested, final Kit kit) {
 			this.requested = requested;

@@ -18,7 +18,7 @@ public class LocationsCommand implements CommandExecutor {
 			sender.sendMessage(ChatColor.RED + "The permission akyto.arena is needed for this.");
 			return false;
 		}
-		if (args.length > 1 || args.length < 1) {
+		if (args.length != 1) {
 			sender.sendMessage(ChatColor.RED + "/location set<spawn/editor>");
 			return false;
 		}

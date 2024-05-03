@@ -22,9 +22,9 @@ public class ProfileManager {
 	public ConcurrentMap<UUID, String> editing;
 	
 	public ProfileManager(final Practice main) {
-		this.profiles = new ConcurrentHashMap<UUID, Profile>();
-		this.editor = new ConcurrentHashMap<UUID, Map<String, Edited>>();
-		this.duelStatistics = new HashMap<UUID, DuelStatistics>();
-		this.editing = new ConcurrentHashMap<UUID, String>();
+		this.profiles = new ConcurrentHashMap<>();
+		this.editor = new ConcurrentHashMap<>();
+		this.duelStatistics = new HashMap<>();
+		this.editing = new ConcurrentHashMap<>();
 	}
 }

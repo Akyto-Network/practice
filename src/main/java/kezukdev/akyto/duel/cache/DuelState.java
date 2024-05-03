@@ -4,6 +4,6 @@ public enum DuelState {
 	
 	STARTING,
 	PLAYING,
-	FINISHING;
+	FINISHING
 
 }

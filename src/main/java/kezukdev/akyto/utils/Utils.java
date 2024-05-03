@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.TimerTask;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -37,11 +38,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 
 public class Utils {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public Utils(final Practice main) { this.main = main; }
 	
-	public ItemStack createItem(final Material material, final int amount,final byte id, final String displayName) {
+	public ItemStack createItem(final Material material, final int amount, final byte id, final String displayName) {
 		final ItemStack item = new ItemStack(material, amount, id);
 		final ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(displayName);
@@ -128,11 +129,11 @@ public class Utils {
 	public List<UUID> getOpponents(UUID uuid) {
 	    if (getDuelByUUID(uuid) != null) {
 	        Duel duel = getDuelByUUID(uuid);
-	        return duel.getFirst().contains(uuid) ? duel.getSecond().stream().collect(Collectors.toList()) : duel.getFirst().stream().collect(Collectors.toList());
+	        return duel.getFirst().contains(uuid) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 	    }
 	    if (getDuelPartyByUUID(uuid) != null) {
 	        DuelParty duel = getDuelPartyByUUID(uuid);
-	        return duel.getFirst().contains(uuid) ? duel.getSecond().stream().collect(Collectors.toList()) : duel.getFirst().stream().collect(Collectors.toList());
+	        return duel.getFirst().contains(uuid) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 	    }
 	    return null;
 	}
@@ -379,30 +380,28 @@ public class Utils {
                 joinerWin.add(wtxt);
             });
 
-            List<UUID> losers = duel.getFirst().containsAll(duel.getWinner()) ? duel.getSecond().stream().collect(Collectors.toList()) : duel.getFirst().stream().collect(Collectors.toList());
+            List<UUID> losers = duel.getFirst().containsAll(duel.getWinner()) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 
             losers.forEach(uuid -> {
                 final TextComponent ltxt = new TextComponent(Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName());
                 ltxt.setColor(ChatColor.RED);
                 ltxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + (Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName()) + "'s inventory").create()));
                 ltxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + (Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName())));
-                joinerLose.add(ltxt);
+				joinerLose.add(ltxt);
             });
 
             winnerComponent.addExtra(joinerWin.toTextComponent());
             loserComponent.addExtra(joinerLose.toTextComponent());
 
-            players.forEach(uuidList -> {
-                uuidList.forEach(uuid -> {
-                    Player player = Bukkit.getPlayer(uuid);
-                    if (player != null) {
-                    	player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-                        player.spigot().sendMessage(winnerComponent);
-                        player.spigot().sendMessage(loserComponent);
-                        player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-                    }
-                });
-            });
+            players.forEach(uuidList -> uuidList.forEach(uuid -> {
+                Player player = Bukkit.getPlayer(uuid);
+                if (player != null) {
+                    player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+                    player.spigot().sendMessage(winnerComponent);
+                    player.spigot().sendMessage(loserComponent);
+                    player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+                }
+            }));
 		}
 	}
 	
@@ -420,7 +419,7 @@ public class Utils {
                 return;
             }
 
-            List<UUID> allPlayers = Arrays.asList(match.getFirst(), match.getSecond()).stream()
+            List<UUID> allPlayers = Stream.of(match.getFirst(), match.getSecond())
                     .flatMap(Collection::stream)
                     .collect(Collectors.toList());
 
@@ -443,44 +442,38 @@ public class Utils {
         }
 
         if (match.getDuelPartyType().equals("split") || match.getDuelPartyType().equals("duel")) {
-        	if (match.getFirstAlives().contains(uuid)) {
-        		match.getFirstAlives().remove(uuid);
-        	}
-        	if (match.getSecondAlives().contains(uuid)) {
-        		match.getSecondAlives().remove(uuid);
-        	}
-            if (match.getFirstAlives().size() == 0 || match.getSecondAlives().size() == 0) {
-            	List<UUID> winners = Lists.newArrayList();
+            match.getFirstAlives().remove(uuid);
+            match.getSecondAlives().remove(uuid);
+            if (match.getFirstAlives().isEmpty() || match.getSecondAlives().isEmpty()) {
+            	List<UUID> winners = Lists.newArrayList(); // Winners unused ??
             	winners.addAll(match.getFirst().contains(killer) ? match.getFirst() : match.getSecond());
                 this.main.getManagerHandler().getDuelManager().endMultiple(killer);
                 return;
             }
-            else {
-            	List<UUID> allPlayers = Arrays.asList(match.getFirst(), match.getSecond()).stream()
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toList());
 
-                allPlayers.forEach(uuids -> {
-                    Player player = Bukkit.getPlayer(uuids);
-                    if (player != null) {
-                    	int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
-                        int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
-                        player.sendMessage(ChatColor.WHITE + Bukkit.getPlayer(uuid).getName() + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + (killer != null ? Bukkit.getPlayer(killer).getName() : "Unknown") +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
-                    }
-                });
+			List<UUID> allPlayers = Stream.of(match.getFirst(), match.getSecond())
+					.flatMap(Collection::stream)
+					.collect(Collectors.toList());
 
-                match.getSpectator().forEach(uuids -> {
-                    Player spectator = Bukkit.getPlayer(uuids);
-                    if (spectator != null) {
-                    	int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
-                        int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
-                        spectator.sendMessage(ChatColor.WHITE + Bukkit.getPlayer(uuid).getName() + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + (killer != null ? Bukkit.getPlayer(killer).getName() : "Unknown") +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
-                    }
-                });
-                if (Bukkit.getPlayer(uuid) != null) {
-                    this.addSpectateParty(uuid);
-                }	
-            }
+			allPlayers.forEach(uuids -> {
+				Player player = Bukkit.getPlayer(uuids);
+				if (player != null) {
+					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
+					int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
+					player.sendMessage(ChatColor.WHITE + Bukkit.getPlayer(uuid).getName() + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Bukkit.getPlayer(killer).getName() +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
+				}
+			});
+
+			match.getSpectator().forEach(uuids -> {
+				Player spectator = Bukkit.getPlayer(uuids);
+				if (spectator != null) {
+					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
+					int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
+					spectator.sendMessage(ChatColor.WHITE + Bukkit.getPlayer(uuid).getName() + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Bukkit.getPlayer(killer).getName() +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
+				}
+			});
+			if (Bukkit.getPlayer(uuid) != null)
+				this.addSpectateParty(uuid);
         }
     }
     
@@ -494,23 +487,21 @@ public class Utils {
     		});
     	}
     	if (duel.getDuelPartyType().equals("split") || duel.getDuelPartyType().equals("duel")) {
-    		Arrays.asList(duel.getFirstAlives(), duel.getSecondAlives()).forEach(alivesArray -> {
-    			alivesArray.forEach(alives -> {
-        			Bukkit.getPlayer(alives).hidePlayer(Bukkit.getPlayer(uuid));
-        			this.getProfiles(uuid).setProfileState(ProfileState.SPECTATE);
-        			this.main.getManagerHandler().getItemManager().giveItems(uuid, false); 
-    			});
-    		});
+    		Arrays.asList(duel.getFirstAlives(), duel.getSecondAlives()).forEach(alivesArray -> alivesArray.forEach(alives -> {
+                Bukkit.getPlayer(alives).hidePlayer(Bukkit.getPlayer(uuid));
+                this.getProfiles(uuid).setProfileState(ProfileState.SPECTATE);
+                this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
+            }));
     	}
 		final Profile profile = this.getProfiles(uuid);
 		if (!duel.getSpectator().isEmpty()) {
 			duel.getSpectator().forEach(spectator -> {
-				if (profile.getSpectateSettings().get(0).booleanValue()) Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(spectator));
-				if (!profile.getSpectateSettings().get(0).booleanValue()) Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(spectator));
+				if (profile.getSpectateSettings().get(0)) Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(spectator));
+				if (!profile.getSpectateSettings().get(0)) Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(spectator));
 			});
 		}
-		if (profile.getSpectateSettings().get(1).booleanValue()) Bukkit.getPlayer(uuid).setFlySpeed(0.1f);
-		if (!profile.getSpectateSettings().get(1).booleanValue()) Bukkit.getPlayer(uuid).setFlySpeed(0.25f);
+		if (profile.getSpectateSettings().get(1)) Bukkit.getPlayer(uuid).setFlySpeed(0.1f);
+		if (!profile.getSpectateSettings().get(1)) Bukkit.getPlayer(uuid).setFlySpeed(0.25f);
     }
 	
     public String formatTime(int time) {
