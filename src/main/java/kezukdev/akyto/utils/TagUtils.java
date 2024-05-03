@@ -11,8 +11,8 @@ import org.bukkit.scoreboard.Team;
 
 public class TagUtils {
 	
-	public static void setupTeams(final List<List<UUID>> players) {
-		players.get(0).forEach(uuid -> {
+	public static void setupTeams(final List<UUID> first, List<UUID> second) {
+		first.forEach(uuid -> {
 			Scoreboard sb = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
 			if (!Bukkit.getPlayer(uuid).getScoreboard().equals(sb)) {
 				sb = Bukkit.getPlayer(uuid).getScoreboard();
@@ -23,10 +23,10 @@ public class TagUtils {
 			team1.setAllowFriendlyFire(false);
 			final Team team2 = sb.registerNewTeam("red");
 			team2.setPrefix(ChatColor.RED.toString());
-			players.get(1).forEach(second -> team2.addEntry(Bukkit.getPlayer(second) != null ? Bukkit.getPlayer(second).getName() : Bukkit.getOfflinePlayer(second).getName()));
+			second.forEach(secondUUID -> team2.addEntry(Bukkit.getPlayer(secondUUID) != null ? Bukkit.getPlayer(secondUUID).getName() : Bukkit.getOfflinePlayer(secondUUID).getName()));
 			Bukkit.getPlayer(uuid).setScoreboard(sb);
 		});
-		players.get(1).forEach(uuid -> {
+		second.forEach(uuid -> {
 			Scoreboard sb = Bukkit.getServer().getScoreboardManager().getNewScoreboard();
 			if (!Bukkit.getPlayer(uuid).getScoreboard().equals(sb)) {
 				sb = Bukkit.getPlayer(uuid).getScoreboard();
@@ -37,7 +37,7 @@ public class TagUtils {
 			team1.setAllowFriendlyFire(false);
 			final Team team2 = sb.registerNewTeam("red");
 			team2.setPrefix(ChatColor.RED.toString());
-			players.get(0).forEach(second -> team2.addEntry(Bukkit.getPlayer(second) != null ? Bukkit.getPlayer(second).getName() : Bukkit.getOfflinePlayer(second).getName()));
+			first.forEach(firstUUID -> team2.addEntry(Bukkit.getPlayer(firstUUID) != null ? Bukkit.getPlayer(firstUUID).getName() : Bukkit.getOfflinePlayer(firstUUID).getName()));
 			Bukkit.getPlayer(uuid).setScoreboard(sb);
 		});
 	}

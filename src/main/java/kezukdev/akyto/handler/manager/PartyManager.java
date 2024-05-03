@@ -86,7 +86,7 @@ public class PartyManager {
 		}
 		this.main.getUtils().getPartyByUUID(kicker).getMembers().remove(kicked);
 		this.main.getUtils().getPartyByUUID(kicker).getMembers().forEach(uuids -> Bukkit.getPlayer(uuids).sendMessage(ChatColor.RED + Bukkit.getPlayer(kicked).getName() + " was kicked from the party"));
-		if (this.main.getUtils().getDuelPartyByUUID(kicked) == null) {
+		if (this.main.getUtils().getDuelByUUID(kicked) == null) {
 			this.main.getUtils().sendToSpawn(kicked, false);
 		}
 		Bukkit.getPlayer(kicked).sendMessage(ChatColor.RED + "You were excluded from the party.");
@@ -99,10 +99,10 @@ public class PartyManager {
 	    }
 	    final PartyEntry party = this.main.getUtils().getPartyByUUID(inviter);
 	    party.getMembers().add(invited);
-	    if (this.main.getUtils().getDuelPartyByUUID(inviter) != null) {
+	    if (this.main.getUtils().getDuelByUUID(inviter) != null) {
 	        this.main.getUtils().getProfiles(invited).setProfileState(ProfileState.SPECTATE);
-	        this.main.getUtils().getDuelPartyByUUID(inviter).getSpectator().add(invited);
-	        Bukkit.getPlayer(invited).teleport(this.main.getUtils().getDuelPartyByUUID(inviter).getArena().getPosition().get(0).toBukkitLocation());
+	        this.main.getUtils().getDuelByUUID(inviter).getSpectator().add(invited);
+	        Bukkit.getPlayer(invited).teleport(this.main.getUtils().getDuelByUUID(inviter).getArena().getPosition().get(0).toBukkitLocation());
 	        Bukkit.getOnlinePlayers().forEach(player -> {
 	            if (this.main.getUtils().getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.FIGHT) || this.main.getUtils().getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
 	                player.hidePlayer(Bukkit.getPlayer(invited));

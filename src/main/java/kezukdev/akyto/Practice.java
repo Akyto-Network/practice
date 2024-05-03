@@ -19,7 +19,6 @@ import com.bizarrealex.aether.Aether;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.board.SideBoard;
 import kezukdev.akyto.duel.Duel;
-import kezukdev.akyto.duel.DuelParty;
 import kezukdev.akyto.handler.ManagerHandler;
 import kezukdev.akyto.handler.MiscHandler;
 import kezukdev.akyto.handler.manager.QueueManager.QueueEntry;
@@ -62,7 +61,6 @@ public class Practice extends JavaPlugin {
     
 	private List<Kit> kits = new ArrayList<>();
 	private List<Duel> duels = new ArrayList<>();
-	private List<DuelParty> duelsParty = new ArrayList<>();
 	private ConcurrentMap<UUID, QueueEntry> queue;
     private List<Arena> arenas = new ArrayList<>();
     private HashMap<String, Arena> arenasMap = new HashMap<>();

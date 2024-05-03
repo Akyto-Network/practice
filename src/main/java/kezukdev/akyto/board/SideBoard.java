@@ -1,6 +1,5 @@
 package kezukdev.akyto.board;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -14,19 +13,15 @@ import com.bizarrealex.aether.scoreboard.cooldown.BoardCooldown;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
-import kezukdev.akyto.duel.DuelParty;
+import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.handler.manager.PartyManager;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
 
-public class SideBoard implements BoardAdapter
-{
+public class SideBoard implements BoardAdapter {
     private final Practice plugin;
     private final String spacer = ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------";
-    DateFormat shortDateFormat = DateFormat.getDateTimeInstance(
-            DateFormat.SHORT,
-            DateFormat.SHORT);
 
     public SideBoard(final Practice plugin) {  this.plugin = plugin; }
 
@@ -76,47 +71,40 @@ public class SideBoard implements BoardAdapter
 
     private List<String> getGameBoard(final Player player) {
         final List<String> board = new LinkedList<>();
+        final Duel duel = this.plugin.getUtils().getDuelByUUID(player.getUniqueId());
         board.add(spacer);
-        if (this.plugin.getUtils().getDuelPartyByUUID(player.getUniqueId()) != null) {
-        	final DuelParty duel = this.plugin.getUtils().getDuelPartyByUUID(player.getUniqueId());
-        	if (duel.getDuelPartyType().equals("ffa")) {
-        		board.add(ChatColor.WHITE.toString() + duel.getAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + (duel.getFirst().size() + duel.getSecond().size()));
-        		
-        	}
-        	if (duel.getDuelPartyType().equals("split") || duel.getDuelPartyType().equals("duel")) {
-        		final String firstName = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
-        		final String secondName = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getSecond()).get(0)).getName();
-        		board.add(ChatColor.DARK_GRAY + firstName + "'s team" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getFirstAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + duel.getFirst().size());
-        		board.add(ChatColor.DARK_GRAY + secondName + "'s team" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getSecondAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + duel.getSecond().size());
-        	}
-    		board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getMultipleFormattedDuration(duel));
-            if (this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() != 0L) {
-                final double time = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 1000.0D;
-                final DecimalFormat df = new DecimalFormat("#.#");
-                player.setLevel((int)time);
-                final float timeInf = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
-                player.setExp(timeInf);
-                board.add(ChatColor.RED + "Enderpearl" + ChatColor.GRAY + ": " + ChatColor.RESET + df.format(time) + "s");
-            }	
-        }
-        if (this.plugin.getUtils().getDuelByUUID(player.getUniqueId()) != null) {
-            final UUID opps = this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getFirst().contains(player.getUniqueId()) ? new ArrayList<>(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getSecond()).get(0) : new ArrayList<>(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getFirst()).get(0);
-            if (this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getState().equals(DuelState.PLAYING) || this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getState().equals(DuelState.STARTING)) {
+        final UUID opps = this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getFirst().contains(player.getUniqueId()) ? new ArrayList<>(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getSecond()).get(0) : new ArrayList<>(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getFirst()).get(0);
+        if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
+        	if (duel.getDuelType().equals(DuelType.SINGLE)) {
                 board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(opps) != null ? Bukkit.getPlayer(opps).getName() : Bukkit.getOfflinePlayer(opps).getName()));
-                board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getSingleFormattedDuration(this.plugin.getUtils().getDuelByUUID(player.getUniqueId())));
-                if (this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() != 0L) {
-                    final double time = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 1000.0D;
-                    final DecimalFormat df = new DecimalFormat("#.#");
-                    player.setLevel((int)time);
-                    final float timeInf = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
-                    player.setExp(timeInf);
-                    board.add(ChatColor.RED + "Enderpearl" + ChatColor.GRAY + ": " + ChatColor.RESET + df.format(time) + "s");
-                }	
-            }
-            if (this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getState().equals(DuelState.FINISHING)) {
-            	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner()) != null ? Bukkit.getPlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner()).getName() : Bukkit.getOfflinePlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner()).getName()));
-            }	
+	
+        	}
+        	if (duel.getDuelType().equals(DuelType.FFA)) {
+        		board.add(ChatColor.DARK_GRAY + "Alives" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getAlives().size());
+        		board.add(" ");
+        	}
+        	if (duel.getDuelType().equals(DuelType.SPLIT)) {
+        		final int green = duel.getFirst().contains(player.getUniqueId()) ? duel.getFirst().size() : duel.getSecond().size();
+        		final int red = duel.getSecond().contains(player.getUniqueId()) ? duel.getFirst().size() : duel.getSecond().size();
+        		final int greenAlive = duel.getFirst().contains(player.getUniqueId()) ? duel.getFirstAlives().size() : duel.getSecondAlives().size();
+        		final int redAlive = duel.getSecond().contains(player.getUniqueId()) ? duel.getFirstAlives().size() : duel.getSecondAlives().size();
+        		board.add(ChatColor.GREEN + "▊ " + ChatColor.DARK_GRAY + "alives" + ChatColor.GRAY + ": " + ChatColor.RESET + greenAlive + "/" + green);
+        		board.add(ChatColor.RED + "▊ " + ChatColor.DARK_GRAY + "alives" + ChatColor.GRAY + ": " + ChatColor.RESET + redAlive + "/" + red);
+        		board.add(" ");
+        	}
         }
+        board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(this.plugin.getUtils().getDuelByUUID(player.getUniqueId())));
+        if (this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() != 0L) {
+            final double time = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 1000.0D;
+            final DecimalFormat df = new DecimalFormat("#.#");
+            player.setLevel((int)time);
+            final float timeInf = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
+            player.setExp(timeInf);
+            board.add(ChatColor.RED + "Enderpearl" + ChatColor.GRAY + ": " + ChatColor.RESET + df.format(time) + "s");
+        }
+        if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
+        	board.add(ChatColor.DARK_GRAY + "Winner(s)" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner().get(0)) != null ? Bukkit.getPlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner().get(0)).getName() : Bukkit.getOfflinePlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner().get(0)).getName()));
+        }	
         board.add(" ");
         board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");
         board.add(spacer);
@@ -126,34 +114,27 @@ public class SideBoard implements BoardAdapter
     private List<String> getSpecBoard(final Player player) {
         final List<String> board = new LinkedList<>();
         board.add(spacer);
-        if (this.plugin.getUtils().getDuelPartyBySpectator(player.getUniqueId()) != null) {
-        	final DuelParty duel = this.plugin.getUtils().getDuelPartyBySpectator(player.getUniqueId());
-        	if (duel.getDuelPartyType().equals("ffa")) {
-        		board.add(ChatColor.WHITE.toString() + duel.getAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + (duel.getFirst().size() + duel.getSecond().size()));
-        		
-        	}
-        	if (duel.getDuelPartyType().equals("split") || duel.getDuelPartyType().equals("duel")) {
-        		final String firstName = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
-        		final String secondName = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getSecond()).get(0)).getName();
-        		board.add(ChatColor.DARK_GRAY + firstName + "'s team" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getFirstAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + duel.getFirst().size());
-        		board.add(ChatColor.DARK_GRAY + secondName + "'s team" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getSecondAlives().size() + ChatColor.GRAY + "/" + ChatColor.RED + duel.getSecond().size());
-        	}
-    		board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getMultipleFormattedDuration(duel));
-        }
-        if (this.plugin.getUtils().getDuelBySpectator(player.getUniqueId()) != null) {
-            final Duel duel = this.plugin.getUtils().getDuelBySpectator(player.getUniqueId());
-            final String first = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
-            final String second = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
-            if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
+        final Duel duel = this.plugin.getUtils().getDuelBySpectator(player.getUniqueId());
+        final String first = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
+        final String second = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
+        if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
+        	if (duel.getDuelType().equals(DuelType.SINGLE)) {
                 board.add(ChatColor.GREEN + first);
                 board.add(ChatColor.DARK_GRAY + "    against");
-                board.add(ChatColor.RED + second);
-                board.add(" ");
-                board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getSingleFormattedDuration(duel));
-            }
-            if (duel.getState().equals(DuelState.FINISHING)) {
-            	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(duel.getWinner()) != null ? Bukkit.getPlayer(duel.getWinner()).getName() : Bukkit.getOfflinePlayer(duel.getWinner()).getName()));
-            }	
+                board.add(ChatColor.RED + second);	
+        	}
+        	if (duel.getDuelType().equals(DuelType.FFA)) {
+        		board.add(ChatColor.DARK_GRAY + "Alives" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getAlives().size());
+        	}
+        	if (duel.getDuelType().equals(DuelType.SPLIT)) {
+        		board.add(ChatColor.GREEN + "▊ " + ChatColor.DARK_GRAY + "alives" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getFirstAlives().size() + "/" + duel.getFirst().size());
+        		board.add(ChatColor.RED + "▊ " + ChatColor.DARK_GRAY + "alives" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getSecondAlives().size() + "/" + duel.getSecond().size());
+        	}
+            board.add(" ");
+            board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(duel));
+        }
+        if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
+        	board.add(ChatColor.DARK_GRAY + "Winner(s)" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(duel.getWinner().get(0)) != null ? Bukkit.getPlayer(duel.getWinner().get(0)).getName() : Bukkit.getOfflinePlayer(duel.getWinner().get(0)).getName()));
         }
         board.add(" ");
         board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");
@@ -161,13 +142,7 @@ public class SideBoard implements BoardAdapter
         return board;
     }
 
-    public String getSingleFormattedDuration(final Duel duel) {
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(duel.getDuration());
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(duel.getDuration()) - TimeUnit.MINUTES.toSeconds(minutes);
-        return String.format("%02d:%02d", minutes, seconds);
-    }
-    
-    public String getMultipleFormattedDuration(final DuelParty duel) {
+    public String getFormattedDuration(final Duel duel) {
         long minutes = TimeUnit.MILLISECONDS.toMinutes(duel.getDuration());
         long seconds = TimeUnit.MILLISECONDS.toSeconds(duel.getDuration()) - TimeUnit.MINUTES.toSeconds(minutes);
         return String.format("%02d:%02d", minutes, seconds);

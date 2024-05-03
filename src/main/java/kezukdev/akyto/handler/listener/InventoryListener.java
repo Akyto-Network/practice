@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
-import kezukdev.akyto.duel.DuelParty;
+import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
@@ -91,9 +91,8 @@ public class InventoryListener implements Listener {
 			    for (int i = size / 2; i < size; i++) {
 			        secondTeam.add(shuffle.get(i));
 			    }
-			    String duelType = event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3].getName()) ? "ffa" : "split";
 			    Kit kit = Kit.getLadderByID(event.getSlot(), main);
-			    new DuelParty(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam), duelType, kit);
+			    new Duel(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam),false,  kit, event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3].getName()) ? DuelType.FFA : DuelType.SPLIT);
 			}
 			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0].getName())) {
 				this.main.getUtils().sendToEditor(event.getWhoClicked().getUniqueId(), Kit.getLadderByDisplay(event.getCurrentItem().getItemMeta().getDisplayName(), this.main));

@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
-import kezukdev.akyto.duel.DuelParty;
+import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.handler.manager.PartyManager;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.Profile;
@@ -81,61 +81,30 @@ public class Utils {
 	}
 	
 	public void multiArena(final UUID uuid, final boolean display) {
-	    Profile playerProfile = this.getProfiles(uuid);
-	    if (playerProfile == null) return;
-	    List<UUID> opponentUUIDs = this.getOpponents(uuid);
-	    if (opponentUUIDs == null || opponentUUIDs.isEmpty()) return;
-	    for (Player player : Bukkit.getOnlinePlayers()) {
-	        Profile profile = this.getProfiles(player.getUniqueId());
-	        if (profile == null) continue;
-	        if (profile.equals(playerProfile)) {
-	            player.showPlayer(Bukkit.getPlayer(uuid));
-	            Bukkit.getPlayer(uuid).showPlayer(player);
-	        }
-	    }
-	    for (Player player : Bukkit.getOnlinePlayers()) {
-	        Profile profile = this.getProfiles(player.getUniqueId());
-	        if (profile == null) continue;
-	        if (!profile.equals(playerProfile) && !opponentUUIDs.contains(player.getUniqueId())) {
-	            player.hidePlayer(Bukkit.getPlayer(uuid));
-	            Bukkit.getPlayer(uuid).hidePlayer(player);
-	        }
-	    }
-	    for (UUID opponentUUID : opponentUUIDs) {
-	        if (Bukkit.getPlayer(opponentUUID) != null) {
-	            Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(opponentUUID));
-	            Bukkit.getPlayer(opponentUUID).showPlayer(Bukkit.getPlayer(uuid));
-	        }
-	    }
-	    List<UUID> allyUUIDs = new ArrayList<>();
-	    if (this.getDuelPartyByUUID(uuid) != null) {
-	        DuelParty duelParty = this.getDuelPartyByUUID(uuid);
-	        if (duelParty.getFirst().contains(uuid)) {
-	            allyUUIDs.addAll(duelParty.getFirst());
-	        } else {
-	            allyUUIDs.addAll(duelParty.getSecond());
-	        }
-	    }
-	    for (UUID allyUUID : allyUUIDs) {
-	        if (Bukkit.getPlayer(allyUUID) != null && !allyUUID.equals(uuid)) {
-	            Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(allyUUID));
-	            Bukkit.getPlayer(allyUUID).showPlayer(Bukkit.getPlayer(uuid));
-	        }
+	    if (!display) {
+	    	Bukkit.getOnlinePlayers().forEach(player -> {
+	    		Bukkit.getPlayer(uuid).hidePlayer(player);
+	    		player.hidePlayer(Bukkit.getPlayer(uuid));
+	    	});
+	    	final Duel duel = this.getDuelByUUID(uuid);
+	    	duel.getFirst().forEach(first -> {
+	    		if (Bukkit.getPlayer(first) == null) return;
+	    		Bukkit.getPlayer(first).showPlayer(Bukkit.getPlayer(uuid));
+	    		Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(first));
+	    	});
+	    	duel.getSecond().forEach(second -> {
+	    		if (Bukkit.getPlayer(second) == null) return;
+	    		Bukkit.getPlayer(second).showPlayer(Bukkit.getPlayer(uuid));
+	    		Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(second));
+	    	});
 	    }
 	}
 
 
 
 	public List<UUID> getOpponents(UUID uuid) {
-	    if (getDuelByUUID(uuid) != null) {
-	        Duel duel = getDuelByUUID(uuid);
-	        return duel.getFirst().contains(uuid) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
-	    }
-	    if (getDuelPartyByUUID(uuid) != null) {
-	        DuelParty duel = getDuelPartyByUUID(uuid);
-	        return duel.getFirst().contains(uuid) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
-	    }
-	    return null;
+        Duel duel = getDuelByUUID(uuid);
+        return duel.getFirst().contains(uuid) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 	}
 
 	public Duel getDuelByUUID(UUID uuid) {
@@ -144,14 +113,6 @@ public class Utils {
 	
 	public Duel getDuelBySpectator(UUID uuid) {
 	    return main.getDuels().stream().filter(duel -> duel.getSpectator().contains(uuid)).findFirst().orElse(null);
-	}
-	
-	public DuelParty getDuelPartyByUUID(UUID uuid) {
-	    return main.getDuelsParty().stream().filter(duel -> duel.getFirst().contains(uuid) || duel.getSecond().contains(uuid)).findFirst().orElse(null);
-	}
-	
-	public DuelParty getDuelPartyBySpectator(UUID uuid) {
-	    return main.getDuelsParty().stream().filter(duel -> duel.getSpectator().contains(uuid)).findFirst().orElse(null);
 	}
 	
 	public PartyManager.PartyEntry getPartyByUUID(UUID uuid) {
@@ -201,67 +162,37 @@ public class Utils {
 		Bukkit.getPlayer(uuid).teleport(this.main.getEditor().getLocation());
 	}
 	
-    public void startSingleDuration(final Duel matchEntry) {
+    public void startDuration(final Duel matchEntry) {
         matchEntry.getTimer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                updateSingleDuration(matchEntry);
+                updateDuration(matchEntry);
             }
         }, 1000, 1000);
     }
     
-    public void startMultipleDuration(final DuelParty matchEntry) {
-        matchEntry.getTimer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                updateMultipleDuration(matchEntry);
-            }
-        }, 1000, 1000);
-    }
-    
-    private void updateSingleDuration(final Duel matchEntry) {
-        long currentTime = System.currentTimeMillis();
-        matchEntry.duration = currentTime - matchEntry.getStartTime();
-    }
-    
-    private void updateMultipleDuration(final DuelParty matchEntry) {
+    private void updateDuration(final Duel matchEntry) {
         long currentTime = System.currentTimeMillis();
         matchEntry.duration = currentTime - matchEntry.getStartTime();
     }
 	
 	public void addDrops(Item item, final UUID uuid) {
-		if (this.getDuelByUUID(uuid) != null) {
-			this.getDuelByUUID(uuid).getDropped().add(item.getUniqueId());	
-		}
-		if (this.getDuelPartyByUUID(uuid) != null) {
-			this.getDuelPartyByUUID(uuid).getDropped().add(item.getUniqueId());	
-		}
+		this.getDuelByUUID(uuid).getDropped().add(item.getUniqueId());	
 	}
 	
 	public void removeDrops(Item item, final UUID uuid) {
-		if (this.getDuelByUUID(uuid) != null) {
-			this.getDuelByUUID(uuid).getDropped().remove(item.getUniqueId());	
-		}
-		if (this.getDuelPartyByUUID(uuid) != null) {
-			this.getDuelPartyByUUID(uuid).getDropped().remove(item.getUniqueId());	
-		}
+		this.getDuelByUUID(uuid).getDropped().remove(item.getUniqueId());	
 	}
 	
 	public boolean containDrops(Item item, final UUID uuid) {
-		if (this.getDuelByUUID(uuid) != null) {
-			return this.getDuelByUUID(uuid).getDropped().contains(item.getUniqueId());	
-		}
-		if (this.getDuelPartyByUUID(uuid) != null) {
-			return this.getDuelPartyByUUID(uuid).getDropped().contains(item.getUniqueId());	
-		}
-		return false;
+		return this.getDuelByUUID(uuid).getDropped().contains(item.getUniqueId());
 	}
 	
 	public void clearDrops(final UUID uuid) {
-		if ((this.getDuelByUUID(uuid) != null && this.getDuelByUUID(uuid).getDropped().isEmpty()) || (this.getDuelPartyByUUID(uuid) != null && this.getDuelPartyByUUID(uuid).getDropped().isEmpty())) return;
+		if ((this.getDuelByUUID(uuid) != null && this.getDuelByUUID(uuid).getDropped().isEmpty())) return;
 		final World world = Bukkit.getWorld("world");
 		for (Entity entities : world.getEntities()) {
-			if (entities == null || !(entities instanceof Item) && ((this.getDuelByUUID(uuid) != null && !this.getDuelByUUID(uuid).getDropped().contains(entities.getUniqueId())) || (this.getDuelPartyByUUID(uuid) != null && !this.getDuelPartyByUUID(uuid).getDropped().contains(entities.getUniqueId())))) continue;
+			if (entities == null || !(entities instanceof Item) && ((this.getDuelByUUID(uuid) != null && !this.getDuelByUUID(uuid).getDropped().contains(entities.getUniqueId())))) continue;
 			entities.remove();
 		}
 	}
@@ -337,9 +268,9 @@ public class Utils {
 	    });
 	}
 	
-	public void sendPartyComponent(final String type, final List<List<UUID>> players) {
-		final DuelParty duel = this.getDuelPartyByUUID(players.get(0).get(0));
-		if (type.equals("ffa")) {
+	public void sendPartyComponent(final List<List<UUID>> players) {
+		final Duel duel = this.getDuelByUUID(players.get(0).get(0));
+		if (duel.getDuelType().equals(DuelType.FFA)) {
 			TextComponent invComponent = new TextComponent(ChatColor.YELLOW + "Inventorie(s)" + ChatColor.GRAY + ": ");
             final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
             players.forEach(uuid -> {
@@ -358,7 +289,7 @@ public class Utils {
                     if (Bukkit.getPlayer(uuids) != null) {
                     	Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
         				Bukkit.getPlayer(uuids).sendMessage(ChatColor.YELLOW + "Match Information");
-        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + (Bukkit.getPlayer(this.main.getUtils().getDuelPartyByUUID(uuids).getWinner().get(0)) != null ? Bukkit.getPlayer(this.main.getUtils().getDuelPartyByUUID(uuids).getWinner().get(0)).getName() : Bukkit.getOfflinePlayer(this.main.getUtils().getDuelPartyByUUID(uuids).getWinner().get(0)).getName()));
+        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + (Bukkit.getPlayer(this.main.getUtils().getDuelByUUID(uuids).getWinner().get(0)) != null ? Bukkit.getPlayer(this.main.getUtils().getDuelByUUID(uuids).getWinner().get(0)).getName() : Bukkit.getOfflinePlayer(this.main.getUtils().getDuelByUUID(uuids).getWinner().get(0)).getName()));
         				Bukkit.getPlayer(uuids).sendMessage(" ");
         				Bukkit.getPlayer(uuids).spigot().sendMessage(invComponent);
         				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
@@ -367,7 +298,7 @@ public class Utils {
             });
             return;
 		}
-		if (type.equals("split") || type.equals("duel")) {
+		if (duel.getDuelType().equals(DuelType.SPLIT)) {
             TextComponent winnerComponent = new TextComponent(ChatColor.GRAY + "Winner(s)" + ChatColor.GRAY + ": ");
             TextComponent loserComponent = new TextComponent(ChatColor.GRAY + "Looser(s)" + ChatColor.GRAY + ": ");
             final ComponentJoiner joinerWin = new ComponentJoiner(ChatColor.GRAY + ", ");
@@ -406,10 +337,10 @@ public class Utils {
 	}
 	
     public void addKill(final UUID uuid, final UUID killer) {
-        final DuelParty match = this.getDuelPartyByUUID(uuid);
+        final Duel match = this.getDuelByUUID(uuid);
         if (match == null) return;
         this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, killer);
-        if (match.getDuelPartyType().equals("ffa")) {
+        if (match.getDuelType().equals(DuelType.FFA)) {
         	match.getAlives().remove(uuid);
             if (match.getAlives().size() == 1) {
             	if (killer != null) {
@@ -441,12 +372,10 @@ public class Utils {
             }
         }
 
-        if (match.getDuelPartyType().equals("split") || match.getDuelPartyType().equals("duel")) {
+        if (match.getDuelType().equals(DuelType.SPLIT)) {
             match.getFirstAlives().remove(uuid);
             match.getSecondAlives().remove(uuid);
             if (match.getFirstAlives().isEmpty() || match.getSecondAlives().isEmpty()) {
-            	List<UUID> winners = Lists.newArrayList(); // Winners unused ??
-            	winners.addAll(match.getFirst().contains(killer) ? match.getFirst() : match.getSecond());
                 this.main.getManagerHandler().getDuelManager().endMultiple(killer);
                 return;
             }
@@ -478,15 +407,15 @@ public class Utils {
     }
     
     private void addSpectateParty(final UUID uuid) {
-    	final DuelParty duel = this.getDuelPartyByUUID(uuid);
-    	if (duel.getDuelPartyType().equals("ffa")) {
+    	final Duel duel = this.getDuelByUUID(uuid);
+    	if (duel.getDuelType().equals(DuelType.FFA)) {
     		duel.getAlives().forEach(alives -> {
     			Bukkit.getPlayer(alives).hidePlayer(Bukkit.getPlayer(uuid));
     			this.getProfiles(uuid).setProfileState(ProfileState.SPECTATE);
     			this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
     		});
     	}
-    	if (duel.getDuelPartyType().equals("split") || duel.getDuelPartyType().equals("duel")) {
+    	if (duel.getDuelType().equals(DuelType.SPLIT)) {
     		Arrays.asList(duel.getFirstAlives(), duel.getSecondAlives()).forEach(alivesArray -> alivesArray.forEach(alives -> {
                 Bukkit.getPlayer(alives).hidePlayer(Bukkit.getPlayer(uuid));
                 this.getProfiles(uuid).setProfileState(ProfileState.SPECTATE);

@@ -17,6 +17,7 @@ kezukdev\akyto\handler\command\DuelCommand.class
 kezukdev\akyto\handler\listener\PlayerListener.class
 com\bizarrealex\aether\scoreboard\BoardEntry.class
 com\bizarrealex\aether\scoreboard\cooldown\BoardFormat.class
+kezukdev\akyto\duel\Duel$DuelType.class
 kezukdev\akyto\utils\TagUtils.class
 kezukdev\akyto\utils\EloUtils.class
 kezukdev\akyto\profile\kiteditor\Edited.class
@@ -40,7 +41,6 @@ kezukdev\akyto\handler\listener\InventoryListener.class
 com\bizarrealex\aether\Aether.class
 kezukdev\akyto\kit\KitInterface.class
 kezukdev\akyto\utils\config\ConfigFile.class
-kezukdev\akyto\utils\Utils$2.class
 kezukdev\akyto\handler\ManagerHandler.class
 com\bizarrealex\aether\scoreboard\Board.class
 kezukdev\akyto\handler\manager\LeaderboardManager.class
@@ -70,7 +70,6 @@ kezukdev\akyto\handler\manager\ArenaManager.class
 kezukdev\akyto\handler\manager\RequestManager$RequestEntry.class
 kezukdev\akyto\handler\manager\DuelManager.class
 kezukdev\akyto\utils\location\LocationSerializer.class
-kezukdev\akyto\duel\DuelParty.class
 kezukdev\akyto\handler\listener\PlayerListener$2.class
 kezukdev\akyto\utils\leaderboard\Top.class
 kezukdev\akyto\utils\location\LocationUtil.class

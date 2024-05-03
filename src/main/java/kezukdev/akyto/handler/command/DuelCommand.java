@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
+import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
 
@@ -83,7 +84,7 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not free now.");
 				return false;
 			}
-			new Duel(this.main, Sets.newHashSet(Bukkit.getPlayer(args[1]).getUniqueId()), Sets.newHashSet(Bukkit.getPlayer(sender.getName()).getUniqueId()), false, this.main.getManagerHandler().getRequestManager().getRequest().get(Bukkit.getPlayer(args[1]).getUniqueId()).getKit());
+			new Duel(this.main, Sets.newHashSet(Bukkit.getPlayer(args[1]).getUniqueId()), Sets.newHashSet(Bukkit.getPlayer(sender.getName()).getUniqueId()), false, this.main.getManagerHandler().getRequestManager().getRequest().get(Bukkit.getPlayer(args[1]).getUniqueId()).getKit(), DuelType.SINGLE);
 			this.main.getManagerHandler().getRequestManager().removeRequest(Bukkit.getPlayer(args[1]).getUniqueId());
 		}
 		return false;

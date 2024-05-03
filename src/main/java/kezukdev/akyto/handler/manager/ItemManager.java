@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import kezukdev.akyto.Practice;
+import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.kit.KitInterface;
 import kezukdev.akyto.profile.Profile;
@@ -58,9 +59,9 @@ public class ItemManager {
 		if (profile.getProfileState().equals(ProfileState.SPECTATE)) {
 			player.setAllowFlight(true);
 			player.setFlying(true);
-			if (this.main.getUtils().getDuelPartyByUUID(uuid) == null) player.getInventory().setItem(0, this.main.getUtils().createItem(Material.CHEST, 1, (byte)0, ChatColor.DARK_GRAY + "Teleport to another " + ChatColor.WHITE + "player" + ChatColor.DARK_GRAY + "."));
-			player.getInventory().setItem(this.main.getUtils().getDuelPartyByUUID(uuid) == null ? 3 : 0, this.main.getUtils().createItem(Material.REDSTONE_COMPARATOR, 1, (byte)0, ChatColor.DARK_GRAY + "Settings"));
-			if (this.main.getUtils().getDuelPartyByUUID(uuid) == null) player.getInventory().setItem(5, this.main.getUtils().createItem(Material.COMPASS, 1, (byte)0, ChatColor.DARK_GRAY + "Spectate another " + ChatColor.WHITE + "match" + ChatColor.DARK_GRAY + "."));	
+			if (this.main.getUtils().getDuelByUUID(uuid).getDuelType().equals(DuelType.SINGLE)) player.getInventory().setItem(0, this.main.getUtils().createItem(Material.CHEST, 1, (byte)0, ChatColor.DARK_GRAY + "Teleport to another " + ChatColor.WHITE + "player" + ChatColor.DARK_GRAY + "."));
+			player.getInventory().setItem(this.main.getUtils().getDuelByUUID(uuid).getDuelType().equals(DuelType.SINGLE) ? 3 : 0, this.main.getUtils().createItem(Material.REDSTONE_COMPARATOR, 1, (byte)0, ChatColor.DARK_GRAY + "Settings"));
+			if (this.main.getUtils().getDuelByUUID(uuid).getDuelType().equals(DuelType.SINGLE)) player.getInventory().setItem(5, this.main.getUtils().createItem(Material.COMPASS, 1, (byte)0, ChatColor.DARK_GRAY + "Spectate another " + ChatColor.WHITE + "match" + ChatColor.DARK_GRAY + "."));	
 			player.getInventory().setItem(8, this.main.getUtils().createItem(Material.REDSTONE_TORCH_ON, 1, (byte)0, ChatColor.RED + "Leave Spectating."));
 			player.updateInventory();
 		}
@@ -71,9 +72,9 @@ public class ItemManager {
 			player.updateInventory();
 		}
 		if (profile.getProfileState().equals(ProfileState.FIGHT)) {
-			final KitInterface kit = this.main.getUtils().getDuelByUUID(uuid) != null ? (KitInterface) this.main.getUtils().getDuelByUUID(uuid).getKit() : (KitInterface) this.main.getUtils().getDuelPartyByUUID(uuid).getKit();
+			final KitInterface kit = (KitInterface) this.main.getUtils().getDuelByUUID(uuid).getKit();
 			if (this.main.getManagerHandler().getProfileManager().getEditor().containsKey(uuid)) {
-				if (this.main.getManagerHandler().getProfileManager().getEditor().get(uuid).containsKey(this.main.getUtils().getDuelByUUID(uuid) != null ? this.main.getUtils().getDuelByUUID(uuid).getKit().name() : this.main.getUtils().getDuelPartyByUUID(uuid).getKit().name())) {
+				if (this.main.getManagerHandler().getProfileManager().getEditor().get(uuid).containsKey(this.main.getUtils().getDuelByUUID(uuid).getKit().name())) {
 					player.getInventory().setItem(0, this.main.getUtils().createItem(Material.ENCHANTED_BOOK, 1, (byte) 0, ChatColor.DARK_GRAY + "Edited Kit."));
 					player.getInventory().setItem(8, this.main.getUtils().createItem(Material.BOOK, 1, (byte) 0, ChatColor.DARK_GRAY + "Default Kit."));
 				}

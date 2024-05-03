@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
+import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.ProfileState;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class QueueManager {
         for (Entry<UUID, QueueEntry> entry : main.getQueue().entrySet()) {
             QueueEntry queueEntry = entry.getValue();
             if (queueEntry.getKit().equals(kit) && queueEntry.isRanked() == ranked && !entry.getKey().equals(uuid)) {
-                new Duel(this.main, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit());
+                new Duel(this.main, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE);
                 main.getQueue().remove(entry.getKey());
                 this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
                 return;

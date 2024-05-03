@@ -14,7 +14,7 @@ import co.aikar.idb.DB;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.duel.Duel;
-import kezukdev.akyto.duel.DuelParty;
+import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.ProfileState;
@@ -35,34 +35,53 @@ public class DuelManager {
 	
 	public DuelManager(final Practice main) { this.main = main; }
 	
-	public void startSingle(final List<UUID> players, final Kit kit) {
+	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
 		final Arena arena = this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
+		final Duel duel = this.main.getUtils().getDuelByUUID(first.get(0));
+		duel.arena = arena;
 		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
-		TagUtils.setupTeams(Arrays.asList(Lists.newArrayList(players.get(0)), Lists.newArrayList(players.get(1))));
-		players.forEach(uuid -> {
-			if (Bukkit.getPlayer(uuid) == null) {
-				this.endSingle(players.get(0).equals(uuid) ? players.get(1) : players.get(0));
-				return;
-			}
-			this.main.getUtils().multiArena(uuid, false);
-			Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponents(uuid).get(0)));
-			this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(this.main.getUtils().getDuelByUUID(uuid).isRanked(), kit);
-			this.main.getUtils().resetPlayer(uuid);
-			final Player player = Bukkit.getPlayer(uuid);
-			player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " + ChatColor.WHITE + (players.get(0).equals(uuid) ? Bukkit.getPlayer(players.get(1)).getName() : Bukkit.getPlayer(players.get(0)).getName()) + (this.main.getUtils().getDuelByUUID(uuid).isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + this.main.getUtils().getProfiles(this.main.getUtils().getOpponents(uuid).get(0)).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
-			player.teleport(players.get(0).equals(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
-			this.main.getUtils().addPlayedToData(uuid, kit);
-			this.main.getUtils().getProfiles(uuid).setProfileState(ProfileState.FIGHT);
-			this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
-			if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
+		TagUtils.setupTeams(first, second);
+		if (duel.getDuelType().equals(DuelType.SPLIT)) {
+			this.main.getUtils().sendSplitMessage(first, second, kit);
+		}
+		Arrays.asList(first, second).forEach(uuids -> {
+			uuids.forEach(uuid -> {
+				if (Bukkit.getPlayer(uuid) == null) {
+					if (duel.getDuelType().equals(DuelType.SINGLE)) {
+						this.endSingle(first.get(0).equals(uuid) ? second.get(0) : first.get(0));	
+						return;
+					}
+					if (duel.getDuelType().equals(DuelType.FFA) || duel.getDuelType().equals(DuelType.SPLIT)) {
+						this.main.getUtils().addKill(uuid, null);
+					}
+				}
+				this.main.getUtils().multiArena(uuid, false);
+				Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponents(uuid).get(0)));
+				this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(this.main.getUtils().getDuelByUUID(uuid).isRanked(), kit);
+				this.main.getUtils().resetPlayer(uuid);
+				final Player player = Bukkit.getPlayer(uuid);
+				if (duel.getDuelType().equals(DuelType.SINGLE)) {
+					player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " + 
+					ChatColor.WHITE + (first.get(0).equals(uuid) ? Bukkit.getPlayer(second.get(0)).getName() : Bukkit.getPlayer(first.get(0)).getName()) +
+					(this.main.getUtils().getDuelByUUID(uuid).isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + this.main.getUtils().getProfiles(this.main.getUtils().getOpponents(uuid).get(0)).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
+				}
+				if (duel.getDuelType().equals(DuelType.FFA)) {
+					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
+				}
+				player.teleport(first.contains(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
+				this.main.getUtils().addPlayedToData(uuid, kit);
+				this.main.getUtils().getProfiles(uuid).setProfileState(ProfileState.FIGHT);
+				this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
+				if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
+			});
 		});
-		if (kit.name().equalsIgnoreCase("sumo")) new SumoRunnable(this.main, this.main.getUtils().getDuelByUUID(players.get(0))).runTaskTimer(this.main, 5L, 5L);
-		new CountdownRunnable(Arrays.asList(players), this.main).runTaskTimer(this.main, 20L, 20L);
+		if (kit.name().equalsIgnoreCase("sumo")) new SumoRunnable(this.main, this.main.getUtils().getDuelByUUID(first.get(0))).runTaskTimer(this.main, 5L, 5L);
+		new CountdownRunnable(Arrays.asList(first, second), duel, this.main).runTaskTimer(this.main, 20L, 20L);
 	}
 	
 	public void endSingle(final UUID winner) {
 		final Duel duel = this.main.getUtils().getDuelByUUID(winner);
-		duel.setWinner(winner);
+		duel.setWinner(Lists.newArrayList(winner));
 		if (duel.getTimer() != null) {
 			duel.getTimer().cancel();	
 		}
@@ -112,47 +131,19 @@ public class DuelManager {
 			this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid);
 			});
 		TagUtils.clearEntries(Arrays.asList(Lists.newArrayList(winner), Lists.newArrayList(looser)));
-		new RespawnRunnable(Arrays.asList(players), false, this.main).runTaskLater(this.main, 70L);
-	}
-	
-	public void startMultiple(final List<List<UUID>> players, final Kit kit) {
-		final Arena arena = this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
-		final DuelParty duel = this.main.getUtils().getDuelPartyByUUID(players.get(0).get(0));
-		duel.arena = arena;
-		TagUtils.setupTeams(players);
-		players.forEach(uuids -> uuids.forEach(uuid -> {
-            if (Bukkit.getPlayer(uuid) == null) {
-                main.getUtils().addKill(uuid, null);
-            }
-            this.main.getUtils().getOpponents(uuid).forEach(UUID -> this.main.getUtils().multiArena(uuid, false));
-            Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(this.main.getUtils().getOpponents(uuid).get(0)));
-            this.main.getUtils().resetPlayer(uuid);
-            final Player player = Bukkit.getPlayer(uuid);
-            if (duel.getDuelPartyType().equals("ffa")) {
-                Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
-            }
-            player.teleport(players.get(0).contains(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
-            this.main.getUtils().addPlayedToData(uuid, kit);
-            this.main.getUtils().getProfiles(uuid).setProfileState(ProfileState.FIGHT);
-            this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
-            if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
-        }));
-		if (duel.getDuelPartyType().equals("split") || duel.getDuelPartyType().equals("duel")) {
-			this.main.getUtils().sendSplitMessage(players.get(0), players.get(1), kit);
-		}
-		new CountdownRunnable(players, this.main).runTaskTimer(this.main, 20L, 20L);
+		new RespawnRunnable(Arrays.asList(players), this.main).runTaskLater(this.main, 70L);
 	}
 
 	public void endMultiple(final UUID winner) {
-		final DuelParty duel = this.main.getUtils().getDuelPartyByUUID(winner);
+		final Duel duel = this.main.getUtils().getDuelByUUID(winner);
 		final List<UUID> winners = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getFirst()) : new ArrayList<>(duel.getSecond());
 		final List<UUID> loosers = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 		duel.getWinner().addAll(winners);
 		duel.getTimer().cancel();
 		duel.setState(DuelState.FINISHING);
-		this.main.getUtils().sendPartyComponent(duel.getDuelPartyType(), Arrays.asList(winners, loosers));
+		this.main.getUtils().sendPartyComponent(Arrays.asList(winners, loosers));
 		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid)));
 		TagUtils.clearEntries(Arrays.asList(winners, loosers));
-		new RespawnRunnable(Arrays.asList(winners, loosers), true, this.main).runTaskLater(this.main, 70L);
+		new RespawnRunnable(Arrays.asList(winners, loosers), this.main).runTaskLater(this.main, 70L);
 	}
 }

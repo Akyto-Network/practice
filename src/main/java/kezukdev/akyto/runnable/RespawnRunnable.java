@@ -8,23 +8,18 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
-import kezukdev.akyto.duel.DuelParty;
 import kezukdev.akyto.kit.Kit;
 
 public class RespawnRunnable extends BukkitRunnable {
     
     private final Practice main;
     private final List<List<UUID>> players;
-    private final boolean party;
     private Duel duel;
-    private DuelParty duelParty;
     
-    public RespawnRunnable(final List<List<UUID>> players, final boolean party, final Practice main) {
+    public RespawnRunnable(final List<List<UUID>> players, final Practice main) {
         this.main = main;
         this.players = players;
-        this.party = party;
-        if (party) this.duelParty = this.main.getUtils().getDuelPartyByUUID(players.get(0).get(0));
-        if (!party) this.duel = this.main.getUtils().getDuelByUUID(players.get(0).get(0));
+        this.duel = this.main.getUtils().getDuelByUUID(players.get(0).get(0));
     }
 
     @Override
@@ -38,13 +33,10 @@ public class RespawnRunnable extends BukkitRunnable {
                 }
             });
 }));
-        if(!party) {
-            final boolean ranked = duel.isRanked();
-            final Kit kit = duel.getKit();
-            main.getDuels().remove(duel);
-            main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);	
-        }
-        if (party) { main.getDuelsParty().remove(duelParty); }
+        final boolean ranked = duel.isRanked();
+        final Kit kit = duel.getKit();
+        main.getDuels().remove(duel);
+        main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);	
         main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
         cancel();
     }

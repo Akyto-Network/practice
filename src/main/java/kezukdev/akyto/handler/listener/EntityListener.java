@@ -40,8 +40,8 @@ public class EntityListener implements Listener {
 		if (event.getEntity() instanceof Player) {
 			final Profile data = this.main.getUtils().getProfiles(event.getEntity().getUniqueId());
 			if (data != null && data.getProfileState().equals(ProfileState.FIGHT)) {
-				if (((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING)) || (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING))) && !event.getCause().equals(DamageCause.CONTACT)) {
-					if ((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo")) || (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo"))) {
+				if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING)) {
+					if ((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo"))) {
 						event.setDamage(0.0f);
 					}
 					return;
@@ -58,9 +58,9 @@ public class EntityListener implements Listener {
 			if (data.getProfileState().equals(ProfileState.FIGHT) && this.main.getUtils().getProfiles(event.getDamager().getUniqueId()).getProfileState().equals(ProfileState.FIGHT)) {
 				final DuelStatistics statisticsDamager = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getDamager().getUniqueId());
 				final DuelStatistics statisticsVictim = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getEntity().getUniqueId());
-				if (((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING)) || (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING))) && !event.getCause().equals(DamageCause.CONTACT)) {
-					if (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getFirstAlives() != null) {
-						if (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getFirstAlives().contains(event.getEntity().getUniqueId()) && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getFirstAlives().contains(event.getDamager().getUniqueId()) || this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getSecondAlives().contains(event.getEntity().getUniqueId()) && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getSecondAlives().contains(event.getDamager().getUniqueId())) {
+				if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING)) {
+					if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getFirstAlives() != null) {
+						if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getFirstAlives().contains(event.getEntity().getUniqueId()) && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getFirstAlives().contains(event.getDamager().getUniqueId()) || this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getSecondAlives().contains(event.getEntity().getUniqueId()) && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getSecondAlives().contains(event.getDamager().getUniqueId())) {
 							event.setCancelled(true);
 							return;
 						}
@@ -73,7 +73,7 @@ public class EntityListener implements Listener {
 							statisticsDamager.setLongestHit(statisticsDamager.getCombo());
 						}	
 					}
-					if ((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo")) || (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo"))) {
+					if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo")) {
 						event.setDamage(0.0f);
 					}
 					return;
