@@ -9,7 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,6 +40,12 @@ import kezukdev.akyto.kit.KitInterface;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
 import net.md_5.bungee.api.ChatColor;
+import net.minecraft.server.v1_7_R4.Entity;
+import net.minecraft.server.v1_7_R4.EntityHuman;
+import net.minecraft.server.v1_7_R4.EntityLightning;
+import net.minecraft.server.v1_7_R4.EntityLiving;
+import net.minecraft.server.v1_7_R4.EntityPlayer;
+import net.minecraft.server.v1_7_R4.PacketPlayOutNamedSoundEffect;
 
 public class PlayerListener implements Listener {
 	
@@ -297,6 +305,25 @@ public class PlayerListener implements Listener {
 		final Location deathLoc = event.getEntity().getLocation();
 		LightningStrike lightning = deathLoc.getWorld().strikeLightningEffect(deathLoc);
 		lightning.setFireTicks(0);
+		lightning.setSilent(true);
+		((CraftPlayer)event.getEntity()).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", deathLoc.getX(), deathLoc.getY(), deathLoc.getZ(), 10000.0F, deathLoc.getPitch()));
+		if (event.getEntity().getKiller() != null) {
+			((CraftPlayer)event.getEntity().getKiller()).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", event.getEntity().getKiller().getLocation().getX(),  event.getEntity().getKiller().getLocation().getY(),  event.getEntity().getKiller().getLocation().getZ(), 10000.0F,  event.getEntity().getKiller().getLocation().getPitch()));
+		}
+		if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null) {
+			if (!this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getSpectator().isEmpty()) {
+				this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getSpectator().forEach(specs -> {
+					((CraftPlayer)Bukkit.getPlayer(specs)).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", event.getEntity().getKiller().getLocation().getX(),  event.getEntity().getKiller().getLocation().getY(),  event.getEntity().getKiller().getLocation().getZ(), 10000.0F,  event.getEntity().getKiller().getLocation().getPitch()));
+				});
+			}
+		}
+		if (this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()) != null) {
+			if (!this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getSpectator().isEmpty()) {
+				this.main.getUtils().getDuelPartyByUUID(event.getEntity().getUniqueId()).getSpectator().forEach(specs -> {
+					((CraftPlayer)Bukkit.getPlayer(specs)).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", event.getEntity().getKiller().getLocation().getX(),  event.getEntity().getKiller().getLocation().getY(),  event.getEntity().getKiller().getLocation().getZ(), 10000.0F,  event.getEntity().getKiller().getLocation().getPitch()));
+				});
+			}
+		}
 		event.setDroppedExp(0);
 		event.getDrops().clear();
 		event.getEntity().setLevel(0);
