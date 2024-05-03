@@ -114,11 +114,12 @@ public class SideBoard implements BoardAdapter {
     private List<String> getSpecBoard(final Player player) {
         final List<String> board = new LinkedList<>();
         board.add(spacer);
-        final Duel duel = this.plugin.getUtils().getDuelBySpectator(player.getUniqueId());
-        final String first = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
-        final String second = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
+        Duel duel = this.plugin.getUtils().getDuelBySpectator(player.getUniqueId());
+        if (duel == null) duel = this.plugin.getUtils().getDuelByUUID(player.getUniqueId());
         if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
         	if (duel.getDuelType().equals(DuelType.SINGLE)) {
+                final String first = Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
+                final String second = Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName();
                 board.add(ChatColor.GREEN + first);
                 board.add(ChatColor.DARK_GRAY + "    against");
                 board.add(ChatColor.RED + second);	

@@ -248,17 +248,19 @@ public class Utils {
         final TextComponent firsttxt = new TextComponent(ChatColor.DARK_GRAY + Bukkit.getPlayer(first.get(0)).getName() + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
         final TextComponent secondtxt = new TextComponent(ChatColor.DARK_GRAY + Bukkit.getPlayer(second.get(0)).getName() + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
 	    first.forEach(uuid -> {
-	    	firsttxt.addExtra(Bukkit.getPlayer(uuid).getName());
-	        firsttxt.setColor(ChatColor.RED);
-	        firsttxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
-	        joinerOne.add(firsttxt);
+	    	final TextComponent itxt = new TextComponent(Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName());
+	        itxt.setColor(ChatColor.RED);
+	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
+	        joinerOne.add(itxt);
 	    });
 	    second.forEach(uuid -> {
-	    	secondtxt.addExtra(Bukkit.getPlayer(uuid).getName());
-	        secondtxt.setColor(ChatColor.RED);
-	        secondtxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
-	        joinerTwo.add(secondtxt);
+	    	final TextComponent itxt = new TextComponent(Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName());
+	        itxt.setColor(ChatColor.RED);
+	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
+	        joinerTwo.add(itxt);
 	    });
+	    firsttxt.addExtra(joinerOne.toTextComponent());
+	    secondtxt.addExtra(joinerTwo.toTextComponent());
 	    final List<List<UUID>> list = Arrays.asList(first, second);
 	    list.forEach(uuids -> {
 	    	for (UUID uuid : uuids) {
