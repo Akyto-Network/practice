@@ -1,6 +1,5 @@
 package kezukdev.akyto.handler.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,11 +21,12 @@ public class LeaderboardCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) return false;
-		final Profile profile = this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId());
+		final Player playerSender = (Player) sender;
+		final Profile profile = this.main.getUtils().getProfiles(playerSender.getUniqueId());
+
 		if (profile.getProfileState().equals(ProfileState.FREE) || profile.getProfileState().equals(ProfileState.QUEUE) || profile.getProfileState().equals(ProfileState.SPECTATE)) {
-			Bukkit.getPlayer(sender.getName()).openInventory(this.main.getManagerHandler().getInventoryManager().getLeaderboardInventory());
-		}
-		else {
+			playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getLeaderboardInventory());
+		} else {
 			sender.sendMessage(ChatColor.RED + "You cannot do that right now!");
 		}
 		return false;

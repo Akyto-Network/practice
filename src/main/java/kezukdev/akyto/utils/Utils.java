@@ -10,17 +10,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import com.google.common.collect.Lists;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
@@ -100,7 +95,12 @@ public class Utils {
 	    }
 	}
 
-
+	public static UUID getUUID(String playerName) {
+		Player target = Bukkit.getPlayer(playerName);
+		if (target != null)
+			return target.getUniqueId();
+		return Bukkit.getOfflinePlayer(playerName).getUniqueId();
+	}
 
 	public List<UUID> getOpponents(UUID uuid) {
         Duel duel = getDuelByUUID(uuid);

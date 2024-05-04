@@ -1,5 +1,6 @@
 package kezukdev.akyto.handler.listener;
 
+import kezukdev.akyto.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -226,7 +227,7 @@ public class InventoryListener implements Listener {
 			if (event.getCurrentItem().getType().equals(Material.LEVER)) {
 				final String nextName = event.getCurrentItem().getItemMeta().getDisplayName().replace(ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": ", "");
 				event.getWhoClicked().closeInventory();
-				event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(Bukkit.getPlayer(nextName) != null ? Bukkit.getPlayer(nextName).getUniqueId() : Bukkit.getOfflinePlayer(nextName).getUniqueId()));
+				event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(Utils.getUUID(nextName)));
 			}
 		}
 	}

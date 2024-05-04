@@ -24,6 +24,7 @@ public class DuelCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) return false;
+		Player playerSender = (Player) sender;
 		if (args.length == 0) {
 			sender.sendMessage(ChatColor.RED + "/" + cmd.getName() + " <player>");
 			return false;
@@ -33,7 +34,7 @@ public class DuelCommand implements CommandExecutor {
 			return false;
 		}
 		if (args.length == 1) {
-			final Profile profile = this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId());
+			final Profile profile = this.main.getUtils().getProfiles(playerSender.getUniqueId());
 			if (args[0].equals(sender.getName())) {
 				sender.sendMessage(ChatColor.RED + "You cannot duel yourself.");
 				return false;
@@ -46,11 +47,12 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
 			}
-			if (Bukkit.getPlayer(args[0]) == null) {
+			Player target = Bukkit.getPlayer(args[0]);
+			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[0] + " not found on akyto.");
 				return false;
 			}
-			final Profile targetProfile = this.main.getUtils().getProfiles(Bukkit.getPlayer(args[0]).getUniqueId());
+			final Profile targetProfile = this.main.getUtils().getProfiles(target.getUniqueId());
 			if (!targetProfile.getSettings().get(1)) {
 				sender.sendMessage(ChatColor.RED + "This player doesn't accept any duel request!");
 				return false;
@@ -59,10 +61,10 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not free now.");
 				return false;
 			}
-			this.main.getManagerHandler().getRequestManager().createPullRequest(Bukkit.getPlayer(sender.getName()).getUniqueId(), Bukkit.getPlayer(args[0]).getUniqueId());	
+			this.main.getManagerHandler().getRequestManager().createPullRequest(playerSender.getUniqueId(), target.getUniqueId());
 		}
 		if (args.length == 2 && args[0].equalsIgnoreCase("accept")) {
-			final Profile profile = this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId());
+			final Profile profile = this.main.getUtils().getProfiles(playerSender.getUniqueId());
 			if (!profile.getProfileState().equals(ProfileState.FREE)) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
@@ -75,7 +77,7 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "This player don't have send any request!");
 				return false;
 			}
-			if (!this.main.getManagerHandler().getRequestManager().getRequest().get(Bukkit.getPlayer(args[1]).getUniqueId()).getRequested().equals(Bukkit.getPlayer(sender.getName()).getUniqueId())) {
+			if (!this.main.getManagerHandler().getRequestManager().getRequest().get(Bukkit.getPlayer(args[1]).getUniqueId()).getRequested().equals(playerSender.getUniqueId())) {
 				sender.sendMessage(ChatColor.RED + "You don't have any request from this player!");
 				return false;
 			}
@@ -84,7 +86,7 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not free now.");
 				return false;
 			}
-			new Duel(this.main, Sets.newHashSet(Bukkit.getPlayer(args[1]).getUniqueId()), Sets.newHashSet(Bukkit.getPlayer(sender.getName()).getUniqueId()), false, this.main.getManagerHandler().getRequestManager().getRequest().get(Bukkit.getPlayer(args[1]).getUniqueId()).getKit(), DuelType.SINGLE);
+			new Duel(this.main, Sets.newHashSet(Bukkit.getPlayer(args[1]).getUniqueId()), Sets.newHashSet(playerSender.getUniqueId()), false, this.main.getManagerHandler().getRequestManager().getRequest().get(Bukkit.getPlayer(args[1]).getUniqueId()).getKit(), DuelType.SINGLE);
 			this.main.getManagerHandler().getRequestManager().removeRequest(Bukkit.getPlayer(args[1]).getUniqueId());
 		}
 		return false;

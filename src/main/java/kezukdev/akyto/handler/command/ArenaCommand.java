@@ -21,6 +21,7 @@ public class ArenaCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player) || !sender.isOp()) return false;
+		final Player playerSender = (Player) sender;
 		
 		if (args.length == 0) {
 			sender.sendMessage(new String[] {
@@ -56,7 +57,7 @@ public class ArenaCommand implements CommandExecutor {
 				return false;
 			}
             ArenaType.valueOf(args[2].toUpperCase());
-            this.main.getArenasMap().putIfAbsent(args[1], new Arena(main, args[1], LocationSerializer.fromBukkitLocation(Bukkit.getPlayer(sender.getName()).getLocation()), LocationSerializer.fromBukkitLocation(Bukkit.getPlayer(sender.getName()).getLocation()), ArenaType.valueOf(args[2].toUpperCase())));
+            this.main.getArenasMap().putIfAbsent(args[1], new Arena(main, args[1], LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), ArenaType.valueOf(args[2].toUpperCase())));
 			sender.sendMessage(ChatColor.GREEN + "You have succesfully create the " + args[1] + " arena into the " + args[2] + " type!");
 			return false;
 		}
@@ -78,7 +79,7 @@ public class ArenaCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "Sorry but this arena doesn't exist!");
 				return false;
 			}
-			this.main.getManagerHandler().getArenaManager().getArena(args[1]).getPosition().set(args[0].contains("1") ? 0 : 1, LocationSerializer.fromBukkitLocation(Bukkit.getPlayer(sender.getName()).getLocation()));
+			this.main.getManagerHandler().getArenaManager().getArena(args[1]).getPosition().set(args[0].contains("1") ? 0 : 1, LocationSerializer.fromBukkitLocation(playerSender.getLocation()));
 			sender.sendMessage(ChatColor.GREEN + "The " + (args[0].contains("1") ? "first" : "second") + " location is now setup for the " + args[1] + " arena!");
 		}
 		return false;

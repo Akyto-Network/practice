@@ -19,30 +19,35 @@ public class StatisticsCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) return false;
-		final ProfileState state = this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState();
+		final Player playerSender = (Player) sender;
+		final ProfileState state = this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState();
 		boolean is_busy = state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR);
+
 		if (args.length == 0) {
 			if (is_busy) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}
-			Bukkit.getPlayer(sender.getName()).openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(Bukkit.getPlayer(sender.getName()).getUniqueId()));
+			playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(playerSender.getUniqueId()));
 			return false;
 		}
+
 		if (args.length == 1) {
             if (is_busy) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}
-			if (Bukkit.getPlayer(args[0]) == null) {
+
+			final Player target = Bukkit.getPlayer(args[0]);
+			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not online.");
 				return false;
 			}
-			Bukkit.getPlayer(sender.getName()).openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(Bukkit.getPlayer(args[0]).getUniqueId()));
+			playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(target.getUniqueId()));
 			return false;
 		}
+
 		sender.sendMessage(ChatColor.RED + "/" + cmd.getName());
 		return false;
 	}
-
 }

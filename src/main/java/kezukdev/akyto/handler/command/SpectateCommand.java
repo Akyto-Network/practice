@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -27,23 +28,25 @@ public class SpectateCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) return false;
+        final Player playerSender = (Player) sender;
+
 		if (args.length == 0) {
-			if (this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.QUEUE) || this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.EDITOR) || this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FIGHT)) {
+			if (this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState().equals(ProfileState.QUEUE) || this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState().equals(ProfileState.EDITOR) || this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState().equals(ProfileState.FIGHT)) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
 				return false;
 			}
-			this.main.getManagerHandler().getInventoryManager().getSpectateMultipage().open(Bukkit.getPlayer(sender.getName()), 1);
+			this.main.getManagerHandler().getInventoryManager().getSpectateMultipage().open(playerSender, 1);
 			return false;
 		}
 		if (args.length != 1) {
 			sender.sendMessage(ChatColor.GRAY + " * " + ChatColor.RED + "/" + cmd.getName() + " <player>");
 			return false;
 		}
-        if (this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.QUEUE) || this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.EDITOR) || this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FIGHT)) {
+        if (this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState().equals(ProfileState.QUEUE) || this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState().equals(ProfileState.EDITOR) || this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState().equals(ProfileState.FIGHT)) {
             sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
             return false;
         }
-        final UUID targetUUID = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getUniqueId() : Bukkit.getPlayer(args[0]).getUniqueId();
+        final UUID targetUUID = Utils.getUUID(args[0]);
         if (this.main.getUtils().getDuelByUUID(targetUUID) == null) {
             sender.sendMessage(ChatColor.WHITE + args[0] + ChatColor.RED + " isn't in fight.");
             return false;
@@ -52,41 +55,40 @@ public class SpectateCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.WHITE + args[0] + ChatColor.RED + " duel is finished.");
             return false;
         }
-        if (this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
-            final Duel duel = this.main.getUtils().getDuelBySpectator(Bukkit.getPlayer(sender.getName()).getUniqueId());
-            duel.getSpectator().remove(Bukkit.getPlayer(sender.getName()).getUniqueId());
+        if (this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
+            final Duel duel = this.main.getUtils().getDuelBySpectator(playerSender.getUniqueId());
+            duel.getSpectator().remove(playerSender.getUniqueId());
             Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
                 Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
-                Bukkit.getPlayer(sender.getName()).hidePlayer(Bukkit.getPlayer(uuid));
+                playerSender.hidePlayer(Bukkit.getPlayer(uuid));
             }));
         }
-        if (!this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
+        if (!this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
             Bukkit.getOnlinePlayers().forEach(player -> {
-                player.hidePlayer(Bukkit.getPlayer(sender.getName()));
-                Bukkit.getPlayer(sender.getName()).hidePlayer(player);
+                player.hidePlayer(playerSender);
+                playerSender.hidePlayer(player);
             });
-            this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId()).setProfileState(ProfileState.SPECTATE);
-            this.main.getManagerHandler().getItemManager().giveItems(Bukkit.getPlayer(sender.getName()).getUniqueId(), false);
+            this.main.getUtils().getProfiles(playerSender.getUniqueId()).setProfileState(ProfileState.SPECTATE);
+            this.main.getManagerHandler().getItemManager().giveItems(playerSender.getUniqueId(), false);
         }
         final Duel duel = this.main.getUtils().getDuelByUUID(targetUUID);
         List<List<UUID>> players = Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond()));
         players.forEach(uuids -> uuids.forEach(uuid -> {
-            Bukkit.getPlayer(sender.getName()).showPlayer(Bukkit.getPlayer(uuid));
+            playerSender.showPlayer(Bukkit.getPlayer(uuid));
             Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is now spectating.");
         }));
-        duel.getSpectator().add(Bukkit.getPlayer(sender.getName()).getUniqueId());
-        final Profile profile = this.main.getUtils().getProfiles(Bukkit.getPlayer(sender.getName()).getUniqueId());
+        duel.getSpectator().add(playerSender.getUniqueId());
+        final Profile profile = this.main.getUtils().getProfiles(playerSender.getUniqueId());
         if (!duel.getSpectator().isEmpty()) {
             duel.getSpectator().forEach(spectator -> {
-                if (profile.getSpectateSettings().get(0)) Bukkit.getPlayer(sender.getName()).showPlayer(Bukkit.getPlayer(spectator));
-                if (!profile.getSpectateSettings().get(0)) Bukkit.getPlayer(sender.getName()).hidePlayer(Bukkit.getPlayer(spectator));
+                if (profile.getSpectateSettings().get(0)) playerSender.showPlayer(Bukkit.getPlayer(spectator));
+                if (!profile.getSpectateSettings().get(0)) playerSender.hidePlayer(Bukkit.getPlayer(spectator));
             });
         }
-        if (profile.getSpectateSettings().get(1)) Bukkit.getPlayer(sender.getName()).setFlySpeed(0.1f);
-        if (!profile.getSpectateSettings().get(1)) Bukkit.getPlayer(sender.getName()).setFlySpeed(0.25f);
-        Bukkit.getPlayer(sender.getName()).teleport(Bukkit.getPlayer(targetUUID).getLocation());
-        this.main.getManagerHandler().getInventoryManager().generateChangeSpectateInventory(Bukkit.getPlayer(sender.getName()).getUniqueId());
+        if (profile.getSpectateSettings().get(1)) playerSender.setFlySpeed(0.1f);
+        if (!profile.getSpectateSettings().get(1)) playerSender.setFlySpeed(0.25f);
+        playerSender.teleport(Bukkit.getPlayer(targetUUID).getLocation());
+        this.main.getManagerHandler().getInventoryManager().generateChangeSpectateInventory(playerSender.getUniqueId());
         return false;
 	}
-
 }
