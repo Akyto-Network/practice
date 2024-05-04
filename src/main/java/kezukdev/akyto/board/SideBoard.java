@@ -92,15 +92,15 @@ public class SideBoard implements BoardAdapter {
         		board.add(ChatColor.RED + "▊ " + ChatColor.DARK_GRAY + "alives" + ChatColor.GRAY + ": " + ChatColor.RESET + redAlive + "/" + red);
         		board.add(" ");
         	}
-        }
-        board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(this.plugin.getUtils().getDuelByUUID(player.getUniqueId())));
-        if (this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() != 0L) {
-            final double time = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 1000.0D;
-            final DecimalFormat df = new DecimalFormat("#.#");
-            player.setLevel((int)time);
-            final float timeInf = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
-            player.setExp(timeInf);
-            board.add(ChatColor.RED + "Enderpearl" + ChatColor.GRAY + ": " + ChatColor.RESET + df.format(time) + "s");
+            board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(this.plugin.getUtils().getDuelByUUID(player.getUniqueId())));
+            if (this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() != 0L) {
+                final double time = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 1000.0D;
+                final DecimalFormat df = new DecimalFormat("#.#");
+                player.setLevel((int)time);
+                final float timeInf = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
+                player.setExp(timeInf);
+                board.add(ChatColor.RED + "Enderpearl" + ChatColor.GRAY + ": " + ChatColor.RESET + df.format(time) + "s");
+            }
         }
         if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
         	board.add(ChatColor.DARK_GRAY + "Winner(s)" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner().get(0)) != null ? Bukkit.getPlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner().get(0)).getName() : Bukkit.getOfflinePlayer(this.plugin.getUtils().getDuelByUUID(player.getUniqueId()).getWinner().get(0)).getName()));
@@ -135,7 +135,7 @@ public class SideBoard implements BoardAdapter {
             board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(duel));
         }
         if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
-        	board.add(ChatColor.DARK_GRAY + "Winner(s)" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(duel.getWinner().get(0)) != null ? Bukkit.getPlayer(duel.getWinner().get(0)).getName() : Bukkit.getOfflinePlayer(duel.getWinner().get(0)).getName()));
+        	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + (Bukkit.getPlayer(duel.getWinner().get(0)) != null ? Bukkit.getPlayer(duel.getWinner().get(0)).getName() : Bukkit.getOfflinePlayer(duel.getWinner().get(0)).getName()));
         }
         board.add(" ");
         board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");

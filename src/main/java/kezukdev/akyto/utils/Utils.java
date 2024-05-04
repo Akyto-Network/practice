@@ -341,7 +341,6 @@ public class Utils {
     public void addKill(final UUID uuid, final UUID killer) {
         final Duel match = this.getDuelByUUID(uuid);
         if (match == null) return;
-        this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, killer);
         if (match.getDuelType().equals(DuelType.FFA)) {
         	match.getAlives().remove(uuid);
             if (match.getAlives().size() == 1) {
@@ -377,6 +376,9 @@ public class Utils {
         if (match.getDuelType().equals(DuelType.SPLIT)) {
             match.getFirstAlives().remove(uuid);
             match.getSecondAlives().remove(uuid);
+            if (killer != null) {
+            	this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(killer, uuid);
+            }
             if (match.getFirstAlives().isEmpty() || match.getSecondAlives().isEmpty()) {
                 this.main.getManagerHandler().getDuelManager().endMultiple(killer);
                 return;
