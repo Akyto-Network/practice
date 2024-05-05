@@ -9,21 +9,21 @@ public class DuelStatistics {
 	private int hits = 0;
 	private int combo = 0;
 	private int longestHit = 0;
-	private long enderpearlCooldown = 0L;
+	private long pearlCooldown = 0L;
 	
 	public boolean isEnderPearlCooldownActive() {
-		return this.enderpearlCooldown > System.currentTimeMillis();
+		return this.pearlCooldown > System.currentTimeMillis();
 	}
 	
 	public long getEnderPearlCooldown() {
-		return Math.max(0L, this.enderpearlCooldown - System.currentTimeMillis());
+		return Math.max(0L, this.pearlCooldown - System.currentTimeMillis());
 	}
 
 	public void applyEnderPearlCooldown() {
-		this.enderpearlCooldown = System.currentTimeMillis() + 16L * 1000L;
+		this.pearlCooldown = System.currentTimeMillis() + 16L * 1000L;
 	}
 
 	public void removeEnderPearlCooldown() {
-		this.enderpearlCooldown = 0L;
+		this.pearlCooldown = 0L;
 	}
 }

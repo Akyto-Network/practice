@@ -25,7 +25,7 @@ public class FileSetup {
 		final long timeUnit = System.currentTimeMillis();
 		final File dir = new File(this.main.getDataFolder() + "/players/");
 		File[] files = dir.listFiles();
-		if (dir.exists()) {
+		if (files != null && dir.exists()) {
 			for (File file : files) {
 				YamlConfiguration configFile = YamlConfiguration.loadConfiguration(file);
 				final String str = file.getName().replace(".yml", "");

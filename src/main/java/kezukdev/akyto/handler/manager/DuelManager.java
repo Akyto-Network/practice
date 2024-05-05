@@ -28,7 +28,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 @Getter
 public class DuelManager {
 	
-	private Practice main;
+	private final Practice main;
 	
 	public DuelManager(final Practice main) { this.main = main; }
 	
@@ -45,7 +45,7 @@ public class DuelManager {
 			uuids.forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) == null) {
 					if (duel.getDuelType().equals(DuelType.SINGLE)) {
-						this.endSingle(first.get(0).equals(uuid) ? second.get(0) : first.get(0));	
+						this.endSingle(first.get(0).equals(uuid) ? second.get(0) : first.get(0));
 						return;
 					}
 					if (duel.getDuelType().equals(DuelType.FFA) || duel.getDuelType().equals(DuelType.SPLIT)) {
@@ -58,7 +58,7 @@ public class DuelManager {
 				this.main.getUtils().resetPlayer(uuid);
 				final Player player = Bukkit.getPlayer(uuid);
 				if (duel.getDuelType().equals(DuelType.SINGLE)) {
-					player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " + 
+					player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " +
 					ChatColor.WHITE + (first.get(0).equals(uuid) ? Bukkit.getPlayer(second.get(0)).getName() : Bukkit.getPlayer(first.get(0)).getName()) +
 					(this.main.getUtils().getDuelByUUID(uuid).isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + this.main.getUtils().getProfiles(this.main.getUtils().getOpponents(uuid).get(0)).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
 				}

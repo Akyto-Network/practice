@@ -26,7 +26,7 @@ public class ManagerHandler {
 	private final RequestManager requestManager;
 	
 	public ManagerHandler(final Practice main) {
-		this.profileManager = new ProfileManager(main);
+		this.profileManager = new ProfileManager();
 		this.itemManager = new ItemManager(main);
 		this.queueManager = new QueueManager(main);
 		this.duelManager = new DuelManager(main);

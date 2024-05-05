@@ -35,7 +35,7 @@ public class InventoryManager {
             DateFormat.SHORT,
             DateFormat.SHORT);
 	
-	private Practice main;
+	private final Practice main;
 	private Inventory[] queueInventory = new Inventory[5];
 	private Inventory[] editorInventory = new Inventory[3];
 	private Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leadeboard:");
@@ -74,7 +74,7 @@ public class InventoryManager {
 
 	public void refreshPartyInventory() {
         List<ItemStack> partys = new ArrayList<>();
-        this.main.getManagerHandler().getPartyManager().getPartys().forEach(party -> {
+        this.main.getManagerHandler().getPartyManager().getParties().forEach(party -> {
             final ItemStack item = new ItemStack(Material.SKULL_ITEM);
             final ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(ChatColor.GOLD + (Bukkit.getPlayer(party.getCreator()) != null ? Bukkit.getPlayer(party.getCreator()).getName() : Bukkit.getOfflinePlayer(party.getCreator()).getName()) + "'s party");

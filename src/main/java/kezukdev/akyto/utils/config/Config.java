@@ -1,9 +1,11 @@
 package kezukdev.akyto.utils.config;
 
+import lombok.Getter;
 import org.bukkit.plugin.java.*;
 import java.io.*;
 import org.bukkit.configuration.file.*;
 
+@Getter
 public class Config
 {
     private final FileConfiguration config;
@@ -33,16 +35,5 @@ public class Config
             e.printStackTrace();
         }
     }
-    
-    public FileConfiguration getConfig() {
-        return this.config;
-    }
-    
-    public File getConfigFile() {
-        return this.configFile;
-    }
-    
-    public boolean isWasCreated() {
-        return this.wasCreated;
-    }
+
 }

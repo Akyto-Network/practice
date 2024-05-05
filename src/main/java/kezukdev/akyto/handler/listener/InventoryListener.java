@@ -1,5 +1,7 @@
 package kezukdev.akyto.handler.listener;
 
+import kezukdev.akyto.handler.manager.InventoryManager;
+import kezukdev.akyto.handler.manager.PartyManager;
 import kezukdev.akyto.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -33,10 +35,12 @@ import net.md_5.bungee.api.ChatColor;
 public class InventoryListener implements Listener {
 	
 	private final Practice main;
+	private final InventoryManager inventoryManager;
 	
 	public InventoryListener(final Practice main) {
 		this.main = main;
-	}
+        this.inventoryManager = main.getManagerHandler().getInventoryManager();
+    }
 	
 	@EventHandler
 	public void onInventoryClick(final InventoryClickEvent event) {
@@ -59,28 +63,28 @@ public class InventoryListener implements Listener {
 				event.setResult(Result.DENY);
 				return;
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[0].getName())) {
+			if (event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[0].getName())) {
 				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(event.getWhoClicked().getUniqueId(), Kit.getLadderByID(event.getSlot(), main), false);
 				event.getWhoClicked().closeInventory();
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[1].getName())) {
+			if (event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[1].getName())) {
 				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(event.getWhoClicked().getUniqueId(), Kit.getLadderByID(event.getSlot(), main), true);
 				event.getWhoClicked().closeInventory();
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[2].getName())) {
+			if (event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[2].getName())) {
 				final UUID target = this.main.getManagerHandler().getRequestManager().getStartRequest().get(event.getWhoClicked().getUniqueId());
 				this.main.getManagerHandler().getRequestManager().createDuelRequest(event.getWhoClicked().getUniqueId(), target, Kit.getLadderByID(event.getSlot(), main));
 				event.getWhoClicked().closeInventory();
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getPartyEventInventory().getName())) {
+			if (event.getClickedInventory().getName().equals(inventoryManager.getPartyEventInventory().getName())) {
 				if (event.getCurrentItem().getType().equals(Material.IRON_AXE)) {
-					event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3]);
+					event.getWhoClicked().openInventory(inventoryManager.getQueueInventory()[3]);
 				}
 				if (event.getCurrentItem().getType().equals(Material.DIAMOND_CHESTPLATE)) {
-					event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[4]);
+					event.getWhoClicked().openInventory(inventoryManager.getQueueInventory()[4]);
 				}
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3].getName()) || event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[4].getName())) {
+			if (event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[3].getName()) || event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[4].getName())) {
 			    final List<UUID> shuffle = Lists.newArrayList(this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getWhoClicked().getUniqueId()).getMembers());
 			    Collections.shuffle(shuffle);
 			    int size = shuffle.size();
@@ -93,9 +97,9 @@ public class InventoryListener implements Listener {
 			        secondTeam.add(shuffle.get(i));
 			    }
 			    Kit kit = Kit.getLadderByID(event.getSlot(), main);
-			    new Duel(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam),false,  kit, event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3].getName()) ? DuelType.FFA : DuelType.SPLIT);
+			    new Duel(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam),false,  kit, event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[3].getName()) ? DuelType.FFA : DuelType.SPLIT);
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0].getName())) {
+			if (event.getClickedInventory().getName().equals(inventoryManager.getEditorInventory()[0].getName())) {
 				this.main.getUtils().sendToEditor(event.getWhoClicked().getUniqueId(), Kit.getLadderByDisplay(event.getCurrentItem().getItemMeta().getDisplayName(), this.main));
 				event.getWhoClicked().closeInventory();
 			}
@@ -107,7 +111,7 @@ public class InventoryListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getSpectateInventory().get(event.getWhoClicked().getUniqueId()).getName())) {
+			if (event.getClickedInventory().getName().equals(inventoryManager.getSpectateInventory().get(event.getWhoClicked().getUniqueId()).getName())) {
 				final String nextName = event.getCurrentItem().getItemMeta().getDisplayName().replace(ChatColor.WHITE.toString(), "");
 				event.getWhoClicked().teleport(Bukkit.getPlayer(nextName).getLocation());
 				event.getWhoClicked().closeInventory();
@@ -124,7 +128,7 @@ public class InventoryListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[1].getName())) {	
+			if (event.getClickedInventory().getName().equals(inventoryManager.getEditorInventory()[1].getName())) {
 				for (ItemStack items : event.getWhoClicked().getInventory().getContents()) {
 					if (items.getType().equals(Material.COOKED_BEEF) || items.getType().equals(Material.GRILLED_PORK) || items.getType().equals(Material.GOLDEN_CARROT)) {
 						if (event.getCurrentItem().getType().equals(Material.COOKED_BEEF)) items.setType(Material.COOKED_BEEF);
@@ -133,7 +137,7 @@ public class InventoryListener implements Listener {
 					}
 				}
 			}
-			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[2].getName())) {	
+			if (event.getClickedInventory().getName().equals(inventoryManager.getEditorInventory()[2].getName())) {
 				if (event.getCurrentItem().getType().equals(Material.BOOKSHELF)) {
 					final Map<String, Edited> map = new HashMap<>();
 					map.put(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId()), new Edited(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId()), event.getWhoClicked().getInventory().getContents(), event.getWhoClicked().getInventory().getArmorContents()));
@@ -159,21 +163,21 @@ public class InventoryListener implements Listener {
 			if (event.getCurrentItem().getType().equals(Material.PAINTING)) {
 				profile.getSettings().set(0, profile.getSettings().get(0) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
-				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, false);
+				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, false);
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(0) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r scoreboard");
 				return;
 			}
 			if (event.getCurrentItem().getType().equals(Material.BLAZE_POWDER)) {
 				profile.getSettings().set(1, profile.getSettings().get(1) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
-				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, false);
+				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, false);
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(1) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r duel request");
 				return;
 			}
 			if (event.getCurrentItem().getType().equals(Material.WATCH)) {
 				profile.getSettings().set(2, profile.getSettings().get(2) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
-				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 2, false);
+				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 2, false);
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "Time set to " + (profile.getSettings().get(2) ? ChatColor.YELLOW + "day" : ChatColor.BLUE + "night"));
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setPlayerTime(profile.getSettings().get(2) ? 0L : 18000L, true);
 				return;
@@ -191,7 +195,7 @@ public class InventoryListener implements Listener {
 						if (!profile.getSpectateSettings().get(0)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).hidePlayer(Bukkit.getPlayer(spectator));
 					});
 				}
-				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, true);
+				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, true);
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSpectateSettings().get(0) ? ChatColor.GREEN + "show" : ChatColor.RED + "hide") + ChatColor.DARK_GRAY + " other spectators");
 				return;
 			}
@@ -200,12 +204,12 @@ public class InventoryListener implements Listener {
 				event.getWhoClicked().closeInventory();
 				if (profile.getSpectateSettings().get(1)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.1f);
 				if (!profile.getSpectateSettings().get(1)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.25f);
-				this.main.getManagerHandler().getInventoryManager().refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, true);
+				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, true);
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been set the fly speed to " + (profile.getSpectateSettings().get(1) ? ChatColor.YELLOW + "x1.0" : ChatColor.GOLD + "x2.5"));
 				return;
 			}
 			if (event.getCurrentItem().getType().equals(Material.EMERALD)) {
-				event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(event.getWhoClicked().getUniqueId()));
+				event.getWhoClicked().openInventory(inventoryManager.getSettingsInventory().get(event.getWhoClicked().getUniqueId()));
 				return;
 			}
 		}
@@ -227,7 +231,7 @@ public class InventoryListener implements Listener {
 			if (event.getCurrentItem().getType().equals(Material.LEVER)) {
 				final String nextName = event.getCurrentItem().getItemMeta().getDisplayName().replace(ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": ", "");
 				event.getWhoClicked().closeInventory();
-				event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(Utils.getUUID(nextName)));
+				event.getWhoClicked().openInventory(inventoryManager.getPreviewInventory().get(Utils.getUUID(nextName)));
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package kezukdev.akyto.handler.listener;
 
+import kezukdev.akyto.duel.Duel;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,18 +38,23 @@ public class EntityListener implements Listener {
 	
 	@EventHandler
 	public void onDamage(final EntityDamageEvent event) {
-		if (event.getEntity() instanceof Player) {
-			final Profile data = this.main.getUtils().getProfiles(event.getEntity().getUniqueId());
-			if (data != null && data.getProfileState().equals(ProfileState.FIGHT)) {
-				if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING)) {
-					if ((this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo"))) {
-						event.setDamage(0.0f);
-					}
-					return;
+		if (!(event.getEntity() instanceof Player))
+			return;
+
+		final Profile data = this.main.getUtils().getProfiles(event.getEntity().getUniqueId());
+
+		if (data != null && data.getProfileState().equals(ProfileState.FIGHT)) {
+
+			final Duel playerDuel = this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId());
+
+			if (playerDuel != null && playerDuel.getState().equals(DuelState.PLAYING)) {
+				if (playerDuel.getKit().name().equals("sumo")) {
+					event.setDamage(0.0f);
 				}
+				return;
 			}
-			event.setCancelled(true);
 		}
+		event.setCancelled(true);
 	}
 	
 	@EventHandler

@@ -18,10 +18,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 @Getter
 public class RequestManager {
 	
-	private Practice main;
-	private HashMap<UUID, UUID> startRequest;
-	private HashMap<UUID, UUID> partyRequest;
-	private HashMap<UUID, RequestEntry> request;
+	private final Practice main;
+	private final HashMap<UUID, UUID> startRequest;
+	private final HashMap<UUID, UUID> partyRequest;
+	private final HashMap<UUID, RequestEntry> request;
 	
 	public RequestManager(final Practice main) {
 		this.main = main;

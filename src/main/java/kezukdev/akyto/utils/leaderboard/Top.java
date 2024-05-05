@@ -11,7 +11,7 @@ import net.md_5.bungee.api.ChatColor;
 public class Top {
 
     private int elo_id;
-    private final Map<String, Integer> topboard = new HashMap<>();
+    private final Map<String, Integer> topBoard = new HashMap<>();
     private final ArrayList<String> loreRanked = new ArrayList<>();
     private final ArrayList<String> lore = new ArrayList<>();
 
@@ -23,24 +23,24 @@ public class Top {
 
     public Top(Map<String, int[]> map, final Practice main) {
     	for(Map.Entry<String, int[]> entry : map.entrySet()) {
-            int global_elo=0;
+            int global_elo = 0;
             for(int elo : entry.getValue()) {
-                global_elo+=elo;
+                global_elo += elo;
             }
-            global_elo = global_elo/entry.getValue().length;
-            topboard.put(entry.getKey(), global_elo);
+            global_elo = global_elo / entry.getValue().length;
+            topBoard.put(entry.getKey(), global_elo);
         }
         organise();
     }
 
     private void extirpate(Map<String, int[]> map) {
-        map.forEach((key, value) -> topboard.put(key, value[elo_id]));
+        map.forEach((key, value) -> topBoard.put(key, value[elo_id]));
     }
 
     private void organise() {
-        List<Map.Entry<String, Integer>> entries = topboard.entrySet().stream().sorted(Map.Entry.comparingByValue()).limit(topboard.size()).collect(Collectors.toList());
+        List<Map.Entry<String, Integer>> entries = topBoard.entrySet().stream().sorted(Map.Entry.comparingByValue()).limit(topBoard.size()).collect(Collectors.toList());
         Collections.reverse(entries);
-        int x=1;
+        int x = 1;
         for(Map.Entry<String, Integer> entry : entries) {
             if(x <= 3) {
             	loreRanked.add(ChatColor.DARK_GRAY + "#" + x + " " + ChatColor.RED + entry.getKey() + ChatColor.GRAY + " (" + ChatColor.WHITE + entry.getValue() + ChatColor.GRAY + ")");

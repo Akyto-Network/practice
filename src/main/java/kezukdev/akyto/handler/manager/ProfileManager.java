@@ -15,13 +15,12 @@ import lombok.Getter;
 @Getter
 public class ProfileManager {
 	
-	private Practice main;
 	private ConcurrentMap<UUID, Profile> profiles;
 	private ConcurrentMap<UUID, Map<String, Edited>> editor;
 	private HashMap<UUID, DuelStatistics> duelStatistics;
 	public ConcurrentMap<UUID, String> editing;
 	
-	public ProfileManager(final Practice main) {
+	public ProfileManager() {
 		this.profiles = new ConcurrentHashMap<>();
 		this.editor = new ConcurrentHashMap<>();
 		this.duelStatistics = new HashMap<>();

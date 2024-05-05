@@ -21,9 +21,12 @@ public class ItemManager {
 	public ItemManager(final Practice main) { this.main = main; }
 	
 	public void giveItems(final UUID uuid, final boolean destruct) {
-		if (Bukkit.getPlayer(uuid) == null) return;
 		final Player player = Bukkit.getPlayer(uuid);
+
+		if (player == null) return;
+
 		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid);
+
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
 		if (profile.getProfileState().equals(ProfileState.FREE)) {

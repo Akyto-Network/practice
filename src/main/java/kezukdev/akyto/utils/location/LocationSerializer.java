@@ -2,9 +2,12 @@ package kezukdev.akyto.utils.location;
 
 import java.util.*;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.bukkit.*;
 
+@Getter @Setter
 public class LocationSerializer
 {
     private final long timestamp;
@@ -105,59 +108,7 @@ public class LocationSerializer
     public String toString() {
         return new ToStringBuilder(this).append("x", this.x).append("y", this.y).append("z", this.z).append("yaw", this.yaw).append("pitch", this.pitch).append("world", this.world).append("timestamp", this.timestamp).toString();
     }
-    
-    public long getTimestamp() {
-        return this.timestamp;
-    }
-    
-    public String getWorld() {
-        return this.world;
-    }
-    
-    public double getX() {
-        return this.x;
-    }
-    
-    public double getY() {
-        return this.y;
-    }
-    
-    public double getZ() {
-        return this.z;
-    }
-    
-    public float getYaw() {
-        return this.yaw;
-    }
-    
-    public float getPitch() {
-        return this.pitch;
-    }
-    
-    public void setWorld(final String world) {
-        this.world = world;
-    }
-    
-    public void setX(final double x) {
-        this.x = x;
-    }
-    
-    public void setY(final double y) {
-        this.y = y;
-    }
-    
-    public void setZ(final double z) {
-        this.z = z;
-    }
-    
-    public void setYaw(final float yaw) {
-        this.yaw = yaw;
-    }
-    
-    public void setPitch(final float pitch) {
-        this.pitch = pitch;
-    }
-    
+
     public LocationSerializer(final String world, final double x, final double y, final double z, final float yaw, final float pitch) {
         this.timestamp = System.currentTimeMillis();
         this.world = world;

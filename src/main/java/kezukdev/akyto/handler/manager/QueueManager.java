@@ -17,7 +17,7 @@ import lombok.Getter;
 @Getter
 public class QueueManager {
     
-    private Practice main;
+    private final Practice main;
     
     public QueueManager(final Practice main) { this.main = main; }
     
@@ -51,9 +51,9 @@ public class QueueManager {
     
     @Getter
     public static class QueueEntry {
-        private UUID uuid;
-        private Kit kit;
-        private boolean ranked;
+        private final UUID uuid;
+        private final Kit kit;
+        private final boolean ranked;
         
         public QueueEntry(final UUID uuid, final Kit kit, final boolean ranked) {
             this.uuid = uuid;

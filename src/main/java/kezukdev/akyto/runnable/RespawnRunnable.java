@@ -14,7 +14,7 @@ public class RespawnRunnable extends BukkitRunnable {
     
     private final Practice main;
     private final List<List<UUID>> players;
-    private Duel duel;
+    private final Duel duel;
     
     public RespawnRunnable(final List<List<UUID>> players, final Practice main) {
         this.main = main;
@@ -32,7 +32,7 @@ public class RespawnRunnable extends BukkitRunnable {
                     Bukkit.getPlayer(uuid).showPlayer(player);
                 }
             });
-}));
+        }));
         final boolean ranked = duel.isRanked();
         final Kit kit = duel.getKit();
         main.getDuels().remove(duel);

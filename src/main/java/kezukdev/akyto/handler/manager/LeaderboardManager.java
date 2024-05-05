@@ -9,12 +9,15 @@ import java.util.Map;
 import co.aikar.idb.DB;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.utils.leaderboard.Top;
+import lombok.Getter;
 
 public class LeaderboardManager {
 
 	private final Practice main;
 	
+    @Getter
     final Top[] top = new Top[99];
+    @Getter
     Top global;
 
     public LeaderboardManager(final Practice main) { this.main = main; }
@@ -63,11 +66,4 @@ public class LeaderboardManager {
        global = new Top(map, main);
    }
 
-    public Top[] getTop() {
-        return top;
-    }
-
-    public Top getGlobal() {
-        return global;
-    }
 }

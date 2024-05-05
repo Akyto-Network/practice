@@ -50,15 +50,17 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(final PlayerJoinEvent event) {
-		if (event.getPlayer().isOnline()) {
-			new Profile(main, event.getPlayer().getUniqueId());
-			this.main.getDatabaseSetup().update(event.getPlayer().getUniqueId());
-			this.main.getManagerHandler().getItemManager().giveItems(event.getPlayer().getUniqueId(), false);
-			this.main.getUtils().resetPlayer(event.getPlayer().getUniqueId());
-			event.getPlayer().teleport(this.main.getSpawn().getLocation() != null ? this.main.getSpawn().getLocation() : event.getPlayer().getWorld().getSpawnLocation());	
-            this.main.getManagerHandler().getInventoryManager().generateSettingsInventory(event.getPlayer().getUniqueId());
-            this.main.getManagerHandler().getInventoryManager().generateProfileInventory(event.getPlayer().getUniqueId());
-		}
+		if (!event.getPlayer().isOnline())
+			return;
+
+		Profile playerProfile = new Profile(event.getPlayer().getUniqueId());
+		this.main.getManagerHandler().getProfileManager().getProfiles().put(event.getPlayer().getUniqueId(), playerProfile);
+		this.main.getDatabaseSetup().update(event.getPlayer().getUniqueId());
+		this.main.getManagerHandler().getItemManager().giveItems(event.getPlayer().getUniqueId(), false);
+		this.main.getUtils().resetPlayer(event.getPlayer().getUniqueId());
+		event.getPlayer().teleport(this.main.getSpawn().getLocation() == null ? event.getPlayer().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
+		this.main.getManagerHandler().getInventoryManager().generateSettingsInventory(event.getPlayer().getUniqueId());
+		this.main.getManagerHandler().getInventoryManager().generateProfileInventory(event.getPlayer().getUniqueId());
 	}
 
 	@EventHandler

@@ -20,11 +20,11 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class PartyManager {
 	
 	private final Practice main;
-	private final List<PartyEntry> partys;
+	private final List<PartyEntry> parties;
 	
 	public PartyManager(final Practice main) {
 		this.main = main;
-		this.partys = new ArrayList<>();
+		this.parties = new ArrayList<>();
 	}
 
 	public void createParty(final UUID creator) {
@@ -36,7 +36,7 @@ public class PartyManager {
 			Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "You're already at a party!");
 			return;
 		}
-		this.partys.add(new PartyEntry(creator));
+		this.parties.add(new PartyEntry(creator));
 		Bukkit.getPlayer(creator).sendMessage(ChatColor.GRAY + "You've just created your own party!");
 		this.main.getManagerHandler().getItemManager().giveItems(creator, false);
 		this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
@@ -135,7 +135,7 @@ public class PartyManager {
 				}
 				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + (Bukkit.getPlayer(sender) != null ? Bukkit.getPlayer(sender).getName() : Bukkit.getOfflinePlayer(sender).getName()) + " to dissolve the party!");
 			});
-			this.partys.remove(party);
+			this.parties.remove(party);
 			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
         } else {
 			party.getMembers().remove(sender);
@@ -155,7 +155,7 @@ public class PartyManager {
 	}
 
 	public PartyEntry getPartyByUUID(UUID uuid) {
-		return this.partys.stream().filter(party -> party.getMembers().contains(uuid)).findFirst().orElse(null);
+		return this.parties.stream().filter(party -> party.getMembers().contains(uuid)).findFirst().orElse(null);
 	}
 	
 	@Getter @Setter

@@ -92,7 +92,7 @@ public class PartyCommand implements CommandExecutor {
 					return false;
 				}
 
-				if (target.getUniqueId() == playerSender.getUniqueId()) {
+				if (target.getUniqueId().equals(playerSender.getUniqueId())) {
 					sender.sendMessage(ChatColor.RED + "You cannot invite yourself!");
 					return false;
 				}

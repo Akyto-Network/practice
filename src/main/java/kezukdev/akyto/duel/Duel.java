@@ -52,7 +52,7 @@ public class Duel {
         this.winner = new ArrayList<>();
 		main.getDuels().add(this);
 		Arrays.asList(first, second).forEach(uuids -> uuids.forEach(uuid -> main.getManagerHandler().getProfileManager().getDuelStatistics().put(uuid, new DuelStatistics())));
-		main.getManagerHandler().getDuelManager().start(first.stream().collect(Collectors.toList()), second.stream().collect(Collectors.toList()), kit);
+		main.getManagerHandler().getDuelManager().start(new ArrayList<>(first), new ArrayList<>(second), kit);
 	}
 	
 	public enum DuelType {

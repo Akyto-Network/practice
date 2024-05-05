@@ -19,13 +19,12 @@ public class Profile {
 	private List<Boolean> spectateSettings;
 	private Team team;
 	
-	public Profile(final Practice main, final UUID uuid) {
-		this.setProfileState(ProfileState.FREE);
+	public Profile(final UUID uuid) {
+		this.profileState = ProfileState.FREE;
 		this.stats = Arrays.asList(new int[7], new int[7], new int[7]);
 		for (int i = 0; i <= this.stats.get(2).length - 1; i++) this.stats.get(2)[i] = 1000;
 		this.settings = Arrays.asList(true, true, true);
 		this.spectateSettings = Arrays.asList(true, true);
-		main.getManagerHandler().getProfileManager().getProfiles().put(uuid, this);
 	}
 
 }
