@@ -15,9 +15,9 @@ import lombok.Getter;
 @Getter
 public class ProfileManager {
 	
-	private ConcurrentMap<UUID, Profile> profiles;
-	private ConcurrentMap<UUID, Map<String, Edited>> editor;
-	private HashMap<UUID, DuelStatistics> duelStatistics;
+	private final ConcurrentMap<UUID, Profile> profiles;
+	private final ConcurrentMap<UUID, Map<String, Edited>> editor;
+	private final HashMap<UUID, DuelStatistics> duelStatistics;
 	public ConcurrentMap<UUID, String> editing;
 	
 	public ProfileManager() {

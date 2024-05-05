@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import kezukdev.akyto.Practice;
@@ -36,18 +37,28 @@ public class CountdownRunnable extends BukkitRunnable {
 			this.cancel();
 			return;
 		}
+
 		counter -= 1;
-		if (counter <= 0) {
+		if (counter > 0) {
+            players.forEach(uuids -> uuids.forEach(uuid -> {
+				final Player player = main.getServer().getPlayer(uuid);
+                if (player != null) {
+                    player.playSound(player.getLocation(), Sound.NOTE_PIANO, 1.5f, 1.5f);
+                    player.sendMessage(ChatColor.RED.toString() + counter + "s" + ChatColor.GRAY + "...");
+                }
+            }));
+        } else {
             final KitInterface kit = (KitInterface) duel.getKit();
 			players.forEach(uuids -> uuids.forEach(uuid -> {
-                if (Bukkit.getPlayer(uuid) != null) {
-                    if (Bukkit.getPlayer(uuid).getInventory().contains(Material.BOOK)) {
-                        Bukkit.getPlayer(uuid).getInventory().setArmorContents(kit.armor());
-                        Bukkit.getPlayer(uuid).getInventory().setContents(kit.content());
-                        Bukkit.getPlayer(uuid).updateInventory();
+				final Player player = main.getServer().getPlayer(uuid);
+                if (player != null) {
+                    if (player.getInventory().contains(Material.BOOK)) {
+                        player.getInventory().setArmorContents(kit.armor());
+                        player.getInventory().setContents(kit.content());
+                        player.updateInventory();
                     }
-                    Bukkit.getPlayer(uuid).playSound(Bukkit.getPlayer(uuid).getLocation(), Sound.FIREWORK_LARGE_BLAST, 1f, 1f);
-                    Bukkit.getPlayer(uuid).sendMessage(ChatColor.DARK_GRAY + "The match has begun" + ChatColor.GRAY + "," + ChatColor.WHITE + " good luck.");
+                    player.playSound(player.getLocation(), Sound.FIREWORK_LARGE_BLAST, 1f, 1f);
+                    player.sendMessage(ChatColor.DARK_GRAY + "The match has begun" + ChatColor.GRAY + "," + ChatColor.WHITE + " good luck.");
                 }
             }));
 			this.duel.timer = new Timer();
@@ -56,14 +67,6 @@ public class CountdownRunnable extends BukkitRunnable {
 			duel.setState(DuelState.PLAYING);
 			this.cancel();
 		}
-		if (counter > 0) {
-            players.forEach(uuids -> uuids.forEach(uuid -> {
-                if (Bukkit.getPlayer(uuid) != null) {
-                    Bukkit.getPlayer(uuid).playSound(Bukkit.getPlayer(uuid).getLocation(), Sound.NOTE_PIANO, 1.5f, 1.5f);
-                    Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED.toString() + counter + "s" + ChatColor.GRAY + "...");
-                }
-            }));
-        }
 	}
 
 }

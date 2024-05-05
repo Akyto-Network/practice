@@ -29,6 +29,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.graalvm.compiler.core.common.util.Util;
 
 public class Utils {
 	
@@ -103,10 +104,17 @@ public class Utils {
 	}
 
 	public static UUID getUUID(String playerName) {
-		Player target = Bukkit.getPlayer(playerName);
+		Player target = Practice.getAPI().getServer().getPlayer(playerName);
 		if (target != null)
 			return target.getUniqueId();
-		return Bukkit.getOfflinePlayer(playerName).getUniqueId();
+		return Practice.getAPI().getServer().getOfflinePlayer(playerName).getUniqueId();
+	}
+
+	public static String getName(UUID playerId) {
+		Player target = Practice.getAPI().getServer().getPlayer(playerId);
+		if (target != null)
+			return target.getName();
+		return Practice.getAPI().getServer().getOfflinePlayer(playerId).getName();
 	}
 
 	public List<UUID> getOpponents(UUID uuid) {
@@ -229,14 +237,14 @@ public class Utils {
 	public TextComponent endMessage(final UUID winner, final UUID looser) {
 		TextComponent winnerComponent = new TextComponent("Winner: ");
 		winnerComponent.setColor(ChatColor.GREEN);
-		TextComponent winnerNameComponent = new TextComponent(Bukkit.getOfflinePlayer(winner).getName());
+		TextComponent winnerNameComponent = new TextComponent(Utils.getName(winner));
 		winnerNameComponent.setColor(ChatColor.GRAY);
-		winnerNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + (Bukkit.getPlayer(winner) != null ? Bukkit.getPlayer(winner).getName() : Bukkit.getOfflinePlayer(winner).getName())));
+		winnerNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(winner)));
 		TextComponent loserComponent = new TextComponent("Loser: ");
 		loserComponent.setColor(ChatColor.RED);
-		TextComponent loserNameComponent = new TextComponent(Bukkit.getOfflinePlayer(looser).getName());
+		TextComponent loserNameComponent = new TextComponent(Utils.getName(looser));
 		loserNameComponent.setColor(ChatColor.GRAY);
-		loserNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + (Bukkit.getPlayer(looser) != null ? Bukkit.getPlayer(looser).getName() : Bukkit.getOfflinePlayer(looser).getName())));
+		loserNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(looser)));
 		TextComponent separatorComponent = new TextComponent(ChatColor.GRAY + " - ");
 		winnerComponent.addExtra(winnerNameComponent);
 		loserComponent.addExtra(loserNameComponent);
@@ -248,16 +256,16 @@ public class Utils {
 	public void sendSplitMessage(final List<UUID> first, final List<UUID> second, final Kit ladder) {
 	    final ComponentJoiner joinerOne = new ComponentJoiner(ChatColor.GRAY + ", ");
 	    final ComponentJoiner joinerTwo = new ComponentJoiner(ChatColor.GRAY + ", ");
-        final TextComponent firsttxt = new TextComponent(ChatColor.DARK_GRAY + Bukkit.getPlayer(first.get(0)).getName() + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
-        final TextComponent secondtxt = new TextComponent(ChatColor.DARK_GRAY + Bukkit.getPlayer(second.get(0)).getName() + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
+        final TextComponent firsttxt = new TextComponent(ChatColor.DARK_GRAY + Utils.getName(first.get(0)) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
+        final TextComponent secondtxt = new TextComponent(ChatColor.DARK_GRAY + Utils.getName(second.get(0)) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
 	    first.forEach(uuid -> {
-	    	final TextComponent itxt = new TextComponent(Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName());
+	    	final TextComponent itxt = new TextComponent(Utils.getName(uuid));
 	        itxt.setColor(ChatColor.RED);
 	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
 	        joinerOne.add(itxt);
 	    });
 	    second.forEach(uuid -> {
-	    	final TextComponent itxt = new TextComponent(Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName());
+	    	final TextComponent itxt = new TextComponent(Utils.getName(uuid));
 	        itxt.setColor(ChatColor.RED);
 	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
 	        joinerTwo.add(itxt);
@@ -280,10 +288,10 @@ public class Utils {
             final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
             players.forEach(uuid -> {
                 for (UUID uuids : uuid) {
-                    final TextComponent itxt = new TextComponent(Bukkit.getPlayer(uuids) == null ? Bukkit.getOfflinePlayer(uuids).getName() : Bukkit.getPlayer(uuids).getName());
+                    final TextComponent itxt = new TextComponent(Utils.getName(uuids));
                     itxt.setColor(ChatColor.WHITE);
-                    itxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + (Bukkit.getPlayer(uuids) == null ? Bukkit.getOfflinePlayer(uuids).getName() : Bukkit.getPlayer(uuids).getName()) + "'s inventory").create()));
-                    itxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + (Bukkit.getPlayer(uuids) == null ? Bukkit.getOfflinePlayer(uuids).getName() : Bukkit.getPlayer(uuids).getName())));
+                    itxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + Utils.getName(uuids) + "'s inventory").create()));
+                    itxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(uuids)));
                     joiner.add(itxt);
 
                 }
@@ -294,7 +302,7 @@ public class Utils {
                     if (Bukkit.getPlayer(uuids) != null) {
                     	Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
         				Bukkit.getPlayer(uuids).sendMessage(ChatColor.YELLOW + "Match Information");
-        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + (Bukkit.getPlayer(this.main.getUtils().getDuelByUUID(uuids).getWinner().get(0)) != null ? Bukkit.getPlayer(this.main.getUtils().getDuelByUUID(uuids).getWinner().get(0)).getName() : Bukkit.getOfflinePlayer(this.main.getUtils().getDuelByUUID(uuids).getWinner().get(0)).getName()));
+        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + Utils.getName(this.main.getUtils().getDuelByUUID(uuids).getWinner().get(0)));
         				Bukkit.getPlayer(uuids).sendMessage(" ");
         				Bukkit.getPlayer(uuids).spigot().sendMessage(invComponent);
         				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
@@ -309,20 +317,20 @@ public class Utils {
             final ComponentJoiner joinerWin = new ComponentJoiner(ChatColor.GRAY + ", ");
             final ComponentJoiner joinerLose = new ComponentJoiner(ChatColor.GRAY + ", ");
             duel.getWinner().forEach(uuid -> {
-                final TextComponent wtxt = new TextComponent(Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName());
+                final TextComponent wtxt = new TextComponent(Utils.getName(uuid));
                 wtxt.setColor(ChatColor.GREEN);
-                wtxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + (Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName()) + "'s inventory").create()));
-                wtxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + (Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName())));
+                wtxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + Utils.getName(uuid) + "'s inventory").create()));
+                wtxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(uuid)));
                 joinerWin.add(wtxt);
             });
 
             List<UUID> losers = duel.getFirst().containsAll(duel.getWinner()) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 
             losers.forEach(uuid -> {
-                final TextComponent ltxt = new TextComponent(Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName());
+                final TextComponent ltxt = new TextComponent(Utils.getName(uuid));
                 ltxt.setColor(ChatColor.RED);
-                ltxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + (Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName()) + "'s inventory").create()));
-                ltxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + (Bukkit.getPlayer(uuid) == null ? Bukkit.getOfflinePlayer(uuid).getName() : Bukkit.getPlayer(uuid).getName())));
+                ltxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + Utils.getName(uuid) + "'s inventory").create()));
+                ltxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(uuid)));
 				joinerLose.add(ltxt);
             });
 
@@ -361,14 +369,14 @@ public class Utils {
             allPlayers.forEach(uuids -> {
                 Player player = Bukkit.getPlayer(uuids);
                 if (player != null) {
-                    player.sendMessage(ChatColor.WHITE + Bukkit.getPlayer(uuid).getName() +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Bukkit.getPlayer(killer).getName()));
+                    player.sendMessage(ChatColor.WHITE + Utils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer)));
                 }
             });
             
             match.getSpectator().forEach(uuids -> {
                 Player spectator = Bukkit.getPlayer(uuids);
                 if (spectator != null) {
-                    spectator.sendMessage(ChatColor.WHITE + Bukkit.getPlayer(uuid).getName() +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Bukkit.getPlayer(killer).getName()));
+                    spectator.sendMessage(ChatColor.WHITE + Utils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer)));
                 }
             });
             if (Bukkit.getPlayer(uuid) != null) {
@@ -396,7 +404,7 @@ public class Utils {
 				if (player != null) {
 					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
 					int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
-					player.sendMessage(ChatColor.WHITE + Bukkit.getPlayer(uuid).getName() + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Bukkit.getPlayer(killer).getName() +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
+					player.sendMessage(ChatColor.WHITE + Utils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
 				}
 			});
 
@@ -405,7 +413,7 @@ public class Utils {
 				if (spectator != null) {
 					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
 					int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
-					spectator.sendMessage(ChatColor.WHITE + Bukkit.getPlayer(uuid).getName() + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Bukkit.getPlayer(killer).getName() +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
+					spectator.sendMessage(ChatColor.WHITE + Utils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
 				}
 			});
 			if (Bukkit.getPlayer(uuid) != null)

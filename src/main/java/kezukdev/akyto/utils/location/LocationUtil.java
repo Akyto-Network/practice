@@ -12,11 +12,7 @@ import lombok.Setter;
 
 public @Getter @Setter class LocationUtil {
 
-    @Getter static List<LocationUtil> all;
-
-    static {
-        all = new ArrayList<>();
-    }
+    @Getter static List<LocationUtil> all = new ArrayList<>();
 
     private String name;
     private Location location;
@@ -33,7 +29,7 @@ public @Getter @Setter class LocationUtil {
     }
 
     public void save(final Practice main) {
-        if(location == null) return;
+        if (location == null) return;
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(location.getWorld().getName());
         stringBuilder.append(":");
@@ -46,7 +42,7 @@ public @Getter @Setter class LocationUtil {
         stringBuilder.append(location.getYaw());
         stringBuilder.append(":");
         stringBuilder.append(location.getPitch());
-        if(stringBuilder.toString().equals(main.locationConfig.get("locations." + name))) return;
+        if (stringBuilder.toString().equals(main.locationConfig.get("locations." + name))) return;
         main.locationConfig.set("locations." + name, stringBuilder.toString());
     }
 

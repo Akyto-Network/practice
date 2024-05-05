@@ -6,8 +6,7 @@ import java.io.*;
 import org.bukkit.configuration.file.*;
 
 @Getter
-public class Config
-{
+public class Config {
     private final FileConfiguration config;
     private final File configFile;
     protected boolean wasCreated;

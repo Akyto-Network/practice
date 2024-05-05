@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -89,23 +90,27 @@ public class DatabaseSetup {
 	
 	public void exitAsync(final UUID uuid) {
 		final Profile data = this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid);
+
 		if (data != null) {
-	        DB.executeUpdateAsync("UPDATE playersdata SET scoreboard=? WHERE name=?", String.valueOf(data.getSettings().get(0).booleanValue()), Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()).join();
-	        DB.executeUpdateAsync("UPDATE playersdata SET duelRequest=? WHERE name=?", String.valueOf(data.getSettings().get(1).booleanValue()), Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()).join();
-	        DB.executeUpdateAsync("UPDATE playersdata SET time=? WHERE name=?", String.valueOf(data.getSettings().get(2).booleanValue()), Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()).join();
-	        DB.executeUpdateAsync("UPDATE playersdata SET displaySpectate=? WHERE name=?", String.valueOf(data.getSpectateSettings().get(0).booleanValue()), Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()).join();
-	        DB.executeUpdateAsync("UPDATE playersdata SET flySpeed=? WHERE name=?", String.valueOf(data.getSpectateSettings().get(1).booleanValue()), Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()).join();
-	        DB.executeUpdateAsync("UPDATE playersdata SET played=? WHERE name=?", this.main.getUtils().getStringValue(data.getStats().get(0), ":"), Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()).join();
-	    	DB.executeUpdateAsync("UPDATE playersdata SET win=? WHERE name=?", this.main.getUtils().getStringValue(data.getStats().get(1), ":"), Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()).join();
+			final String playerName = Utils.getName(uuid);
+
+	        DB.executeUpdateAsync("UPDATE playersdata SET scoreboard=? WHERE name=?", String.valueOf(data.getSettings().get(0).booleanValue()), playerName).join();
+	        DB.executeUpdateAsync("UPDATE playersdata SET duelRequest=? WHERE name=?", String.valueOf(data.getSettings().get(1).booleanValue()), playerName).join();
+	        DB.executeUpdateAsync("UPDATE playersdata SET time=? WHERE name=?", String.valueOf(data.getSettings().get(2).booleanValue()), playerName).join();
+	        DB.executeUpdateAsync("UPDATE playersdata SET displaySpectate=? WHERE name=?", String.valueOf(data.getSpectateSettings().get(0).booleanValue()), playerName).join();
+	        DB.executeUpdateAsync("UPDATE playersdata SET flySpeed=? WHERE name=?", String.valueOf(data.getSpectateSettings().get(1).booleanValue()), playerName).join();
+	        DB.executeUpdateAsync("UPDATE playersdata SET played=? WHERE name=?", this.main.getUtils().getStringValue(data.getStats().get(0), ":"), playerName).join();
+	    	DB.executeUpdateAsync("UPDATE playersdata SET win=? WHERE name=?", this.main.getUtils().getStringValue(data.getStats().get(1), ":"), playerName).join();
 		}
+
 		this.main.getManagerHandler().getInventoryManager().removeUselessInventory(uuid);
 		this.main.getManagerHandler().getProfileManager().getProfiles().remove(uuid);
 	}
 	
 	public void loadAsync(final UUID uuid) {
-	    final Player player = Bukkit.getPlayer(uuid);
 	    final Profile data = this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid);
-        String playerName = player.getName();
+		final String playerName = Utils.getName(uuid);
+
         CompletableFuture<String> scoreboardFuture = DB.getFirstRowAsync("SELECT scoreboard FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> row.getString("scoreboard"));
         CompletableFuture<String> duelRequestFuture = DB.getFirstRowAsync("SELECT duelRequest FROM playersdata WHERE name=?", playerName)

@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -77,10 +78,10 @@ public class InventoryManager {
         this.main.getManagerHandler().getPartyManager().getParties().forEach(party -> {
             final ItemStack item = new ItemStack(Material.SKULL_ITEM);
             final ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GOLD + (Bukkit.getPlayer(party.getCreator()) != null ? Bukkit.getPlayer(party.getCreator()).getName() : Bukkit.getOfflinePlayer(party.getCreator()).getName()) + "'s party");
+            meta.setDisplayName(ChatColor.GOLD + Utils.getName(party.getCreator()) + "'s party");
             final List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "Member(s) [" + party.getMembers().size() + "]");
-            party.getMembers().forEach(member -> lore.add(ChatColor.GRAY + " -> " + ChatColor.WHITE + (Bukkit.getPlayer(member) != null ? Bukkit.getPlayer(member).getName() : Bukkit.getOfflinePlayer(member).getName())));
+            party.getMembers().forEach(member -> lore.add(ChatColor.GRAY + " -> " + ChatColor.WHITE + Utils.getName(member)));
             meta.setLore(lore);
             item.setItemMeta(meta);
             partys.add(item);
@@ -93,7 +94,7 @@ public class InventoryManager {
         this.main.getDuels().forEach(duel -> {
             final ItemStack item = new ItemStack(duel.getKit().material(), 1, duel.getKit().data());
             final ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GREEN + (Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getFirst()).get(0)).getName()) + ChatColor.GRAY + " vs " + ChatColor.RED + (Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)) != null ? Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName() : Bukkit.getOfflinePlayer(new ArrayList<>(duel.getSecond()).get(0)).getName()));
+            meta.setDisplayName(ChatColor.GREEN + Utils.getName(duel.getFirst().iterator().next()) + ChatColor.GRAY + " vs " + ChatColor.RED + Utils.getName(duel.getSecond().iterator().next()));
             meta.setLore(Arrays.asList(ChatColor.GRAY + "In: " + (duel.isRanked() ? ChatColor.GOLD + "Ranked" : ChatColor.YELLOW + "Unranked"), ChatColor.GRAY + "Kit: " + ChatColor.YELLOW + ChatColor.stripColor(duel.getKit().displayName())));
             item.setItemMeta(meta);
             matchs.add(item);
@@ -164,7 +165,7 @@ public class InventoryManager {
 	}
 	
 	public void generatePreviewInventory(final UUID uuid, final UUID opponent) {
-		final Inventory preview = Bukkit.createInventory(null, 54, ChatColor.DARK_GRAY + (Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()) + " preview's");
+		final Inventory preview = Bukkit.createInventory(null, 54, ChatColor.DARK_GRAY + Utils.getName(uuid) + " preview's");
 		final DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid);
         preview.setContents(Bukkit.getPlayer(uuid).getInventory().getContents());
         preview.setItem(36, Bukkit.getPlayer(uuid).getInventory().getArmorContents()[3]);
@@ -197,7 +198,7 @@ public class InventoryManager {
         loreStats.add(ChatColor.DARK_GRAY + "Hits" + ChatColor.RESET + ": " + duelStatistics.getHits());
         loreStats.add(ChatColor.DARK_GRAY + "Longer Hits" + ChatColor.RESET + ": " + duelStatistics.getLongestHit());
         preview.setItem(50, this.main.getUtils().createItem(Material.MELON, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
-        preview.setItem(53, this.main.getUtils().createItem(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + (Bukkit.getPlayer(opponent) != null ? Bukkit.getPlayer(opponent).getName() : Bukkit.getOfflinePlayer(opponent).getName()), null));
+        preview.setItem(53, this.main.getUtils().createItem(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + Utils.getName(opponent), null));
         this.previewInventory.remove(uuid);
 		this.previewInventory.put(uuid, preview);
 	}
@@ -256,7 +257,7 @@ public class InventoryManager {
 	}
 	
 	public void generateProfileInventory(final UUID uuid) {
-		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + (Bukkit.getPlayer(uuid) != null ? Bukkit.getPlayer(uuid).getName() : Bukkit.getOfflinePlayer(uuid).getName()) + " profile");
+		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + Utils.getName(uuid) + " profile");
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
         for (int i = 0; i < 5; ++i) {
             profile.setItem(i, glass);

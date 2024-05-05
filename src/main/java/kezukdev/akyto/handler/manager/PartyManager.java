@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -32,12 +33,14 @@ public class PartyManager {
 			Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "You cannot do this right now!");
 			return;
 		}
+
 		if (this.getPartyByUUID(creator) != null) {
 			Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "You're already at a party!");
 			return;
 		}
+
 		this.parties.add(new PartyEntry(creator));
-		Bukkit.getPlayer(creator).sendMessage(ChatColor.GRAY + "You've just created your own party!");
+		this.main.getServer().getPlayer(creator).sendMessage(ChatColor.GRAY + "You've just created your own party!");
 		this.main.getManagerHandler().getItemManager().giveItems(creator, false);
 		this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 	}
@@ -47,18 +50,19 @@ public class PartyManager {
 			Bukkit.getPlayer(sender).sendMessage(ChatColor.RED + "You're not in a party!");
 			return;
 		}
+
 		final PartyEntry party = this.getPartyByUUID(sender);
 		TextComponent partyComponent = new TextComponent(ChatColor.YELLOW + "Member(s)" + ChatColor.GRAY + ": ");
 		final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
 		party.getMembers().forEach(member -> {
 			if (!member.equals(party.getCreator())) {
-				final TextComponent itxt = new TextComponent(Bukkit.getPlayer(member) == null ? Bukkit.getOfflinePlayer(member).getName() : Bukkit.getPlayer(member).getName());
+				final TextComponent itxt = new TextComponent(Utils.getName(member));
 				joiner.add(itxt);	
 			}
 		});
 		partyComponent.addExtra(joiner.toTextComponent());
 		Bukkit.getPlayer(sender).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-		Bukkit.getPlayer(sender).sendMessage(ChatColor.DARK_GRAY + "Leader" + ChatColor.GRAY + ": " + ChatColor.WHITE + Bukkit.getPlayer(party.getCreator()).getName());
+		Bukkit.getPlayer(sender).sendMessage(ChatColor.DARK_GRAY + "Leader" + ChatColor.GRAY + ": " + ChatColor.WHITE + Utils.getName(party.getCreator()));
 		Bukkit.getPlayer(sender).spigot().sendMessage(partyComponent);
 		Bukkit.getPlayer(sender).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
 	}
@@ -114,7 +118,7 @@ public class PartyManager {
 	        });
 	    }
 	    party.getMembers().forEach(uuid -> {
-	        if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + (Bukkit.getPlayer(invited) != null ? Bukkit.getPlayer(invited).getName() : Bukkit.getOfflinePlayer(invited).getName()) + " join the party!");
+	        if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + Utils.getName(invited) + " join the party!");
 	    });
 	    this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 	    this.main.getManagerHandler().getItemManager().giveItems(invited, false);
@@ -133,7 +137,7 @@ public class PartyManager {
 						this.main.getManagerHandler().getItemManager().giveItems(uuid, true);
 					}
 				}
-				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + (Bukkit.getPlayer(sender) != null ? Bukkit.getPlayer(sender).getName() : Bukkit.getOfflinePlayer(sender).getName()) + " to dissolve the party!");
+				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + Utils.getName(sender) + " to dissolve the party!");
 			});
 			this.parties.remove(party);
 			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
@@ -148,7 +152,7 @@ public class PartyManager {
 				}
 			}
 			party.getMembers().forEach(uuid -> {
-				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + (Bukkit.getPlayer(sender) != null ? Bukkit.getPlayer(sender).getName() : Bukkit.getOfflinePlayer(sender).getName()) + " left the party!");
+				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + Utils.getName(sender) + " left the party!");
 			});
 			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 		}

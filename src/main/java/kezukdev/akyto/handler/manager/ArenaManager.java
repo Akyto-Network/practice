@@ -55,7 +55,7 @@ public class ArenaManager {
     public Arena getRandomArena(ArenaType arenaType) {
         List<Arena> availableArena = this.main.getArenas().stream().filter(arenaManager -> arenaManager.getArenaType() == arenaType).collect(Collectors.toList());
         Collections.shuffle(availableArena);
-        return availableArena.get(0);
+        return availableArena.isEmpty() ? null : availableArena.get(0);
     }
 
 	public Arena getArena(String name) {

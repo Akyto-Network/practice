@@ -22,14 +22,9 @@ public class Top {
     }
 
     public Top(Map<String, int[]> map, final Practice main) {
-    	for(Map.Entry<String, int[]> entry : map.entrySet()) {
-            int global_elo = 0;
-            for(int elo : entry.getValue()) {
-                global_elo += elo;
-            }
-            global_elo = global_elo / entry.getValue().length;
-            topBoard.put(entry.getKey(), global_elo);
-        }
+        map.forEach((key, value) -> {
+            topBoard.put(key, (int) Arrays.stream(value).average().orElse(0));
+        });
         organise();
     }
 
@@ -38,14 +33,16 @@ public class Top {
     }
 
     private void organise() {
-        List<Map.Entry<String, Integer>> entries = topBoard.entrySet().stream().sorted(Map.Entry.comparingByValue()).limit(topBoard.size()).collect(Collectors.toList());
-        Collections.reverse(entries);
+        List<Map.Entry<String, Integer>> entries = topBoard.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toList());
+
         int x = 1;
-        for(Map.Entry<String, Integer> entry : entries) {
-            if(x <= 3) {
+        for (Map.Entry<String, Integer> entry : entries) {
+            if (x <= 3) {
             	loreRanked.add(ChatColor.DARK_GRAY + "#" + x + " " + ChatColor.RED + entry.getKey() + ChatColor.GRAY + " (" + ChatColor.WHITE + entry.getValue() + ChatColor.GRAY + ")");
             }
-            if(x <= 10) {
+            if (x <= 10) {
             	lore.add(ChatColor.DARK_GRAY + "#" + x + " " + ChatColor.RED + entry.getKey() + ChatColor.GRAY + " (" + ChatColor.WHITE + entry.getValue() + ChatColor.GRAY + ")");
             }
         	x++;

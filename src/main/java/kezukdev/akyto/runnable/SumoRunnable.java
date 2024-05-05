@@ -27,14 +27,15 @@ public class SumoRunnable extends BukkitRunnable {
             this.cancel();
             return;
         }
+
         List<UUID> uuids = new ArrayList<>();
         uuids.addAll(match.getFirst());
         uuids.addAll(match.getSecond());
         for (final UUID uuid : uuids) {
-        	final Player player = Bukkit.getPlayer(uuid);
+        	final Player player = main.getServer().getPlayer(uuid);
             if (player != null && player.getLocation().getBlock().isLiquid()) {
                 this.cancel();
-                this.main.getManagerHandler().getDuelManager().endSingle(match.getFirst().contains(player.getUniqueId()) ? new ArrayList<>(match.getSecond()).get(0) : new ArrayList<>(match.getFirst()).get(0));
+                this.main.getManagerHandler().getDuelManager().endSingle(new ArrayList<>(match.getFirst().contains(player.getUniqueId()) ? match.getSecond() : match.getFirst()).get(0));
                 break;
             }
         }
