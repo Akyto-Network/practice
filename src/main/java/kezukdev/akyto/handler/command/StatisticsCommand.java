@@ -18,7 +18,11 @@ public class StatisticsCommand implements CommandExecutor {
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) return false;
+		if (!(sender instanceof Player)) {
+			sender.sendMessage(org.bukkit.ChatColor.RED + "You must be a player to do that");
+			return false;
+		}
+
 		final Player playerSender = (Player) sender;
 		final ProfileState state = this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState();
 		boolean is_busy = state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR);

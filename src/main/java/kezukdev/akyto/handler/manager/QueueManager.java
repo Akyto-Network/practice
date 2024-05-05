@@ -50,7 +50,7 @@ public class QueueManager {
     }
     
     @Getter
-    public class QueueEntry {
+    public static class QueueEntry {
         private UUID uuid;
         private Kit kit;
         private boolean ranked;

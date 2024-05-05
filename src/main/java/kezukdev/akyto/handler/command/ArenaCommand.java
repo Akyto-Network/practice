@@ -1,6 +1,5 @@
 package kezukdev.akyto.handler.command;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +19,11 @@ public class ArenaCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player) || !sender.isOp()) return false;
+		if (!(sender instanceof Player) || !sender.isOp()) {
+			sender.sendMessage(org.bukkit.ChatColor.RED + "You must be an op player to do that");
+			return false;
+		}
+
 		final Player playerSender = (Player) sender;
 		
 		if (args.length == 0) {

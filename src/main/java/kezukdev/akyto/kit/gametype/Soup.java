@@ -1,6 +1,7 @@
 package kezukdev.akyto.kit.gametype;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -129,6 +130,6 @@ public class Soup extends Kit implements KitInterface {
 
 	@Override
 	public List<PotionEffect> potionEffect() {
-		return Arrays.asList(new PotionEffect(PotionEffectType.SPEED, 99999999, 1));
+		return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, 99999999, 1));
 	}
 }

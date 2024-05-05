@@ -20,16 +20,16 @@ public class Board
     private final AetherOptions options;
     
     static {
-        Board.boards = new HashSet<Board>();
+        Board.boards = new HashSet<>();
     }
     
     public Board(final Player player, final Aether aether, final AetherOptions options) {
         this.player = player;
         this.aether = aether;
         this.options = options;
-        this.keys = new HashSet<String>();
-        this.cooldowns = new HashSet<BoardCooldown>();
-        this.entries = new ArrayList<BoardEntry>();
+        this.keys = new HashSet<>();
+        this.cooldowns = new HashSet<>();
+        this.entries = new ArrayList<>();
         this.setup();
     }
     
@@ -68,8 +68,8 @@ public class Board
     }
     
     public List<String> getBoardEntriesFormatted() {
-        final List<String> toReturn = new ArrayList<String>();
-        for (final BoardEntry entry : new ArrayList<BoardEntry>(this.entries)) {
+        final List<String> toReturn = new ArrayList<>();
+        for (final BoardEntry entry : new ArrayList<>(this.entries)) {
             toReturn.add(entry.getText());
         }
         return toReturn;

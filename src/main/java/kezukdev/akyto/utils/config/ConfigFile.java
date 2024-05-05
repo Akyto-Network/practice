@@ -65,7 +65,7 @@ public class ConfigFile
             }
             return toReturn;
         }
-        return Arrays.asList("ERROR: STRING LIST NOT FOUND!");
+        return Collections.singletonList("ERROR: STRING LIST NOT FOUND!");
     }
     
     public List<String> getStringList(final String path) {
@@ -76,7 +76,7 @@ public class ConfigFile
             }
             return strings;
         }
-        return Arrays.asList("ERROR: STRING LIST NOT FOUND!");
+        return Collections.singletonList("ERROR: STRING LIST NOT FOUND!");
     }
     
     public List<String> getStringListOrDefault(final String path, final List<String> toReturn) {

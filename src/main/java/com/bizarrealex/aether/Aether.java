@@ -44,7 +44,7 @@ public class Aether implements Listener
                     final Board board = Board.getByPlayer(player);
                     if (board != null) {
                         final List<String> scores = Aether.this.adapter.getScoreboard(player, board, board.getCooldowns());
-                        final List<String> translatedScores = new ArrayList<String>();
+                        final List<String> translatedScores = new ArrayList<>();
                         if (scores == null) {
                             if (board.getEntries().isEmpty()) {
                                 continue;

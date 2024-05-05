@@ -24,7 +24,7 @@ public class ExampleBoardAdapter implements BoardAdapter, Listener
     
     @Override
     public List<String> getScoreboard(final Player player, final Board board, final Set<BoardCooldown> cooldowns) {
-        final List<String> strings = new ArrayList<String>();
+        final List<String> strings = new ArrayList<>();
         strings.add("&7&m-------------------");
         for (final BoardCooldown cooldown : cooldowns) {
             if (cooldown.getId().equals("enderpearl")) {

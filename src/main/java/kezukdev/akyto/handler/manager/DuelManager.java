@@ -1,9 +1,6 @@
 package kezukdev.akyto.handler.manager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -131,7 +128,7 @@ public class DuelManager {
 			this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid);
 			});
 		TagUtils.clearEntries(Arrays.asList(Lists.newArrayList(winner), Lists.newArrayList(looser)));
-		new RespawnRunnable(Arrays.asList(players), this.main).runTaskLater(this.main, 70L);
+		new RespawnRunnable(Collections.singletonList(players), this.main).runTaskLater(this.main, 70L);
 	}
 
 	public void endMultiple(final UUID winner) {
