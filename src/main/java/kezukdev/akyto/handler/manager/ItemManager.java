@@ -32,12 +32,12 @@ public class ItemManager {
 				player.getInventory().setItem(1, this.main.getUtils().createItem(Material.EMERALD, 1, (byte)0, ChatColor.GRAY + "Settings"));
 				player.getInventory().setItem(4, this.main.getUtils().createItem(Material.PAPER, 1, (byte)0, ChatColor.GRAY + "Party Informations"));
 				player.getInventory().setItem(7, this.main.getUtils().createItem(Material.CHEST, 1, (byte)0, ChatColor.GRAY + "Other Parties"));
-				player.getInventory().setItem(8, this.main.getUtils().createItem(Material.DIAMOND_AXE, 1, (byte)0, ChatColor.GRAY + "Party Events"));
+				player.getInventory().setItem(8, this.main.getUtils().createItem(Material.DIAMOND_AXE, 1, (byte)0, ChatColor.GRAY + "Party Events", true));
 				player.updateInventory();
 				return;
 			}
-			player.getInventory().setItem(0, this.main.getUtils().createItem(Material.IRON_SWORD, 1, (byte)0, ChatColor.GRAY + "Unranked"));
-			player.getInventory().setItem(1, this.main.getUtils().createItem(Material.DIAMOND_SWORD, 1, (byte)0, ChatColor.GRAY + "Ranked"));
+			player.getInventory().setItem(0, this.main.getUtils().createItem(Material.IRON_SWORD, 1, (byte)0, ChatColor.GRAY + "Unranked", true));
+			player.getInventory().setItem(1, this.main.getUtils().createItem(Material.DIAMOND_SWORD, 1, (byte)0, ChatColor.GRAY + "Ranked", true));
 			player.getInventory().setItem(3, this.main.getUtils().createItem(Material.NAME_TAG, 1, (byte)0, ChatColor.GRAY + "Create party"));
 			player.getInventory().setItem(5, this.main.getUtils().createItem(Material.SKULL_ITEM, 1, (byte)0, ChatColor.GRAY + "Profile"));
 			player.getInventory().setItem(7, this.main.getUtils().createItem(Material.BOOK, 1, (byte)0, ChatColor.GRAY + "Editor"));

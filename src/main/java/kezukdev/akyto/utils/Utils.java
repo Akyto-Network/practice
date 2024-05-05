@@ -35,7 +35,7 @@ public class Utils {
 	private final Practice main;
 	
 	public Utils(final Practice main) { this.main = main; }
-	
+
 	public ItemStack createItem(final Material material, final int amount, final byte id, final String displayName) {
 		final ItemStack item = new ItemStack(material, amount, id);
 		final ItemMeta meta = item.getItemMeta();
@@ -43,20 +43,28 @@ public class Utils {
 		item.setItemMeta(meta);
 		return item;
 	}
-	
+
+	public ItemStack createItem(final Material material, final int amount, final byte id, final String displayName, boolean unbreakable) {
+		final ItemStack item = new ItemStack(material, amount, id);
+		final ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(displayName);
+		meta.spigot().setUnbreakable(unbreakable);
+		item.setItemMeta(meta);
+		return item;
+	}
+
 	public ItemStack createItem(final Material material, final String displayName, final List<String> lore) {
 		final ItemStack item = new ItemStack(material);
 		final ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(displayName);
 		meta.setLore(lore);
-		meta.spigot().setUnbreakable(true);
 		item.setItemMeta(meta);
 		return item;
 	}
 	
 	public void resetPlayer(final UUID uuid) {
-		if (Bukkit.getPlayer(uuid) == null) return;
 		final Player player = Bukkit.getPlayer(uuid);
+		if (player == null) return;
 		player.setAllowFlight(false);
 		player.setFlying(false);
 		player.setFireTicks(0);
