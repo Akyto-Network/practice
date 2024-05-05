@@ -81,7 +81,7 @@ public class InventoryListener implements Listener {
 				}
 			}
 			if (event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[3].getName()) || event.getClickedInventory().getName().equals(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[4].getName())) {
-			    final List<UUID> shuffle = Lists.newArrayList(this.main.getUtils().getPartyByUUID(event.getWhoClicked().getUniqueId()).getMembers());
+			    final List<UUID> shuffle = Lists.newArrayList(this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getWhoClicked().getUniqueId()).getMembers());
 			    Collections.shuffle(shuffle);
 			    int size = shuffle.size();
 			    final List<UUID> firstTeam = Lists.newArrayList();

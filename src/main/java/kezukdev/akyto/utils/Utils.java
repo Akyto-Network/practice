@@ -20,7 +20,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
-import kezukdev.akyto.handler.manager.PartyManager;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
@@ -114,11 +113,7 @@ public class Utils {
 	public Duel getDuelBySpectator(UUID uuid) {
 	    return main.getDuels().stream().filter(duel -> duel.getSpectator().contains(uuid)).findFirst().orElse(null);
 	}
-	
-	public PartyManager.PartyEntry getPartyByUUID(UUID uuid) {
-	    return main.getManagerHandler().getPartyManager().getPartys().stream().filter(party -> party.getMembers().contains(uuid)).findFirst().orElse(null);
-	}
-	
+
 	public Profile getProfiles(final UUID uuid) {
 		return this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid);
 	}

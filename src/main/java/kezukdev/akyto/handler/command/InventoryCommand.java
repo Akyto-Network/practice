@@ -2,6 +2,7 @@ package kezukdev.akyto.handler.command;
 
 import java.util.UUID;
 
+import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.utils.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,22 +23,19 @@ public class InventoryCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) return false;
-        final Player player = (Player) sender;
+        final Player playerSender = (Player) sender;
 
 		if (args.length != 1) {
 			sender.sendMessage(ChatColor.GRAY + " * " + ChatColor.RED + "/" + cmd.getName() + " <player>");
 			return false;
 		}
 
-        if (this.main.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId()).getProfileState().equals(ProfileState.FIGHT) || this.main.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId()).getProfileState().equals(ProfileState.EDITOR)) {
-            if (this.main.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId()).getProfileState().equals(ProfileState.FIGHT) && !this.main.getUtils().getDuelByUUID(player.getUniqueId()).getState().equals(DuelState.FINISHING)) {
-                sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
-                return false;
-            }
-            if (this.main.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId()).getProfileState().equals(ProfileState.EDITOR)) {
-                sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
-                return false;
-            }
+        final Profile senderProfile = this.main.getManagerHandler().getProfileManager().getProfiles().get(playerSender.getUniqueId());
+
+        if ((senderProfile.getProfileState().equals(ProfileState.FIGHT) && !this.main.getUtils().getDuelByUUID(playerSender.getUniqueId()).getState().equals(DuelState.FINISHING))
+                || senderProfile.getProfileState().equals(ProfileState.EDITOR)) {
+            sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
+            return false;
         }
 
         final UUID targetUUID = Utils.getUUID(args[0]);
@@ -47,8 +45,7 @@ public class InventoryCommand implements CommandExecutor {
             return false;
         }
 
-        player.openInventory(this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(targetUUID));
+        playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(targetUUID));
         return false;
 	}
-
 }

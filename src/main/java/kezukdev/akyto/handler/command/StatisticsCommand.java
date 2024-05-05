@@ -28,6 +28,7 @@ public class StatisticsCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}
+
 			playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(playerSender.getUniqueId()));
 			return false;
 		}
@@ -39,10 +40,12 @@ public class StatisticsCommand implements CommandExecutor {
 			}
 
 			final Player target = Bukkit.getPlayer(args[0]);
+
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not online.");
 				return false;
 			}
+
 			playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(target.getUniqueId()));
 			return false;
 		}

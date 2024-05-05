@@ -29,7 +29,7 @@ public class LeaderboardCommand implements CommandExecutor {
 		} else {
 			sender.sendMessage(ChatColor.RED + "You cannot do that right now!");
 		}
+
 		return false;
 	}
-
 }

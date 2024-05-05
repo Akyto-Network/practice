@@ -57,9 +57,9 @@ public class SideBoard implements BoardAdapter {
         board.add(ChatColor.DARK_GRAY + "Online" + ChatColor.GRAY + ": " + ChatColor.WHITE + Bukkit.getOnlinePlayers().size());
         board.add(ChatColor.DARK_GRAY + "In Fight" + ChatColor.GRAY + ": " + ChatColor.WHITE + this.plugin.getDuels().size());
         board.add(ChatColor.DARK_GRAY + "In Queue" + ChatColor.GRAY + ": " + ChatColor.WHITE + this.plugin.getQueue().size());
-        if (this.plugin.getUtils().getPartyByUUID(player.getUniqueId()) != null) {
+        if (this.plugin.getManagerHandler().getPartyManager().getPartyByUUID(player.getUniqueId()) != null) {
         	board.add(" ");
-        	final PartyManager.PartyEntry party = this.plugin.getUtils().getPartyByUUID(player.getUniqueId());
+        	final PartyManager.PartyEntry party = this.plugin.getManagerHandler().getPartyManager().getPartyByUUID(player.getUniqueId());
         	board.add(ChatColor.DARK_GRAY + "Leader" + ChatColor.GRAY + ": " + ChatColor.WHITE + Bukkit.getPlayer(party.getCreator()).getName());
         	board.add(ChatColor.DARK_GRAY + "Members" + ChatColor.GRAY + ": " + ChatColor.WHITE + (party.getMembers().size()-1));
         }

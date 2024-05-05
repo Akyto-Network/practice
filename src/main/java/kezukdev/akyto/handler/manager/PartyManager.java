@@ -19,8 +19,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 @Getter
 public class PartyManager {
 	
-	private Practice main;
-	private List<PartyEntry> partys;
+	private final Practice main;
+	private final List<PartyEntry> partys;
 	
 	public PartyManager(final Practice main) {
 		this.main = main;
@@ -32,7 +32,7 @@ public class PartyManager {
 			Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "You cannot do this right now!");
 			return;
 		}
-		if (this.main.getUtils().getPartyByUUID(creator) != null) {
+		if (this.getPartyByUUID(creator) != null) {
 			Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "You're already at a party!");
 			return;
 		}
@@ -43,11 +43,11 @@ public class PartyManager {
 	}
 	
 	public void sendPartyInformation(final UUID sender) {
-		if (this.main.getUtils().getPartyByUUID(sender) == null && Bukkit.getPlayer(sender) != null) {
+		if (this.getPartyByUUID(sender) == null && Bukkit.getPlayer(sender) != null) {
 			Bukkit.getPlayer(sender).sendMessage(ChatColor.RED + "You're not in a party!");
 			return;
 		}
-		final PartyEntry party = this.main.getUtils().getPartyByUUID(sender);
+		final PartyEntry party = this.getPartyByUUID(sender);
 		TextComponent partyComponent = new TextComponent(ChatColor.YELLOW + "Member(s)" + ChatColor.GRAY + ": ");
 		final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
 		party.getMembers().forEach(member -> {
@@ -64,28 +64,28 @@ public class PartyManager {
 	}
 	
 	public void kickParty(final UUID kicker, final UUID kicked) {
-		if(this.main.getUtils().getPartyByUUID(kicker) == null) {
-			Bukkit.getPlayer(kicker).sendMessage(ChatColor.RED + "You'r not in any party!");
+		if(this.getPartyByUUID(kicker) == null) {
+			Bukkit.getPlayer(kicker).sendMessage(ChatColor.RED + "You're not in any party!");
 			return;
 		}
 		if (kicker == kicked) {
 			Bukkit.getPlayer(kicker).sendMessage(ChatColor.RED + "You can't kick yourself.");
 			return;
 		}
-		if (!this.main.getUtils().getPartyByUUID(kicker).getMembers().contains(kicked)) {
+		if (!this.getPartyByUUID(kicker).getMembers().contains(kicked)) {
 			Bukkit.getPlayer(kicker).sendMessage(ChatColor.RED + "This player is not in your party!");
 			return;
 		}
-		if (this.main.getUtils().getPartyByUUID(kicker).getCreator().equals(kicked)) {
+		if (this.getPartyByUUID(kicker).getCreator().equals(kicked)) {
 			Bukkit.getPlayer(kicker).sendMessage(ChatColor.RED + "You can't kick the party creator!");
 			return;
 		}
-		if (!this.main.getUtils().getPartyByUUID(kicker).getCreator().equals(kicker)) {
+		if (!this.getPartyByUUID(kicker).getCreator().equals(kicker)) {
 			Bukkit.getPlayer(kicker).sendMessage(ChatColor.RED + "You're not the party leader!");
 			return;
 		}
-		this.main.getUtils().getPartyByUUID(kicker).getMembers().remove(kicked);
-		this.main.getUtils().getPartyByUUID(kicker).getMembers().forEach(uuids -> Bukkit.getPlayer(uuids).sendMessage(ChatColor.RED + Bukkit.getPlayer(kicked).getName() + " was kicked from the party"));
+		this.getPartyByUUID(kicker).getMembers().remove(kicked);
+		this.getPartyByUUID(kicker).getMembers().forEach(uuids -> Bukkit.getPlayer(uuids).sendMessage(ChatColor.RED + Bukkit.getPlayer(kicked).getName() + " was kicked from the party"));
 		if (this.main.getUtils().getDuelByUUID(kicked) == null) {
 			this.main.getUtils().sendToSpawn(kicked, false);
 		}
@@ -93,11 +93,11 @@ public class PartyManager {
 	}
 	
 	public void joinParty(final UUID inviter, final UUID invited) {
-	    if (this.main.getUtils().getPartyByUUID(inviter) == null || Bukkit.getPlayer(inviter) == null) {
+	    if (this.getPartyByUUID(inviter) == null || Bukkit.getPlayer(inviter) == null) {
 	        Bukkit.getPlayer(invited).sendMessage(ChatColor.RED + "Target is not connected or him isn't in any party!");
 	        return;
 	    }
-	    final PartyEntry party = this.main.getUtils().getPartyByUUID(inviter);
+	    final PartyEntry party = this.getPartyByUUID(inviter);
 	    party.getMembers().add(invited);
 	    if (this.main.getUtils().getDuelByUUID(inviter) != null) {
 	        this.main.getUtils().getProfiles(invited).setProfileState(ProfileState.SPECTATE);
@@ -121,11 +121,11 @@ public class PartyManager {
 	}
 	
 	public void leaveParty(final UUID sender) {
-		if (this.main.getUtils().getPartyByUUID(sender) == null && Bukkit.getPlayer(sender) != null) {
+		if (this.getPartyByUUID(sender) == null && Bukkit.getPlayer(sender) != null) {
 			Bukkit.getPlayer(sender).sendMessage(ChatColor.RED + "You're not in a party!");
 			return;
 		}
-		final PartyEntry party = this.main.getUtils().getPartyByUUID(sender);
+		final PartyEntry party = this.getPartyByUUID(sender);
 		if (party.getCreator().equals(sender)) {
 			party.getMembers().forEach(uuid -> {
 				if (this.main.getUtils().getProfiles(uuid) != null) {
@@ -153,9 +153,13 @@ public class PartyManager {
 			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 		}
 	}
+
+	public PartyEntry getPartyByUUID(UUID uuid) {
+		return this.partys.stream().filter(party -> party.getMembers().contains(uuid)).findFirst().orElse(null);
+	}
 	
 	@Getter @Setter
-	public class PartyEntry {
+	public static class PartyEntry {
 		
 		private UUID creator;
 		private Set<UUID> members;

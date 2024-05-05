@@ -27,8 +27,8 @@ public class ItemManager {
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
 		if (profile.getProfileState().equals(ProfileState.FREE)) {
-			if (this.main.getUtils().getPartyByUUID(uuid) != null && !destruct) {
-				player.getInventory().setItem(0, this.main.getUtils().createItem(Material.REDSTONE_TORCH_ON, 1, (byte)0, ChatColor.RED + (this.main.getUtils().getPartyByUUID(uuid).getCreator().equals(uuid) ? "Disband" : "Leave") + " Party."));
+			if (this.main.getManagerHandler().getPartyManager().getPartyByUUID(uuid) != null && !destruct) {
+				player.getInventory().setItem(0, this.main.getUtils().createItem(Material.REDSTONE_TORCH_ON, 1, (byte)0, ChatColor.RED + (this.main.getManagerHandler().getPartyManager().getPartyByUUID(uuid).getCreator().equals(uuid) ? "Disband" : "Leave") + " Party."));
 				player.getInventory().setItem(1, this.main.getUtils().createItem(Material.EMERALD, 1, (byte)0, ChatColor.GRAY + "Settings"));
 				player.getInventory().setItem(4, this.main.getUtils().createItem(Material.PAPER, 1, (byte)0, ChatColor.GRAY + "Party Informations"));
 				player.getInventory().setItem(7, this.main.getUtils().createItem(Material.CHEST, 1, (byte)0, ChatColor.GRAY + "Other Parties"));

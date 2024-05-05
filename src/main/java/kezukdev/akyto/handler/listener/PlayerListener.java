@@ -65,7 +65,7 @@ public class PlayerListener implements Listener {
 	public void onPlayerLeft(final PlayerQuitEvent event) {
 		final Profile profile = this.main.getUtils().getProfiles(event.getPlayer().getUniqueId());
 		if (event.getPlayer().isOnline() && profile != null) {
-			if (this.main.getUtils().getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
+			if (this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
 				this.main.getManagerHandler().getPartyManager().leaveParty(event.getPlayer().getUniqueId());
 			}
 			if (profile.getProfileState().equals(ProfileState.QUEUE)) {
@@ -115,16 +115,16 @@ public class PlayerListener implements Listener {
         }
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (data.getProfileState().equals(ProfileState.FREE)) {
-				if (this.main.getUtils().getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
+				if (this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
 					if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) { this.main.getManagerHandler().getPartyManager().leaveParty(event.getPlayer().getUniqueId()); }
 					if (event.getItem().getType().equals(Material.PAPER)) { this.main.getManagerHandler().getPartyManager().sendPartyInformation(event.getPlayer().getUniqueId()); }
 					if (event.getItem().getType().equals(Material.CHEST)) { this.main.getManagerHandler().getInventoryManager().getPartyMultipage().open(event.getPlayer(), 1); }
 					if (event.getItem().getType().equals(Material.DIAMOND_AXE)) { 
-						if (!this.main.getUtils().getPartyByUUID(event.getPlayer().getUniqueId()).getCreator().equals(event.getPlayer().getUniqueId())) {
+						if (!this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getPlayer().getUniqueId()).getCreator().equals(event.getPlayer().getUniqueId())) {
 							event.getPlayer().sendMessage(ChatColor.RED + "You're not the party's creator!");
 							return;
 						}
-						if (!(this.main.getUtils().getPartyByUUID(event.getPlayer().getUniqueId()).getMembers().size() > 1)) {
+						if (!(this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getPlayer().getUniqueId()).getMembers().size() > 1)) {
 							event.getPlayer().sendMessage(ChatColor.RED + "You must have at least two members to launch an event!");
 							return;
 						}
