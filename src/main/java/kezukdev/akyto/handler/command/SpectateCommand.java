@@ -76,7 +76,7 @@ public class SpectateCommand implements CommandExecutor {
                 playerSender.hidePlayer(Bukkit.getPlayer(uuid));
             }));
         }
-
+        targetDuel.getSpectator().add(playerSender.getUniqueId());
         if (!profileSender.getProfileState().equals(ProfileState.SPECTATE)) {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 player.hidePlayer(playerSender);
@@ -91,7 +91,6 @@ public class SpectateCommand implements CommandExecutor {
             playerSender.showPlayer(Bukkit.getPlayer(uuid));
             Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is now spectating.");
         }));
-        targetDuel.getSpectator().add(playerSender.getUniqueId());
 
         if (!targetDuel.getSpectator().isEmpty()) {
             targetDuel.getSpectator().forEach(spectator -> {
