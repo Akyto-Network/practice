@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CompletableFuture;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -40,6 +41,8 @@ import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.kit.KitInterface;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.runnable.PearlExpBarRunnable;
+import kezukdev.akyto.runnable.PearlExpireRunnable;
 import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
 import kezukdev.akyto.utils.match.MatchUtils;
@@ -227,19 +230,8 @@ public class PlayerListener implements Listener {
 					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getPlayer().getUniqueId());
 					if (!duelStatistics.isEnderPearlCooldownActive()) {
 						duelStatistics.applyEnderPearlCooldown();
-						new BukkitRunnable() {
-							
-							@Override
-							public void run() {
-								if (!duelStatistics.isEnderPearlCooldownActive()) {
-									this.cancel();
-									return;
-								}
-								if (!duel.getState().equals(DuelState.FINISHING)) {
-									event.getPlayer().sendMessage(ChatColor.GREEN + "Enderpearl cooldown has expired, you can launch another pearl!");		
-								}
-							}
-						}.runTaskLaterAsynchronously(main, 320L);
+						new PearlExpBarRunnable(player, duel).runTaskTimerAsynchronously(Practice.getAPI(), 2L, 2L);
+						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
 						return;
 					}
 					event.setUseItemInHand(Result.DENY);
