@@ -1,4 +1,4 @@
-package kezukdev.akyto.utils;
+package kezukdev.akyto.utils.match;
 
 import java.util.UUID;
 

@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Timer;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import gym.core.utils.TimeUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.cache.DuelState;
@@ -63,7 +63,7 @@ public class CountdownRunnable extends BukkitRunnable {
             }));
 			this.duel.timer = new Timer();
 			this.duel.startTime = System.currentTimeMillis();
-			this.main.getUtils().startDuration(duel);
+			TimeUtils.startDuration(duel);
 			duel.setState(DuelState.PLAYING);
 			this.cancel();
 		}

@@ -65,7 +65,7 @@ public class SideBoard implements BoardAdapter {
         board.add(ChatColor.DARK_GRAY + "In Fight" + ChatColor.GRAY + ": " + ChatColor.WHITE + this.plugin.getDuels().size());
         board.add(ChatColor.DARK_GRAY + "In Queue" + ChatColor.GRAY + ": " + ChatColor.WHITE + this.plugin.getQueue().size());
 
-        final PartyManager.PartyEntry playerParty = this.plugin.getManagerHandler().getPartyManager().getPartyByUUID(player.getUniqueId());
+        final PartyManager.PartyEntry playerParty = Utils.getPartyByUUID(player.getUniqueId());
 
         if (playerParty != null) {
         	board.add(" ");
@@ -81,7 +81,7 @@ public class SideBoard implements BoardAdapter {
 
     private List<String> getGameBoard(final Player player) {
         final List<String> board = new LinkedList<>();
-        final Duel duel = this.plugin.getUtils().getDuelByUUID(player.getUniqueId());
+        final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
         final UUID opps = duel.getFirst().contains(player.getUniqueId()) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0);
 
         board.add(spacer);
@@ -132,8 +132,8 @@ public class SideBoard implements BoardAdapter {
     private List<String> getSpecBoard(final Player player) {
         final List<String> board = new LinkedList<>();
         board.add(spacer);
-        Duel duel = this.plugin.getUtils().getDuelBySpectator(player.getUniqueId());
-        if (duel == null) duel = this.plugin.getUtils().getDuelByUUID(player.getUniqueId());
+        Duel duel = Utils.getDuelBySpectator(player.getUniqueId());
+        if (duel == null) duel = Utils.getDuelByUUID(player.getUniqueId());
         if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
         	if (duel.getDuelType().equals(DuelType.SINGLE)) {
                 final String first = Utils.getName(duel.getFirst().iterator().next());

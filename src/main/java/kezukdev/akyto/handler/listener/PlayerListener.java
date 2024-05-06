@@ -36,9 +36,13 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.duel.cache.DuelStatistics;
+import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.kit.KitInterface;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.utils.FormatUtils;
+import kezukdev.akyto.utils.Utils;
+import kezukdev.akyto.utils.match.MatchUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_7_R4.PacketPlayOutNamedSoundEffect;
 
@@ -57,7 +61,7 @@ public class PlayerListener implements Listener {
 		this.main.getManagerHandler().getProfileManager().getProfiles().put(event.getPlayer().getUniqueId(), playerProfile);
 		this.main.getDatabaseSetup().update(event.getPlayer().getUniqueId());
 		this.main.getManagerHandler().getItemManager().giveItems(event.getPlayer().getUniqueId(), false);
-		this.main.getUtils().resetPlayer(event.getPlayer().getUniqueId());
+		Utils.resetPlayer(event.getPlayer().getUniqueId());
 		event.getPlayer().teleport(this.main.getSpawn().getLocation() == null ? event.getPlayer().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
 		this.main.getManagerHandler().getInventoryManager().generateSettingsInventory(event.getPlayer().getUniqueId());
 		this.main.getManagerHandler().getInventoryManager().generateProfileInventory(event.getPlayer().getUniqueId());
@@ -65,27 +69,27 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerLeft(final PlayerQuitEvent event) {
-		final Profile profile = this.main.getUtils().getProfiles(event.getPlayer().getUniqueId());
+		final Profile profile = Utils.getProfiles(event.getPlayer().getUniqueId());
 		if (event.getPlayer().isOnline() && profile != null) {
-			if (this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
+			if (Utils.getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
 				this.main.getManagerHandler().getPartyManager().leaveParty(event.getPlayer().getUniqueId());
 			}
 			if (profile.getProfileState().equals(ProfileState.QUEUE)) {
 				this.main.getQueue().remove(event.getPlayer().getUniqueId());
 			}
 			if (profile.getProfileState().equals(ProfileState.SPECTATE)) {
-				final Duel duel = this.main.getUtils().getDuelBySpectator(event.getPlayer().getUniqueId());
+				final Duel duel = Utils.getDuelBySpectator(event.getPlayer().getUniqueId());
 				duel.getSpectator().remove(event.getPlayer().getUniqueId());
 				Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.")));
 			}
 			if (profile.getProfileState().equals(ProfileState.FIGHT)) {
-				if (this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()) != null) {
-					final Duel duel = this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId());
+				if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()) != null) {
+					final Duel duel = Utils.getDuelByUUID(event.getPlayer().getUniqueId());
 					if (!duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
 						this.main.getManagerHandler().getDuelManager().endSingle(duel.getFirst().contains(event.getPlayer().getUniqueId()) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));
 					}
 					if (!duel.getState().equals(DuelState.FINISHING) && (duel.getDuelType().equals(DuelType.FFA) || duel.getDuelType().equals(DuelType.SPLIT))) {
-						this.main.getUtils().addKill(event.getPlayer().getUniqueId(), null);
+						MatchUtils.addKill(event.getPlayer().getUniqueId(), null);
 					}
 				}
 			}	
@@ -107,7 +111,7 @@ public class PlayerListener implements Listener {
 	public void onInteract(final PlayerInteractEvent event) {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
 		if (event.getItem() == null || event.getItem().getType().equals(Material.AIR)) return;
-		final Profile data = this.main.getUtils().getProfiles(event.getPlayer().getUniqueId());
+		final Profile data = Utils.getProfiles(event.getPlayer().getUniqueId());
 		final Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
 		Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null && isPlants(clickedBlock.getType())) {
@@ -117,16 +121,16 @@ public class PlayerListener implements Listener {
         }
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (data.getProfileState().equals(ProfileState.FREE)) {
-				if (this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
+				if (Utils.getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
 					if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) { this.main.getManagerHandler().getPartyManager().leaveParty(event.getPlayer().getUniqueId()); }
 					if (event.getItem().getType().equals(Material.PAPER)) { this.main.getManagerHandler().getPartyManager().sendPartyInformation(event.getPlayer().getUniqueId()); }
 					if (event.getItem().getType().equals(Material.CHEST)) { this.main.getManagerHandler().getInventoryManager().getPartyMultipage().open(event.getPlayer(), 1); }
 					if (event.getItem().getType().equals(Material.DIAMOND_AXE)) { 
-						if (!this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getPlayer().getUniqueId()).getCreator().equals(event.getPlayer().getUniqueId())) {
+						if (!Utils.getPartyByUUID(event.getPlayer().getUniqueId()).getCreator().equals(event.getPlayer().getUniqueId())) {
 							event.getPlayer().sendMessage(ChatColor.RED + "You're not the party's creator!");
 							return;
 						}
-						if (!(this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getPlayer().getUniqueId()).getMembers().size() > 1)) {
+						if (!(Utils.getPartyByUUID(event.getPlayer().getUniqueId()).getMembers().size() > 1)) {
 							event.getPlayer().sendMessage(ChatColor.RED + "You must have at least two members to launch an event!");
 							return;
 						}
@@ -160,13 +164,13 @@ public class PlayerListener implements Listener {
 					event.getPlayer().openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsSpectateInventory().get(event.getPlayer().getUniqueId()));
 				}
 				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) { 
-					final Duel duel = this.main.getUtils().getDuelBySpectator(event.getPlayer().getUniqueId());
+					final Duel duel = Utils.getDuelBySpectator(event.getPlayer().getUniqueId());
 					duel.getSpectator().remove(event.getPlayer().getUniqueId());
 					Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
 						Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
 						event.getPlayer().hidePlayer(Bukkit.getPlayer(uuid));
 					}));
-					this.main.getUtils().sendToSpawn(event.getPlayer().getUniqueId(), true);
+					Utils.sendToSpawn(event.getPlayer().getUniqueId(), true);
 					return;
 				}
 			}
@@ -181,24 +185,26 @@ public class PlayerListener implements Listener {
 				if (event.getClickedBlock().getType().equals(Material.ANVIL)) { event.getPlayer().openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[2]); }
 				if (event.getClickedBlock().getType().equals(Material.TRAP_DOOR)) { 
 					event.getPlayer().sendMessage(ChatColor.GREEN + "You've returned to the spawn");
-					this.main.getUtils().sendToSpawn(event.getPlayer().getUniqueId(), true);
+					Utils.sendToSpawn(event.getPlayer().getUniqueId(), true);
 					return;
 				}
 			}
 			if (data.getProfileState().equals(ProfileState.FIGHT)) {
+				final Duel duel = Utils.getDuelByUUID(event.getPlayer().getUniqueId());
+				final Kit kit = duel.getKit();
 				if (event.getItem().getType().equals(Material.ENCHANTED_BOOK)) {
 					event.setUseItemInHand(Result.DENY);
 					event.getPlayer().closeInventory();
 					event.getPlayer().getInventory().clear();
-					event.getPlayer().getInventory().setArmorContents(this.main.getManagerHandler().getProfileManager().getEditor().get(event.getPlayer().getUniqueId()).get(this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getKit().name()).getArmorContent());
-					event.getPlayer().getInventory().setContents(this.main.getManagerHandler().getProfileManager().getEditor().get(event.getPlayer().getUniqueId()).get(this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getKit().name()).getContent());
+					event.getPlayer().getInventory().setArmorContents(this.main.getManagerHandler().getProfileManager().getEditor().get(event.getPlayer().getUniqueId()).get(kit.name()).getArmorContent());
+					event.getPlayer().getInventory().setContents(this.main.getManagerHandler().getProfileManager().getEditor().get(event.getPlayer().getUniqueId()).get(kit.name()).getContent());
 					event.getPlayer().updateInventory();
 					return;
 				}
 				if (event.getItem().getType().equals(Material.BOOK)) {
-					final KitInterface kit = (KitInterface) this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getKit();
-					event.getPlayer().getInventory().setArmorContents(kit.armor());
-					event.getPlayer().getInventory().setContents(kit.content());
+					final KitInterface kitI = (KitInterface) Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getKit();
+					event.getPlayer().getInventory().setArmorContents(kitI.armor());
+					event.getPlayer().getInventory().setContents(kitI.content());
 					event.getPlayer().updateInventory();
 					return;
 				}
@@ -212,7 +218,7 @@ public class PlayerListener implements Listener {
 				}
 				final ItemStack item = event.getItem();
 				if (item.getType() == Material.ENDER_PEARL) {
-					if (this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.STARTING)) {
+					if (duel.getState().equals(DuelState.STARTING)) {
 						event.setUseItemInHand(Result.DENY);
 						event.getPlayer().sendMessage(ChatColor.RED + "You can't launch an enderpearl yet!");
 						event.getPlayer().updateInventory();
@@ -225,21 +231,23 @@ public class PlayerListener implements Listener {
 							
 							@Override
 							public void run() {
-								if (main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()) != null) {
-									if (!main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.FINISHING)) {
-										event.getPlayer().sendMessage(ChatColor.RED + "Enderpearl cooldown has expired, you can launch another pearl!");		
-									}
+								if (!duelStatistics.isEnderPearlCooldownActive()) {
+									this.cancel();
+									return;
+								}
+								if (!duel.getState().equals(DuelState.FINISHING)) {
+									event.getPlayer().sendMessage(ChatColor.GREEN + "Enderpearl cooldown has expired, you can launch another pearl!");		
 								}
 							}
 						}.runTaskLaterAsynchronously(main, 320L);
 						return;
 					}
 					event.setUseItemInHand(Result.DENY);
-					event.getPlayer().sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + this.main.getUtils().formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
+					event.getPlayer().sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
 					event.getPlayer().updateInventory();
 					return;
 				}
-				if (this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.STARTING)) {
+				if (duel.getState().equals(DuelState.STARTING)) {
 					if (item.getType().equals(Material.POTION) && item.getDurability() == 16421) {
 						event.setUseItemInHand(Result.DENY);
 						event.setCancelled(true);
@@ -265,7 +273,8 @@ public class PlayerListener implements Listener {
 	public void PlayerFoodChange(final FoodLevelChangeEvent event) {
 		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getEntity().getUniqueId());
 		if (profile.getProfileState().equals(ProfileState.FIGHT)) {
-			if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo") || this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("soup")) {
+			final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
+			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup")) {
 				event.setCancelled(true);
 				event.setFoodLevel(20);
 				return;	
@@ -278,9 +287,9 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onDrop(final PlayerDropItemEvent event) {
 		if (event == null || event.getItemDrop() == null) return;
-		final Profile data = this.main.getUtils().getProfiles(event.getPlayer().getUniqueId());
+		final Profile data = Utils.getProfiles(event.getPlayer().getUniqueId());
 		if (data.getProfileState().equals(ProfileState.FIGHT)) {
-			if (this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.PLAYING) || this.main.getUtils().getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.STARTING)) {
+			if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.PLAYING) || Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.STARTING)) {
 				if (event.getItemDrop().getItemStack().getType().equals(Material.GLASS_BOTTLE)) {
 					event.getItemDrop().remove();
 					return;
@@ -289,7 +298,7 @@ public class PlayerListener implements Listener {
 					event.setCancelled(true);
 					return;
 				}
-				this.main.getUtils().addDrops(event.getItemDrop(), event.getPlayer().getUniqueId());
+				MatchUtils.addDrops(event.getItemDrop(), event.getPlayer().getUniqueId());
 				return;	
 			}
 		}
@@ -307,12 +316,11 @@ public class PlayerListener implements Listener {
 		if (event.getEntity().getKiller() != null) {
 			((CraftPlayer)event.getEntity().getKiller()).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", event.getEntity().getKiller().getLocation().getX(),  event.getEntity().getKiller().getLocation().getY(),  event.getEntity().getKiller().getLocation().getZ(), 10000.0F,  event.getEntity().getKiller().getLocation().getPitch()));
 		}
-		if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null) {
-			if (!this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getSpectator().isEmpty()) {
-				this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getSpectator().forEach(specs -> {
-					((CraftPlayer)Bukkit.getPlayer(specs)).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", event.getEntity().getKiller().getLocation().getX(),  event.getEntity().getKiller().getLocation().getY(),  event.getEntity().getKiller().getLocation().getZ(), 10000.0F,  event.getEntity().getKiller().getLocation().getPitch()));
-				});
-			}
+		final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
+		if (!duel.getSpectator().isEmpty()) {
+			duel.getSpectator().forEach(specs -> {
+				((CraftPlayer)Bukkit.getPlayer(specs)).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", event.getEntity().getKiller().getLocation().getX(),  event.getEntity().getKiller().getLocation().getY(),  event.getEntity().getKiller().getLocation().getZ(), 10000.0F,  event.getEntity().getKiller().getLocation().getPitch()));
+			});
 		}
 		event.setDroppedExp(0);
 		event.getDrops().clear();
@@ -348,12 +356,11 @@ public class PlayerListener implements Listener {
                     }	
             	}
             }.runTaskLater(main, 19L);
-            final Duel duel = this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId());
             if (duel.getDuelType().equals(DuelType.SINGLE)) {
                 this.main.getManagerHandler().getDuelManager().endSingle(event.getEntity().getUniqueId().equals(new ArrayList<>(duel.getFirst()).get(0)) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));	
                 return;
             }
-        	this.main.getUtils().addKill(event.getEntity().getUniqueId(), event.getEntity().getKiller() != null ? event.getEntity().getKiller().getUniqueId() : null);
+        	MatchUtils.addKill(event.getEntity().getUniqueId(), event.getEntity().getKiller() != null ? event.getEntity().getKiller().getUniqueId() : null);
 		}
 	}
 	

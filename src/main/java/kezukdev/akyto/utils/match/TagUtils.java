@@ -1,4 +1,4 @@
-package kezukdev.akyto.utils;
+package kezukdev.akyto.utils.match;
 
 import java.util.List;
 import java.util.UUID;
@@ -8,7 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
-import org.graalvm.compiler.core.common.util.Util;
+
+import kezukdev.akyto.utils.Utils;
 
 public class TagUtils {
 	

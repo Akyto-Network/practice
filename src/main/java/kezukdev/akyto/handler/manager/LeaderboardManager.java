@@ -8,8 +8,11 @@ import java.util.Map;
 
 import co.aikar.idb.DB;
 import kezukdev.akyto.Practice;
+import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.leaderboard.Top;
 import lombok.Getter;
+
+// CREDITS TO TETELIE FOR THIS CLASS //
 
 public class LeaderboardManager {
 
@@ -48,7 +51,7 @@ public class LeaderboardManager {
            if (getRowNumber("playersdata") == 0) return null;
            if (rs.next()) {
                for (int i = 1; i <= getRowNumber("playersdata"); ++i) {
-                   int[] elos = this.main.getUtils().getSplitValue(DB.getFirstRow("SELECT elos FROM playersdata WHERE ID=?", i).getString("elos"), ":");
+                   int[] elos = FormatUtils.getSplitValue(DB.getFirstRow("SELECT elos FROM playersdata WHERE ID=?", i).getString("elos"), ":");
                    String player_name = DB.getFirstRow("SELECT name FROM playersdata WHERE ID=?", i).getString("name");
                    top_elo.put(player_name, elos);
                }

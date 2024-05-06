@@ -9,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.kit.Kit;
+import kezukdev.akyto.utils.Utils;
 
 public class RespawnRunnable extends BukkitRunnable {
     
@@ -19,13 +20,13 @@ public class RespawnRunnable extends BukkitRunnable {
     public RespawnRunnable(final List<List<UUID>> players, final Practice main) {
         this.main = main;
         this.players = players;
-        this.duel = this.main.getUtils().getDuelByUUID(players.get(0).get(0));
+        this.duel = Utils.getDuelByUUID(players.get(0).get(0));
     }
 
     @Override
     public void run() {
         players.forEach(uuids -> uuids.forEach(uuid -> {
-            main.getUtils().sendToSpawn(uuid, true);
+            Utils.sendToSpawn(uuid, true);
             Bukkit.getOnlinePlayers().forEach(player -> {
                 if (Bukkit.getPlayer(uuid) != null) {
                     player.showPlayer(Bukkit.getPlayer(uuid));

@@ -6,7 +6,6 @@ import java.util.UUID;
 
 import org.bukkit.scoreboard.Team;
 
-import kezukdev.akyto.Practice;
 import lombok.Getter;
 import lombok.Setter;
 

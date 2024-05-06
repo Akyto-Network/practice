@@ -12,6 +12,7 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.utils.Utils;
 import lombok.Getter;
 
 @Getter
@@ -32,7 +33,7 @@ public class QueueManager {
             }
         }
         this.main.getQueue().put(uuid, new QueueEntry(uuid, kit, ranked));
-        this.main.getUtils().getProfiles(uuid).setProfileState(ProfileState.QUEUE);
+        Utils.getProfiles(uuid).setProfileState(ProfileState.QUEUE);
         this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
         this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
         Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "You have successfully joined the " + ChatColor.stripColor(kit.displayName()) + " queue");
@@ -42,7 +43,7 @@ public class QueueManager {
         if (this.main.getQueue().containsKey(uuid)) {
         	final QueueEntry queue = this.main.getQueue().get(uuid);
         	this.main.getQueue().remove(uuid);
-            this.main.getUtils().getProfiles(uuid).setProfileState(ProfileState.FREE);
+            Utils.getProfiles(uuid).setProfileState(ProfileState.FREE);
             this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
             this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(queue.isRanked(), queue.getKit());
             Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + "You have successfully left the queue");

@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,6 +26,8 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.handler.manager.QueueManager.QueueEntry;
 import kezukdev.akyto.kit.Kit;
+import kezukdev.akyto.profile.Profile;
+import kezukdev.akyto.utils.inventory.ItemUtils;
 import kezukdev.akyto.utils.inventory.MultipageSerializer;
 import kezukdev.akyto.utils.leaderboard.Top;
 import lombok.Getter;
@@ -57,8 +60,8 @@ public class InventoryManager {
 		this.profileInventory = new ConcurrentHashMap<>();
 		this.settingsInventory = new ConcurrentHashMap<>();
 		this.settingsSpectateInventory = new ConcurrentHashMap<>();
-		this.spectateMultipage = new MultipageSerializer(main, new ArrayList<>(), ChatColor.GRAY + "Spectate", this.main.getUtils().createItem(Material.COMPASS, 1, (byte) 0, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
-		this.partyMultipage = new MultipageSerializer(main, new ArrayList<>(), ChatColor.GRAY + "Partys", this.main.getUtils().createItem(Material.CHEST, 1, (byte) 0, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "));
+		this.spectateMultipage = new MultipageSerializer(main, new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
+		this.partyMultipage = new MultipageSerializer(main, new ArrayList<>(), ChatColor.GRAY + "Partys", ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "));
 		this.queueInventory[0] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Unranked queue:");
 		this.queueInventory[1] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Ranked queue:");
 		this.queueInventory[2] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select duel kit:");
@@ -67,7 +70,7 @@ public class InventoryManager {
 		this.editorInventory[0] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select kit:");
 		this.editorInventory[1] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "More:");
 		this.editorInventory[2] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Management:");
-		this.leaderboardInventory.setItem(8, main.getUtils().createItem(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #10 " + ChatColor.WHITE + "Global", null));
+		this.leaderboardInventory.setItem(8, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #10 " + ChatColor.WHITE + "Global"));
 		this.setQueueInventory();
 		this.runnableLeaderboardInventory();
 		this.setEditorInventory();
@@ -119,9 +122,9 @@ public class InventoryManager {
 		this.editorInventory[1].setItem(3, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8));
 		this.editorInventory[1].setItem(4, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8));
 		this.editorInventory[2].setItem(0, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8));
-		this.editorInventory[2].setItem(1, this.main.getUtils().createItem(Material.WRITTEN_BOOK, ChatColor.GRAY + "Load Edited Kit", null));
+		this.editorInventory[2].setItem(1, ItemUtils.createItems(Material.WRITTEN_BOOK, ChatColor.GRAY + "Load Edited Kit"));
 		this.editorInventory[2].setItem(2, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8));
-		this.editorInventory[2].setItem(3, this.main.getUtils().createItem(Material.BOOKSHELF, ChatColor.GRAY + "Save Kit", null));
+		this.editorInventory[2].setItem(3, ItemUtils.createItems(Material.BOOKSHELF, ChatColor.GRAY + "Save Kit"));
 		this.editorInventory[2].setItem(4, new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8));
 	}
 
@@ -140,9 +143,9 @@ public class InventoryManager {
 				inv.setItem(kit.id(), item);
 			});
 		}
-		this.partyEventInventory.setItem(1, this.main.getUtils().createItem(Material.IRON_AXE, ChatColor.DARK_GRAY + "Free For All", null));
-		this.partyEventInventory.setItem(3, this.main.getUtils().createItem(Material.DIAMOND_CHESTPLATE, ChatColor.DARK_GRAY + "Split", null));
-		this.queueInventory[1].setItem(8, this.main.getUtils().createItem(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #3" + ChatColor.WHITE + " Global", null));
+		this.partyEventInventory.setItem(1, ItemUtils.createItems(Material.IRON_AXE, ChatColor.DARK_GRAY + "Free For All"));
+		this.partyEventInventory.setItem(3, ItemUtils.createItems(Material.DIAMOND_CHESTPLATE, ChatColor.DARK_GRAY + "Split"));
+		this.queueInventory[1].setItem(8, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #3" + ChatColor.WHITE + " Global"));
 	}
 	
 	public void refreshQueueInventory(boolean ranked, final Kit kit) {
@@ -167,6 +170,8 @@ public class InventoryManager {
 	public void generatePreviewInventory(final UUID uuid, final UUID opponent) {
 		final Inventory preview = Bukkit.createInventory(null, 54, ChatColor.DARK_GRAY + Utils.getName(uuid) + " preview's");
 		final DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid);
+		final Duel duel = Utils.getDuelByUUID(uuid);
+		final Kit kit = duel.getKit();
         preview.setContents(Bukkit.getPlayer(uuid).getInventory().getContents());
         preview.setItem(36, Bukkit.getPlayer(uuid).getInventory().getArmorContents()[3]);
         preview.setItem(37, Bukkit.getPlayer(uuid).getInventory().getArmorContents()[2]);
@@ -177,42 +182,41 @@ public class InventoryManager {
             preview.setItem(i, glass);
         }
         final List<String> loreInfos = new ArrayList<>();
-        loreInfos.add(ChatColor.DARK_GRAY + "Life Level" + ChatColor.RESET + ": " + this.main.getUtils().formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "\u2665");
-        loreInfos.add(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + this.main.getUtils().formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d));
-        preview.setItem(48, this.main.getUtils().createItem(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", loreInfos));
+        loreInfos.add(ChatColor.DARK_GRAY + "Life Level" + ChatColor.RESET + ": " + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "\u2665");
+        loreInfos.add(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d));
+        preview.setItem(48, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", loreInfos));
         List<String> effectsInfo = new ArrayList<>();
         if(!Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
-            for(PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects()) effectsInfo.add(ChatColor.GRAY + potionEffect.getType().getName() + " " + (potionEffect.getAmplifier() + 1) + ChatColor.WHITE + " for " + ChatColor.RED + (this.main.getUtils().formatTime(potionEffect.getDuration() / 20)));
+            for(PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects()) effectsInfo.add(ChatColor.GRAY + potionEffect.getType().getName() + " " + (potionEffect.getAmplifier() + 1) + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
         }
         if(Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
         	effectsInfo.add(ChatColor.RED + "No Effects.");
         }
-        preview.setItem(49, this.main.getUtils().createItem(Material.BREWING_STAND_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Effects Informations" + ChatColor.RESET + ": ", effectsInfo));
+        preview.setItem(49, ItemUtils.createItems(Material.BREWING_STAND_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Effects Informations" + ChatColor.RESET + ": ", effectsInfo));
         
         final List<String> loreStats = new ArrayList<>();
-        if (this.main.getUtils().getDuelByUUID(uuid) != null) {
-            if (this.main.getUtils().getDuelByUUID(uuid).getKit().name().equals("nodebuff") || this.main.getUtils().getDuelByUUID(uuid).getKit().name().equals("debuff") || this.main.getUtils().getDuelByUUID(uuid).getKit().name().equals("noenchant") || this.main.getUtils().getDuelByUUID(uuid).getKit().name().equals("axe")) {
-                loreStats.add(ChatColor.DARK_GRAY + "Amount Pots" + ChatColor.RESET + ": " + Bukkit.getPlayer(uuid).getInventory().all(new ItemStack(Material.POTION, 1, (short)16421)).size());	
-            }	
-        }
+        if (kit.name().equals("nodebuff") || kit.name().equals("debuff") || kit.name().equals("noenchant") || kit.name().equals("axe")) {
+            loreStats.add(ChatColor.DARK_GRAY + "Amount Pots" + ChatColor.RESET + ": " + Bukkit.getPlayer(uuid).getInventory().all(new ItemStack(Material.POTION, 1, (short)16421)).size());	
+        }	
         loreStats.add(ChatColor.DARK_GRAY + "Hits" + ChatColor.RESET + ": " + duelStatistics.getHits());
         loreStats.add(ChatColor.DARK_GRAY + "Longer Hits" + ChatColor.RESET + ": " + duelStatistics.getLongestHit());
-        preview.setItem(50, this.main.getUtils().createItem(Material.MELON, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
-        preview.setItem(53, this.main.getUtils().createItem(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + Utils.getName(opponent), null));
+        preview.setItem(50, ItemUtils.createItems(Material.MELON, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
+        preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + Utils.getName(opponent)));
         this.previewInventory.remove(uuid);
 		this.previewInventory.put(uuid, preview);
 	}
 	
 	public void generateSettingsInventory(final UUID uuid) {
 		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Settings");
+		final Profile profiles = Utils.getProfiles(uuid);
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
         for (int i = 0; i < 5; ++i) {
             profile.setItem(i, glass);
         }
         String[] lore = new String[] {ChatColor.GREEN + "Enable", ChatColor.RED + "Disable"};
-        profile.setItem(0, this.main.getUtils().createItem(Material.PAINTING, ChatColor.DARK_GRAY + "Scoreboard" + ChatColor.GRAY + ":", Collections.singletonList(this.main.getUtils().getProfiles(uuid).getSettings().get(0).equals(true) ? lore[0] : lore[1])));
-        profile.setItem(1, this.main.getUtils().createItem(Material.BLAZE_POWDER, ChatColor.DARK_GRAY + "Duel Request" + ChatColor.GRAY + ":", Collections.singletonList(this.main.getUtils().getProfiles(uuid).getSettings().get(1).equals(true) ? lore[0] : lore[1])));
-        profile.setItem(2, this.main.getUtils().createItem(Material.WATCH, ChatColor.DARK_GRAY + "Time" + ChatColor.GRAY + ":", Collections.singletonList(this.main.getUtils().getProfiles(uuid).getSettings().get(2).equals(true) ? ChatColor.YELLOW + "Day" : ChatColor.BLUE + "Night")));
+        profile.setItem(0, ItemUtils.createItems(Material.PAINTING, ChatColor.DARK_GRAY + "Scoreboard" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSettings().get(0).equals(true) ? lore[0] : lore[1])));
+        profile.setItem(1, ItemUtils.createItems(Material.BLAZE_POWDER, ChatColor.DARK_GRAY + "Duel Request" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSettings().get(1).equals(true) ? lore[0] : lore[1])));
+        profile.setItem(2, ItemUtils.createItems(Material.WATCH, ChatColor.DARK_GRAY + "Time" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSettings().get(2).equals(true) ? ChatColor.YELLOW + "Day" : ChatColor.BLUE + "Night")));
         this.settingsInventory.remove(uuid);
 		this.settingsInventory.put(uuid, profile);
 		this.generateSpectateSettingsInventory(uuid);
@@ -226,38 +230,41 @@ public class InventoryManager {
 	
 	private void generateSpectateSettingsInventory(final UUID uuid) {
 		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Spectate Settings");
+		final Profile profiles = Utils.getProfiles(uuid);
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
         for (int i = 0; i < 5; ++i) {
             profile.setItem(i, glass);
         }
         String[] lore = new String[] {ChatColor.GREEN + "Enable", ChatColor.RED + "Disable"};
-        profile.setItem(0, this.main.getUtils().createItem(Material.DIAMOND, ChatColor.DARK_GRAY + "Display Other Spectators" + ChatColor.GRAY + ":", Collections.singletonList(this.main.getUtils().getProfiles(uuid).getSpectateSettings().get(0).equals(true) ? lore[0] : lore[1])));
-        profile.setItem(1, this.main.getUtils().createItem(Material.FEATHER, ChatColor.DARK_GRAY + "Fly Speed" + ChatColor.GRAY + ":", Collections.singletonList(this.main.getUtils().getProfiles(uuid).getSpectateSettings().get(1).equals(true) ? "x1.0" : "x2.5")));
-        profile.setItem(4, this.main.getUtils().createItem(Material.EMERALD, ChatColor.DARK_GRAY + "Global Settings", null));
+        profile.setItem(0, ItemUtils.createItems(Material.DIAMOND, ChatColor.DARK_GRAY + "Display Other Spectators" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSpectateSettings().get(0).equals(true) ? lore[0] : lore[1])));
+        profile.setItem(1, ItemUtils.createItems(Material.FEATHER, ChatColor.DARK_GRAY + "Fly Speed" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSpectateSettings().get(1).equals(true) ? "x1.0" : "x2.5")));
+        profile.setItem(4, ItemUtils.createItems(Material.EMERALD, ChatColor.DARK_GRAY + "Global Settings"));
         this.settingsSpectateInventory.remove(uuid);
 		this.settingsSpectateInventory.put(uuid, profile);
 	}
 	
 	public void refreshSettingsInventory(final UUID uuid, final int id, final boolean spectate) {
+		final Profile profile = Utils.getProfiles(uuid);
 		if (!spectate) {
 			final Inventory inv = this.settingsInventory.get(uuid);
 			final ItemStack item = inv.getItem(id);
 			final ItemMeta meta = item.getItemMeta();
 			String[] lore = id == 2 ? new String[] {ChatColor.BLUE + "Night", ChatColor.YELLOW + "Day"} : new String[] {ChatColor.GREEN + "Enable", ChatColor.RED + "Disable"};
-			meta.setLore(Collections.singletonList(this.main.getUtils().getProfiles(uuid).getSettings().get(id).equals(true) ? lore[0] : lore[1]));
+			meta.setLore(Collections.singletonList(profile.getSettings().get(id).equals(true) ? lore[0] : lore[1]));
 			item.setItemMeta(meta);	
 		} else {
 			final Inventory inv = this.settingsSpectateInventory.get(uuid);
 			final ItemStack item = inv.getItem(id);
 			final ItemMeta meta = item.getItemMeta();
 			String[] lore = id == 1 ? new String[] {ChatColor.YELLOW + "x1.0", ChatColor.GOLD + "x2.5"} : new String[] {ChatColor.GREEN + "Enable", ChatColor.RED + "Disable"};
-			meta.setLore(Collections.singletonList(this.main.getUtils().getProfiles(uuid).getSpectateSettings().get(id).equals(true) ? lore[0] : lore[1]));
+			meta.setLore(Collections.singletonList(profile.getSpectateSettings().get(id).equals(true) ? lore[0] : lore[1]));
 			item.setItemMeta(meta);
 		}
 	}
 	
 	public void generateProfileInventory(final UUID uuid) {
 		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + Utils.getName(uuid) + " profile");
+		final Profile profiles = Utils.getProfiles(uuid);
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
         for (int i = 0; i < 5; ++i) {
             profile.setItem(i, glass);
@@ -265,8 +272,8 @@ public class InventoryManager {
         List<String> kitLore = new ArrayList<>();
         kitLore.add(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------");
         this.main.getKits().forEach(kit -> {
-        	final int lose = this.main.getUtils().getProfiles(uuid).getStats().get(0)[kit.id()] - this.main.getUtils().getProfiles(uuid).getStats().get(1)[kit.id()];
-        	kitLore.add(kit.displayName() + ChatColor.GRAY + " (" + ChatColor.WHITE + this.main.getUtils().getProfiles(uuid).getStats().get(2)[kit.id()] + ChatColor.GRAY + ") : " + ChatColor.GREEN + this.main.getUtils().getProfiles(uuid).getStats().get(1)[kit.id()] +  ChatColor.GRAY + "/" + ChatColor.YELLOW + this.main.getUtils().getProfiles(uuid).getStats().get(0)[kit.id()] + ChatColor.GRAY + "/" + ChatColor.RED + lose);
+        	final int lose = profiles.getStats().get(0)[kit.id()] - profiles.getStats().get(1)[kit.id()];
+        	kitLore.add(kit.displayName() + ChatColor.GRAY + " (" + ChatColor.WHITE + profiles.getStats().get(2)[kit.id()] + ChatColor.GRAY + ") : " + ChatColor.GREEN + profiles.getStats().get(1)[kit.id()] +  ChatColor.GRAY + "/" + ChatColor.YELLOW + profiles.getStats().get(0)[kit.id()] + ChatColor.GRAY + "/" + ChatColor.RED + lose);
         });
         kitLore.add(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------");
         List<String> playerLore = new ArrayList<>();
@@ -275,9 +282,9 @@ public class InventoryManager {
         int totalElos = 0;
         playerLore.add(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------");
         for (Kit kit : this.main.getKits()) {
-            totalWins = totalWins + this.main.getUtils().getProfiles(uuid).getStats().get(1)[kit.id()];
-            totalPlayed = totalPlayed + this.main.getUtils().getProfiles(uuid).getStats().get(0)[kit.id()];
-            totalElos = totalElos + this.main.getUtils().getProfiles(uuid).getStats().get(2)[kit.id()];
+            totalWins = totalWins + profiles.getStats().get(1)[kit.id()];
+            totalPlayed = totalPlayed + profiles.getStats().get(0)[kit.id()];
+            totalElos = totalElos + profiles.getStats().get(2)[kit.id()];
         }
         playerLore.add(ChatColor.DARK_GRAY + "Total Win" + ChatColor.GRAY + ": " + ChatColor.WHITE + totalWins);
         playerLore.add(ChatColor.DARK_GRAY + "Total Played" + ChatColor.GRAY + ": " + ChatColor.WHITE + totalPlayed);
@@ -293,7 +300,7 @@ public class InventoryManager {
         meta.setDisplayName(ChatColor.GRAY + "Player Statistics");
         meta.setLore(playerLore);
         playerHead.setItemMeta(meta);
-        profile.setItem(1, this.main.getUtils().createItem(Material.BREWING_STAND_ITEM, ChatColor.GRAY + "Kit Statistics" + ChatColor.GRAY + ":", kitLore));
+        profile.setItem(1, ItemUtils.createItems(Material.BREWING_STAND_ITEM, ChatColor.GRAY + "Kit Statistics" + ChatColor.GRAY + ":", kitLore));
         profile.setItem(3, playerHead);
         this.profileInventory.remove(uuid);
 		this.profileInventory.put(uuid, profile);
@@ -301,7 +308,7 @@ public class InventoryManager {
 	
 	public void generateChangeSpectateInventory(final UUID playerUUID) {
 		final Inventory spectate = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Teleport to:");
-		final Duel duel = this.main.getUtils().getDuelBySpectator(playerUUID);
+		final Duel duel = Utils.getDuelBySpectator(playerUUID);
 		List<List<UUID>> spec = Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond()));
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
         for (int i = 0; i < 5; ++i) {

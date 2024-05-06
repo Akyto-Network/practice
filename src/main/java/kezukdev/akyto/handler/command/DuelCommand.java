@@ -14,6 +14,7 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.utils.Utils;
 
 public class DuelCommand implements CommandExecutor {
 	
@@ -29,7 +30,7 @@ public class DuelCommand implements CommandExecutor {
 		}
 
 		final Player playerSender = (Player) sender;
-		final Profile senderProfile = this.main.getUtils().getProfiles(playerSender.getUniqueId());
+		final Profile senderProfile = Utils.getProfiles(playerSender.getUniqueId());
 
 		if (args.length == 0) {
 			sender.sendMessage(ChatColor.RED + "/" + cmd.getName() + " <player>");
@@ -64,7 +65,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 
-			final Profile targetProfile = this.main.getUtils().getProfiles(target.getUniqueId());
+			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
 
 			if (!targetProfile.getSettings().get(1)) {
 				sender.sendMessage(ChatColor.RED + "This player doesn't accept any duel request!");
@@ -102,7 +103,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 
-			final Profile targetProfile = this.main.getUtils().getProfiles(target.getUniqueId());
+			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
 
 			if (!targetProfile.getProfileState().equals(ProfileState.FREE)) {
 				sender.sendMessage(ChatColor.RED + target.getDisplayName() + " is not free now.");

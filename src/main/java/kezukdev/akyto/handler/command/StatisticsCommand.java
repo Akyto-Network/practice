@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.utils.Utils;
 
 public class StatisticsCommand implements CommandExecutor {
 
@@ -24,7 +25,7 @@ public class StatisticsCommand implements CommandExecutor {
 		}
 
 		final Player playerSender = (Player) sender;
-		final ProfileState state = this.main.getUtils().getProfiles(playerSender.getUniqueId()).getProfileState();
+		final ProfileState state = Utils.getProfiles(playerSender.getUniqueId()).getProfileState();
 		boolean is_busy = state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR);
 
 		if (args.length == 0) {

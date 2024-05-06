@@ -6,9 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
-import net.md_5.bungee.api.ChatColor;
 
 public class LeaderboardCommand implements CommandExecutor {
 	
@@ -26,13 +23,7 @@ public class LeaderboardCommand implements CommandExecutor {
 		}
 
 		final Player playerSender = (Player) sender;
-		final Profile profile = this.main.getUtils().getProfiles(playerSender.getUniqueId());
-
-		if (profile.getProfileState().equals(ProfileState.FREE) || profile.getProfileState().equals(ProfileState.QUEUE) || profile.getProfileState().equals(ProfileState.SPECTATE)) {
-			playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getLeaderboardInventory());
-		} else {
-			sender.sendMessage(ChatColor.RED + "You cannot do that right now!");
-		}
+		playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getLeaderboardInventory());
 
 		return false;
 	}

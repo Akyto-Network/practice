@@ -1,10 +1,11 @@
-package kezukdev.akyto.utils.database;
+package kezukdev.akyto.database;
 
 import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -64,8 +65,8 @@ public class DatabaseSetup {
 			        DB.executeUpdate("UPDATE playersdata SET time=? WHERE name=?", String.valueOf(data.getSettings().get(2).booleanValue()), player.getName());
 			        DB.executeUpdate("UPDATE playersdata SET displaySpectate=? WHERE name=?", String.valueOf(data.getSpectateSettings().get(0).booleanValue()), player.getName());
 			        DB.executeUpdate("UPDATE playersdata SET flySpeed=? WHERE name=?", String.valueOf(data.getSpectateSettings().get(1).booleanValue()), player.getName());
-			        DB.executeUpdate("UPDATE playersdata SET played=? WHERE name=?", this.main.getUtils().getStringValue(data.getStats().get(0), ":"), player.getName());
-			    	DB.executeUpdate("UPDATE playersdata SET win=? WHERE name=?", this.main.getUtils().getStringValue(data.getStats().get(1), ":"), player.getName());
+			        DB.executeUpdate("UPDATE playersdata SET played=? WHERE name=?", FormatUtils.getStringValue(data.getStats().get(0), ":"), player.getName());
+			    	DB.executeUpdate("UPDATE playersdata SET win=? WHERE name=?", FormatUtils.getStringValue(data.getStats().get(1), ":"), player.getName());
 				} catch (SQLException e) { e.printStackTrace(); }
 			});
 		}
@@ -99,8 +100,8 @@ public class DatabaseSetup {
 	        DB.executeUpdateAsync("UPDATE playersdata SET time=? WHERE name=?", String.valueOf(data.getSettings().get(2).booleanValue()), playerName).join();
 	        DB.executeUpdateAsync("UPDATE playersdata SET displaySpectate=? WHERE name=?", String.valueOf(data.getSpectateSettings().get(0).booleanValue()), playerName).join();
 	        DB.executeUpdateAsync("UPDATE playersdata SET flySpeed=? WHERE name=?", String.valueOf(data.getSpectateSettings().get(1).booleanValue()), playerName).join();
-	        DB.executeUpdateAsync("UPDATE playersdata SET played=? WHERE name=?", this.main.getUtils().getStringValue(data.getStats().get(0), ":"), playerName).join();
-	    	DB.executeUpdateAsync("UPDATE playersdata SET win=? WHERE name=?", this.main.getUtils().getStringValue(data.getStats().get(1), ":"), playerName).join();
+	        DB.executeUpdateAsync("UPDATE playersdata SET played=? WHERE name=?", FormatUtils.getStringValue(data.getStats().get(0), ":"), playerName).join();
+	    	DB.executeUpdateAsync("UPDATE playersdata SET win=? WHERE name=?", FormatUtils.getStringValue(data.getStats().get(1), ":"), playerName).join();
 		}
 
 		this.main.getManagerHandler().getInventoryManager().removeUselessInventory(uuid);
@@ -122,11 +123,11 @@ public class DatabaseSetup {
         CompletableFuture<String> displaySpectateFuture = DB.getFirstRowAsync("SELECT displaySpectate FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> row.getString("displaySpectate"));
         CompletableFuture<int[]> elosFuture = DB.getFirstRowAsync("SELECT elos FROM playersdata WHERE name=?", playerName)
-                .thenApply(row -> this.main.getUtils().getSplitValue(row.getString("elos"), ":"));
+                .thenApply(row -> FormatUtils.getSplitValue(row.getString("elos"), ":"));
         CompletableFuture<int[]> winFuture = DB.getFirstRowAsync("SELECT win FROM playersdata WHERE name=?", playerName)
-                .thenApply(row -> this.main.getUtils().getSplitValue(row.getString("win"), ":"));
+                .thenApply(row -> FormatUtils.getSplitValue(row.getString("win"), ":"));
         CompletableFuture<int[]> playedFuture = DB.getFirstRowAsync("SELECT played FROM playersdata WHERE name=?", playerName)
-                .thenApply(row -> this.main.getUtils().getSplitValue(row.getString("played"), ":"));
+                .thenApply(row -> FormatUtils.getSplitValue(row.getString("played"), ":"));
         CompletableFuture<Void> allOfFuture = CompletableFuture.allOf(scoreboardFuture, duelRequestFuture, timeFuture, flySpeedFuture, displaySpectateFuture, elosFuture, winFuture, playedFuture);
         allOfFuture.join();
         data.getSettings().set(0, Boolean.valueOf(scoreboardFuture.join()));

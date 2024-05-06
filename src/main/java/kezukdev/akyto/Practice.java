@@ -18,6 +18,9 @@ import com.bizarrealex.aether.Aether;
 
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.board.SideBoard;
+import kezukdev.akyto.database.DatabaseSetup;
+import kezukdev.akyto.database.FileSetup;
+import kezukdev.akyto.database.MySQL;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.ManagerHandler;
 import kezukdev.akyto.handler.MiscHandler;
@@ -30,10 +33,6 @@ import kezukdev.akyto.kit.gametype.NoDebuff;
 import kezukdev.akyto.kit.gametype.NoEnchant;
 import kezukdev.akyto.kit.gametype.Soup;
 import kezukdev.akyto.kit.gametype.Sumo;
-import kezukdev.akyto.utils.Utils;
-import kezukdev.akyto.utils.database.DatabaseSetup;
-import kezukdev.akyto.utils.database.FileSetup;
-import kezukdev.akyto.utils.database.MySQL;
 import kezukdev.akyto.utils.location.LocationUtil;
 import lombok.Getter;
 
@@ -54,7 +53,6 @@ public class Practice extends JavaPlugin {
 	private MySQL mySQL;
     public File locationFile;
     public YamlConfiguration locationConfig;
-	private Utils utils;
     public LocationUtil spawn = new LocationUtil("spawn");
     public LocationUtil editor = new LocationUtil("editor");
     private String region;
@@ -81,7 +79,6 @@ public class Practice extends JavaPlugin {
         }
         this.kits = Arrays.asList(new NoDebuff(), new NoEnchant(), new Debuff(), new Gapple(), new Sumo(), new Soup(), new Axe());
         this.queue = new ConcurrentHashMap<>();
-		this.utils = new Utils(this);
 		this.managerHandler = new ManagerHandler(this);
 		this.miscHandler = new MiscHandler(this);
 		this.mySQL = new MySQL(this);

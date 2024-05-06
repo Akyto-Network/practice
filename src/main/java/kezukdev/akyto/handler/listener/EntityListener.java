@@ -17,6 +17,7 @@ import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.utils.Utils;
 import net.minecraft.server.v1_7_R4.PacketPlayInFlying;
 
 public class EntityListener implements Listener {
@@ -27,9 +28,13 @@ public class EntityListener implements Listener {
 		this.main = main;
         kPaper.INSTANCE.addMovementHandler(new MovementHandler() {
             public void handleUpdateLocation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
-                if (main.getUtils().getDuelByUUID(player.getUniqueId()) != null && main.getUtils().getDuelByUUID(player.getUniqueId()).getKit().name().equalsIgnoreCase("sumo") && main.getUtils().getDuelByUUID(player.getUniqueId()).getState().equals(DuelState.STARTING)) {
-                    player.teleport(location1);
-                }
+            	final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
+            	if (duel != null) {
+            		final String kitName = duel.getKit().name();
+            		if (kitName.equalsIgnoreCase("sumo") && duel.getState().equals(DuelState.STARTING)) {
+            			player.teleport(location1);
+            		}
+            	}
             }
             public void handleUpdateRotation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
             }
@@ -41,11 +46,11 @@ public class EntityListener implements Listener {
 		if (!(event.getEntity() instanceof Player))
 			return;
 
-		final Profile data = this.main.getUtils().getProfiles(event.getEntity().getUniqueId());
+		final Profile data = Utils.getProfiles(event.getEntity().getUniqueId());
 
 		if (data != null && data.getProfileState().equals(ProfileState.FIGHT)) {
 
-			final Duel playerDuel = this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId());
+			final Duel playerDuel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 
 			if (playerDuel != null && playerDuel.getState().equals(DuelState.PLAYING)) {
 				if (playerDuel.getKit().name().equals("sumo")) {
@@ -60,13 +65,16 @@ public class EntityListener implements Listener {
 	@EventHandler
 	public void onDamageByEntity(final EntityDamageByEntityEvent event) {
 		if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-			final Profile data = this.main.getUtils().getProfiles(event.getEntity().getUniqueId());
-			if (data.getProfileState().equals(ProfileState.FIGHT) && this.main.getUtils().getProfiles(event.getDamager().getUniqueId()).getProfileState().equals(ProfileState.FIGHT)) {
+			final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
+			final Profile profileDamager = Utils.getProfiles(event.getDamager().getUniqueId());
+			if (victimProfile.getProfileState().equals(ProfileState.FIGHT) && profileDamager.getProfileState().equals(ProfileState.FIGHT)) {
+				final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 				final DuelStatistics statisticsDamager = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getDamager().getUniqueId());
 				final DuelStatistics statisticsVictim = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getEntity().getUniqueId());
-				if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getState().equals(DuelState.PLAYING)) {
-					if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getFirstAlives() != null) {
-						if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getFirstAlives().contains(event.getEntity().getUniqueId()) && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getFirstAlives().contains(event.getDamager().getUniqueId()) || this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getSecondAlives().contains(event.getEntity().getUniqueId()) && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getSecondAlives().contains(event.getDamager().getUniqueId())) {
+				if (duel.getState().equals(DuelState.PLAYING)) {
+					if (duel.getFirstAlives() != null) {
+						if (duel.getFirstAlives().contains(event.getEntity().getUniqueId()) && duel.getFirstAlives().contains(event.getDamager().getUniqueId()) ||
+								duel.getSecondAlives().contains(event.getEntity().getUniqueId()) && duel.getSecondAlives().contains(event.getDamager().getUniqueId())) {
 							event.setCancelled(true);
 							return;
 						}
@@ -79,7 +87,7 @@ public class EntityListener implements Listener {
 							statisticsDamager.setLongestHit(statisticsDamager.getCombo());
 						}	
 					}
-					if (this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()) != null && this.main.getUtils().getDuelByUUID(event.getEntity().getUniqueId()).getKit().name().equals("sumo")) {
+					if (duel.getKit().name().equals("sumo")) {
 						event.setDamage(0.0f);
 					}
 					return;

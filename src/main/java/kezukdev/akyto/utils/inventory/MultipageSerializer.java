@@ -32,9 +32,9 @@ public class MultipageSerializer {
         for (int page = 1; page <= var0; page++) {
             int start = page == 1 ? 0 : (page-1) * 36;
             Inventory inventory = Bukkit.createInventory(null, 9*6, inventoryName);
-            inventory.setItem(45, this.main.getUtils().createItem(Material.LEVER, ChatColor.GRAY + "Previous Page", Collections.singletonList(ChatColor.GRAY + "Click here for pack to the previous page.")));
+            inventory.setItem(45, ItemUtils.createItems(Material.LEVER, ChatColor.GRAY + "Previous Page", Collections.singletonList(ChatColor.GRAY + "Click here for pack to the previous page.")));
             int nextPage = page + 1;
-            inventory.setItem(53, this.main.getUtils().createItem(Material.ARROW, ChatColor.GRAY + "Next Page" , Collections.singletonList(ChatColor.GRAY + "The next page is: " + ChatColor.AQUA + nextPage)));
+            inventory.setItem(53, ItemUtils.createItems(Material.ARROW, ChatColor.GRAY + "Next Page" , Collections.singletonList(ChatColor.GRAY + "The next page is: " + ChatColor.AQUA + nextPage)));
             for (int i = 0; i <= 8; i++) inventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte)8));
             inventory.setItem(4, icon);
 

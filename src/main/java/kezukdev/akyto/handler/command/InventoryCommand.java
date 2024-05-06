@@ -36,7 +36,7 @@ public class InventoryCommand implements CommandExecutor {
 
         final Profile senderProfile = this.main.getManagerHandler().getProfileManager().getProfiles().get(playerSender.getUniqueId());
 
-        if ((senderProfile.getProfileState().equals(ProfileState.FIGHT) && !this.main.getUtils().getDuelByUUID(playerSender.getUniqueId()).getState().equals(DuelState.FINISHING))
+        if ((senderProfile.getProfileState().equals(ProfileState.FIGHT) && !Utils.getDuelByUUID(playerSender.getUniqueId()).getState().equals(DuelState.FINISHING))
                 || senderProfile.getProfileState().equals(ProfileState.EDITOR)) {
             sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
             return false;
@@ -45,7 +45,7 @@ public class InventoryCommand implements CommandExecutor {
         final UUID targetUUID = Utils.getUUID(args[0]);
 
         if (this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(targetUUID) == null) {
-            sender.sendMessage(ChatColor.GRAY + " * " + ChatColor.WHITE + args[0] + ChatColor.RED + " inventory does not exist.");
+            sender.sendMessage(ChatColor.WHITE + args[0] + ChatColor.RED + " inventory does not exist.");
             return false;
         }
 

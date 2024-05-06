@@ -1,4 +1,4 @@
-package kezukdev.akyto.utils.database;
+package kezukdev.akyto.database;
 
 import co.aikar.idb.DB;
 import co.aikar.idb.DbStatement;

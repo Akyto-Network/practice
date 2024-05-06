@@ -1,6 +1,8 @@
 package kezukdev.akyto.handler.command;
 
 import kezukdev.akyto.handler.manager.PartyManager;
+import kezukdev.akyto.utils.Utils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -59,7 +61,7 @@ public class PartyCommand implements CommandExecutor {
 			}
 
 			if (args[0].equalsIgnoreCase("open")) {
-				final PartyManager.PartyEntry senderParty = this.partyManager.getPartyByUUID(playerSender.getUniqueId());
+				final PartyManager.PartyEntry senderParty = Utils.getPartyByUUID(playerSender.getUniqueId());
 
 				if (senderParty == null) {
 					sender.sendMessage(ChatColor.RED + "You must be in a party to do this!");
@@ -78,7 +80,7 @@ public class PartyCommand implements CommandExecutor {
 		}
 		else if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("invite")) {
-				final PartyManager.PartyEntry senderParty = this.partyManager.getPartyByUUID(playerSender.getUniqueId());
+				final PartyManager.PartyEntry senderParty = Utils.getPartyByUUID(playerSender.getUniqueId());
 
 				if (senderParty == null) {
 					sender.sendMessage(ChatColor.RED + "You must be in a party to do this!");
@@ -97,7 +99,7 @@ public class PartyCommand implements CommandExecutor {
 					return false;
 				}
 
-				final PartyManager.PartyEntry targetParty = this.partyManager.getPartyByUUID(target.getUniqueId());
+				final PartyManager.PartyEntry targetParty = Utils.getPartyByUUID(target.getUniqueId());
 
 				if (targetParty != null) {
 					sender.sendMessage(ChatColor.RED + "You cannot invite him because he(r) is already in other party!");
@@ -132,14 +134,14 @@ public class PartyCommand implements CommandExecutor {
 					return false;
 				}
 
-				final PartyManager.PartyEntry targetParty = this.partyManager.getPartyByUUID(target.getUniqueId());
+				final PartyManager.PartyEntry targetParty = Utils.getPartyByUUID(target.getUniqueId());
 
 				if (targetParty == null) {
 					sender.sendMessage(ChatColor.RED + "This player is not in a party!");
 					return false;
 				}
 
-				if (this.partyManager.getPartyByUUID(playerSender.getUniqueId()) != null) {
+				if (Utils.getPartyByUUID(playerSender.getUniqueId()) != null) {
 					sender.sendMessage(ChatColor.RED + "You cannot do this because you are already in a party!");
 					return false;
 				}

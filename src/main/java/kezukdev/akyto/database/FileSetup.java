@@ -1,4 +1,4 @@
-package kezukdev.akyto.utils.database;
+package kezukdev.akyto.database;
 
 import java.io.File;
 import java.io.IOException;

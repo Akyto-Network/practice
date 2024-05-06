@@ -6,6 +6,7 @@ import kezukdev.akyto.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import org.bukkit.Material;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import com.google.common.collect.Lists;
@@ -51,7 +53,10 @@ public class InventoryListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-		final Profile profile = this.main.getUtils().getProfiles(event.getWhoClicked().getUniqueId());
+		final Inventory inventory = event.getClickedInventory();
+		final String inventoryName = inventory.getName();
+		final Material itemMaterial = event.getCurrentItem().getType();
+		final Profile profile = Utils.getProfiles(event.getWhoClicked().getUniqueId());
 		if (profile.getProfileState().equals(ProfileState.FREE)) {
 			if (event.getClick().equals(ClickType.NUMBER_KEY)) {
 				event.setResult(Result.DENY);
@@ -63,29 +68,29 @@ public class InventoryListener implements Listener {
 				event.setResult(Result.DENY);
 				return;
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[0].getName())) {
+			if (inventoryName.equals(inventoryManager.getQueueInventory()[0].getName())) {
 				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(event.getWhoClicked().getUniqueId(), Kit.getLadderByID(event.getSlot(), main), false);
 				event.getWhoClicked().closeInventory();
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[1].getName())) {
+			if (inventoryName.equals(inventoryManager.getQueueInventory()[1].getName())) {
 				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(event.getWhoClicked().getUniqueId(), Kit.getLadderByID(event.getSlot(), main), true);
 				event.getWhoClicked().closeInventory();
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[2].getName())) {
+			if (inventoryName.equals(inventoryManager.getQueueInventory()[2].getName())) {
 				final UUID target = this.main.getManagerHandler().getRequestManager().getStartRequest().get(event.getWhoClicked().getUniqueId());
 				this.main.getManagerHandler().getRequestManager().createDuelRequest(event.getWhoClicked().getUniqueId(), target, Kit.getLadderByID(event.getSlot(), main));
 				event.getWhoClicked().closeInventory();
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getPartyEventInventory().getName())) {
-				if (event.getCurrentItem().getType().equals(Material.IRON_AXE)) {
+			if (inventoryName.equals(inventoryManager.getPartyEventInventory().getName())) {
+				if (itemMaterial.equals(Material.IRON_AXE)) {
 					event.getWhoClicked().openInventory(inventoryManager.getQueueInventory()[3]);
 				}
-				if (event.getCurrentItem().getType().equals(Material.DIAMOND_CHESTPLATE)) {
+				if (itemMaterial.equals(Material.DIAMOND_CHESTPLATE)) {
 					event.getWhoClicked().openInventory(inventoryManager.getQueueInventory()[4]);
 				}
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[3].getName()) || event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[4].getName())) {
-			    final List<UUID> shuffle = Lists.newArrayList(this.main.getManagerHandler().getPartyManager().getPartyByUUID(event.getWhoClicked().getUniqueId()).getMembers());
+			if (inventoryName.equals(inventoryManager.getQueueInventory()[3].getName()) || inventoryName.equals(inventoryManager.getQueueInventory()[4].getName())) {
+			    final List<UUID> shuffle = new ArrayList<>(Utils.getPartyByUUID(event.getWhoClicked().getUniqueId()).getMembers());
 			    Collections.shuffle(shuffle);
 			    int size = shuffle.size();
 			    final List<UUID> firstTeam = Lists.newArrayList();
@@ -99,8 +104,8 @@ public class InventoryListener implements Listener {
 			    Kit kit = Kit.getLadderByID(event.getSlot(), main);
 			    new Duel(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam),false,  kit, event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[3].getName()) ? DuelType.FFA : DuelType.SPLIT);
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getEditorInventory()[0].getName())) {
-				this.main.getUtils().sendToEditor(event.getWhoClicked().getUniqueId(), Kit.getLadderByDisplay(event.getCurrentItem().getItemMeta().getDisplayName(), this.main));
+			if (inventoryName.equals(inventoryManager.getEditorInventory()[0].getName())) {
+				Utils.sendToEditor(event.getWhoClicked().getUniqueId(), Kit.getLadderByDisplay(event.getCurrentItem().getItemMeta().getDisplayName(), this.main));
 				event.getWhoClicked().closeInventory();
 			}
 			event.setCancelled(true);
@@ -111,7 +116,7 @@ public class InventoryListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getSpectateInventory().get(event.getWhoClicked().getUniqueId()).getName())) {
+			if (inventoryName.equals(inventoryManager.getSpectateInventory().get(event.getWhoClicked().getUniqueId()).getName())) {
 				final String nextName = event.getCurrentItem().getItemMeta().getDisplayName().replace(ChatColor.WHITE.toString(), "");
 				event.getWhoClicked().teleport(Bukkit.getPlayer(nextName).getLocation());
 				event.getWhoClicked().closeInventory();
@@ -119,8 +124,8 @@ public class InventoryListener implements Listener {
 			event.setCancelled(true);
 		}
 		if (profile.getProfileState().equals(ProfileState.EDITOR)) {
-			if (event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS) || event.getCurrentItem().getType().equals(Material.AIR)) return;
-			if (event.getClickedInventory().getName().equals(event.getWhoClicked().getInventory().getName())) {
+			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
+			if (inventoryName.equals(event.getWhoClicked().getInventory().getName())) {
 				return;
 			}
 			if (event.getClick().equals(ClickType.NUMBER_KEY)) {
@@ -128,7 +133,7 @@ public class InventoryListener implements Listener {
 				event.setCancelled(true);
 				return;
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getEditorInventory()[1].getName())) {
+			if (inventoryName.equals(inventoryManager.getEditorInventory()[1].getName())) {
 				for (ItemStack items : event.getWhoClicked().getInventory().getContents()) {
 					if (items.getType().equals(Material.COOKED_BEEF) || items.getType().equals(Material.GRILLED_PORK) || items.getType().equals(Material.GOLDEN_CARROT)) {
 						if (event.getCurrentItem().getType().equals(Material.COOKED_BEEF)) items.setType(Material.COOKED_BEEF);
@@ -137,15 +142,15 @@ public class InventoryListener implements Listener {
 					}
 				}
 			}
-			if (event.getClickedInventory().getName().equals(inventoryManager.getEditorInventory()[2].getName())) {
-				if (event.getCurrentItem().getType().equals(Material.BOOKSHELF)) {
+			if (inventoryName.equals(inventoryManager.getEditorInventory()[2].getName())) {
+				if (itemMaterial.equals(Material.BOOKSHELF)) {
 					final Map<String, Edited> map = new HashMap<>();
 					map.put(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId()), new Edited(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId()), event.getWhoClicked().getInventory().getContents(), event.getWhoClicked().getInventory().getArmorContents()));
 					this.main.getManagerHandler().getProfileManager().getEditor().put(event.getWhoClicked().getUniqueId(), map);
 					event.getWhoClicked().closeInventory();
 					Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.GREEN + "You have been saved the kit!");
 				}
-				if (event.getCurrentItem().getType().equals(Material.PAPER)) {
+				if (itemMaterial.equals(Material.PAPER)) {
 					if (this.main.getManagerHandler().getProfileManager().getEditor().get(event.getWhoClicked().getUniqueId()).get(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId())) != null) {
 						event.getWhoClicked().getInventory().setArmorContents(this.main.getManagerHandler().getProfileManager().getEditor().get(event.getWhoClicked().getUniqueId()).get(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId())).getArmorContent());
 						event.getWhoClicked().getInventory().setContents(this.main.getManagerHandler().getProfileManager().getEditor().get(event.getWhoClicked().getUniqueId()).get(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId())).getContent());
@@ -156,25 +161,25 @@ public class InventoryListener implements Listener {
 			}
 			event.setCancelled(true);
 		}
-		if (event.getClickedInventory().getName().contains("Settings") && !event.getClickedInventory().getName().contains("Spectate")) {
-			if (event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS) || event.getCurrentItem().getType().equals(Material.AIR)) return;
+		if (inventoryName.contains("Settings") && !inventoryName.contains("Spectate")) {
+			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
-			if (event.getCurrentItem().getType().equals(Material.PAINTING)) {
+			if (itemMaterial.equals(Material.PAINTING)) {
 				profile.getSettings().set(0, profile.getSettings().get(0) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, false);
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(0) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r scoreboard");
 				return;
 			}
-			if (event.getCurrentItem().getType().equals(Material.BLAZE_POWDER)) {
+			if (itemMaterial.equals(Material.BLAZE_POWDER)) {
 				profile.getSettings().set(1, profile.getSettings().get(1) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, false);
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(1) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r duel request");
 				return;
 			}
-			if (event.getCurrentItem().getType().equals(Material.WATCH)) {
+			if (itemMaterial.equals(Material.WATCH)) {
 				profile.getSettings().set(2, profile.getSettings().get(2) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 2, false);
@@ -183,12 +188,12 @@ public class InventoryListener implements Listener {
 				return;
 			}
 		}
-		if (event.getClickedInventory().getName().contains("Settings") && event.getClickedInventory().getName().contains("Spectate")) {
-			if (event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS) || event.getCurrentItem().getType().equals(Material.AIR)) return;
-			if (event.getCurrentItem().getType().equals(Material.DIAMOND)) {
+		if (inventoryName.contains("Settings") && inventoryName.contains("Spectate")) {
+			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
+			if (itemMaterial.equals(Material.DIAMOND)) {
 				profile.getSpectateSettings().set(0, profile.getSpectateSettings().get(0) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
-				final Duel duel = this.main.getUtils().getDuelBySpectator(event.getWhoClicked().getUniqueId());
+				final Duel duel = Utils.getDuelBySpectator(event.getWhoClicked().getUniqueId());
 				if (!duel.getSpectator().isEmpty()) {
 					duel.getSpectator().forEach(spectator -> {
 						if (profile.getSpectateSettings().get(0)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).showPlayer(Bukkit.getPlayer(spectator));
@@ -199,7 +204,7 @@ public class InventoryListener implements Listener {
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSpectateSettings().get(0) ? ChatColor.GREEN + "show" : ChatColor.RED + "hide") + ChatColor.DARK_GRAY + " other spectators");
 				return;
 			}
-			if (event.getCurrentItem().getType().equals(Material.FEATHER)) {
+			if (itemMaterial.equals(Material.FEATHER)) {
 				profile.getSpectateSettings().set(1, profile.getSpectateSettings().get(1) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				if (profile.getSpectateSettings().get(1)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.1f);
@@ -208,23 +213,23 @@ public class InventoryListener implements Listener {
 				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been set the fly speed to " + (profile.getSpectateSettings().get(1) ? ChatColor.YELLOW + "x1.0" : ChatColor.GOLD + "x2.5"));
 				return;
 			}
-			if (event.getCurrentItem().getType().equals(Material.EMERALD)) {
+			if (itemMaterial.equals(Material.EMERALD)) {
 				event.getWhoClicked().openInventory(inventoryManager.getSettingsInventory().get(event.getWhoClicked().getUniqueId()));
 				return;
 			}
 		}
-		if (event.getClickedInventory().getName().contains("Spectate") && !event.getClickedInventory().getName().contains("Settings") ) {
+		if (inventoryName.contains("Spectate") && !inventoryName.contains("Settings") ) {
 			if (event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR)) return;
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
-			if (event.getCurrentItem().getType().equals(Material.STAINED_GLASS) || event.getCurrentItem().getType().equals(Material.STAINED_GLASS_PANE) || event.getCurrentItem().getType().equals(Material.GLASS) || event.getCurrentItem().getType().equals(Material.COMPASS) || event.getCurrentItem().getType().equals(Material.AIR)) return;
+			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
             String title = event.getCurrentItem().getItemMeta().getDisplayName();
             String arr[] = title.split(" ", 2);
             String first = arr[0];
             event.getWhoClicked().closeInventory();
             Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).chat("/spectate " + ChatColor.stripColor(first));
 		}
-		if (event.getClickedInventory().getName().contains("preview's")) {
+		if (inventoryName.contains("preview's")) {
 			if (event.getCurrentItem() == null) return;
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
