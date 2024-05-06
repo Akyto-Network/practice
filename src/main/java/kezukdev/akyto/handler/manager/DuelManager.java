@@ -53,7 +53,7 @@ public class DuelManager {
 						this.endSingle(first.get(0).equals(uuid) ? second.get(0) : first.get(0));
 						return;
 					}
-					if (duel.getDuelType().equals(DuelType.FFA) || duel.getDuelType().equals(DuelType.SPLIT)) {
+					else {
 						MatchUtils.addKill(uuid, null);
 					}
 				}

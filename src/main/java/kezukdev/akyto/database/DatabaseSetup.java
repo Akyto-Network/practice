@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
@@ -114,30 +115,35 @@ public class DatabaseSetup {
 
         CompletableFuture<String> scoreboardFuture = DB.getFirstRowAsync("SELECT scoreboard FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> row.getString("scoreboard"));
+        scoreboardFuture.thenAccept(accept -> data.getSettings().set(0, Boolean.valueOf(accept)));
+        
         CompletableFuture<String> duelRequestFuture = DB.getFirstRowAsync("SELECT duelRequest FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> row.getString("duelRequest"));
+        duelRequestFuture.thenAccept(accept -> data.getSettings().set(1, Boolean.valueOf(accept)));
+        
         CompletableFuture<String> timeFuture = DB.getFirstRowAsync("SELECT time FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> row.getString("time"));
+        timeFuture.thenAccept(accept -> data.getSettings().set(2, Boolean.valueOf(accept)));
+        
         CompletableFuture<String> flySpeedFuture = DB.getFirstRowAsync("SELECT flySpeed FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> row.getString("flySpeed"));
+        flySpeedFuture.thenAccept(accept -> data.getSpectateSettings().set(0, Boolean.valueOf(accept)));
+        
         CompletableFuture<String> displaySpectateFuture = DB.getFirstRowAsync("SELECT displaySpectate FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> row.getString("displaySpectate"));
+        displaySpectateFuture.thenAccept(accept -> data.getSpectateSettings().set(1, Boolean.valueOf(accept)));
+        
         CompletableFuture<int[]> elosFuture = DB.getFirstRowAsync("SELECT elos FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> FormatUtils.getSplitValue(row.getString("elos"), ":"));
+        elosFuture.thenAccept(accept -> data.getStats().set(2, accept));
+        
         CompletableFuture<int[]> winFuture = DB.getFirstRowAsync("SELECT win FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> FormatUtils.getSplitValue(row.getString("win"), ":"));
+        winFuture.thenAccept(accept -> data.getStats().set(1, accept));
+        
         CompletableFuture<int[]> playedFuture = DB.getFirstRowAsync("SELECT played FROM playersdata WHERE name=?", playerName)
                 .thenApply(row -> FormatUtils.getSplitValue(row.getString("played"), ":"));
-        CompletableFuture<Void> allOfFuture = CompletableFuture.allOf(scoreboardFuture, duelRequestFuture, timeFuture, flySpeedFuture, displaySpectateFuture, elosFuture, winFuture, playedFuture);
-        allOfFuture.join();
-        data.getSettings().set(0, Boolean.valueOf(scoreboardFuture.join()));
-        data.getSettings().set(1, Boolean.valueOf(duelRequestFuture.join()));
-        data.getSettings().set(2, Boolean.valueOf(timeFuture.join()));
-        data.getSpectateSettings().set(0, Boolean.valueOf(flySpeedFuture.join()));
-        data.getSpectateSettings().set(1, Boolean.valueOf(displaySpectateFuture.join()));
-        data.getStats().set(2, elosFuture.join());
-        data.getStats().set(1, winFuture.join());
-        data.getStats().set(0, playedFuture.join());
+        playedFuture.thenAccept(accept -> data.getStats().set(0, accept));
 	}
     
 }
