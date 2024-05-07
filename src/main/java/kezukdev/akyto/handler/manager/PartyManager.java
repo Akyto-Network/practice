@@ -119,7 +119,12 @@ public class PartyManager {
 	        });
 	    }
 	    party.getMembers().forEach(uuid -> {
-	        if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + Utils.getName(invited) + " join the party!");
+	        if (Bukkit.getPlayer(uuid) != null) {
+	        	Bukkit.getPlayer(uuid).sendMessage(new String[] {
+	        			ChatColor.GREEN + Utils.getName(invited) + " joined the party!",
+	        			ChatColor.GRAY.toString() + ChatColor.ITALIC +  "We advise you to play " + 
+	    	        			(party.getMembers().size() % 2 == 0 ? ChatColor.YELLOW.toString() + ChatColor.ITALIC + "split" + ChatColor.GRAY + " (" + ChatColor.GOLD + (party.getMembers().size() / 2) + ChatColor.RED + "v" + ChatColor.GOLD + (party.getMembers().size() / 2) + ChatColor.GRAY + ")" : ChatColor.YELLOW.toString() + ChatColor.ITALIC + "FFA")});
+	        }
 	    });
 	    this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 	    this.main.getManagerHandler().getItemManager().giveItems(invited, false);
