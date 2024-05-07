@@ -117,10 +117,12 @@ public class PlayerListener implements Listener {
 		final Profile data = Utils.getProfiles(event.getPlayer().getUniqueId());
 		final Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
 		Block clickedBlock = event.getClickedBlock();
-        if (clickedBlock != null && isPlants(clickedBlock.getType())) {
-            if (player.getLocation().getBlockY() > event.getClickedBlock().getLocation().getBlockY()) {
+        if (clickedBlock != null) {
+            if (isPlants(clickedBlock.getType()) && player.getLocation().getBlockY() > event.getClickedBlock().getLocation().getBlockY()) {
                 event.setCancelled(true);
             }
+			if (event.getClickedBlock().getType().equals(Material.FIRE))
+				event.setCancelled(true);
         }
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (data.getProfileState().equals(ProfileState.FREE)) {
