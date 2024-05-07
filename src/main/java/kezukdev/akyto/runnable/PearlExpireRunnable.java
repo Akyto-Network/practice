@@ -15,7 +15,6 @@ public class PearlExpireRunnable extends BukkitRunnable {
 	public PearlExpireRunnable(final Player player, final Duel duel) {
 		this.player = player;
 		this.duel = duel;
-		this.run();
 	}
 
 	@Override

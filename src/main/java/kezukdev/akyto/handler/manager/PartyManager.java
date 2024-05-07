@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import kezukdev.akyto.Practice;
+import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.utils.chat.ComponentJoiner;
@@ -105,15 +106,16 @@ public class PartyManager {
 	    final PartyEntry party = Utils.getPartyByUUID(inviter);
 	    party.getMembers().add(invited);
 	    if (Utils.getDuelByUUID(inviter) != null) {
+	    	final Duel duel = Utils.getDuelByUUID(inviter);
 	        Utils.getProfiles(invited).setProfileState(ProfileState.SPECTATE);
-	        Utils.getDuelByUUID(inviter).getSpectator().add(invited);
-	        Bukkit.getPlayer(invited).teleport(Utils.getDuelByUUID(inviter).getArena().getPosition().get(0).toBukkitLocation());
+	        duel.getSpectator().add(invited);
+	        Bukkit.getPlayer(invited).teleport(duel.getArena().getPosition().get(0).toBukkitLocation());
 	        Bukkit.getOnlinePlayers().forEach(player -> {
 	            if (Utils.getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.FIGHT) || Utils.getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
 	                player.hidePlayer(Bukkit.getPlayer(invited));
 	                Bukkit.getPlayer(invited).hidePlayer(player);
 	            }
-	            if (Utils.getDuelBySpectator(invited).getFirst().contains(player.getUniqueId()) || Utils.getDuelBySpectator(invited).getSecond().contains(player.getUniqueId())) {
+	            if (duel.getFirst().contains(player.getUniqueId()) || duel.getSecond().contains(player.getUniqueId())) {
 	                Bukkit.getPlayer(invited).showPlayer(player);
 	            }
 	        });
