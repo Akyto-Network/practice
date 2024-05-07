@@ -47,8 +47,8 @@ public class Practice extends JavaPlugin {
 	
 	private ManagerHandler managerHandler;
 	private MiscHandler miscHandler;
-	private String hikariPath;
-	public String getHikariPath() { return hikariPath; }
+	@Getter
+    private String hikariPath;
     public Connection connection;
 	private MySQL mySQL;
     public File locationFile;
@@ -58,10 +58,10 @@ public class Practice extends JavaPlugin {
     private String region;
     
 	private List<Kit> kits = new ArrayList<>();
-	private List<Duel> duels = new ArrayList<>();
+	private final List<Duel> duels = new ArrayList<>();
 	private ConcurrentMap<UUID, QueueEntry> queue;
-    private List<Arena> arenas = new ArrayList<>();
-    private HashMap<String, Arena> arenasMap = new HashMap<>();
+    private final List<Arena> arenas = new ArrayList<>();
+    private final HashMap<String, Arena> arenasMap = new HashMap<>();
     private DatabaseSetup databaseSetup;
 	private FileSetup fileSetup;
 	
