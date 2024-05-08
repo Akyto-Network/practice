@@ -26,7 +26,7 @@ public class QueueManager {
         for (Entry<UUID, QueueEntry> entry : main.getQueue().entrySet()) {
             QueueEntry queueEntry = entry.getValue();
             if (queueEntry.getKit().equals(kit) && queueEntry.isRanked() == ranked && !entry.getKey().equals(uuid)) {
-                new Duel(this.main, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE);
+                new Duel(this.main, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE, null);
                 main.getQueue().remove(entry.getKey());
                 this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
                 return;

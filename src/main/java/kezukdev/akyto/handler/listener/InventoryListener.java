@@ -1,7 +1,8 @@
 package kezukdev.akyto.handler.listener;
 
 import kezukdev.akyto.handler.manager.InventoryManager;
-import kezukdev.akyto.handler.manager.PartyManager;
+import kezukdev.akyto.request.Request;
+import kezukdev.akyto.request.Request.RequestType;
 import kezukdev.akyto.utils.Utils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +20,7 @@ import org.bukkit.Material;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -77,8 +79,14 @@ public class InventoryListener implements Listener {
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventoryName.equals(inventoryManager.getQueueInventory()[2].getName())) {
-				final UUID target = this.main.getManagerHandler().getRequestManager().getStartRequest().get(event.getWhoClicked().getUniqueId());
-				this.main.getManagerHandler().getRequestManager().createDuelRequest(event.getWhoClicked().getUniqueId(), target, Kit.getLadderByID(event.getSlot(), main));
+				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
+				request.setKit(Kit.getLadderByID(event.getSlot(), main));
+				event.getWhoClicked().openInventory(Kit.getLadderByID(event.getSlot(), main).name().equalsIgnoreCase("sumo") ? this.main.getManagerHandler().getInventoryManager().getArenaInventory()[1] : this.main.getManagerHandler().getInventoryManager().getArenaInventory()[0]);
+			}
+			if (inventoryName.equals(inventoryManager.getArenaInventory()[0].getName()) || inventoryName.equals(inventoryManager.getArenaInventory()[1].getName())) {
+				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
+				request.setArena(Utils.getArenaByIcon(event.getCurrentItem().getType()));
+				this.main.getManagerHandler().getRequestManager().sendNotification(event.getWhoClicked().getUniqueId(), RequestType.DUEL);
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventoryName.equals(inventoryManager.getPartyEventInventory().getName())) {
@@ -102,7 +110,7 @@ public class InventoryListener implements Listener {
 			        secondTeam.add(shuffle.get(i));
 			    }
 			    Kit kit = Kit.getLadderByID(event.getSlot(), main);
-			    new Duel(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam),false,  kit, event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[3].getName()) ? DuelType.FFA : DuelType.SPLIT);
+			    new Duel(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam),false,  kit, event.getClickedInventory().getName().equals(inventoryManager.getQueueInventory()[3].getName()) ? DuelType.FFA : DuelType.SPLIT, null);
 			}
 			if (inventoryName.equals(inventoryManager.getEditorInventory()[0].getName())) {
 				Utils.sendToEditor(event.getWhoClicked().getUniqueId(), Kit.getLadderByDisplay(event.getCurrentItem().getItemMeta().getDisplayName(), this.main));
@@ -241,4 +249,13 @@ public class InventoryListener implements Listener {
 		}
 	}
 
+	
+	@EventHandler
+	public void onCloseInventory(final InventoryCloseEvent event) {
+		if (event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[0].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[1].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getQueueInventory()[2].getName())) {
+			this.main.getManagerHandler().getRequestManager().removeRequest(Utils.getRequestByUUID(event.getPlayer().getUniqueId()));
+			Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage(ChatColor.RED + "You have cancelled your request duel.");
+			return;
+		}
+	}
 }

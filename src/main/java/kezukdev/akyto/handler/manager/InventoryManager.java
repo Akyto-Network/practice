@@ -22,6 +22,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.google.common.collect.Lists;
 
 import kezukdev.akyto.Practice;
+import kezukdev.akyto.arena.Arena;
+import kezukdev.akyto.arena.ArenaType;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.handler.manager.QueueManager.QueueEntry;
@@ -41,6 +43,7 @@ public class InventoryManager {
 	
 	private final Practice main;
 	private Inventory[] queueInventory = new Inventory[5];
+	private Inventory[] arenaInventory = new Inventory[2];
 	private Inventory[] editorInventory = new Inventory[3];
 	private Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leadeboard:");
 	private Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
@@ -67,6 +70,13 @@ public class InventoryManager {
 		this.queueInventory[2] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select duel kit:");
 		this.queueInventory[3] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select ffa kit:");
 		this.queueInventory[4] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select split kit:");
+		this.arenaInventory[0] = Bukkit.createInventory(null, 9*4, ChatColor.GRAY + "Select Normal Arena:");
+		this.arenaInventory[1] = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Select Sumo Arena:");
+		for (Arena arena : this.main.getArenas()) {
+			this.arenaInventory[arena.getArenaType().equals(ArenaType.NORMAL) ? 0 : 1].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + arena.getName()));
+		}
+		this.arenaInventory[0].setItem(44, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
+		this.arenaInventory[1].setItem(26, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
 		this.editorInventory[0] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select kit:");
 		this.editorInventory[1] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "More:");
 		this.editorInventory[2] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Management:");

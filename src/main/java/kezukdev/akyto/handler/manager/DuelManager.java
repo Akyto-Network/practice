@@ -38,9 +38,8 @@ public class DuelManager {
 	public DuelManager(final Practice main) { this.main = main; }
 	
 	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
-		final Arena arena = this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
 		final Duel duel = Utils.getDuelByUUID(first.get(0));
-		duel.arena = arena;
+		Arena arena = duel.getArena() != null ? duel.getArena() : this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
 		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
 		TagUtils.setupTeams(first, second);
 		if (duel.getDuelType().equals(DuelType.SPLIT)) {

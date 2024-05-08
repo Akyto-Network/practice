@@ -14,6 +14,7 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.request.Request;
 import kezukdev.akyto.utils.Utils;
 
 public class DuelCommand implements CommandExecutor {
@@ -92,26 +93,20 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + args[1] + " not found on akyto.");
 				return false;
 			}
-
-			if (!this.main.getManagerHandler().getRequestManager().getRequest().containsKey(target.getUniqueId())) {
-				sender.sendMessage(ChatColor.RED + "This player don't have send any request!");
+			
+			final Request request = Utils.getRequestByUUID(target.getUniqueId());
+			if (request == null || !request.getReceiver().equals(Utils.getUUID(sender.getName()))) {
+				sender.sendMessage(ChatColor.RED + "You have no request for a duel from " + target.getName());
 				return false;
 			}
-
-			if (!this.main.getManagerHandler().getRequestManager().getRequest().get(target.getUniqueId()).getRequested().equals(playerSender.getUniqueId())) {
-				sender.sendMessage(ChatColor.RED + "You don't have any request from this player!");
-				return false;
-			}
-
 			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
-
 			if (!targetProfile.getProfileState().equals(ProfileState.FREE)) {
 				sender.sendMessage(ChatColor.RED + target.getDisplayName() + " is not free now.");
 				return false;
 			}
 
-			new Duel(this.main, Sets.newHashSet(target.getUniqueId()), Sets.newHashSet(playerSender.getUniqueId()), false, this.main.getManagerHandler().getRequestManager().getRequest().get(target.getUniqueId()).getKit(), DuelType.SINGLE);
-			this.main.getManagerHandler().getRequestManager().removeRequest(target.getUniqueId());
+			new Duel(this.main, Sets.newHashSet(target.getUniqueId()), Sets.newHashSet(playerSender.getUniqueId()), false, request.getKit(), DuelType.SINGLE, request.getArena());
+			this.main.getManagerHandler().getRequestManager().removeRequest(request);
 		}
 		return false;
 	}

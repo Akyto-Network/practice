@@ -1,13 +1,21 @@
 package kezukdev.akyto.handler.manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 import kezukdev.akyto.Practice;
+import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.kit.Kit;
+import kezukdev.akyto.request.Request;
+import kezukdev.akyto.request.Request.RequestType;
+import kezukdev.akyto.runnable.RequestExpireRunnable;
+import kezukdev.akyto.utils.Utils;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
@@ -19,56 +27,35 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class RequestManager {
 	
 	private final Practice main;
-	private final HashMap<UUID, UUID> startRequest;
-	private final HashMap<UUID, UUID> partyRequest;
-	private final HashMap<UUID, RequestEntry> request;
+	private final List<Request> request;
 	
 	public RequestManager(final Practice main) {
 		this.main = main;
-		this.startRequest = new HashMap<>();
-		this.partyRequest = new HashMap<>();
-		this.request = new HashMap<>();
+		this.request = new ArrayList<>();
 	}
 	
-	public void createPullRequest(final UUID sender, final UUID target) { 
-		this.startRequest.put(sender, target);
+	public void createPullRequest(final UUID sender, final UUID target) {
+		this.request.add(new Request(sender, target, null, null, RequestType.DUEL));
 		Bukkit.getPlayer(sender).openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[2]);
 	}
 	
-	public void createDuelRequest(final UUID sender, final UUID target, final Kit kit) {
-		this.request.put(sender, new RequestEntry(target, kit));
-		Bukkit.getPlayer(sender).sendMessage(ChatColor.GREEN + "Your duel request into " + ChatColor.stripColor(kit.displayName()) + " as been sent to " + Bukkit.getPlayer(target).getName());
-		final TextComponent comp = new TextComponent(ChatColor.GREEN + "You have just received a duel request from " + Bukkit.getPlayer(sender).getName() + " into " + ChatColor.stripColor(kit.displayName()));
-		comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to accept the duel request.").create()));
-		comp.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/duel accept " + Bukkit.getPlayer(sender).getName()));
-		Bukkit.getPlayer(target).spigot().sendMessage(comp);
-		this.startRequest.remove(sender);
+	public void createRequest(final UUID sender, final UUID target, final Kit kit, final Arena arena, final RequestType type) {
+		new Request(sender, target, kit, arena, type);
 	}
 	
-	public void createPartyRequest(final UUID sender, final UUID target) {
-		this.partyRequest.put(sender, target);
-		Bukkit.getPlayer(sender).sendMessage(ChatColor.GREEN + "Your party invitation as been sent to " + Bukkit.getPlayer(target).getName());
-		final TextComponent comp = new TextComponent(ChatColor.GREEN + "You have just received a party invitation from " + Bukkit.getPlayer(sender).getName());
-		comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to accept the party invitation.").create()));
-		comp.setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/party join " + Bukkit.getPlayer(sender).getName()));
-		Bukkit.getPlayer(target).spigot().sendMessage(comp);
-	}
-	
-	public void removeRequest(final UUID sender) {
-        this.partyRequest.remove(sender);
-        this.startRequest.remove(sender);
-        this.request.remove(sender);
-	}
-	
-	@Getter
-	public static class RequestEntry {
-		private final UUID requested;
-		private final Kit kit;
-		
-		public RequestEntry(final UUID requested, final Kit kit) {
-			this.requested = requested;
-			this.kit = kit;
+	public void sendNotification(final UUID sender, final RequestType type) {
+		final Request request = Utils.getRequestByUUID(sender);
+		Bukkit.getPlayer(sender).sendMessage(ChatColor.GREEN + "Your " + (type.equals(RequestType.DUEL) ? "duel request into " + ChatColor.stripColor(request.getKit().displayName()) : "party invitation") + " as been sent to " + Bukkit.getPlayer(request.getReceiver()).getName());
+		final TextComponent comp = new TextComponent(ChatColor.GREEN + "You have just received a " + (type.equals(RequestType.DUEL) ? "duel request from " : "party invitation from " ) + Bukkit.getPlayer(sender).getName() + (type.equals(RequestType.DUEL) ? " into " + ChatColor.stripColor(request.getKit().displayName()) + ChatColor.GREEN + " on " + ChatColor.YELLOW + request.getArena().getName() : ""));
+		comp.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to accept the " + (type.equals(RequestType.DUEL) ? "duel request." : "party invitation.")).create()));
+		comp.setClickEvent(new ClickEvent(Action.RUN_COMMAND, (type.equals(RequestType.DUEL) ? "/duel accept " : "/party join ") + Bukkit.getPlayer(sender).getName()));
+		Bukkit.getPlayer(request.getReceiver()).spigot().sendMessage(comp);
+		if (type.equals(RequestType.DUEL)) {
+			new RequestExpireRunnable(request);
 		}
 	}
-
+	
+	public void removeRequest(final Request request) {
+		this.request.remove(request);
+	}
 }

@@ -1,6 +1,8 @@
 package kezukdev.akyto.handler.command;
 
 import kezukdev.akyto.handler.manager.PartyManager;
+import kezukdev.akyto.request.Request;
+import kezukdev.akyto.request.Request.RequestType;
 import kezukdev.akyto.utils.Utils;
 
 import org.bukkit.Bukkit;
@@ -11,8 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import kezukdev.akyto.Practice;
-
-import java.util.UUID;
 
 public class PartyCommand implements CommandExecutor {
 	
@@ -106,13 +106,14 @@ public class PartyCommand implements CommandExecutor {
 					return false;
 				}
 
-				final UUID request = this.main.getManagerHandler().getRequestManager().getPartyRequest().get(target.getUniqueId());
+				final Request request = Utils.getRequestByUUID(playerSender.getUniqueId());
 
-				if (request != null && request.equals(playerSender.getUniqueId())) {
+				if (request != null && request.getReceiver().equals(target.getUniqueId())) {
 					sender.sendMessage(ChatColor.RED + "You can't invite " + target.getDisplayName() + " because you've already invited him!");
 				}
 
-                this.main.getManagerHandler().getRequestManager().createPartyRequest(playerSender.getUniqueId(), target.getUniqueId());
+                this.main.getManagerHandler().getRequestManager().createRequest(playerSender.getUniqueId(), target.getUniqueId(), null, null, Request.RequestType.PARTY);
+                this.main.getManagerHandler().getRequestManager().sendNotification(playerSender.getUniqueId(), RequestType.PARTY);
                 return false;
             }
 
@@ -151,15 +152,15 @@ public class PartyCommand implements CommandExecutor {
                     return false;
                 }
 
-				final UUID inviter = this.main.getManagerHandler().getRequestManager().getPartyRequest().get(target.getUniqueId());
+				final Request request = Utils.getRequestByUUID(playerSender.getUniqueId());
 
-				if (inviter == null || !inviter.equals(playerSender.getUniqueId())) {
+				if (request == null || !request.getRequester().equals(target.getUniqueId())) {
 					sender.sendMessage(ChatColor.RED + "You doesn't have any party invitation from " + target.getDisplayName() + " !");
 					return false;
 				}
 
                 partyManager.joinParty(target.getUniqueId(), playerSender.getUniqueId());
-                this.main.getManagerHandler().getRequestManager().removeRequest(target.getUniqueId());
+                this.main.getManagerHandler().getRequestManager().removeRequest(request);
                 return false;
             }
 		}

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -29,7 +30,7 @@ public class ArenaManager {
 		ConfigurationSection arenaSection = fileConfig.getConfigurationSection("arenas");
 		if (arenaSection == null) return;
 		arenaSection.getKeys(false).forEach(name -> {
-			final Arena arena = new Arena(main, name, LocationSerializer.stringToLocation(arenaSection.getString(name + ".first")), LocationSerializer.stringToLocation(arenaSection.getString(name + ".second")), ArenaType.valueOf(arenaSection.getString(name + ".type")));
+			final Arena arena = new Arena(main, name, LocationSerializer.stringToLocation(arenaSection.getString(name + ".first")), LocationSerializer.stringToLocation(arenaSection.getString(name + ".second")), ArenaType.valueOf(arenaSection.getString(name + ".type")), Material.valueOf(arenaSection.getString(name + ".icon")));
 			this.main.getArenasMap().putIfAbsent(name, arena);
 		});
 	}
@@ -42,6 +43,7 @@ public class ArenaManager {
 			fileConfig.set("arenas." + arenaName + ".first", LocationSerializer.locationToString(arena.getPosition().get(0)));
 			fileConfig.set("arenas." + arenaName + ".second", LocationSerializer.locationToString(arena.getPosition().get(1)));
 			fileConfig.set("arenas." + arenaName + ".type", arena.getArenaType().toString());
+			fileConfig.set("arenas." + arenaName + ".icon", arena.getIcon().toString());
 		});
 		this.config.save();
 	}

@@ -1,8 +1,6 @@
 package kezukdev.akyto.duel;
 
 import java.util.*;
-import java.util.stream.Collectors;
-
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.duel.cache.DuelState;
@@ -31,7 +29,7 @@ public class Duel {
     private List<UUID> winner;
     public Arena arena;
 	
-	public Duel(final Practice main, final Set<UUID> first, final Set<UUID> second, final boolean ranked, final Kit kit, final Duel.DuelType type) {
+	public Duel(final Practice main, final Set<UUID> first, final Set<UUID> second, final boolean ranked, final Kit kit, final Duel.DuelType type, final Arena arena) {
 		this.duelType = type;
 		this.first = first;
 		this.second = second;
@@ -50,6 +48,7 @@ public class Duel {
 		this.state = DuelState.STARTING;
         this.duration = 0;
         this.winner = new ArrayList<>();
+        if (arena != null) this.arena = arena;
 		main.getDuels().add(this);
 		Arrays.asList(first, second).forEach(uuids -> uuids.forEach(uuid -> main.getManagerHandler().getProfileManager().getDuelStatistics().put(uuid, new DuelStatistics())));
 		main.getManagerHandler().getDuelManager().start(new ArrayList<>(first), new ArrayList<>(second), kit);

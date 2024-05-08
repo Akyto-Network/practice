@@ -3,6 +3,8 @@ package kezukdev.akyto.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import kezukdev.akyto.arena.Arena;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import kezukdev.akyto.Practice;
@@ -11,6 +13,7 @@ import kezukdev.akyto.handler.manager.PartyManager.PartyEntry;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.request.Request;
 
 public class Utils {
 
@@ -35,6 +38,14 @@ public class Utils {
 
 	public static Duel getDuelByUUID(UUID uuid) {
 	    return Practice.getAPI().getDuels().stream().filter(duel -> duel.getFirst().contains(uuid) || duel.getSecond().contains(uuid)).findFirst().orElse(null);
+	}
+
+	public static Arena getArenaByIcon(Material icon) {
+		return Practice.getAPI().getArenas().stream().filter(arena -> arena.getIcon().equals(icon)).findFirst().orElse(null);
+	}
+	
+	public static Request getRequestByUUID(UUID uuid) {
+	    return Practice.getAPI().getManagerHandler().getRequestManager().getRequest().stream().filter(request -> request.getReceiver().equals(uuid) || request.getRequester().equals(uuid)).findFirst().orElse(null);
 	}
 	
 	public static Duel getDuelBySpectator(UUID uuid) {
