@@ -85,7 +85,7 @@ public class InventoryListener implements Listener {
 			}
 			if (inventoryName.equals(inventoryManager.getArenaInventory()[0].getName()) || inventoryName.equals(inventoryManager.getArenaInventory()[1].getName())) {
 				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
-				request.setArena(Utils.getArenaByIcon(event.getCurrentItem().getType()));
+				request.setArena(event.getCurrentItem().getType().equals(Material.NETHER_STAR) ? this.main.getManagerHandler().getArenaManager().getRandomArena(request.getKit().arenaType()) : Utils.getArenaByIcon(event.getCurrentItem().getType()));
 				this.main.getManagerHandler().getRequestManager().sendNotification(event.getWhoClicked().getUniqueId(), RequestType.DUEL);
 				event.getWhoClicked().closeInventory();
 			}
