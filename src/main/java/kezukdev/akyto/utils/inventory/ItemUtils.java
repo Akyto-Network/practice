@@ -6,8 +6,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import gym.core.utils.Utils;
-
 public class ItemUtils {
 	
 	public static ItemStack createItems(final Material material, final String displayName) {
@@ -37,7 +35,7 @@ public class ItemUtils {
 	public static ItemStack createItems(final Material material, final int amount, final short damage, final Byte data, final String displayName, final boolean unbreakable, final List<String> lore) {
 		final ItemStack item = new ItemStack(material, amount, damage, data);
 		final ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(Utils.translate(displayName));
+		meta.setDisplayName(displayName);
 		if (lore != null) meta.setLore(lore);
 		if (unbreakable) meta.spigot().setUnbreakable(unbreakable);
 		item.setItemMeta(meta);

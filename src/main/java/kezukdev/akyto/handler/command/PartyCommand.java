@@ -112,7 +112,7 @@ public class PartyCommand implements CommandExecutor {
 					sender.sendMessage(ChatColor.RED + "You can't invite " + target.getDisplayName() + " because you've already invited him!");
 				}
 
-                this.main.getManagerHandler().getRequestManager().createRequest(playerSender.getUniqueId(), target.getUniqueId(), null, null, Request.RequestType.PARTY);
+                this.main.getManagerHandler().getRequestManager().createPartyRequest(playerSender.getUniqueId(), target.getUniqueId());
                 this.main.getManagerHandler().getRequestManager().sendNotification(playerSender.getUniqueId(), RequestType.PARTY);
                 return false;
             }

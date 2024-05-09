@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import kezukdev.akyto.arena.Arena;
+import kezukdev.akyto.arena.ArenaType;
+
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import kezukdev.akyto.Practice;
@@ -40,8 +42,8 @@ public class Utils {
 	    return Practice.getAPI().getDuels().stream().filter(duel -> duel.getFirst().contains(uuid) || duel.getSecond().contains(uuid)).findFirst().orElse(null);
 	}
 
-	public static Arena getArenaByIcon(Material icon) {
-		return Practice.getAPI().getArenas().stream().filter(arena -> arena.getIcon().equals(icon)).findFirst().orElse(null);
+	public static Arena getArenaByIcon(Material icon, ArenaType arenaType) {
+		return Practice.getAPI().getArenas().stream().filter(arena -> arena.getIcon().equals(icon) && arena.getArenaType().equals(arenaType)).findFirst().orElse(null);
 	}
 	
 	public static Request getRequestByUUID(UUID uuid) {

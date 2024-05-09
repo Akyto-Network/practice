@@ -75,8 +75,8 @@ public class InventoryManager {
 		for (Arena arena : this.main.getArenas()) {
 			this.arenaInventory[arena.getArenaType().equals(ArenaType.NORMAL) ? 0 : 1].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + arena.getName()));
 		}
-		this.arenaInventory[0].setItem(44, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
-		this.arenaInventory[1].setItem(26, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
+		this.arenaInventory[0].setItem(35, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
+		this.arenaInventory[1].setItem(26, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
 		this.editorInventory[0] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select kit:");
 		this.editorInventory[1] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "More:");
 		this.editorInventory[2] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Management:");

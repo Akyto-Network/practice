@@ -10,11 +10,11 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import gym.core.utils.TimeUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.kit.KitInterface;
+import kezukdev.akyto.utils.match.DurationUtils;
 
 public class CountdownRunnable extends BukkitRunnable {
 	
@@ -63,7 +63,7 @@ public class CountdownRunnable extends BukkitRunnable {
             }));
 			this.duel.timer = new Timer();
 			this.duel.startTime = System.currentTimeMillis();
-			TimeUtils.startDuration(duel);
+			DurationUtils.startDuration(duel);
 			duel.setState(DuelState.PLAYING);
 			this.cancel();
 		}

@@ -1,17 +1,12 @@
 package kezukdev.akyto.handler.manager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
-
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.arena.Arena;
-import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.request.Request;
 import kezukdev.akyto.request.Request.RequestType;
 import kezukdev.akyto.runnable.RequestExpireRunnable;
@@ -39,8 +34,8 @@ public class RequestManager {
 		Bukkit.getPlayer(sender).openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[2]);
 	}
 	
-	public void createRequest(final UUID sender, final UUID target, final Kit kit, final Arena arena, final RequestType type) {
-		new Request(sender, target, kit, arena, type);
+	public void createPartyRequest(final UUID sender, final UUID target) {
+		new Request(sender, target, null, null, RequestType.PARTY);
 	}
 	
 	public void sendNotification(final UUID sender, final RequestType type) {

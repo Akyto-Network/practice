@@ -3,7 +3,6 @@ author: [kezukdev]
 version: 1.0
 description: Akyto practice developed by Kezuk
 main: kezukdev.akyto.Practice
-depends: [Core]
 commands:
   duel:
     aliases: [d, duels]

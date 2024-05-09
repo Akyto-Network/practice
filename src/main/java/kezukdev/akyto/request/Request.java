@@ -19,10 +19,6 @@ public class Request {
 	public Request(final UUID requester, final UUID receiver, final Kit kit, final Arena arena, final RequestType type) {
 		this.requester = requester;
 		this.receiver = receiver;
-		if (type.equals(RequestType.DUEL)) {
-			this.kit = kit;
-			this.arena = arena != null ? arena : Practice.getAPI().getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());	
-		}
 		Practice.getAPI().getManagerHandler().getRequestManager().getRequest().add(this);
 	}
 
