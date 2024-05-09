@@ -104,7 +104,6 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + target.getDisplayName() + " is not free now.");
 				return false;
 			}
-			System.out.println(this.main.getManagerHandler().getRequestManager().getRequest());
 			new Duel(this.main, Sets.newHashSet(target.getUniqueId()), Sets.newHashSet(playerSender.getUniqueId()), false, request.getKit(), DuelType.SINGLE, request.getArena());
 			this.main.getManagerHandler().getRequestManager().getRequest().remove(request);
 		}

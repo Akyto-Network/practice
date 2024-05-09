@@ -9,8 +9,8 @@ import kezukdev.akyto.duel.cache.DuelState;
 
 public class PearlExpBarRunnable extends BukkitRunnable {
 	
-	private Player player;
-	private Duel duel;
+	private final Player player;
+	private final Duel duel;
 	
 	public PearlExpBarRunnable(final Player player, final Duel duel) {
 		this.player = player;
@@ -27,7 +27,8 @@ public class PearlExpBarRunnable extends BukkitRunnable {
 		if (duel == null || duel.getState().equals(DuelState.FINISHING) || !Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).isEnderPearlCooldownActive()) {
 			player.setExp(0.0f);
 			player.setLevel(0);
-			this.cancel();
+			if (Practice.getAPI().getServer().getScheduler().isCurrentlyRunning(this.getTaskId()))
+				this.cancel();
 			return;
 		}
 		final double time = Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 1000.0D;

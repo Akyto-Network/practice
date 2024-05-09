@@ -4,6 +4,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import kezukdev.akyto.runnable.RgbArmorTask;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -21,15 +23,12 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import gym.core.Core;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
@@ -66,6 +65,24 @@ public class PlayerListener implements Listener {
 		event.getPlayer().teleport(this.main.getSpawn().getLocation() == null ? event.getPlayer().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
 		this.main.getManagerHandler().getInventoryManager().generateSettingsInventory(event.getPlayer().getUniqueId());
 		this.main.getManagerHandler().getInventoryManager().generateProfileInventory(event.getPlayer().getUniqueId());
+	}
+
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent event) {
+		Player teleported = event.getPlayer();
+		if (!event.getTo().equals(this.main.getSpawn().getLocation() == null ? teleported.getWorld().getSpawnLocation() : this.main.getSpawn().getLocation()))
+			return;
+
+		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
+		if (profile == null || !Core.API.getManagerHandler().getProfileManager().getRank(teleported.getUniqueId()).isStaff())
+			return;
+
+		this.main.getServer().getScheduler().runTaskTimerAsynchronously(
+				this.main,
+				new RgbArmorTask(teleported),
+				100L,
+				1L
+		);
 	}
 
 	@EventHandler
