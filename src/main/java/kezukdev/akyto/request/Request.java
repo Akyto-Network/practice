@@ -19,10 +19,8 @@ public class Request {
 	public Request(final UUID requester, final UUID receiver, final Kit kit, final Arena arena, final RequestType type) {
 		this.requester = requester;
 		this.receiver = receiver;
-		Practice.getAPI().getManagerHandler().getRequestManager().getRequest().add(this);
 	}
 
-	
 	public enum RequestType {
 		DUEL,
 		PARTY

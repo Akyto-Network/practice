@@ -35,7 +35,7 @@ public class RequestManager {
 	}
 	
 	public void createPartyRequest(final UUID sender, final UUID target) {
-		new Request(sender, target, null, null, RequestType.PARTY);
+		this.request.add(new Request(sender, target, null, null, RequestType.PARTY));
 	}
 	
 	public void sendNotification(final UUID sender, final RequestType type) {
