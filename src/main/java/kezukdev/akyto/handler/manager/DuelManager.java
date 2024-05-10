@@ -93,7 +93,6 @@ public class DuelManager {
 		players.add(looser);
 		if (!duel.getSpectator().isEmpty()) players.addAll(new ArrayList<>(duel.getSpectator()));
 		DataUtils.addWinToData(winner, duel.getKit());
-		MatchUtils.clearDrops(winner);
 		players.forEach(uuid -> {
 			if (!duel.getSpectator().contains(uuid)) {
 				this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid).removeEnderPearlCooldown();

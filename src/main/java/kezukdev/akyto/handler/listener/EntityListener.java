@@ -100,6 +100,10 @@ public class EntityListener implements Listener {
 	  @EventHandler
 	  public void onReceiveDroppedItems(PlayerPickupItemEvent event) {
 		  if (this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getPlayer().getUniqueId()).getProfileState().equals(ProfileState.FIGHT)) {
+			  if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.FINISHING)) {
+				  event.setCancelled(true);
+				  return;
+			  }
 			  return;
 		  }
 		  event.setCancelled(true);

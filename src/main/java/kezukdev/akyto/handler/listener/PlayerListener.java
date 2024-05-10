@@ -11,7 +11,10 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -332,9 +335,13 @@ public class PlayerListener implements Listener {
 			});
 		}
 		event.setDroppedExp(0);
-		event.getDrops().clear();
 		event.getEntity().setLevel(0);
 		event.getEntity().setExp(0);
+		for (ItemStack item : event.getDrops()) {
+			final Item items = event.getEntity().getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()));
+			MatchUtils.addDrops(items, event.getEntity().getUniqueId());
+		}
+		event.getDrops().clear();
 		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getEntity().getUniqueId());
 		if (event.getEntity() == null) return;
 		if ((profile.getProfileState().equals(ProfileState.FIGHT))) {
