@@ -17,7 +17,7 @@ public class RequestExpireRunnable extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		if (request == null || !Practice.getAPI().getManagerHandler().getRequestManager().getRequest().contains(request)) {
+		if (request == null || !Practice.getAPI().getManagerHandler().getRequestManager().getRequest().containsKey(request.getRequester())) {
 			this.cancel();
 			return;
 		}
@@ -25,6 +25,7 @@ public class RequestExpireRunnable extends BukkitRunnable {
 		if (Bukkit.getPlayer(request.getReceiver()) != null) {
 			Bukkit.getPlayer(request.getReceiver()).sendMessage(ChatColor.RED + "The duel request of " + (Bukkit.getPlayer(request.getRequester()) != null ? Bukkit.getPlayer(request.getRequester()).getName() : Bukkit.getOfflinePlayer(request.getRequester()).getName()) + " have expired!");
 		}
+		Practice.getAPI().getManagerHandler().getRequestManager().removeRequest(request.getRequester());
 	}
 
 }

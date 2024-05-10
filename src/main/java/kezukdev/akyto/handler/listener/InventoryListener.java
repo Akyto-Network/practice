@@ -257,9 +257,16 @@ public class InventoryListener implements Listener {
 	
 	@EventHandler
 	public void onCloseInventory(final InventoryCloseEvent event) {
-		if (!this.inventoriesClosed.contains(event.getPlayer().getUniqueId())) {
-			if (event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[0].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[1].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getQueueInventory()[2].getName())) {
-				this.main.getManagerHandler().getRequestManager().removeRequest(Utils.getRequestByUUID(event.getPlayer().getUniqueId()));
+		if (event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getQueueInventory()[2].getName())) {
+			if (Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getKit() == null) {
+				this.main.getManagerHandler().getRequestManager().removeRequest(event.getPlayer().getUniqueId());
+				Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage(ChatColor.RED + "You have cancelled your request duel.");
+				return;
+			}	
+		}
+		if (event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[0].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[1].getName())) {
+			if (Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getArena() == null) {
+				this.main.getManagerHandler().getRequestManager().removeRequest(event.getPlayer().getUniqueId());
 				Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage(ChatColor.RED + "You have cancelled your request duel.");
 				return;
 			}	

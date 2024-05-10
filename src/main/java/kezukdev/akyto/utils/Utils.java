@@ -47,7 +47,7 @@ public class Utils {
 	}
 	
 	public static Request getRequestByUUID(UUID uuid) {
-	    return Practice.getAPI().getManagerHandler().getRequestManager().getRequest().stream().filter(request -> request.getReceiver().equals(uuid) || request.getRequester().equals(uuid)).findFirst().orElse(null);
+	    return Practice.getAPI().getManagerHandler().getRequestManager().getRequest().get(uuid);
 	}
 	
 	public static Duel getDuelBySpectator(UUID uuid) {

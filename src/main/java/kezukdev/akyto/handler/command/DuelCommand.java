@@ -65,9 +65,18 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
 			}
+			
+			if (Practice.getAPI().getManagerHandler().getRequestManager().getRequest().containsKey(Utils.getUUID(sender.getName()))) {
+				sender.sendMessage(ChatColor.RED + "There's a pending request in all of this :3");
+				return false;
+			}
 
 			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
 
+			if (!targetProfile.getProfileState().equals(ProfileState.FREE)) {
+				sender.sendMessage(ChatColor.RED + target.getName() + "is not available at the moment");
+				return false;
+			}
 			if (!targetProfile.getSettings().get(1)) {
 				sender.sendMessage(ChatColor.RED + "This player doesn't accept any duel request!");
 				return false;
@@ -105,7 +114,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 			new Duel(this.main, Sets.newHashSet(target.getUniqueId()), Sets.newHashSet(playerSender.getUniqueId()), false, request.getKit(), DuelType.SINGLE, request.getArena());
-			this.main.getManagerHandler().getRequestManager().getRequest().remove(Utils.getRequestByUUID(playerSender.getUniqueId()));
+			this.main.getManagerHandler().getRequestManager().getRequest().remove(target.getUniqueId());
 		}
 		return false;
 	}

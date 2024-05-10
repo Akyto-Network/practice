@@ -152,7 +152,7 @@ public class PartyCommand implements CommandExecutor {
                     return false;
                 }
 
-				final Request request = Utils.getRequestByUUID(playerSender.getUniqueId());
+				final Request request = Utils.getRequestByUUID(target.getUniqueId());
 
 				if (request == null || !request.getRequester().equals(target.getUniqueId())) {
 					sender.sendMessage(ChatColor.RED + "You doesn't have any party invitation from " + target.getDisplayName() + " !");
@@ -160,7 +160,7 @@ public class PartyCommand implements CommandExecutor {
 				}
 
                 partyManager.joinParty(target.getUniqueId(), playerSender.getUniqueId());
-                this.main.getManagerHandler().getRequestManager().removeRequest(request);
+                this.main.getManagerHandler().getRequestManager().removeRequest(target.getUniqueId());
                 return false;
             }
 		}

@@ -1,6 +1,7 @@
 package kezukdev.akyto.handler.manager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,20 +23,20 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class RequestManager {
 	
 	private final Practice main;
-	private final List<Request> request;
+	private final HashMap<UUID, Request> request;
 	
 	public RequestManager(final Practice main) {
 		this.main = main;
-		this.request = new ArrayList<>();
+		this.request = new HashMap<>();
 	}
 	
 	public void createPullRequest(final UUID sender, final UUID target) {
-		this.request.add(new Request(sender, target, null, null, RequestType.DUEL));
+		this.request.put(sender, new Request(sender, target, null, null, RequestType.DUEL));
 		Bukkit.getPlayer(sender).openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[2]);
 	}
 	
 	public void createPartyRequest(final UUID sender, final UUID target) {
-		this.request.add(new Request(sender, target, null, null, RequestType.PARTY));
+		this.request.put(sender, new Request(sender, target, null, null, RequestType.PARTY));
 	}
 	
 	public void sendNotification(final UUID sender, final RequestType type) {
@@ -50,7 +51,7 @@ public class RequestManager {
 		}
 	}
 	
-	public void removeRequest(final Request request) {
-		this.request.remove(request);
+	public void removeRequest(final UUID sender) {
+		this.request.remove(sender);
 	}
 }
