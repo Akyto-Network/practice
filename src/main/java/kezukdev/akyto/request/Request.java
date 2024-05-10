@@ -2,7 +2,6 @@ package kezukdev.akyto.request;
 
 import java.util.UUID;
 
-import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.kit.Kit;
 import lombok.Getter;

@@ -11,6 +11,7 @@ public class PearlExpBarRunnable extends BukkitRunnable {
 	
 	private final Player player;
 	private final Duel duel;
+	private int tick;
 	
 	public PearlExpBarRunnable(final Player player, final Duel duel) {
 		this.player = player;
@@ -24,16 +25,19 @@ public class PearlExpBarRunnable extends BukkitRunnable {
 			this.cancel();
 			return;
 		}
+		tick++;
 		if (duel == null || duel.getState().equals(DuelState.FINISHING) || !Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).isEnderPearlCooldownActive()) {
 			player.setExp(0.0f);
 			player.setLevel(0);
-			if (Practice.getAPI().getServer().getScheduler().isCurrentlyRunning(this.getTaskId()))
-				this.cancel();
+			this.cancel();
 			return;
 		}
-		final double time = Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 1000.0D;
+		if (tick == 10) {
+			final double time = Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 1000.0D;	
+			player.setLevel((int) time);
+			tick = 0;
+		}
 		final float timeInf = Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
-		player.setLevel((int) time);
 		player.setExp(timeInf);
 	}
 

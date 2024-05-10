@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import kezukdev.akyto.Practice;
 import kezukdev.akyto.request.Request;
 
 public class RequestExpireRunnable extends BukkitRunnable {
@@ -16,7 +17,7 @@ public class RequestExpireRunnable extends BukkitRunnable {
 
 	@Override
 	public void run() {
-		if (request == null) {
+		if (request == null || !Practice.getAPI().getManagerHandler().getRequestManager().getRequest().contains(request)) {
 			this.cancel();
 			return;
 		}
