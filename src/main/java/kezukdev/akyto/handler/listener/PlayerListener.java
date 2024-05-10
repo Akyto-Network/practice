@@ -338,7 +338,7 @@ public class PlayerListener implements Listener {
 		event.getEntity().setLevel(0);
 		event.getEntity().setExp(0);
 		for (ItemStack item : event.getDrops()) {
-			final Item items = event.getEntity().getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()));
+			final Item items = event.getEntity().getWorld().dropItemNaturally(event.getEntity(), deathLoc, new ItemStack(item.clone()));
 			MatchUtils.addDrops(items, event.getEntity().getUniqueId());
 		}
 		event.getDrops().clear();
