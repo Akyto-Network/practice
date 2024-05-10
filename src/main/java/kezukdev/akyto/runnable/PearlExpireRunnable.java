@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import kezukdev.akyto.duel.Duel;
+import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.utils.Utils;
 
 public class PearlExpireRunnable extends BukkitRunnable {
@@ -20,6 +21,10 @@ public class PearlExpireRunnable extends BukkitRunnable {
 	@Override
 	public void run() {
 		if (player == null || duel == null || duel != Utils.getDuelByUUID(player.getUniqueId())) {
+			this.cancel();
+			return;
+		}
+		if (duel.getState().equals(DuelState.FINISHING)) {
 			this.cancel();
 			return;
 		}

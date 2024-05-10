@@ -50,6 +50,7 @@ public class TagUtils {
 	}
 	
     public static void clearNameTags(Player player) {
+    	if (player == null) return;
         Scoreboard scoreboard = player.getScoreboard();
         if (scoreboard == null) return;
         clearEntries(scoreboard.getTeam("green"));

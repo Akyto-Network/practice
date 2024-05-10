@@ -24,7 +24,7 @@ import net.md_5.bungee.api.ChatColor;
 
 public class MatchUtils {
 	
-    public static void addKill(final UUID uuid, final UUID killer) {
+    public static void addKill(final UUID uuid, final UUID killer, boolean disconnect) {
         final Duel match = Utils.getDuelByUUID(uuid);
         final ManagerHandler managerHandler = Practice.getAPI().getManagerHandler();
         if (match == null) return;
@@ -55,6 +55,11 @@ public class MatchUtils {
                     spectator.sendMessage(ChatColor.WHITE + Utils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer)));
                 }
             });
+            if (disconnect) {
+            	if (match.getFirst().contains(uuid)) match.getFirst().remove(uuid);
+            	if (match.getSecond().contains(uuid)) match.getSecond().remove(uuid);
+            	return;
+            }
             if (Bukkit.getPlayer(uuid) != null) {
                 addSpectateParty(uuid);
             }
@@ -92,6 +97,11 @@ public class MatchUtils {
 					spectator.sendMessage(ChatColor.WHITE + Utils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
 				}
 			});
+            if (disconnect) {
+            	if (match.getFirst().contains(uuid)) match.getFirst().remove(uuid);
+            	if (match.getSecond().contains(uuid)) match.getSecond().remove(uuid);
+            	return;
+            }
 			if (Bukkit.getPlayer(uuid) != null)
 				addSpectateParty(uuid);
         }

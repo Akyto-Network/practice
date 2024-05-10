@@ -107,7 +107,7 @@ public class PlayerListener implements Listener {
 						this.main.getManagerHandler().getDuelManager().endSingle(duel.getFirst().contains(event.getPlayer().getUniqueId()) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));
 					}
 					if (!duel.getState().equals(DuelState.FINISHING) && (duel.getDuelType().equals(DuelType.FFA) || duel.getDuelType().equals(DuelType.SPLIT))) {
-						MatchUtils.addKill(event.getPlayer().getUniqueId(), null);
+						MatchUtils.addKill(event.getPlayer().getUniqueId(), null, true);
 					}
 				}
 			}	
@@ -369,7 +369,7 @@ public class PlayerListener implements Listener {
                 this.main.getManagerHandler().getDuelManager().endSingle(event.getEntity().getUniqueId().equals(new ArrayList<>(duel.getFirst()).get(0)) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));	
                 return;
             }
-        	MatchUtils.addKill(event.getEntity().getUniqueId(), event.getEntity().getKiller() != null ? event.getEntity().getKiller().getUniqueId() : null);
+        	MatchUtils.addKill(event.getEntity().getUniqueId(), event.getEntity().getKiller() != null ? event.getEntity().getKiller().getUniqueId() : null, false);
 		}
 	}
 	

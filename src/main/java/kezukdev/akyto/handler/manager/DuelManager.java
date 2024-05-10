@@ -53,7 +53,7 @@ public class DuelManager {
 						return;
 					}
 					else {
-						MatchUtils.addKill(uuid, null);
+						MatchUtils.addKill(uuid, null, false);
 					}
 				}
 				MatchUtils.multiArena(uuid, false);
