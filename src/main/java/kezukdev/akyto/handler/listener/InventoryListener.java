@@ -247,6 +247,10 @@ public class InventoryListener implements Listener {
 				event.getWhoClicked().openInventory(inventoryManager.getPreviewInventory().get(Utils.getUUID(nextName)));
 			}
 		}
+		if (inventoryName.contains("Leaderboard")) {
+			event.setResult(Result.DENY);
+			event.setCancelled(true);
+		}
 	}
 
 	
