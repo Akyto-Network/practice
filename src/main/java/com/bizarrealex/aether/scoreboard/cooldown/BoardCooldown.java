@@ -2,10 +2,12 @@ package com.bizarrealex.aether.scoreboard.cooldown;
 
 import java.text.*;
 
+import lombok.Getter;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import com.bizarrealex.aether.scoreboard.*;
 
+@Getter
 public class BoardCooldown
 {
     private static final DecimalFormat SECONDS_FORMATTER;
@@ -39,20 +41,5 @@ public class BoardCooldown
     public void cancel() {
         this.board.getCooldowns().remove(this);
     }
-    
-    public Board getBoard() {
-        return this.board;
-    }
-    
-    public String getId() {
-        return this.id;
-    }
-    
-    public double getDuration() {
-        return this.duration;
-    }
-    
-    public long getEnd() {
-        return this.end;
-    }
+
 }

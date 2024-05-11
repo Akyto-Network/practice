@@ -66,7 +66,7 @@ public class LeaderboardManager {
    public void refresh() {
        Map<String, int[]> map = getTopElo();
        this.main.getKits().forEach(ladder -> top[ladder.id()] = new Top(ladder.id(), map));
-       global = new Top(map, main);
+       global = new Top(map);
    }
 
 }

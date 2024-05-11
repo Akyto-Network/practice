@@ -1,14 +1,16 @@
 package com.bizarrealex.aether.scoreboard;
 
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.scoreboard.*;
 
+@Getter
 public class BoardEntry
 {
-    private Board board;
+    private final Board board;
     private String text;
-    private String originalText;
-    private String key;
+    private final String originalText;
+    private final String key;
     private Team team;
     
     public BoardEntry(final Board board, final String text) {
@@ -46,7 +48,7 @@ public class BoardEntry
         if (this.text.length() > 16) {
             final boolean fix = this.text.toCharArray()[15] == '\ufffd';
             final String prefix = fix ? this.text.substring(0, 15) : this.text.substring(0, 16);
-            final String suffix = fix ? this.text.substring(15, this.text.length()) : (String.valueOf(ChatColor.getLastColors(prefix)) + this.text.substring(16, this.text.length()));
+            final String suffix = fix ? this.text.substring(15) : (ChatColor.getLastColors(prefix) + this.text.substring(16));
             this.team.setPrefix(prefix);
             if (suffix.length() > 16) {
                 this.team.setSuffix(suffix.substring(0, 16));
@@ -68,29 +70,10 @@ public class BoardEntry
         this.board.getKeys().remove(this.key);
         this.board.getScoreboard().resetScores(this.key);
     }
-    
-    public Board getBoard() {
-        return this.board;
-    }
-    
-    public String getText() {
-        return this.text;
-    }
-    
+
     public BoardEntry setText(final String text) {
         this.text = text;
         return this;
     }
-    
-    public String getOriginalText() {
-        return this.originalText;
-    }
-    
-    public String getKey() {
-        return this.key;
-    }
-    
-    public Team getTeam() {
-        return this.team;
-    }
+
 }

@@ -63,8 +63,8 @@ public class InventoryManager {
 		this.profileInventory = new ConcurrentHashMap<>();
 		this.settingsInventory = new ConcurrentHashMap<>();
 		this.settingsSpectateInventory = new ConcurrentHashMap<>();
-		this.spectateMultipage = new MultipageSerializer(main, new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
-		this.partyMultipage = new MultipageSerializer(main, new ArrayList<>(), ChatColor.GRAY + "Partys", ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "));
+		this.spectateMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
+		this.partyMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Partys", ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "));
 		this.queueInventory[0] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Unranked queue:");
 		this.queueInventory[1] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Ranked queue:");
 		this.queueInventory[2] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select duel kit:");
@@ -192,7 +192,7 @@ public class InventoryManager {
             preview.setItem(i, glass);
         }
         final List<String> loreInfos = new ArrayList<>();
-        loreInfos.add(ChatColor.DARK_GRAY + "Life Level" + ChatColor.RESET + ": " + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "\u2665");
+        loreInfos.add(ChatColor.DARK_GRAY + "Life Level" + ChatColor.RESET + ": " + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤");
         loreInfos.add(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d));
         preview.setItem(48, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", loreInfos));
         List<String> effectsInfo = new ArrayList<>();

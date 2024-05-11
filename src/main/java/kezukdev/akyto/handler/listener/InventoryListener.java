@@ -40,12 +40,10 @@ public class InventoryListener implements Listener {
 	
 	private final Practice main;
 	private final InventoryManager inventoryManager;
-	private final List<UUID> inventoriesClosed;
-	
+
 	public InventoryListener(final Practice main) {
 		this.main = main;
         this.inventoryManager = main.getManagerHandler().getInventoryManager();
-        this.inventoriesClosed = new ArrayList<>();
     }
 	
 	@EventHandler
@@ -83,16 +81,13 @@ public class InventoryListener implements Listener {
 			if (inventoryName.equals(inventoryManager.getQueueInventory()[2].getName())) {
 				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
 				request.setKit(Kit.getLadderByID(event.getSlot(), main));
-				this.inventoriesClosed.add(event.getWhoClicked().getUniqueId());
 				event.getWhoClicked().openInventory(Kit.getLadderByID(event.getSlot(), main).name().equalsIgnoreCase("sumo") ? this.main.getManagerHandler().getInventoryManager().getArenaInventory()[1] : this.main.getManagerHandler().getInventoryManager().getArenaInventory()[0]);
 			}
 			if (inventoryName.equals(inventoryManager.getArenaInventory()[0].getName()) || inventoryName.equals(inventoryManager.getArenaInventory()[1].getName())) {
 				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
 				request.setArena(event.getCurrentItem().getType().equals(Material.TRAP_DOOR) ? this.main.getManagerHandler().getArenaManager().getRandomArena(request.getKit().arenaType()) : Utils.getArenaByIcon(event.getCurrentItem().getType(), request.getKit().arenaType()));
 				this.main.getManagerHandler().getRequestManager().sendNotification(event.getWhoClicked().getUniqueId(), RequestType.DUEL);
-				this.inventoriesClosed.add(event.getWhoClicked().getUniqueId());
 				event.getWhoClicked().closeInventory();
-				this.inventoriesClosed.remove(event.getWhoClicked().getUniqueId());
 			}
 			if (inventoryName.equals(inventoryManager.getPartyEventInventory().getName())) {
 				if (itemMaterial.equals(Material.IRON_AXE)) {
@@ -136,8 +131,9 @@ public class InventoryListener implements Listener {
 			}
 			event.setCancelled(true);
 		}
+		boolean is_glass = itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR);
 		if (profile.isInState(ProfileState.EDITOR)) {
-			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
+			if (is_glass) return;
 			if (inventoryName.equals(event.getWhoClicked().getInventory().getName())) {
 				return;
 			}
@@ -175,7 +171,7 @@ public class InventoryListener implements Listener {
 			event.setCancelled(true);
 		}
 		if (inventoryName.contains("Settings") && !inventoryName.contains("Spectate")) {
-			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
+			if (is_glass) return;
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
 			if (itemMaterial.equals(Material.PAINTING)) {
@@ -202,7 +198,7 @@ public class InventoryListener implements Listener {
 			}
 		}
 		if (inventoryName.contains("Settings") && inventoryName.contains("Spectate")) {
-			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
+			if (is_glass) return;
 			if (itemMaterial.equals(Material.DIAMOND)) {
 				profile.getSpectateSettings().set(0, profile.getSpectateSettings().get(0) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
@@ -235,10 +231,9 @@ public class InventoryListener implements Listener {
 			if (event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR)) return;
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
-			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
+			if (is_glass) return;
             String title = event.getCurrentItem().getItemMeta().getDisplayName();
-            String arr[] = title.split(" ", 2);
-            String first = arr[0];
+            String first = title.split(" ", 2)[0];
             event.getWhoClicked().closeInventory();
             Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).chat("/spectate " + ChatColor.stripColor(first));
 		}
@@ -268,8 +263,7 @@ public class InventoryListener implements Listener {
 			if (Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getArena() == null) {
 				this.main.getManagerHandler().getRequestManager().removeRequest(event.getPlayer().getUniqueId());
 				Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage(ChatColor.RED + "You have cancelled your request duel.");
-				return;
-			}	
+            }
 		}
 	}
 }

@@ -9,7 +9,7 @@ import kezukdev.akyto.request.Request;
 
 public class RequestExpireRunnable extends BukkitRunnable {
 	
-	private Request request;
+	private final Request request;
 	
 	public RequestExpireRunnable(final Request request) {
 		this.request = request;

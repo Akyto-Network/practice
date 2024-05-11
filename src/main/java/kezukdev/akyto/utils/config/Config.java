@@ -20,7 +20,7 @@ public class Config {
                 this.wasCreated = true;
             }
             catch (IOException e) {
-                e.printStackTrace();
+                plugin.getLogger().severe("Failed to create config file " + this.configFile.getPath() + "\n" + e);
             }
         }
         this.config = YamlConfiguration.loadConfiguration(this.configFile);

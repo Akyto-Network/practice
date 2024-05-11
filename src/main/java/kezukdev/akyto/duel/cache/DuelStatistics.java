@@ -11,7 +11,7 @@ public class DuelStatistics {
 	private int longestHit = 0;
 	private long pearlCooldown = 0L;
 	
-	public boolean isEnderPearlCooldownActive() {
+	public boolean hasPearlCooldown() {
 		return this.pearlCooldown > System.currentTimeMillis();
 	}
 	

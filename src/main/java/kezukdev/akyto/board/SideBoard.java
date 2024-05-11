@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import com.bizarrealex.aether.scoreboard.Board;

@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 
 import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;

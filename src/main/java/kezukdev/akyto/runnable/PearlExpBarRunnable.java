@@ -26,7 +26,7 @@ public class PearlExpBarRunnable extends BukkitRunnable {
 			return;
 		}
 		tick++;
-		if (duel == null || duel.getState().equals(DuelState.FINISHING) || !Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).isEnderPearlCooldownActive()) {
+		if (duel == null || duel.getState().equals(DuelState.FINISHING) || !Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).hasPearlCooldown()) {
 			player.setExp(0.0f);
 			player.setLevel(0);
 			this.cancel();

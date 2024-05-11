@@ -3,7 +3,6 @@ package kezukdev.akyto.utils.leaderboard;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import kezukdev.akyto.Practice;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
 
@@ -21,10 +20,8 @@ public class Top {
         organise();
     }
 
-    public Top(Map<String, int[]> map, final Practice main) {
-        map.forEach((key, value) -> {
-            topBoard.put(key, (int) Arrays.stream(value).average().orElse(0));
-        });
+    public Top(Map<String, int[]> map) {
+        map.forEach((key, value) -> topBoard.put(key, (int) Arrays.stream(value).average().orElse(0)));
         organise();
     }
 
