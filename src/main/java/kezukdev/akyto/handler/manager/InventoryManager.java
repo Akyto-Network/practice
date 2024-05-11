@@ -45,7 +45,7 @@ public class InventoryManager {
 	private Inventory[] queueInventory = new Inventory[5];
 	private Inventory[] arenaInventory = new Inventory[2];
 	private Inventory[] editorInventory = new Inventory[3];
-	private Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leadeboard:");
+	private Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
 	private Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
     public MultipageSerializer spectateMultipage;
     public MultipageSerializer partyMultipage;
