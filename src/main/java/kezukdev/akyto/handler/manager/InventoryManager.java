@@ -355,12 +355,8 @@ public class InventoryManager {
 		                    lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + getMatchedFromLadder(ladder, true));	
 	                    }
 	                    lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-	                    if (inventories.getName().equalsIgnoreCase(queueInventory[1].getName()))
-                            lore.addAll(top[ladder.id()].getLoreRanked());
-	                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) {
-                            lore.addAll(top[ladder.id()].getLore());
-	                    	lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-	                    }
+                        lore.addAll(inventories.getName().equalsIgnoreCase(queueInventory[1].getName()) ? top[ladder.id()].getLoreRanked() : top[ladder.id()].getLore());
+	                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
 	                    meta.setLore(lore);
 	                    current.setItemMeta(meta);	
 		            });
@@ -390,12 +386,9 @@ public class InventoryManager {
                         lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + getMatchedFromLadder(ladder, true));	
                     }
                     lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                    if (inventories.getName().equalsIgnoreCase(queueInventory[1].getName()))
-                        lore.addAll(top[ladder.id()].getLoreRanked());
-                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) {
-                        lore.addAll(top[ladder.id()].getLore());
-                    	lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                    }
+                    lore.addAll(inventories.getName().equalsIgnoreCase(queueInventory[1].getName()) ? top[ladder.id()].getLoreRanked() : top[ladder.id()].getLore());
+                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+                    meta.setLore(lore);
                     meta.setLore(lore);
                     current.setItemMeta(meta);	
                 });
