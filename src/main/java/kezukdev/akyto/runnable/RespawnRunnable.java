@@ -1,8 +1,8 @@
 package kezukdev.akyto.runnable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -38,7 +38,7 @@ public class RespawnRunnable extends BukkitRunnable {
         }));
         final boolean ranked = duel.isRanked();
         final Kit kit = duel.getKit();
-		MatchUtils.clearDrops(duel.getFirst().stream().collect(Collectors.toList()).get(0) != null ? duel.getFirst().stream().collect(Collectors.toList()).get(0) : duel.getSecond().stream().collect(Collectors.toList()).get(0));
+		MatchUtils.clearDrops(new ArrayList<>(duel.getFirst()).get(0) != null ? new ArrayList<>(duel.getFirst()).get(0) : new ArrayList<>(duel.getSecond()).get(0));
         main.getDuels().remove(duel);
         main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);	
         main.getManagerHandler().getInventoryManager().refreshSpectateInventory();

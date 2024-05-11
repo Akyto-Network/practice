@@ -57,7 +57,7 @@ public class Duel {
 	public enum DuelType {
 		SINGLE,
 		SPLIT,
-		FFA;
+		FFA
 	}
 
 }

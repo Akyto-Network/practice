@@ -10,17 +10,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import kezukdev.akyto.Practice;
-
 public class MultipageSerializer {
 
-	private final Practice main;
     private Inventory[] inventories;
     private final String inventoryName;
     private final ItemStack icon;
 
-    public MultipageSerializer(final Practice main, List<ItemStack> itemStacks, String inventoryName, ItemStack icon) {
-    	this.main = main;
+    public MultipageSerializer(List<ItemStack> itemStacks, String inventoryName, ItemStack icon) {
         this.inventoryName = inventoryName;
         this.icon = icon;
         refresh(itemStacks);

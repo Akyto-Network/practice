@@ -46,7 +46,6 @@ import kezukdev.akyto.utils.Utils;
 import kezukdev.akyto.utils.match.MatchUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_7_R4.PacketPlayOutNamedSoundEffect;
-import org.bukkit.scheduler.BukkitTask;
 
 public class PlayerListener implements Listener {
 	
@@ -242,7 +241,7 @@ public class PlayerListener implements Listener {
 						return;
 					}
 					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getPlayer().getUniqueId());
-					if (!duelStatistics.isEnderPearlCooldownActive()) {
+					if (!duelStatistics.hasPearlCooldown()) {
 						duelStatistics.applyEnderPearlCooldown();
 						new PearlExpBarRunnable(player, duel).runTaskTimerAsynchronously(Practice.getAPI(), 2L, 2L);
 						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
@@ -342,13 +341,13 @@ public class PlayerListener implements Listener {
             new BukkitRunnable() {
                 public void run() {
                     try {
-                        final Object nmsPlayer = event.getEntity().getClass().getMethod("getHandle", new Class[0]).invoke(event.getEntity(), new Object[0]);
+                        final Object nmsPlayer = event.getEntity().getClass().getMethod("getHandle", new Class[0]).invoke(event.getEntity());
                         final Object con = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
                         final Class<?> EntityPlayer = Class.forName(nmsPlayer.getClass().getPackage().getName() + ".EntityPlayer");
                         final Field minecraftServer = con.getClass().getDeclaredField("minecraftServer");
                         minecraftServer.setAccessible(true);
                         final Object mcserver = minecraftServer.get(con);
-                        final Object playerlist = mcserver.getClass().getDeclaredMethod("getPlayerList", new Class[0]).invoke(mcserver, new Object[0]);
+                        final Object playerlist = mcserver.getClass().getDeclaredMethod("getPlayerList", new Class[0]).invoke(mcserver);
                         final Method moveToWorld = playerlist.getClass().getMethod("moveToWorld", EntityPlayer, Integer.TYPE, Boolean.TYPE);
                         moveToWorld.invoke(playerlist, nmsPlayer, 0, false);
                     }

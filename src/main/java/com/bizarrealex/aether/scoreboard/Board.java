@@ -1,5 +1,6 @@
 package com.bizarrealex.aether.scoreboard;
 
+import lombok.Getter;
 import org.bukkit.entity.*;
 import com.bizarrealex.aether.scoreboard.cooldown.*;
 import com.bizarrealex.aether.*;
@@ -7,15 +8,20 @@ import org.bukkit.scoreboard.*;
 import org.bukkit.*;
 import java.util.*;
 
-public class Board
-{
+public class Board {
+    @Getter
     private static Set<Board> boards;
+    @Getter
     private Scoreboard scoreboard;
+    @Getter
     private Player player;
+    @Getter
     private Objective objective;
+    @Getter
     private Set<String> keys;
+    @Getter
     private List<BoardEntry> entries;
-    private Set<BoardCooldown> cooldowns;
+    private final Set<BoardCooldown> cooldowns;
     private final Aether aether;
     private final AetherOptions options;
     
@@ -54,10 +60,10 @@ public class Board
         ChatColor[] values;
         for (int length = (values = ChatColor.values()).length, i = 0; i < length; ++i) {
             final ChatColor color = values[i];
-            String colorText = new StringBuilder().append(color).append(ChatColor.WHITE).toString();
+            String colorText = String.valueOf(color) + ChatColor.WHITE;
             if (entry.getText().length() > 16) {
                 final String sub = entry.getText().substring(0, 16);
-                colorText = String.valueOf(colorText) + ChatColor.getLastColors(sub);
+                colorText += ChatColor.getLastColors(sub);
             }
             if (!this.keys.contains(colorText)) {
                 this.keys.add(colorText);
@@ -96,13 +102,7 @@ public class Board
     }
     
     public Set<BoardCooldown> getCooldowns() {
-        final Iterator<BoardCooldown> iterator = this.cooldowns.iterator();
-        while (iterator.hasNext()) {
-            final BoardCooldown cooldown = iterator.next();
-            if (System.currentTimeMillis() >= cooldown.getEnd()) {
-                iterator.remove();
-            }
-        }
+        this.cooldowns.removeIf(cooldown -> System.currentTimeMillis() >= cooldown.getEnd());
         return this.cooldowns;
     }
     
@@ -114,28 +114,5 @@ public class Board
         }
         return null;
     }
-    
-    public static Set<Board> getBoards() {
-        return Board.boards;
-    }
-    
-    public Scoreboard getScoreboard() {
-        return this.scoreboard;
-    }
-    
-    public Player getPlayer() {
-        return this.player;
-    }
-    
-    public Objective getObjective() {
-        return this.objective;
-    }
-    
-    public Set<String> getKeys() {
-        return this.keys;
-    }
-    
-    public List<BoardEntry> getEntries() {
-        return this.entries;
-    }
+
 }

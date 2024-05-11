@@ -1,7 +1,6 @@
 package com.bizarrealex.aether.example;
 
 import org.bukkit.plugin.java.*;
-import org.bukkit.plugin.*;
 import org.bukkit.entity.*;
 import com.bizarrealex.aether.scoreboard.*;
 import com.bizarrealex.aether.scoreboard.cooldown.*;
@@ -14,7 +13,7 @@ import org.bukkit.event.*;
 public class ExampleBoardAdapter implements BoardAdapter, Listener
 {
     public ExampleBoardAdapter(final JavaPlugin plugin) {
-        Bukkit.getPluginManager().registerEvents((Listener)this, (Plugin)plugin);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
     }
     
     @Override

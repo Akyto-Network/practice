@@ -6,7 +6,6 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.kiteditor.Edited;

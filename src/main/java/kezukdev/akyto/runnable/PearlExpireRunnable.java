@@ -10,8 +10,8 @@ import kezukdev.akyto.utils.Utils;
 
 public class PearlExpireRunnable extends BukkitRunnable {
 	
-	private Player player;
-	private Duel duel;
+	private final Player player;
+	private final Duel duel;
 	
 	public PearlExpireRunnable(final Player player, final Duel duel) {
 		this.player = player;

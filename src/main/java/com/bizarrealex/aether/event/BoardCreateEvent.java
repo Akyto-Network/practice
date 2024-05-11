@@ -1,9 +1,11 @@
 package com.bizarrealex.aether.event;
 
+import lombok.Getter;
 import org.bukkit.event.*;
 import com.bizarrealex.aether.scoreboard.*;
 import org.bukkit.entity.*;
 
+@Getter
 public class BoardCreateEvent extends Event
 {
     private static final HandlerList handlers;
@@ -26,12 +28,5 @@ public class BoardCreateEvent extends Event
     public static HandlerList getHandlerList() {
         return BoardCreateEvent.handlers;
     }
-    
-    public Board getBoard() {
-        return this.board;
-    }
-    
-    public Player getPlayer() {
-        return this.player;
-    }
+
 }

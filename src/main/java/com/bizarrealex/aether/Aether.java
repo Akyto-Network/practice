@@ -1,7 +1,7 @@
 package com.bizarrealex.aether;
 
+import lombok.Getter;
 import org.bukkit.plugin.java.*;
-import org.bukkit.plugin.*;
 import org.bukkit.scheduler.*;
 import org.bukkit.entity.*;
 import com.bizarrealex.aether.scoreboard.*;
@@ -12,16 +12,17 @@ import com.bizarrealex.aether.event.*;
 import org.bukkit.event.player.*;
 import org.bukkit.event.*;
 
+@Getter
 public class Aether implements Listener
 {
-    private JavaPlugin plugin;
-    private AetherOptions options;
+    private final JavaPlugin plugin;
+    private final AetherOptions options;
     BoardAdapter adapter;
     
     public Aether(final JavaPlugin plugin, final BoardAdapter adapter, final AetherOptions options) {
         this.options = options;
         this.plugin = plugin;
-        Bukkit.getPluginManager().registerEvents((Listener)this, (Plugin)plugin);
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         this.setAdapter(adapter);
         this.run();
     }
@@ -117,7 +118,7 @@ public class Aether implements Listener
                     }
                 }
             }
-        }.runTaskTimerAsynchronously((Plugin)this.plugin, 20L, 2L);
+        }.runTaskTimerAsynchronously(this.plugin, 20L, 2L);
     }
     
     public void setAdapter(final BoardAdapter adapter) {
@@ -127,14 +128,14 @@ public class Aether implements Listener
             if (board != null) {
                 Board.getBoards().remove(board);
             }
-            Bukkit.getPluginManager().callEvent((Event)new BoardCreateEvent(new Board(player, this, this.options), player));
+            Bukkit.getPluginManager().callEvent(new BoardCreateEvent(new Board(player, this, this.options), player));
         }
     }
     
     @EventHandler
     public void onPlayerJoinEvent(final PlayerJoinEvent event) {
         if (Board.getByPlayer(event.getPlayer()) == null) {
-            Bukkit.getPluginManager().callEvent((Event)new BoardCreateEvent(new Board(event.getPlayer(), this, this.options), event.getPlayer()));
+            Bukkit.getPluginManager().callEvent(new BoardCreateEvent(new Board(event.getPlayer(), this, this.options), event.getPlayer()));
         }
     }
     
@@ -145,16 +146,5 @@ public class Aether implements Listener
             Board.getBoards().remove(board);
         }
     }
-    
-    public JavaPlugin getPlugin() {
-        return this.plugin;
-    }
-    
-    public AetherOptions getOptions() {
-        return this.options;
-    }
-    
-    public BoardAdapter getAdapter() {
-        return this.adapter;
-    }
+
 }

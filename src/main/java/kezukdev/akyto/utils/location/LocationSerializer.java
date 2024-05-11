@@ -58,22 +58,13 @@ public class LocationSerializer
         joiner.add(Double.toString(loc.getX()));
         joiner.add(Double.toString(loc.getY()));
         joiner.add(Double.toString(loc.getZ()));
-        if (loc.getYaw() == 0.0f && loc.getPitch() == 0.0f) {
-            if (loc.getWorld().equals("world")) {
-                return joiner.toString();
-            }
-            joiner.add(loc.getWorld());
-            return joiner.toString();
-        }
-        else {
+        if (loc.getYaw() != 0.0f || loc.getPitch() != 0.0f) {
             joiner.add(Float.toString(loc.getYaw()));
             joiner.add(Float.toString(loc.getPitch()));
-            if (loc.getWorld().equals("world")) {
-                return joiner.toString();
-            }
-            joiner.add(loc.getWorld());
-            return joiner.toString();
         }
+        if (!loc.getWorld().equals("world"))
+            joiner.add(loc.getWorld());
+        return joiner.toString();
     }
     
     public Location toBukkitLocation() {

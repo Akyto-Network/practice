@@ -56,8 +56,8 @@ public class MatchUtils {
                 }
             });
             if (disconnect) {
-            	if (match.getFirst().contains(uuid)) match.getFirst().remove(uuid);
-            	if (match.getSecond().contains(uuid)) match.getSecond().remove(uuid);
+                match.getFirst().remove(uuid);
+                match.getSecond().remove(uuid);
             	return;
             }
             if (Bukkit.getPlayer(uuid) != null) {
@@ -98,8 +98,8 @@ public class MatchUtils {
 				}
 			});
             if (disconnect) {
-            	if (match.getFirst().contains(uuid)) match.getFirst().remove(uuid);
-            	if (match.getSecond().contains(uuid)) match.getSecond().remove(uuid);
+                match.getFirst().remove(uuid);
+                match.getSecond().remove(uuid);
             	return;
             }
 			if (Bukkit.getPlayer(uuid) != null)

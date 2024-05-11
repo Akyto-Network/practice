@@ -14,9 +14,10 @@ import lombok.Setter;
 public class Arena {
 
     private final String name;
-    private List<LocationSerializer> position;
+    private final List<LocationSerializer> position;
     @Setter
     private ArenaType arenaType;
+    @Setter
     private Material icon;
 
     public Arena(final Practice main, final String name, final LocationSerializer loc1, final LocationSerializer loc2, final ArenaType arenaType, final Material icon) {
@@ -25,13 +26,5 @@ public class Arena {
         this.arenaType = arenaType;
         this.icon = icon;
         main.getArenas().add(this);
-    }
-    
-    public void setIcon(Material icon) {
-		this.icon = icon;
-	}
-    
-    public Arena(final String name) {
-        this.name = name;
     }
 }
