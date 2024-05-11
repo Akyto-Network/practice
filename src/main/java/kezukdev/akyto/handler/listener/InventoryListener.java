@@ -40,12 +40,10 @@ public class InventoryListener implements Listener {
 	
 	private final Practice main;
 	private final InventoryManager inventoryManager;
-	private final List<UUID> inventoriesClosed;
 	
 	public InventoryListener(final Practice main) {
 		this.main = main;
         this.inventoryManager = main.getManagerHandler().getInventoryManager();
-        this.inventoriesClosed = new ArrayList<>();
     }
 	
 	@EventHandler
@@ -83,16 +81,13 @@ public class InventoryListener implements Listener {
 			if (inventoryName.equals(inventoryManager.getQueueInventory()[2].getName())) {
 				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
 				request.setKit(Kit.getLadderByID(event.getSlot(), main));
-				this.inventoriesClosed.add(event.getWhoClicked().getUniqueId());
 				event.getWhoClicked().openInventory(Kit.getLadderByID(event.getSlot(), main).name().equalsIgnoreCase("sumo") ? this.main.getManagerHandler().getInventoryManager().getArenaInventory()[1] : this.main.getManagerHandler().getInventoryManager().getArenaInventory()[0]);
 			}
 			if (inventoryName.equals(inventoryManager.getArenaInventory()[0].getName()) || inventoryName.equals(inventoryManager.getArenaInventory()[1].getName())) {
 				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
 				request.setArena(event.getCurrentItem().getType().equals(Material.TRAP_DOOR) ? this.main.getManagerHandler().getArenaManager().getRandomArena(request.getKit().arenaType()) : Utils.getArenaByIcon(event.getCurrentItem().getType(), request.getKit().arenaType()));
 				this.main.getManagerHandler().getRequestManager().sendNotification(event.getWhoClicked().getUniqueId(), RequestType.DUEL);
-				this.inventoriesClosed.add(event.getWhoClicked().getUniqueId());
 				event.getWhoClicked().closeInventory();
-				this.inventoriesClosed.remove(event.getWhoClicked().getUniqueId());
 			}
 			if (inventoryName.equals(inventoryManager.getPartyEventInventory().getName())) {
 				if (itemMaterial.equals(Material.IRON_AXE)) {
@@ -252,20 +247,18 @@ public class InventoryListener implements Listener {
 				event.getWhoClicked().openInventory(inventoryManager.getPreviewInventory().get(Utils.getUUID(nextName)));
 			}
 		}
+		if (inventoryName.contains("Leaderboard")) {
+			event.setResult(Result.DENY);
+			event.setCancelled(true);
+			return;
+		}
 	}
 
 	
 	@EventHandler
 	public void onCloseInventory(final InventoryCloseEvent event) {
-		if (event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getQueueInventory()[2].getName())) {
-			if (Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getKit() == null) {
-				this.main.getManagerHandler().getRequestManager().removeRequest(event.getPlayer().getUniqueId());
-				Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage(ChatColor.RED + "You have cancelled your request duel.");
-				return;
-			}	
-		}
-		if (event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[0].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[1].getName())) {
-			if (Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getArena() == null) {
+		if (event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getQueueInventory()[2].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[0].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[1].getName())) {
+			if ((event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getQueueInventory()[2].getName()) && Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getKit() == null) || (event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[0].getName()) || event.getInventory().getName().equalsIgnoreCase(this.inventoryManager.getArenaInventory()[1].getName()) && Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getArena() == null)) {
 				this.main.getManagerHandler().getRequestManager().removeRequest(event.getPlayer().getUniqueId());
 				Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage(ChatColor.RED + "You have cancelled your request duel.");
 				return;
