@@ -3,16 +3,20 @@ package kezukdev.akyto.runnable;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.UUID;
 
-public class RgbArmorTask extends BukkitRunnable {
+public class RgbArmorTask implements Runnable {
     private static final Color[] rgb = new Color[64];
 
     static {
@@ -27,35 +31,51 @@ public class RgbArmorTask extends BukkitRunnable {
 
     private int i = 0;
     private final LivingEntity entity;
+    private final ItemStack[] previousArmorContent;
+    @Setter
+    private BukkitTask task = null;
+    @Getter
+    private static final HashSet<UUID> armored = new HashSet<>();
 
-    public RgbArmorTask(LivingEntity entity) {
+    public RgbArmorTask(final LivingEntity entity) {
         if (entity == null)
             throw new RuntimeException("Cannot apply rgb armor to null entity.");
 
-        ItemStack[] armor = Arrays.asList(
-                new ItemStack(Material.LEATHER_HELMET),
-                new ItemStack(Material.LEATHER_CHESTPLATE),
+        this.entity = entity;
+        this.previousArmorContent = Arrays.copyOf(entity.getEquipment().getArmorContents(), 4);
+
+        final ItemStack[] armor = Arrays.asList(
+                new ItemStack(Material.LEATHER_BOOTS),
                 new ItemStack(Material.LEATHER_LEGGINGS),
-                new ItemStack(Material.LEATHER_BOOTS))
+                new ItemStack(Material.LEATHER_CHESTPLATE),
+                new ItemStack(Material.LEATHER_HELMET))
                 .toArray(new ItemStack[4]);
 
-        entity.getEquipment().clear();
+        entity.getEquipment().setArmorContents(null);
         entity.getEquipment().setArmorContents(armor);
+        armored.add(entity.getUniqueId());
+    }
 
-        this.entity = entity;
+    public void stopTask() {
+        if (this.task != null)
+            this.task.cancel();
+        this.entity.getEquipment().setArmorContents(this.previousArmorContent);
+        armored.remove(this.entity.getUniqueId());
     }
 
     @Override
     public void run() {
-        Profile profile = Practice.getAPI().getManagerHandler().getProfileManager().getProfiles().get(this.entity.getUniqueId());
-        if (this.entity.isDead() || profile == null || !profile.getProfileState().equals(ProfileState.FREE)) {
-            this.cancel();
+
+        final Profile profile = Practice.getAPI().getManagerHandler().getProfileManager().getProfiles().get(this.entity.getUniqueId());
+
+        if (this.entity.isDead() || profile == null || profile.isInState(ProfileState.FIGHT, ProfileState.EDITOR)) {
+            this.stopTask();
             return;
         }
 
         boolean any = false;
         for (ItemStack it : this.entity.getEquipment().getArmorContents()) {
-            if (it == null || it.getType().name().startsWith("LEATHER_"))
+            if (it == null || !(it.getItemMeta() instanceof LeatherArmorMeta))
                 continue;
             any = true;
 
@@ -65,7 +85,7 @@ public class RgbArmorTask extends BukkitRunnable {
         }
 
         if (!any) {
-            this.cancel();
+            this.stopTask();
             return;
         }
 

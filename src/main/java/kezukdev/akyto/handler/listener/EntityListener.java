@@ -46,9 +46,9 @@ public class EntityListener implements Listener {
 		if (!(event.getEntity() instanceof Player))
 			return;
 
-		final Profile data = Utils.getProfiles(event.getEntity().getUniqueId());
+		final Profile profile = Utils.getProfiles(event.getEntity().getUniqueId());
 
-		if (data != null && data.getProfileState().equals(ProfileState.FIGHT)) {
+		if (profile != null && profile.isInState(ProfileState.FIGHT)) {
 
 			final Duel playerDuel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 
@@ -67,7 +67,7 @@ public class EntityListener implements Listener {
 		if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
 			final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
 			final Profile profileDamager = Utils.getProfiles(event.getDamager().getUniqueId());
-			if (victimProfile.getProfileState().equals(ProfileState.FIGHT) && profileDamager.getProfileState().equals(ProfileState.FIGHT)) {
+			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
 				final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 				final DuelStatistics statisticsDamager = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getDamager().getUniqueId());
 				final DuelStatistics statisticsVictim = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getEntity().getUniqueId());
@@ -99,7 +99,7 @@ public class EntityListener implements Listener {
 	
 	  @EventHandler
 	  public void onReceiveDroppedItems(PlayerPickupItemEvent event) {
-		  if (this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getPlayer().getUniqueId()).getProfileState().equals(ProfileState.FIGHT)) {
+		  if (this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getPlayer().getUniqueId()).isInState(ProfileState.FIGHT)) {
 			  if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.FINISHING)) {
 				  event.setCancelled(true);
 				  return;

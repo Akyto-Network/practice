@@ -44,13 +44,13 @@ public class SideBoard implements BoardAdapter {
 
         // If player enabled scoreboard
         if (pm.getSettings().get(0)) {
-            if (pm.getProfileState().equals(ProfileState.FREE) || pm.getProfileState().equals(ProfileState.QUEUE) || pm.getProfileState().equals(ProfileState.MOD)) {
+            if (pm.isInState(ProfileState.FREE, ProfileState.QUEUE, ProfileState.MOD)) {
                 return this.getLobbyBoard(player);
             }
-            if (pm.getProfileState().equals(ProfileState.FIGHT)) {
+            if (pm.isInState(ProfileState.FIGHT)) {
             	return this.getGameBoard(player);
             }
-            if (pm.getProfileState().equals(ProfileState.SPECTATE)) {
+            if (pm.isInState(ProfileState.SPECTATE)) {
             	return this.getSpecBoard(player);
             }	
         }

@@ -61,7 +61,7 @@ public class InventoryListener implements Listener {
 		final String inventoryName = inventory.getName();
 		final Material itemMaterial = event.getCurrentItem().getType();
 		final Profile profile = Utils.getProfiles(event.getWhoClicked().getUniqueId());
-		if (profile.getProfileState().equals(ProfileState.FREE)) {
+		if (profile.isInState(ProfileState.FREE)) {
 			if (event.getClick().equals(ClickType.NUMBER_KEY)) {
 				event.setResult(Result.DENY);
 				event.setCancelled(true);
@@ -123,7 +123,7 @@ public class InventoryListener implements Listener {
 			}
 			event.setCancelled(true);
 		}
-		if (profile.getProfileState().equals(ProfileState.SPECTATE)) {
+		if (profile.isInState(ProfileState.SPECTATE)) {
 			if (event.getClick().equals(ClickType.NUMBER_KEY)) {
 				event.setResult(Result.DENY);
 				event.setCancelled(true);
@@ -136,7 +136,7 @@ public class InventoryListener implements Listener {
 			}
 			event.setCancelled(true);
 		}
-		if (profile.getProfileState().equals(ProfileState.EDITOR)) {
+		if (profile.isInState(ProfileState.EDITOR)) {
 			if (itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR)) return;
 			if (inventoryName.equals(event.getWhoClicked().getInventory().getName())) {
 				return;

@@ -36,7 +36,7 @@ public class SpectateCommand implements CommandExecutor {
         final Profile profileSender = Utils.getProfiles(playerSender.getUniqueId());
         
 		if (args.length == 0) {
-			if (profileSender.getProfileState().equals(ProfileState.QUEUE) || profileSender.getProfileState().equals(ProfileState.EDITOR) || profileSender.getProfileState().equals(ProfileState.FIGHT)) {
+			if (profileSender.isInState(ProfileState.QUEUE, ProfileState.EDITOR, ProfileState.FIGHT)) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
 				return false;
 			}
@@ -50,7 +50,7 @@ public class SpectateCommand implements CommandExecutor {
 			return false;
 		}
 
-        if (profileSender.getProfileState().equals(ProfileState.QUEUE) || profileSender.getProfileState().equals(ProfileState.EDITOR) || profileSender.getProfileState().equals(ProfileState.FIGHT)) {
+        if (profileSender.isInState(ProfileState.QUEUE, ProfileState.EDITOR, ProfileState.FIGHT)) {
             sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
             return false;
         }
@@ -68,7 +68,7 @@ public class SpectateCommand implements CommandExecutor {
             return false;
         }
 
-        if (profileSender.getProfileState().equals(ProfileState.SPECTATE)) {
+        if (profileSender.isInState(ProfileState.SPECTATE)) {
             final Duel duel = Utils.getDuelBySpectator(playerSender.getUniqueId());
             duel.getSpectator().remove(playerSender.getUniqueId());
             Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
@@ -77,7 +77,7 @@ public class SpectateCommand implements CommandExecutor {
             }));
         }
         targetDuel.getSpectator().add(playerSender.getUniqueId());
-        if (!profileSender.getProfileState().equals(ProfileState.SPECTATE)) {
+        if (!profileSender.isInState(ProfileState.SPECTATE)) {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 player.hidePlayer(playerSender);
                 playerSender.hidePlayer(player);

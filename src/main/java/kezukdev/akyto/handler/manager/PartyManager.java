@@ -31,7 +31,7 @@ public class PartyManager {
 	}
 
 	public void createParty(final UUID creator) {
-		if (!Utils.getProfiles(creator).getProfileState().equals(ProfileState.FREE)) {
+		if (!Utils.getProfiles(creator).isInState(ProfileState.FREE)) {
 			Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "You cannot do this right now!");
 			return;
 		}
@@ -111,7 +111,7 @@ public class PartyManager {
 	        duel.getSpectator().add(invited);
 	        Bukkit.getPlayer(invited).teleport(duel.getArena().getPosition().get(0).toBukkitLocation());
 	        Bukkit.getOnlinePlayers().forEach(player -> {
-	            if (Utils.getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.FIGHT) || Utils.getProfiles(player.getUniqueId()).getProfileState().equals(ProfileState.SPECTATE)) {
+	            if (Utils.getProfiles(player.getUniqueId()).isInState(ProfileState.FIGHT, ProfileState.SPECTATE)) {
 	                player.hidePlayer(Bukkit.getPlayer(invited));
 	                Bukkit.getPlayer(invited).hidePlayer(player);
 	            }
@@ -142,7 +142,7 @@ public class PartyManager {
 		if (party.getCreator().equals(sender)) {
 			party.getMembers().forEach(uuid -> {
 				if (Utils.getProfiles(uuid) != null) {
-					if (profile.getProfileState().equals(ProfileState.FREE)) {
+					if (profile.isInState(ProfileState.FREE)) {
 						this.main.getManagerHandler().getItemManager().giveItems(uuid, true);
 					}
 				}
@@ -152,10 +152,10 @@ public class PartyManager {
 			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
         } else {
 			party.getMembers().remove(sender);
-			if (profile.getProfileState().equals(ProfileState.FREE)) {
+			if (profile.isInState(ProfileState.FREE)) {
 				this.main.getManagerHandler().getItemManager().giveItems(sender, true);
 			}
-			if (profile.getProfileState().equals(ProfileState.SPECTATE)) {
+			if (profile.isInState(ProfileState.SPECTATE)) {
 				Utils.sendToSpawn(sender, true);
 			}
 			party.getMembers().forEach(uuid -> {

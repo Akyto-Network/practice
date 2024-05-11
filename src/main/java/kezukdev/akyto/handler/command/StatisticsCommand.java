@@ -1,5 +1,6 @@
 package kezukdev.akyto.handler.command;
 
+import kezukdev.akyto.profile.Profile;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -25,8 +26,8 @@ public class StatisticsCommand implements CommandExecutor {
 		}
 
 		final Player playerSender = (Player) sender;
-		final ProfileState state = Utils.getProfiles(playerSender.getUniqueId()).getProfileState();
-		boolean is_busy = state.equals(ProfileState.FIGHT) || state.equals(ProfileState.EDITOR);
+		final Profile profile = Utils.getProfiles(playerSender.getUniqueId());
+		boolean is_busy = profile.isInState(ProfileState.FIGHT, ProfileState.EDITOR);
 
 		if (args.length == 0) {
 			if (is_busy) {

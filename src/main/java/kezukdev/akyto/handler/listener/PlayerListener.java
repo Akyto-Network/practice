@@ -11,10 +11,8 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,6 +46,7 @@ import kezukdev.akyto.utils.Utils;
 import kezukdev.akyto.utils.match.MatchUtils;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_7_R4.PacketPlayOutNamedSoundEffect;
+import org.bukkit.scheduler.BukkitTask;
 
 public class PlayerListener implements Listener {
 	
@@ -71,39 +70,21 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onTeleport(PlayerTeleportEvent event) {
-		Player teleported = event.getPlayer();
-		if (!event.getTo().equals(this.main.getSpawn().getLocation() == null ? teleported.getWorld().getSpawnLocation() : this.main.getSpawn().getLocation()))
-			return;
-
-		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
-		if (profile == null || !Core.API.getManagerHandler().getProfileManager().getRank(teleported.getUniqueId()).isStaff())
-			return;
-
-		this.main.getServer().getScheduler().runTaskTimerAsynchronously(
-				this.main,
-				new RgbArmorTask(teleported),
-				100L,
-				1L
-		);
-	}
-
-	@EventHandler
 	public void onPlayerLeft(final PlayerQuitEvent event) {
 		final Profile profile = Utils.getProfiles(event.getPlayer().getUniqueId());
 		if (event.getPlayer().isOnline() && profile != null) {
 			if (Utils.getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
 				this.main.getManagerHandler().getPartyManager().leaveParty(event.getPlayer().getUniqueId());
 			}
-			if (profile.getProfileState().equals(ProfileState.QUEUE)) {
+			if (profile.isInState(ProfileState.QUEUE)) {
 				this.main.getQueue().remove(event.getPlayer().getUniqueId());
 			}
-			if (profile.getProfileState().equals(ProfileState.SPECTATE)) {
+			if (profile.isInState(ProfileState.SPECTATE)) {
 				final Duel duel = Utils.getDuelBySpectator(event.getPlayer().getUniqueId());
 				duel.getSpectator().remove(event.getPlayer().getUniqueId());
 				Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.")));
 			}
-			if (profile.getProfileState().equals(ProfileState.FIGHT)) {
+			if (profile.isInState(ProfileState.FIGHT)) {
 				if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()) != null) {
 					final Duel duel = Utils.getDuelByUUID(event.getPlayer().getUniqueId());
 					if (!duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
@@ -122,8 +103,23 @@ public class PlayerListener implements Listener {
 	public void onPlayerKick(final PlayerKickEvent event) {
 		this.onPlayerLeft(new PlayerQuitEvent(event.getPlayer(), null));
 	}
-	
-	
+
+	// Limit fire extinguish to fights
+	@EventHandler
+	public void onFireExtinguish(PlayerInteractEvent event) {
+		Player player = event.getPlayer();
+		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId());
+
+		if (!player.getGameMode().equals(GameMode.SURVIVAL))
+			return;
+		if (profile == null || profile.isInState(ProfileState.FIGHT))
+			return;
+		if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK))
+			return;
+		if (event.getClickedBlock().getRelative(event.getBlockFace()).getType().equals(Material.FIRE))
+			event.setCancelled(true);
+	}
+
     private boolean isPlants(Material material) {
         return material == Material.CROPS || material == Material.CARROT || material == Material.POTATO || material == Material.NETHER_WARTS || material == Material.COCOA || material == Material.SUGAR_CANE_BLOCK || material == Material.MELON_BLOCK || material == Material.PUMPKIN || material == Material.CACTUS;
     }
@@ -132,18 +128,16 @@ public class PlayerListener implements Listener {
 	public void onInteract(final PlayerInteractEvent event) {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
 		if (event.getItem() == null || event.getItem().getType().equals(Material.AIR)) return;
-		final Profile data = Utils.getProfiles(event.getPlayer().getUniqueId());
+		final Profile profile = Utils.getProfiles(event.getPlayer().getUniqueId());
 		final Player player = Bukkit.getPlayer(event.getPlayer().getUniqueId());
 		Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
             if (isPlants(clickedBlock.getType()) && player.getLocation().getBlockY() > event.getClickedBlock().getLocation().getBlockY()) {
                 event.setCancelled(true);
             }
-			if (event.getClickedBlock().getType().equals(Material.FIRE))
-				event.setCancelled(true);
         }
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-			if (data.getProfileState().equals(ProfileState.FREE)) {
+			if (profile.isInState(ProfileState.FREE)) {
 				if (Utils.getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
 					if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) { this.main.getManagerHandler().getPartyManager().leaveParty(event.getPlayer().getUniqueId()); }
 					if (event.getItem().getType().equals(Material.PAPER)) { this.main.getManagerHandler().getPartyManager().sendPartyInformation(event.getPlayer().getUniqueId()); }
@@ -168,11 +162,11 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
 				return;
 			}
-			if (data.getProfileState().equals(ProfileState.QUEUE)) {
+			if (profile.isInState(ProfileState.QUEUE)) {
 				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) { this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(event.getPlayer().getUniqueId());}
 				return;
 			}	
-			if (data.getProfileState().equals(ProfileState.SPECTATE)) {
+			if (profile.isInState(ProfileState.SPECTATE)) {
 				event.setUseInteractedBlock(Result.DENY);
 				event.setUseItemInHand(Result.DENY);
 				event.setCancelled(true);
@@ -197,7 +191,7 @@ public class PlayerListener implements Listener {
 					return;
 				}
 			}
-			if (data.getProfileState().equals(ProfileState.EDITOR)) {
+			if (profile.isInState(ProfileState.EDITOR) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 				event.setUseInteractedBlock(Result.DENY);
 				event.setUseItemInHand(Result.DENY);
 				event.setCancelled(true);
@@ -212,7 +206,7 @@ public class PlayerListener implements Listener {
 					return;
 				}
 			}
-			if (data.getProfileState().equals(ProfileState.FIGHT)) {
+			if (profile.isInState(ProfileState.FIGHT)) {
 				final Duel duel = Utils.getDuelByUUID(event.getPlayer().getUniqueId());
 				final Kit kit = duel.getKit();
 				if (event.getItem().getType().equals(Material.ENCHANTED_BOOK)) {
@@ -284,7 +278,7 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority=EventPriority.LOW)
 	public void PlayerFoodChange(final FoodLevelChangeEvent event) {
 		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getEntity().getUniqueId());
-		if (profile.getProfileState().equals(ProfileState.FIGHT)) {
+		if (profile.isInState(ProfileState.FIGHT)) {
 			final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup")) {
 				event.setCancelled(true);
@@ -300,7 +294,7 @@ public class PlayerListener implements Listener {
 	public void onDrop(final PlayerDropItemEvent event) {
 		if (event == null || event.getItemDrop() == null) return;
 		final Profile data = Utils.getProfiles(event.getPlayer().getUniqueId());
-		if (data.getProfileState().equals(ProfileState.FIGHT)) {
+		if (data.isInState(ProfileState.FIGHT)) {
 			if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.PLAYING) || Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.STARTING)) {
 				if (event.getItemDrop().getItemStack().getType().equals(Material.GLASS_BOTTLE)) {
 					event.getItemDrop().remove();
@@ -344,7 +338,7 @@ public class PlayerListener implements Listener {
 		event.getDrops().clear();
 		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getEntity().getUniqueId());
 		if (event.getEntity() == null) return;
-		if ((profile.getProfileState().equals(ProfileState.FIGHT))) {
+		if ((profile.isInState(ProfileState.FIGHT))) {
             new BukkitRunnable() {
                 public void run() {
                     try {
@@ -384,4 +378,29 @@ public class PlayerListener implements Listener {
 	public void onWeatherChange(final WeatherChangeEvent event) {
 		event.setCancelled(true);
 	}
+
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent event) {
+		Player teleported = event.getPlayer();
+		if (!event.getTo().equals(this.main.getSpawn().getLocation() == null ? teleported.getWorld().getSpawnLocation() : this.main.getSpawn().getLocation()))
+			return;
+
+		if (RgbArmorTask.getArmored().contains(teleported.getUniqueId()))
+			return;
+
+		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
+
+		if (profile == null || !Core.API.getManagerHandler().getProfileManager().getRank(teleported.getUniqueId()).isStaff())
+			return;
+
+		RgbArmorTask rgbArmor = new RgbArmorTask(teleported);
+		BukkitTask rgbArmorTask = this.main.getServer().getScheduler().runTaskTimerAsynchronously(
+				this.main,
+				rgbArmor,
+				70L,
+				1L
+		);
+		rgbArmor.setTask(rgbArmorTask);
+	}
+
 }

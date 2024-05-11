@@ -61,7 +61,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 
-			if (!senderProfile.getProfileState().equals(ProfileState.FREE)) {
+			if (!senderProfile.isInState(ProfileState.FREE)) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
 			}
@@ -73,7 +73,7 @@ public class DuelCommand implements CommandExecutor {
 
 			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
 
-			if (!targetProfile.getProfileState().equals(ProfileState.FREE)) {
+			if (!targetProfile.isInState(ProfileState.FREE)) {
 				sender.sendMessage(ChatColor.RED + target.getName() + "is not available at the moment");
 				return false;
 			}
@@ -82,16 +82,11 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 
-			if (!targetProfile.getProfileState().equals(ProfileState.FREE)) {
-				sender.sendMessage(ChatColor.RED + target.getDisplayName() + " is not free now.");
-				return false;
-			}
-
 			this.main.getManagerHandler().getRequestManager().createPullRequest(playerSender.getUniqueId(), target.getUniqueId());
 		}
 
 		if (args.length == 2 && args[0].equalsIgnoreCase("accept")) {
-			if (!senderProfile.getProfileState().equals(ProfileState.FREE)) {
+			if (!senderProfile.isInState(ProfileState.FREE)) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
 			}
@@ -109,7 +104,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
-			if (!targetProfile.getProfileState().equals(ProfileState.FREE)) {
+			if (!targetProfile.isInState(ProfileState.FREE)) {
 				sender.sendMessage(ChatColor.RED + target.getDisplayName() + " is not free now.");
 				return false;
 			}

@@ -26,4 +26,13 @@ public class Profile {
 		this.spectateSettings = Arrays.asList(true, true);
 	}
 
+	// Return whether the profile is in any of the given states
+	public boolean isInState(ProfileState... states) {
+		for (ProfileState state : states) {
+			if (this.profileState.equals(state))
+				return true;
+		}
+		return false;
+	}
+
 }

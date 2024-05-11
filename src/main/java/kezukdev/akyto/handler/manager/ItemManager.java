@@ -32,7 +32,7 @@ public class ItemManager {
 
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
-		if (profile.getProfileState().equals(ProfileState.FREE)) {
+		if (profile.isInState(ProfileState.FREE)) {
 			if (Utils.getPartyByUUID(uuid) != null && !destruct) {
 				player.getInventory().setItem(0, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + (Utils.getPartyByUUID(uuid).getCreator().equals(uuid) ? "Disband" : "Leave") + " Party."));
 				player.getInventory().setItem(1, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Settings"));
@@ -50,7 +50,7 @@ public class ItemManager {
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Settings"));
 			player.updateInventory();
 		}
-		if (profile.getProfileState().equals(ProfileState.MOD)) {
+		if (profile.isInState(ProfileState.MOD)) {
 			player.getInventory().setItem(0, ItemUtils.createItems(Material.PAPER, ChatColor.YELLOW + "View CPS " + ChatColor.GRAY + "(Right-Click)"));
 			player.getInventory().setItem(1, ItemUtils.createItems(Material.PACKED_ICE, ChatColor.YELLOW + "Freeze " + ChatColor.GRAY + "(Right-Click)"));
 			player.getInventory().setItem(4, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.YELLOW + "Random Teleport " + ChatColor.GRAY + "(Right-Click)"));
@@ -58,12 +58,12 @@ public class ItemManager {
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Staff-Mode."));
 			player.updateInventory();
 		}
-		if (profile.getProfileState().equals(ProfileState.QUEUE)) {
+		if (profile.isInState(ProfileState.QUEUE)) {
 			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Queue."));
 			player.updateInventory();
 		}
 		// -> Inversé les status ?
-		if (profile.getProfileState().equals(ProfileState.SPECTATE)) {
+		if (profile.isInState(ProfileState.SPECTATE)) {
 			Duel duel = Utils.getDuelBySpectator(uuid);
 			if (duel == null) duel = Utils.getDuelByUUID(uuid);
 			player.setAllowFlight(true);
@@ -74,13 +74,13 @@ public class ItemManager {
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Spectating."));
 			player.updateInventory();
 		}
-		if (profile.getProfileState().equals(ProfileState.EDITOR)) {
+		if (profile.isInState(ProfileState.EDITOR)) {
 			final KitInterface kit = (KitInterface) Kit.getLadder(this.main.getManagerHandler().getProfileManager().getEditing().get(uuid), this.main);
 			player.getInventory().setArmorContents(kit.armor());
 			player.getInventory().setContents(kit.content());
 			player.updateInventory();
 		}
-		if (profile.getProfileState().equals(ProfileState.FIGHT)) {
+		if (profile.isInState(ProfileState.FIGHT)) {
 			final Kit kit = Utils.getDuelByUUID(uuid).getKit();
 			final KitInterface kitI = (KitInterface) Utils.getDuelByUUID(uuid).getKit();
 			if (this.main.getManagerHandler().getProfileManager().getEditor().containsKey(uuid)) {
