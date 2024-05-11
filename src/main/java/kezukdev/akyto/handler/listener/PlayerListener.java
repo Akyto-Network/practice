@@ -393,14 +393,14 @@ public class PlayerListener implements Listener {
 		if (profile == null || !Core.API.getManagerHandler().getProfileManager().getRank(teleported.getUniqueId()).isStaff())
 			return;
 
-		RgbArmorTask rgbArmor = new RgbArmorTask(teleported);
-		BukkitTask rgbArmorTask = this.main.getServer().getScheduler().runTaskTimerAsynchronously(
-				this.main,
-				rgbArmor,
-				70L,
-				1L
-		);
-		rgbArmor.setTask(rgbArmorTask);
+//		RgbArmorTask rgbArmor = new RgbArmorTask(teleported);
+//		BukkitTask rgbArmorTask = this.main.getServer().getScheduler().runTaskTimerAsynchronously(
+//				this.main,
+//				rgbArmor,
+//				40L,
+//				1L
+//		);
+//		rgbArmor.setTask(rgbArmorTask);
 	}
 
 }
