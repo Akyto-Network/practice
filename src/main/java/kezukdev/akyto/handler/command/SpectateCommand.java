@@ -70,6 +70,10 @@ public class SpectateCommand implements CommandExecutor {
 
         if (profileSender.isInState(ProfileState.SPECTATE)) {
             final Duel duel = Utils.getDuelBySpectator(playerSender.getUniqueId());
+            if (duel.equals(Utils.getDuelByUUID(targetUUID))) {
+            	sender.sendMessage(ChatColor.RED + "You are currently spectate this match.");
+            	return false;
+            }
             duel.getSpectator().remove(playerSender.getUniqueId());
             Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
                 Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
