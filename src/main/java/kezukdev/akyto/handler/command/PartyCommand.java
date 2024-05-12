@@ -40,7 +40,10 @@ public class PartyCommand implements CommandExecutor {
 			sender.sendMessage(org.bukkit.ChatColor.RED + "You must be a player to do that");
 			return false;
 		}
-
+		if (!sender.isOp()) {
+			sender.sendMessage(ChatColor.RED + "Currently under working, exit at the next open :3");
+			return false;
+		}
 		final Player playerSender = (Player) sender;
 
 		if (args.length == 0) {

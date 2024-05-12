@@ -426,7 +426,8 @@ public class InventoryManager {
 				count++;
 			}
 		}
-		return count;
+		int number = count*2;
+		return number;
 	}
 
 }

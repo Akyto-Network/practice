@@ -39,7 +39,6 @@ import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.kit.KitInterface;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
-import kezukdev.akyto.runnable.PearlExpBarRunnable;
 import kezukdev.akyto.runnable.PearlExpireRunnable;
 import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
@@ -155,7 +154,13 @@ public class PlayerListener implements Listener {
 				}
 				if (event.getItem().getType().equals(Material.IRON_SWORD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[0]); }
 				if (event.getItem().getType().equals(Material.DIAMOND_SWORD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[1]); }
-				if (event.getItem().getType().equals(Material.NAME_TAG)) this.main.getManagerHandler().getPartyManager().createParty(event.getPlayer().getUniqueId());
+				if (event.getItem().getType().equals(Material.NAME_TAG)) {
+					if (!event.getPlayer().isOp()) {
+						event.getPlayer().sendMessage(ChatColor.RED + "Currently under working, exit at the next open :3");
+						return;
+					}
+					this.main.getManagerHandler().getPartyManager().createParty(event.getPlayer().getUniqueId());
+				}
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }
 				if (event.getItem().getType().equals(Material.SKULL_ITEM)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId())); }
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
@@ -243,7 +248,6 @@ public class PlayerListener implements Listener {
 					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getPlayer().getUniqueId());
 					if (!duelStatistics.hasPearlCooldown()) {
 						duelStatistics.applyEnderPearlCooldown();
-						new PearlExpBarRunnable(player, duel).runTaskTimerAsynchronously(Practice.getAPI(), 2L, 2L);
 						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
 						return;
 					}
@@ -378,7 +382,6 @@ public class PlayerListener implements Listener {
 		event.setCancelled(true);
 	}
 
-	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player teleported = event.getPlayer();
 		if (!event.getTo().equals(this.main.getSpawn().getLocation() == null ? teleported.getWorld().getSpawnLocation() : this.main.getSpawn().getLocation()))

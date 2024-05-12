@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import kezukdev.akyto.Practice;
+import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.utils.Utils;
 
 public class LeaderboardCommand implements CommandExecutor {
 	
@@ -22,8 +24,11 @@ public class LeaderboardCommand implements CommandExecutor {
 			sender.sendMessage(ChatColor.RED + "You must be a player to do that");
 			return false;
 		}
-
 		final Player playerSender = (Player) sender;
+		if (Utils.getProfiles(playerSender.getUniqueId()).isInState(ProfileState.FIGHT)) {
+			sender.sendMessage(ChatColor.RED + "You cannot do that right now!");
+			return false;
+		}
 		playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getLeaderboardInventory());
 
 		return false;
