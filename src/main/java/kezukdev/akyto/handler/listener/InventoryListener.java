@@ -59,6 +59,10 @@ public class InventoryListener implements Listener {
 		final String inventoryName = inventory.getName();
 		final Material itemMaterial = event.getCurrentItem().getType();
 		final Profile profile = Utils.getProfiles(event.getWhoClicked().getUniqueId());
+		if (inventoryName.contains("Leaderboard:")) {
+			event.setResult(Result.DENY);
+			event.setCancelled(true);
+		}
 		if (profile.isInState(ProfileState.FREE)) {
 			if (event.getClick().equals(ClickType.NUMBER_KEY)) {
 				event.setResult(Result.DENY);

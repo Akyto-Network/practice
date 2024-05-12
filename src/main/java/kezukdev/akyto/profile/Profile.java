@@ -25,7 +25,7 @@ public class Profile {
 		this.settings = Arrays.asList(true, true, true);
 		this.spectateSettings = Arrays.asList(true, true);
 	}
-
+	
 	// Return whether the profile is in any of the given states
 	public boolean isInState(ProfileState... states) {
 		for (ProfileState state : states) {
@@ -34,5 +34,4 @@ public class Profile {
 		}
 		return false;
 	}
-
 }

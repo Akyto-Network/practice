@@ -45,7 +45,7 @@ public class InventoryManager {
 	private Inventory[] queueInventory = new Inventory[5];
 	private Inventory[] arenaInventory = new Inventory[2];
 	private Inventory[] editorInventory = new Inventory[3];
-	private Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leadeboard:");
+	private Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
 	private Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
     public MultipageSerializer spectateMultipage;
     public MultipageSerializer partyMultipage;
@@ -355,12 +355,8 @@ public class InventoryManager {
 		                    lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + getMatchedFromLadder(ladder, true));	
 	                    }
 	                    lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-	                    if (inventories.getName().equalsIgnoreCase(queueInventory[1].getName()))
-                            lore.addAll(top[ladder.id()].getLoreRanked());
-	                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) {
-                            lore.addAll(top[ladder.id()].getLore());
-	                    	lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-	                    }
+                        lore.addAll(inventories.getName().equalsIgnoreCase(queueInventory[1].getName()) ? top[ladder.id()].getLoreRanked() : top[ladder.id()].getLore());
+	                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
 	                    meta.setLore(lore);
 	                    current.setItemMeta(meta);	
 		            });
@@ -390,12 +386,9 @@ public class InventoryManager {
                         lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + getMatchedFromLadder(ladder, true));	
                     }
                     lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                    if (inventories.getName().equalsIgnoreCase(queueInventory[1].getName()))
-                        lore.addAll(top[ladder.id()].getLoreRanked());
-                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) {
-                        lore.addAll(top[ladder.id()].getLore());
-                    	lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                    }
+                    lore.addAll(inventories.getName().equalsIgnoreCase(queueInventory[1].getName()) ? top[ladder.id()].getLoreRanked() : top[ladder.id()].getLore());
+                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+                    meta.setLore(lore);
                     meta.setLore(lore);
                     current.setItemMeta(meta);	
                 });
