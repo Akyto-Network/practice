@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -42,18 +43,18 @@ public class InventoryManager {
             DateFormat.SHORT);
 	
 	private final Practice main;
-	private Inventory[] queueInventory = new Inventory[5];
-	private Inventory[] arenaInventory = new Inventory[2];
-	private Inventory[] editorInventory = new Inventory[3];
-	private Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
-	private Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
+	private final Inventory[] queueInventory = new Inventory[5];
+	private final Inventory[] arenaInventory = new Inventory[2];
+	private final Inventory[] editorInventory = new Inventory[3];
+	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
+	private final Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
     public MultipageSerializer spectateMultipage;
     public MultipageSerializer partyMultipage;
-	private ConcurrentMap<UUID, Inventory> previewInventory;
-	private ConcurrentMap<UUID, Inventory> spectateInventory;
-	private ConcurrentMap<UUID, Inventory> profileInventory;
-	private ConcurrentMap<UUID, Inventory> settingsInventory;
-	private ConcurrentMap<UUID, Inventory> settingsSpectateInventory;
+	private final ConcurrentMap<UUID, Inventory> previewInventory;
+	private final ConcurrentMap<UUID, Inventory> spectateInventory;
+	private final ConcurrentMap<UUID, Inventory> profileInventory;
+	private final ConcurrentMap<UUID, Inventory> settingsInventory;
+	private final ConcurrentMap<UUID, Inventory> settingsSpectateInventory;
 	
 	
 	public InventoryManager(final Practice main) {
@@ -73,7 +74,7 @@ public class InventoryManager {
 		this.arenaInventory[0] = Bukkit.createInventory(null, 9*4, ChatColor.GRAY + "Select Normal Arena:");
 		this.arenaInventory[1] = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Select Sumo Arena:");
 		for (Arena arena : this.main.getArenas()) {
-			this.arenaInventory[arena.getArenaType().equals(ArenaType.NORMAL) ? 0 : 1].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + arena.getName()));
+			this.arenaInventory[arena.getArenaType().equals(ArenaType.NORMAL) ? 0 : 1].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + StringUtils.capitalize(arena.getName())));
 		}
 		this.arenaInventory[0].setItem(35, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
 		this.arenaInventory[1].setItem(26, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
@@ -426,8 +427,7 @@ public class InventoryManager {
 				count++;
 			}
 		}
-		int number = count*2;
-		return number;
+        return count * 2;
 	}
 
 }
