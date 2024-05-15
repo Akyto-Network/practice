@@ -393,7 +393,7 @@ public class PlayerListener implements Listener {
 
 		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
 
-		if (profile == null || !Core.API.getManagerHandler().getProfileManager().getRank(teleported.getUniqueId()).isStaff())
+		if (profile == null || teleported.hasPermission("akyto.rgbchest")) // TODO add setting check
 			return;
 
 //		RgbArmorTask rgbArmor = new RgbArmorTask(teleported);
