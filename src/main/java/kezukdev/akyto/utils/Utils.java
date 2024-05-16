@@ -51,7 +51,7 @@ public class Utils {
 	}
 	
 	public static Duel getDuelBySpectator(UUID uuid) {
-	    return Practice.getAPI().getDuels().stream().filter(duel -> duel.getSpectator().contains(uuid)).findFirst().orElse(null);
+	    return Practice.getAPI().getDuels().stream().filter(duel -> duel.getSpectators().contains(uuid)).findFirst().orElse(null);
 	}
 
 	public static Profile getProfiles(final UUID uuid) {

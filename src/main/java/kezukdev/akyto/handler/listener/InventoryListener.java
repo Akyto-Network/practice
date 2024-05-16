@@ -207,8 +207,8 @@ public class InventoryListener implements Listener {
 				profile.getSpectateSettings().set(0, profile.getSpectateSettings().get(0) ? Boolean.FALSE : Boolean.TRUE);
 				event.getWhoClicked().closeInventory();
 				final Duel duel = Utils.getDuelBySpectator(event.getWhoClicked().getUniqueId());
-				if (!duel.getSpectator().isEmpty()) {
-					duel.getSpectator().forEach(spectator -> {
+				if (!duel.getSpectators().isEmpty()) {
+					duel.getSpectators().forEach(spectator -> {
 						if (profile.getSpectateSettings().get(0)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).showPlayer(Bukkit.getPlayer(spectator));
 						if (!profile.getSpectateSettings().get(0)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).hidePlayer(Bukkit.getPlayer(spectator));
 					});

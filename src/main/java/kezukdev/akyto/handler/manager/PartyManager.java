@@ -108,7 +108,7 @@ public class PartyManager {
 	    if (Utils.getDuelByUUID(inviter) != null) {
 	    	final Duel duel = Utils.getDuelByUUID(inviter);
 	        Utils.getProfiles(invited).setProfileState(ProfileState.SPECTATE);
-	        duel.getSpectator().add(invited);
+	        duel.getSpectators().add(invited);
 	        Bukkit.getPlayer(invited).teleport(duel.getArena().getPosition().get(0).toBukkitLocation());
 	        Bukkit.getOnlinePlayers().forEach(player -> {
 	            if (Utils.getProfiles(player.getUniqueId()).isInState(ProfileState.FIGHT, ProfileState.SPECTATE)) {

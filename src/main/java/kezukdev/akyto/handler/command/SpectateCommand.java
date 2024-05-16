@@ -74,13 +74,13 @@ public class SpectateCommand implements CommandExecutor {
             	sender.sendMessage(ChatColor.RED + "You are currently spectate this match.");
             	return false;
             }
-            duel.getSpectator().remove(playerSender.getUniqueId());
+            duel.getSpectators().remove(playerSender.getUniqueId());
             Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
                 Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
                 playerSender.hidePlayer(Bukkit.getPlayer(uuid));
             }));
         }
-        targetDuel.getSpectator().add(playerSender.getUniqueId());
+        targetDuel.getSpectators().add(playerSender.getUniqueId());
         if (!profileSender.isInState(ProfileState.SPECTATE)) {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 player.hidePlayer(playerSender);
@@ -96,8 +96,8 @@ public class SpectateCommand implements CommandExecutor {
             Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is now spectating.");
         }));
 
-        if (!targetDuel.getSpectator().isEmpty()) {
-            targetDuel.getSpectator().forEach(spectator -> {
+        if (!targetDuel.getSpectators().isEmpty()) {
+            targetDuel.getSpectators().forEach(spectator -> {
                 if (profileSender.getSpectateSettings().get(0)) playerSender.showPlayer(Bukkit.getPlayer(spectator));
                 if (!profileSender.getSpectateSettings().get(0)) playerSender.hidePlayer(Bukkit.getPlayer(spectator));
             });

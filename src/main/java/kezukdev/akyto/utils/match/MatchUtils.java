@@ -49,7 +49,7 @@ public class MatchUtils {
                 }
             });
             
-            match.getSpectator().forEach(uuids -> {
+            match.getSpectators().forEach(uuids -> {
                 Player spectator = Bukkit.getPlayer(uuids);
                 if (spectator != null) {
                     spectator.sendMessage(ChatColor.WHITE + Utils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer)));
@@ -89,7 +89,7 @@ public class MatchUtils {
 				}
 			});
 
-			match.getSpectator().forEach(uuids -> {
+			match.getSpectators().forEach(uuids -> {
 				Player spectator = Bukkit.getPlayer(uuids);
 				if (spectator != null) {
 					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
@@ -125,8 +125,8 @@ public class MatchUtils {
             }));
     	}
 		final Profile profile = Utils.getProfiles(uuid);
-		if (!duel.getSpectator().isEmpty()) {
-			duel.getSpectator().forEach(spectator -> {
+		if (!duel.getSpectators().isEmpty()) {
+			duel.getSpectators().forEach(spectator -> {
 				if (profile.getSpectateSettings().get(0)) Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(spectator));
 				if (!profile.getSpectateSettings().get(0)) Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(spectator));
 			});

@@ -1,17 +1,12 @@
 package kezukdev.akyto.handler.listener;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import kezukdev.akyto.runnable.RgbArmorTask;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -29,7 +24,6 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import gym.core.Core;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
@@ -44,7 +38,6 @@ import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
 import kezukdev.akyto.utils.match.MatchUtils;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.v1_7_R4.PacketPlayOutNamedSoundEffect;
 
 public class PlayerListener implements Listener {
 	
@@ -79,7 +72,7 @@ public class PlayerListener implements Listener {
 			}
 			if (profile.isInState(ProfileState.SPECTATE)) {
 				final Duel duel = Utils.getDuelBySpectator(event.getPlayer().getUniqueId());
-				duel.getSpectator().remove(event.getPlayer().getUniqueId());
+				duel.getSpectators().remove(event.getPlayer().getUniqueId());
 				Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.")));
 			}
 			if (profile.isInState(ProfileState.FIGHT)) {
@@ -187,7 +180,7 @@ public class PlayerListener implements Listener {
 				}
 				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) { 
 					final Duel duel = Utils.getDuelBySpectator(player.getUniqueId());
-					duel.getSpectator().remove(player.getUniqueId());
+					duel.getSpectators().remove(player.getUniqueId());
 					Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
 						Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + player.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
 						player.hidePlayer(Bukkit.getPlayer(uuid));
@@ -316,65 +309,81 @@ public class PlayerListener implements Listener {
 	}
 	
 	@EventHandler
-	public void PlayerDeathEvent(final PlayerDeathEvent event) {
+	public void onDeath(final PlayerDeathEvent event) {
+		final Player killed = event.getEntity();
+		final Player killer = killed.getKiller();
+		final Location deathLoc = killed.getLocation();
+
 		event.setDeathMessage(null);
-		final Location deathLoc = event.getEntity().getLocation();
+
 		LightningStrike lightning = deathLoc.getWorld().strikeLightningEffect(deathLoc);
 		lightning.setFireTicks(0);
 		lightning.setSilent(true);
-		((CraftPlayer)event.getEntity()).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", deathLoc.getX(), deathLoc.getY(), deathLoc.getZ(), 10000.0F, deathLoc.getPitch()));
-		if (event.getEntity().getKiller() != null) {
-			((CraftPlayer)event.getEntity().getKiller()).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", event.getEntity().getKiller().getLocation().getX(),  event.getEntity().getKiller().getLocation().getY(),  event.getEntity().getKiller().getLocation().getZ(), 10000.0F,  event.getEntity().getKiller().getLocation().getPitch()));
-		}
-		final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
-		if (!duel.getSpectator().isEmpty()) {
-			duel.getSpectator().forEach(specs -> {
-				((CraftPlayer)Bukkit.getPlayer(specs)).getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect("ambient.weather.thunder", event.getEntity().getKiller().getLocation().getX(),  event.getEntity().getKiller().getLocation().getY(),  event.getEntity().getKiller().getLocation().getZ(), 10000.0F,  event.getEntity().getKiller().getLocation().getPitch()));
-			});
+
+		final Duel duel = Utils.getDuelByUUID(killed.getUniqueId());
+
+		Set<UUID> duelPlayers = new HashSet<>();
+		duelPlayers.addAll(duel.getFirst());
+		duelPlayers.addAll(duel.getSecond());
+		duelPlayers.addAll(duel.getSpectators());
+
+		duelPlayers.stream().map(Bukkit::getPlayer).forEach(player -> {
+			player.playSound(deathLoc, Sound.AMBIENCE_THUNDER, 10000.0F, deathLoc.getPitch());
+		});
+
+		if (killer != null) {
+
+			if (killer.getUniqueId().equals(UUID.fromString("fb4f1dd4-e9c3-47ed-8a1b-17de9e80ae1e"))) {
+				killer.spigot().playEffect(deathLoc.add(0, 1D, 0), Effect.FLAME, 0, 0, 0.6F, 0.1F, 0.6F, 0.2F, 10, 192);
+				for (int i = 0 ; i < 10 ; i++) {
+					killer.spigot().playEffect(deathLoc.add(0, 0.75D, 0), Effect.LAVA_POP, 0, 0, 0.5F, 0.2F, 0.5F, 0F, 3, 192);
+				}
+			}
 		}
 		event.setDroppedExp(0);
-		event.getEntity().setLevel(0);
-		event.getEntity().setExp(0);
+		killed.setLevel(0);
+		killed.setExp(0);
 		for (ItemStack item : event.getDrops()) {
-			final Item items = event.getEntity().getWorld().dropItemNaturally(event.getEntity(), deathLoc, new ItemStack(item.clone()));
-			MatchUtils.addDrops(items, event.getEntity().getUniqueId());
+			final Item items = killed.getWorld().dropItemNaturally(killed, deathLoc, new ItemStack(item.clone()));
+			MatchUtils.addDrops(items, killed.getUniqueId());
 		}
 		event.getDrops().clear();
-		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getEntity().getUniqueId());
-		if (event.getEntity() == null) return;
+		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(killed.getUniqueId());
 		if ((profile.isInState(ProfileState.FIGHT))) {
             new BukkitRunnable() {
                 public void run() {
-                    try {
-                        final Object nmsPlayer = event.getEntity().getClass().getMethod("getHandle", new Class[0]).invoke(event.getEntity());
-                        final Object con = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
-                        final Class<?> EntityPlayer = Class.forName(nmsPlayer.getClass().getPackage().getName() + ".EntityPlayer");
-                        final Field minecraftServer = con.getClass().getDeclaredField("minecraftServer");
-                        minecraftServer.setAccessible(true);
-                        final Object mcserver = minecraftServer.get(con);
-                        final Object playerlist = mcserver.getClass().getDeclaredMethod("getPlayerList", new Class[0]).invoke(mcserver);
-                        final Method moveToWorld = playerlist.getClass().getMethod("moveToWorld", EntityPlayer, Integer.TYPE, Boolean.TYPE);
-                        moveToWorld.invoke(playerlist, nmsPlayer, 0, false);
+                    try { // TODO Check if everything works the same without reflection
+						CraftServer server = (CraftServer) killed.getServer();
+						server.getHandle().moveToWorld(((CraftPlayer) killed).getHandle(), 0, false);
+
+//                        final Object nmsPlayer = killed.getClass().getMethod("getHandle", new Class[0]).invoke(killed);
+//                        final Object con = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
+//                        final Class<?> EntityPlayer = Class.forName(nmsPlayer.getClass().getPackage().getName() + ".EntityPlayer");
+//                        final Field minecraftServer = con.getClass().getDeclaredField("minecraftServer");
+//                        minecraftServer.setAccessible(true);
+//                        final Object mcserver = minecraftServer.get(con);
+//                        final Object playerlist = mcserver.getClass().getDeclaredMethod("getPlayerList", new Class[0]).invoke(mcserver);
+//                        final Method moveToWorld = playerlist.getClass().getMethod("moveToWorld", EntityPlayer, Integer.TYPE, Boolean.TYPE);
+//                        moveToWorld.invoke(playerlist, nmsPlayer, 0, false);
                     }
                     catch (Exception ex) {
-                    	event.getEntity().spigot().respawn();
+                    	killed.spigot().respawn();
                         ex.printStackTrace();
                     }
-        			event.getEntity().teleport(deathLoc);
+        			killed.teleport(deathLoc);
                 }
             }.runTaskLater(this.main, 20L);
             new BukkitRunnable() {
             	public void run() {
-                    if (event.getEntity().getKiller() != null) {
-                    	event.getEntity().getKiller().hidePlayer(event.getEntity());
-                    }	
+                    if (killer != null)
+                    	killer.hidePlayer(killed);
             	}
             }.runTaskLater(main, 19L);
             if (duel.getDuelType().equals(DuelType.SINGLE)) {
-                this.main.getManagerHandler().getDuelManager().endSingle(event.getEntity().getUniqueId().equals(new ArrayList<>(duel.getFirst()).get(0)) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));	
+                this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).get(0)) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));
                 return;
             }
-        	MatchUtils.addKill(event.getEntity().getUniqueId(), event.getEntity().getKiller() != null ? event.getEntity().getKiller().getUniqueId() : null, false);
+        	MatchUtils.addKill(killed.getUniqueId(), killer == null ? null : killer.getUniqueId(), false);
 		}
 	}
 	

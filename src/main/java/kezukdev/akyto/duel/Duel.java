@@ -17,7 +17,7 @@ public class Duel {
 	private Set<UUID> firstAlives;
 	private Set<UUID> second;
 	private Set<UUID> secondAlives;
-	private Set<UUID> spectator;
+	private Set<UUID> spectators;
 	private Set<UUID> dropped;
 	private Set<UUID> alives;
 	private boolean ranked;
@@ -33,7 +33,7 @@ public class Duel {
 		this.duelType = type;
 		this.first = first;
 		this.second = second;
-		this.spectator = new HashSet<>();
+		this.spectators = new HashSet<>();
 		this.dropped = new HashSet<>();
 		this.ranked = ranked;
 		if (type.equals(DuelType.FFA)) {

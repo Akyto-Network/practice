@@ -91,10 +91,10 @@ public class DuelManager {
 		List<UUID> players = new ArrayList<>();
 		players.add(winner);
 		players.add(looser);
-		if (!duel.getSpectator().isEmpty()) players.addAll(new ArrayList<>(duel.getSpectator()));
+		if (!duel.getSpectators().isEmpty()) players.addAll(new ArrayList<>(duel.getSpectators()));
 		DataUtils.addWinToData(winner, duel.getKit());
 		players.forEach(uuid -> {
-			if (!duel.getSpectator().contains(uuid)) {
+			if (!duel.getSpectators().contains(uuid)) {
 				this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid).removeEnderPearlCooldown();
 				this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, Utils.getOpponents(uuid).get(0));
 			}
@@ -105,11 +105,11 @@ public class DuelManager {
 				if (duel.isRanked()) {
 					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (main.getManagerHandler().getProfileManager().getProfiles().get(winner).getStats().get(2)[duel.getKit().id()] - main.getManagerHandler().getProfileManager().getProfiles().get(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
 				}
-				if (!duel.getSpectator().isEmpty()) {
+				if (!duel.getSpectators().isEmpty()) {
 					Bukkit.getPlayer(uuid).sendMessage(" ");
 				    final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
-			        final TextComponent spectxt = new TextComponent(ChatColor.GRAY + "Spectators (" + duel.getSpectator().size() + ChatColor.GRAY + "): ");
-			        duel.getSpectator().forEach(spec -> {
+			        final TextComponent spectxt = new TextComponent(ChatColor.GRAY + "Spectators (" + duel.getSpectators().size() + ChatColor.GRAY + "): ");
+			        duel.getSpectators().forEach(spec -> {
 			        	final TextComponent stxt = new TextComponent(ChatColor.WHITE + Bukkit.getPlayer(spec).getName());
 			        	joiner.add(stxt);
 			        });
@@ -123,7 +123,7 @@ public class DuelManager {
 			EloUtils.eloChanges(winner, looser, duel.getKit(), main);
 		}
 		players.forEach(uuid -> {
-			if (duel.isRanked() && !duel.getSpectator().contains(uuid)) {
+			if (duel.isRanked() && !duel.getSpectators().contains(uuid)) {
 		        final String elos = FormatUtils.getStringValue(this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2), ":");
 		        DB.executeUpdateAsync("UPDATE playersdata SET elos=? WHERE name=?", elos, Bukkit.getServer().getPlayer(uuid).getName()).join();
 		        this.main.getManagerHandler().getInventoryManager().refreshLeaderboard();
