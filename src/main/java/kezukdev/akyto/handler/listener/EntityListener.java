@@ -10,15 +10,15 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
-import kezuk.npaper.kPaper;
-import kezuk.npaper.handler.MovementHandler;
+import akyto.spigot.aSpigot;
+import akyto.spigot.handler.MovementHandler;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.utils.Utils;
-import net.minecraft.server.v1_7_R4.PacketPlayInFlying;
+import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 
 public class EntityListener implements Listener {
 	
@@ -26,7 +26,7 @@ public class EntityListener implements Listener {
 	
 	public EntityListener(final Practice main) { 
 		this.main = main;
-        kPaper.INSTANCE.addMovementHandler(new MovementHandler() {
+        aSpigot.INSTANCE.addMovementHandler(new MovementHandler() {
             public void handleUpdateLocation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
             	final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
             	if (duel != null) {

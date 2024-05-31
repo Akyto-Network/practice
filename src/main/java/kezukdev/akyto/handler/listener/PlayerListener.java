@@ -5,8 +5,8 @@ import java.util.*;
 import kezukdev.akyto.runnable.RgbArmorTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -344,7 +344,7 @@ public class PlayerListener implements Listener {
 		killed.setLevel(0);
 		killed.setExp(0);
 		for (ItemStack item : event.getDrops()) {
-			final Item items = killed.getWorld().dropItemNaturally(killed, deathLoc, new ItemStack(item.clone()));
+			final Item items = killed.getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()), killed);
 			MatchUtils.addDrops(items, killed.getUniqueId());
 		}
 		event.getDrops().clear();
