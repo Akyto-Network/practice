@@ -50,7 +50,7 @@
 		</dependency>
         <dependency>
             <groupId>akyto.spigot</groupId>
-            <artifactId>aspigot-api</artifactId>
+            <artifactId>aspigot-server</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
