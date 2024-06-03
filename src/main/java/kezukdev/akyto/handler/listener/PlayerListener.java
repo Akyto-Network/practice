@@ -392,19 +392,19 @@ public class PlayerListener implements Listener {
 		event.setCancelled(true);
 	}
 
-	public void onTeleport(PlayerTeleportEvent event) {
-		Player teleported = event.getPlayer();
-		if (!event.getTo().equals(this.main.getSpawn().getLocation() == null ? teleported.getWorld().getSpawnLocation() : this.main.getSpawn().getLocation()))
-			return;
-
-		if (RgbArmorTask.getArmored().contains(teleported.getUniqueId()))
-			return;
-
-		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
-
-		if (profile == null || teleported.hasPermission("akyto.rgbchest")) // TODO add setting check
-			return;
-
+//	public void onTeleport(PlayerTeleportEvent event) {
+//		Player teleported = event.getPlayer();
+//		if (!event.getTo().equals(this.main.getSpawn().getLocation() == null ? teleported.getWorld().getSpawnLocation() : this.main.getSpawn().getLocation()))
+//			return;
+//
+//		if (RgbArmorTask.getArmored().contains(teleported.getUniqueId()))
+//			return;
+//
+//		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
+//
+//		if (profile == null || teleported.hasPermission("akyto.rgbchest")) // TODO add setting check
+//			return;
+//
 //		RgbArmorTask rgbArmor = new RgbArmorTask(teleported);
 //		BukkitTask rgbArmorTask = this.main.getServer().getScheduler().runTaskTimerAsynchronously(
 //				this.main,
@@ -413,6 +413,6 @@ public class PlayerListener implements Listener {
 //				1L
 //		);
 //		rgbArmor.setTask(rgbArmorTask);
-	}
+//	}
 
 }
