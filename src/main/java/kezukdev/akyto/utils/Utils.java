@@ -7,6 +7,7 @@ import java.util.UUID;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;
 
+import kezukdev.akyto.duel.cache.DuelStatistics;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import kezukdev.akyto.Practice;
@@ -92,6 +93,7 @@ public class Utils {
 	public static void resetPlayer(final UUID uuid) {
 		final Player player = Bukkit.getPlayer(uuid);
 		if (player == null) return;
+
 		player.setAllowFlight(false);
 		player.setFlying(false);
 		player.setFireTicks(0);

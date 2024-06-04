@@ -98,15 +98,16 @@ public class DuelManager {
 				this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid).removeEnderPearlCooldown();
 				this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, Utils.getOpponents(uuid).get(0));
 			}
-			if (Bukkit.getPlayer(uuid) != null) {
-				Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-				Bukkit.getPlayer(uuid).sendMessage(ChatColor.YELLOW + "Match Information");
-				Bukkit.getPlayer(uuid).spigot().sendMessage(MessageUtils.endMessage(winner, looser));
+			Player player = Bukkit.getPlayer(uuid);
+			if (player != null) {
+				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+				player.sendMessage(ChatColor.YELLOW + "Match Information");
+				player.spigot().sendMessage(MessageUtils.endMessage(winner, looser));
 				if (duel.isRanked()) {
-					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (main.getManagerHandler().getProfileManager().getProfiles().get(winner).getStats().get(2)[duel.getKit().id()] - main.getManagerHandler().getProfileManager().getProfiles().get(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
+					player.sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (main.getManagerHandler().getProfileManager().getProfiles().get(winner).getStats().get(2)[duel.getKit().id()] - main.getManagerHandler().getProfileManager().getProfiles().get(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
 				}
 				if (!duel.getSpectators().isEmpty()) {
-					Bukkit.getPlayer(uuid).sendMessage(" ");
+					player.sendMessage(" ");
 				    final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
 			        final TextComponent spectxt = new TextComponent(ChatColor.GRAY + "Spectators (" + duel.getSpectators().size() + ChatColor.GRAY + "): ");
 			        duel.getSpectators().forEach(spec -> {
@@ -114,9 +115,9 @@ public class DuelManager {
 			        	joiner.add(stxt);
 			        });
 			        spectxt.addExtra(joiner.toTextComponent());
-					Bukkit.getPlayer(uuid).spigot().sendMessage(spectxt);
+					player.spigot().sendMessage(spectxt);
 				}
-				Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
 			}
 		});
 		if (duel.isRanked()) {

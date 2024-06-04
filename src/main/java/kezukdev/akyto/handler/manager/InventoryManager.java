@@ -207,10 +207,10 @@ public class InventoryManager {
         
         final List<String> loreStats = new ArrayList<>();
         if (kit.name().equals("nodebuff") || kit.name().equals("debuff") || kit.name().equals("noenchant") || kit.name().equals("axe")) {
-            loreStats.add(ChatColor.DARK_GRAY + "Amount Pots" + ChatColor.RESET + ": " + Bukkit.getPlayer(uuid).getInventory().all(new ItemStack(Material.POTION, 1, (short)16421)).size());	
+            loreStats.add(ChatColor.DARK_GRAY + "Pots Left" + ChatColor.RESET + ": " + Bukkit.getPlayer(uuid).getInventory().all(new ItemStack(Material.POTION, 1, (short)16421)).size());
         }	
         loreStats.add(ChatColor.DARK_GRAY + "Hits" + ChatColor.RESET + ": " + duelStatistics.getHits());
-        loreStats.add(ChatColor.DARK_GRAY + "Longer Hits" + ChatColor.RESET + ": " + duelStatistics.getLongestHit());
+        loreStats.add(ChatColor.DARK_GRAY + "Best Combo" + ChatColor.RESET + ": " + duelStatistics.getLongestHit());
         preview.setItem(50, ItemUtils.createItems(Material.MELON, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
         preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + Utils.getName(opponent)));
         this.previewInventory.remove(uuid);
