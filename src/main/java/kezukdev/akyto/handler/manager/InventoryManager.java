@@ -156,7 +156,7 @@ public class InventoryManager {
 		}
 		this.partyEventInventory.setItem(1, ItemUtils.createItems(Material.IRON_AXE, ChatColor.DARK_GRAY + "Free For All"));
 		this.partyEventInventory.setItem(3, ItemUtils.createItems(Material.DIAMOND_CHESTPLATE, ChatColor.DARK_GRAY + "Split"));
-		this.queueInventory[1].setItem(8, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #3" + ChatColor.WHITE + " Global"));
+//		this.queueInventory[1].setItem(8, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #3" + ChatColor.WHITE + " Global"));
 	}
 	
 	public void refreshQueueInventory(boolean ranked, final Kit kit) {
@@ -167,11 +167,11 @@ public class InventoryManager {
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "Queueing: " + ChatColor.RESET + this.getQueuedFromLadder(kit, ranked));
         lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + this.getMatchedFromLadder(kit, ranked));
-        if (ranked) {
-            lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-            Top[] top = main.getManagerHandler().getLeaderboardManager().getTop();
-            lore.addAll(top[kit.id()].getLoreRanked());
-        }
+//        if (ranked) {
+//            lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+//            Top[] top = main.getManagerHandler().getLeaderboardManager().getTop();
+//            lore.addAll(top[kit.id()].getLoreRanked());
+//        }
         meta.setLore(lore);
 		item.setItemMeta(meta);
 		inv.removeItem(inv.getItem(kit.id()));
@@ -195,23 +195,24 @@ public class InventoryManager {
         final List<String> loreInfos = new ArrayList<>();
         loreInfos.add(ChatColor.DARK_GRAY + "Life Level" + ChatColor.RESET + ": " + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤");
         loreInfos.add(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d));
-        preview.setItem(48, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", loreInfos));
+        preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", loreInfos));
+		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ")); // TODO Orginiser a la rimk
         List<String> effectsInfo = new ArrayList<>();
-        if(!Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
+        if (!Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
             for(PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects()) effectsInfo.add(ChatColor.GRAY + potionEffect.getType().getName() + " " + (potionEffect.getAmplifier() + 1) + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
         }
-        if(Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
+        if (Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
         	effectsInfo.add(ChatColor.RED + "No Effects.");
         }
-        preview.setItem(49, ItemUtils.createItems(Material.BREWING_STAND_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Effects Informations" + ChatColor.RESET + ": ", effectsInfo));
-        
+		preview.setItem(49, ItemUtils.createItems(Material.BREWING_STAND_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Effects Informations" + ChatColor.RESET + ": ", effectsInfo));
+
         final List<String> loreStats = new ArrayList<>();
         if (kit.name().equals("nodebuff") || kit.name().equals("debuff") || kit.name().equals("noenchant") || kit.name().equals("axe")) {
             loreStats.add(ChatColor.DARK_GRAY + "Pots Left" + ChatColor.RESET + ": " + Bukkit.getPlayer(uuid).getInventory().all(new ItemStack(Material.POTION, 1, (short)16421)).size());
         }	
         loreStats.add(ChatColor.DARK_GRAY + "Hits" + ChatColor.RESET + ": " + duelStatistics.getHits());
         loreStats.add(ChatColor.DARK_GRAY + "Best Combo" + ChatColor.RESET + ": " + duelStatistics.getLongestHit());
-        preview.setItem(50, ItemUtils.createItems(Material.MELON, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
+		preview.setItem(50, ItemUtils.createItems(Material.DIAMOND_SWORD, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
         preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + Utils.getName(opponent)));
         this.previewInventory.remove(uuid);
 		this.previewInventory.put(uuid, preview);
@@ -345,7 +346,8 @@ public class InventoryManager {
 	            main.getManagerHandler().getLeaderboardManager().refresh();
 	            Top[] top = main.getManagerHandler().getLeaderboardManager().getTop();
 	            Top global_top = main.getManagerHandler().getLeaderboardManager().getGlobal();
-	            List<Inventory> inv = Arrays.asList(queueInventory[1], leaderboardInventory);
+//				List<Inventory> inv = Arrays.asList(queueInventory[1], leaderboardInventory);
+				List<Inventory> inv = Collections.singletonList(leaderboardInventory);
 	            for (Inventory inventories : inv) {
 		            main.getKits().forEach(ladder -> {
 	                    ItemStack current = inventories.getItem(ladder.id());

@@ -36,7 +36,7 @@ public class QueueManager {
         Utils.getProfiles(uuid).setProfileState(ProfileState.QUEUE);
         this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
         this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
-        Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "You have successfully joined the " + ChatColor.stripColor(kit.displayName()) + " queue");
+        Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "You have successfully joined the " + (ranked ? "" : "un") + "ranked " + ChatColor.stripColor(kit.displayName()) + " queue");
     }
     
     public void removePlayerFromQueue(final UUID uuid) {
