@@ -392,8 +392,19 @@ public class PlayerListener implements Listener {
 		event.setCancelled(true);
 	}
 
-//	public void onTeleport(PlayerTeleportEvent event) {
-//		Player teleported = event.getPlayer();
+	@EventHandler
+	public void onTeleport(PlayerTeleportEvent event) {
+		Player teleported = event.getPlayer();
+		Profile profile = main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
+
+		if (profile == null)
+			return;
+
+		// Prevent pearl teleporting after fight MAY NOT BE PERFECT !
+		if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL) && !profile.isInState(ProfileState.FIGHT)) {
+			event.setCancelled(true);
+			return;
+		}
 //		if (!event.getTo().equals(this.main.getSpawn().getLocation() == null ? teleported.getWorld().getSpawnLocation() : this.main.getSpawn().getLocation()))
 //			return;
 //
@@ -413,6 +424,6 @@ public class PlayerListener implements Listener {
 //				1L
 //		);
 //		rgbArmor.setTask(rgbArmorTask);
-//	}
+	}
 
 }

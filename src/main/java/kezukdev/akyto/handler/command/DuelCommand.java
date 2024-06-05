@@ -74,7 +74,7 @@ public class DuelCommand implements CommandExecutor {
 			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
 
 			if (!targetProfile.isInState(ProfileState.FREE)) {
-				sender.sendMessage(ChatColor.RED + target.getName() + "is not available at the moment");
+				sender.sendMessage(ChatColor.RED + target.getName() + " is not available at the moment");
 				return false;
 			}
 			if (!targetProfile.getSettings().get(1)) {
