@@ -48,7 +48,7 @@ public class LeaderboardManager {
            final PreparedStatement sts = this.main.connection.prepareStatement("SELECT * FROM playersdata");
            final ResultSet rs = sts.executeQuery();
            //final ResultSetMetaData resultSetMetaData = rs.getMetaData();
-           if (getRowNumber("playersdata") == 0) return null;
+           if (getRowNumber("playersdata") == 0) return top_elo;
            if (rs.next()) {
                for (int i = 1; i <= getRowNumber("playersdata"); ++i) {
                    int[] elos = FormatUtils.getSplitValue(DB.getFirstRow("SELECT elos FROM playersdata WHERE ID=?", i).getString("elos"), ":");
