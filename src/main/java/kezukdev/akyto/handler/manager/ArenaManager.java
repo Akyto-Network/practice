@@ -30,8 +30,29 @@ public class ArenaManager {
 		ConfigurationSection arenaSection = fileConfig.getConfigurationSection("arenas");
 		if (arenaSection == null) return;
 		arenaSection.getKeys(false).forEach(name -> {
-			final Arena arena = new Arena(main, name, LocationSerializer.stringToLocation(arenaSection.getString(name + ".first")), LocationSerializer.stringToLocation(arenaSection.getString(name + ".second")), ArenaType.valueOf(arenaSection.getString(name + ".type")), Material.valueOf(arenaSection.getString(name + ".icon")));
-			this.main.getArenasMap().putIfAbsent(name, arena);
+			final Arena arena = new Arena(
+					main,
+					name,
+					LocationSerializer.stringToLocation(arenaSection.getString(name + ".first")),
+					LocationSerializer.stringToLocation(arenaSection.getString(name + ".second")),
+					ArenaType.valueOf(arenaSection.getString(name + ".type")),
+					Material.valueOf(arenaSection.getString(name + ".icon"))
+			);
+
+			if (arenaSection.isSet(name + ".corner1")) {
+				arena.setCorner1(LocationSerializer.stringToLocation(arenaSection.getString(name + ".corner1")));
+			}
+
+			if (arenaSection.isSet(name + ".corner2")) {
+				arena.setCorner2(LocationSerializer.stringToLocation(arenaSection.getString(name + ".corner2")));
+			}
+
+			try {
+				arena.loadChunks();
+				this.main.getArenasMap().putIfAbsent(name, arena);
+			} catch (Exception ex) {
+				this.main.getLogger().severe("Failed to load chunks for arena " + arena.getName() + " " + ex.getMessage());
+			}
 		});
 	}
 
@@ -44,6 +65,8 @@ public class ArenaManager {
 			fileConfig.set("arenas." + arenaName + ".second", LocationSerializer.locationToString(arena.getPosition().get(1)));
 			fileConfig.set("arenas." + arenaName + ".type", arena.getArenaType().toString());
 			fileConfig.set("arenas." + arenaName + ".icon", arena.getIcon().toString());
+			fileConfig.set("arenas." + arenaName + ".corner1", LocationSerializer.locationToString(arena.getCorner1()));
+			fileConfig.set("arenas." + arenaName + ".corner2", LocationSerializer.locationToString(arena.getCorner2()));
 		});
 		this.config.save();
 	}

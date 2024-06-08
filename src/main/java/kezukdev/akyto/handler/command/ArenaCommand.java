@@ -12,6 +12,8 @@ import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;
 import kezukdev.akyto.utils.location.LocationSerializer;
 
+import java.util.jar.JarEntry;
+
 public class ArenaCommand implements CommandExecutor {
 	
 	private final Practice main;
@@ -35,6 +37,7 @@ public class ArenaCommand implements CommandExecutor {
 					ChatColor.WHITE + "/arena create <name> <NORMAL/SUMO>",
 					ChatColor.WHITE + "/arena setpos<1/2> <name>",
 					ChatColor.WHITE + "/arena delete <name>",
+					ChatColor.WHITE + "/arena setcorners <name> <corner> <x> <y> <z>",
 					"",
 					ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------"
 			});
@@ -49,6 +52,7 @@ public class ArenaCommand implements CommandExecutor {
 						ChatColor.WHITE + "/arena create <name> <NORMAL/SUMO>",
 						ChatColor.WHITE + "/arena setpos<1/2> <name>",
 						ChatColor.WHITE + "/arena delete <name>",
+						ChatColor.WHITE + "/arena setcorners <name> <corner> <x> <y> <z>",
 						"",
 						ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------"
 				});
@@ -65,6 +69,40 @@ public class ArenaCommand implements CommandExecutor {
 			sender.sendMessage(ChatColor.GREEN + "You have succesfully create the " + args[1] + " arena into the " + args[2] + " type!");
 			return false;
 		}
+
+		if (args[0].equalsIgnoreCase("setcorners")) {
+			if (args.length != 6) {
+				sender.sendMessage(ChatColor.RED + "Usage: /arena setcorners <name> <corner> <x> <y> <z>");
+				return false;
+			}
+
+			Arena target = this.main.getManagerHandler().getArenaManager().getArena(args[1]);
+
+			if (target == null) {
+				sender.sendMessage(ChatColor.RED + "Arena not found");
+				return false;
+			}
+
+			try {
+				double x = Double.parseDouble(args[3]);
+				double y = Double.parseDouble(args[4]);
+				double z = Double.parseDouble(args[5]);
+				if (args[2].equals("1")) {
+					target.setCorner1(new LocationSerializer(x, y, z));
+				} else if (args[2].equals("2")) {
+					target.setCorner2(new LocationSerializer(x, y, z));
+				} else {
+					sender.sendMessage(ChatColor.RED + "Invalid corner, must be 1 or 2");
+					return false;
+				}
+				sender.sendMessage(ChatColor.GREEN + "Successfully set corner" + args[2] + " for arena " + target.getName());
+			} catch (Exception ex) {
+				sender.sendMessage(ChatColor.RED + "Failed to parse x y z");
+			}
+
+			return false;
+		}
+
 		if (args[0].equalsIgnoreCase("setpos1") || args[0].equalsIgnoreCase("setpos2")) {
 			if (args.length != 2) {
 				sender.sendMessage(new String[] {
