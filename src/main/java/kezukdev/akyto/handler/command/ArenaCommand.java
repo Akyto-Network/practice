@@ -47,6 +47,8 @@ public class ArenaCommand implements CommandExecutor {
 	
 	public ArenaCommand(final Practice practice) {
 		this.main = practice;
+
+		// Event handler for setting arena corners
 		practice.getServer().getPluginManager().registerEvents(new Listener() {
 			@EventHandler
 			public void onCorner(PlayerInteractEvent event) {
@@ -69,7 +71,7 @@ public class ArenaCommand implements CommandExecutor {
 				else
 					target.setCorner2(clickedLoc);
 
-				player.sendMessage(ChatColor.GREEN + "Successfully set corner " + corner + " for arena " + target.getName() + " to " + clickedLoc);
+				player.sendMessage(ChatColor.GREEN + String.format("Successfully set corner %d for arena %s to x=%f y=%f z=%f", corner, target.getName(), clickedLoc.getX(), clickedLoc.getY(), clickedLoc.getZ()));
 
 				if (corner == 2)
 					player.sendMessage(ChatColor.GREEN + "All corners have been set for arena " + target.getName() + "!");

@@ -9,12 +9,10 @@ import kezukdev.akyto.Practice;
 import kezukdev.akyto.utils.location.LocationSerializer;
 import lombok.Getter;
 import lombok.Setter;
-import org.slf4j.LoggerFactory;
 
 @Getter @Setter
 public class Arena {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Arena.class);
     private final String name;
     private final List<LocationSerializer> position;
     private ArenaType arenaType;
@@ -44,10 +42,16 @@ public class Arena {
         int minZ = (int) Math.min(a.getZ(), b.getZ());
         int maxZ = (int) Math.max(a.getZ(), b.getZ());
 
-        for (int x = minX; x <= maxX; x++) {
-            for (int z = minZ; z <= maxZ; z++) {
-                if (!world.loadChunk(x, z, false))
-                    throw new ChunkLoadException(x, z, "Failed to load chunk x=" + x + " z=" + z);
+        for (int x = minX; x <= maxX; x += 16) {
+            for (int z = minZ; z <= maxZ; z += 16) {
+                if (world.isChunkLoaded(x, z))
+                    continue;
+                if (!world.loadChunk(x, z, false)) {
+                    System.out.println(String.format("Failed to load chunk x=%d z=%d", x, z));
+//                    throw new ChunkLoadException(x, z, "Failed to load chunk x=" + x + " z=" + z);
+                } else {
+                    System.out.println(String.format("Successfully to load chunk x=%d z=%d", x, z));
+                }
             }
         }
 //        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Loaded chunks for arena " + this.name + "!");

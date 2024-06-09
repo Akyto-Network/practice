@@ -124,7 +124,7 @@ public class PlayerListener implements Listener {
 		final Profile profile = Utils.getProfiles(player.getUniqueId());
 		Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
-            if (isPlants(clickedBlock.getType()) && player.getLocation().getBlockY() > event.getClickedBlock().getLocation().getBlockY()) {
+            if (isPlants(clickedBlock.getType()) && player.getLocation().getBlockY() > clickedBlock.getLocation().getBlockY()) {
                 event.setCancelled(true);
             }
         }
@@ -352,7 +352,8 @@ public class PlayerListener implements Listener {
 		if ((profile.isInState(ProfileState.FIGHT))) {
             new BukkitRunnable() {
                 public void run() {
-                    try { // TODO Check if everything works the same without reflection
+                    try {
+						// Does the same as the reflection code below
 						CraftServer server = (CraftServer) killed.getServer();
 						server.getHandle().moveToWorld(((CraftPlayer) killed).getHandle(), 0, false);
 
