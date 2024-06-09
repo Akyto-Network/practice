@@ -15,6 +15,7 @@ import kezukdev.akyto.handler.command.StatisticsCommand;
 import kezukdev.akyto.handler.listener.EntityListener;
 import kezukdev.akyto.handler.listener.InventoryListener;
 import kezukdev.akyto.handler.listener.PlayerListener;
+import org.bukkit.command.PluginCommand;
 
 public class MiscHandler {
 	
@@ -23,7 +24,10 @@ public class MiscHandler {
 	public MiscHandler(final Practice main) {
 		this.main = main;
 		Arrays.asList(new PlayerListener(main), new EntityListener(main), new InventoryListener(main)).forEach(list -> Bukkit.getPluginManager().registerEvents(list, this.main));
-		main.getCommand("arena").setExecutor(new ArenaCommand(main));
+
+		PluginCommand arenaCommand = main.getCommand("arena");
+		arenaCommand.setExecutor(new ArenaCommand(main));
+		arenaCommand.setTabCompleter(new ArenaCommand.Completer());
 		main.getCommand("locations").setExecutor(new LocationsCommand());
 		main.getCommand("inventory").setExecutor(new InventoryCommand(main));
 		main.getCommand("spectate").setExecutor(new SpectateCommand(main));

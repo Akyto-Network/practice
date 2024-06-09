@@ -47,11 +47,12 @@ public class ArenaManager {
 				arena.setCorner2(LocationSerializer.stringToLocation(arenaSection.getString(name + ".corner2")));
 			}
 
+			this.main.getArenasMap().putIfAbsent(name, arena);
+
 			try {
 				arena.loadChunks();
-				this.main.getArenasMap().putIfAbsent(name, arena);
 			} catch (Exception ex) {
-				this.main.getLogger().severe("Failed to load chunks for arena " + arena.getName() + " " + ex.getMessage());
+				this.main.getLogger().severe("Failed to load chunks for arena " + arena.getName() + ": " + ex.getMessage());
 			}
 		});
 	}
@@ -65,8 +66,10 @@ public class ArenaManager {
 			fileConfig.set("arenas." + arenaName + ".second", LocationSerializer.locationToString(arena.getPosition().get(1)));
 			fileConfig.set("arenas." + arenaName + ".type", arena.getArenaType().toString());
 			fileConfig.set("arenas." + arenaName + ".icon", arena.getIcon().toString());
-			fileConfig.set("arenas." + arenaName + ".corner1", LocationSerializer.locationToString(arena.getCorner1()));
-			fileConfig.set("arenas." + arenaName + ".corner2", LocationSerializer.locationToString(arena.getCorner2()));
+			if (arena.getCorner1() != null)
+				fileConfig.set("arenas." + arenaName + ".corner1", LocationSerializer.locationToString(arena.getCorner1()));
+			if (arena.getCorner2() != null)
+				fileConfig.set("arenas." + arenaName + ".corner2", LocationSerializer.locationToString(arena.getCorner2()));
 		});
 		this.config.save();
 	}
@@ -84,6 +87,6 @@ public class ArenaManager {
     }
 
 	public Arena getArena(String name) {
-		return this.main.getArenasMap().get(name);
+		return this.main.getArenasMap().get(name.toLowerCase());
 	}
 }
