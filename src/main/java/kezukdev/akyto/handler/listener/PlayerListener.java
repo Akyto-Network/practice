@@ -68,6 +68,7 @@ public class PlayerListener implements Listener {
 				this.main.getManagerHandler().getPartyManager().leaveParty(event.getPlayer().getUniqueId());
 			}
 			if (profile.isInState(ProfileState.QUEUE)) {
+				this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(this.main.getQueue().get(event.getPlayer().getUniqueId()).isRanked(), this.main.getQueue().get(event.getPlayer().getUniqueId()).getKit());
 				this.main.getQueue().remove(event.getPlayer().getUniqueId());
 			}
 			if (profile.isInState(ProfileState.SPECTATE)) {
