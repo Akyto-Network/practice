@@ -113,12 +113,13 @@ public class ArenaCommand implements CommandExecutor {
 			} else {
                 ArenaType.valueOf(args[2].toUpperCase());
             }
-            if (this.main.getManagerHandler().getArenaManager().getArena(args[1]) != null) {
+			String name = args[1].toLowerCase();
+            if (this.main.getManagerHandler().getArenaManager().getArena(name) != null) {
 				sender.sendMessage(ChatColor.RED + "Sorry but this arena already exist.");
 				return false;
 			}
             ArenaType.valueOf(args[2].toUpperCase());
-            this.main.getArenasMap().putIfAbsent(args[1], new Arena(main, args[1], LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), ArenaType.valueOf(args[2].toUpperCase()), Material.PAPER));
+            this.main.getArenasMap().putIfAbsent(name, new Arena(main, name, LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), ArenaType.valueOf(args[2].toUpperCase()), Material.PAPER));
 			sender.sendMessage(ChatColor.GREEN + "You have succesfully create the " + args[1] + " arena into the " + args[2] + " type!");
 			return false;
 		}
@@ -161,6 +162,26 @@ public class ArenaCommand implements CommandExecutor {
 
 			corners.put(playerSender.getUniqueId(), Pair.of(target, 1));
 			sender.sendMessage(ChatColor.GREEN + "Left click on the first corner of " + target.getName());
+
+			return false;
+		}
+
+		if (args[0].equalsIgnoreCase("delete")) {
+			if (args.length != 2) {
+				sender.sendMessage(ChatColor.RED + "Usage: /arena delete <name>");
+				return false;
+			}
+
+			Arena target = this.main.getManagerHandler().getArenaManager().getArena(args[1]);
+
+			if (target == null) {
+				sender.sendMessage(ChatColor.RED + "Arena \"" + args[1] + "\" not found");
+				return false;
+			}
+
+			this.main.getArenasMap().remove(args[1].toLowerCase());
+
+			sender.sendMessage(ChatColor.GREEN + "Successfully deleted " + args[1]);
 
 			return false;
 		}

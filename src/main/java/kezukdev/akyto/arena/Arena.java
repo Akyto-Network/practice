@@ -41,16 +41,17 @@ public class Arena {
         int maxX = (int) Math.max(a.getX(), b.getX());
         int minZ = (int) Math.min(a.getZ(), b.getZ());
         int maxZ = (int) Math.max(a.getZ(), b.getZ());
-
-        for (int x = minX; x <= maxX; x += 16) {
-            for (int z = minZ; z <= maxZ; z += 16) {
+        // Can async load ?
+        // += 1 to += 16 ?
+        for (int x = minX; x <= maxX; x += 1) {
+            for (int z = minZ; z <= maxZ; z += 1) {
                 if (world.isChunkLoaded(x, z))
                     continue;
                 if (!world.loadChunk(x, z, false)) {
                     System.out.println(String.format("Failed to load chunk x=%d z=%d", x, z));
 //                    throw new ChunkLoadException(x, z, "Failed to load chunk x=" + x + " z=" + z);
                 } else {
-                    System.out.println(String.format("Successfully to load chunk x=%d z=%d", x, z));
+                    System.out.println(String.format("Successfully loaded chunk x=%d z=%d", x, z));
                 }
             }
         }

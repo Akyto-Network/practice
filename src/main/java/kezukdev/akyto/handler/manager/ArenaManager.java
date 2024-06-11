@@ -30,6 +30,7 @@ public class ArenaManager {
 		ConfigurationSection arenaSection = fileConfig.getConfigurationSection("arenas");
 		if (arenaSection == null) return;
 		arenaSection.getKeys(false).forEach(name -> {
+			name = name.toLowerCase();
 			final Arena arena = new Arena(
 					main,
 					name,
