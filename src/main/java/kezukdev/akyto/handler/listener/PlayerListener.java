@@ -2,7 +2,6 @@ package kezukdev.akyto.handler.listener;
 
 import java.util.*;
 
-import kezukdev.akyto.runnable.RgbArmorTask;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -24,6 +23,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import gym.core.Core;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;

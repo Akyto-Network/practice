@@ -12,12 +12,14 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import akyto.spigot.aSpigot;
 import akyto.spigot.handler.MovementHandler;
+import gym.core.Core;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.utils.Utils;
+import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 
 public class EntityListener implements Listener {
@@ -68,6 +70,11 @@ public class EntityListener implements Listener {
 			final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
 			final Profile profileDamager = Utils.getProfiles(event.getDamager().getUniqueId());
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
+				if (!gym.core.utils.Utils.hitAllowed(event.getDamager().getUniqueId())) {
+					event.setCancelled(true);
+					event.getDamager().sendMessage(ChatColor.RED + "Make high cps is strongly discouraged, your attack was disallow. Please make less cps.");
+					return;
+				}
 				final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 				final DuelStatistics statisticsDamager = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getDamager().getUniqueId());
 				final DuelStatistics statisticsVictim = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getEntity().getUniqueId());
