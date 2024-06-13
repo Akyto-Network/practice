@@ -47,7 +47,6 @@ public class Practice extends JavaPlugin {
 	
 	private ManagerHandler managerHandler;
 	private MiscHandler miscHandler;
-	@Getter
     private String hikariPath;
     public Connection connection;
 	private MySQL mySQL;
@@ -64,9 +63,13 @@ public class Practice extends JavaPlugin {
     private final HashMap<String, Arena> arenasMap = new HashMap<>();
     private DatabaseSetup databaseSetup;
 	private FileSetup fileSetup;
+	private boolean debug;
 	
 	public void onEnable() {
 		api = this;
+		debug = getServer().getOptions().has("debug");
+		if (debug)
+			getLogger().info("Debug mode enabled");
 		this.saveDefaultConfig();
 		this.region = this.getConfig().getString("region");
 		this.hikariPath = this.getDataFolder() + "/hikari.properties";
