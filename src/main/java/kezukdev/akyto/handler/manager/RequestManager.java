@@ -45,7 +45,7 @@ public class RequestManager {
 		comp.setClickEvent(new ClickEvent(Action.RUN_COMMAND, (type.equals(RequestType.DUEL) ? "/duel accept " : "/party join ") + Bukkit.getPlayer(sender).getName()));
 		Bukkit.getPlayer(request.getReceiver()).spigot().sendMessage(comp);
 		if (type.equals(RequestType.DUEL)) {
-			new RequestExpireRunnable(request).runTaskLaterAsynchronously(main, 200L);
+			new RequestExpireRunnable(request).runTaskLaterAsynchronously(main, 20 * 20L);
 		}
 	}
 	

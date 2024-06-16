@@ -62,6 +62,15 @@ public class ArenaManager {
 		if (this.main.getArenas().isEmpty()) return;
 		FileConfiguration fileConfig = this.config.getConfig();
 		fileConfig.set("arenas", null);
+
+		this.main.getArenasMap().forEach((arenaName, arena) -> {
+			try {
+				arena.unloadChunks();
+			} catch (Exception ex) {
+				this.main.getLogger().severe("Failed to unload chunks for arena " + arena.getName() + ": " + ex.getMessage());
+			}
+		});
+
 		this.main.getArenasMap().forEach((arenaName, arena) -> {
 			fileConfig.set("arenas." + arenaName + ".first", LocationSerializer.locationToString(arena.getPosition().get(0)));
 			fileConfig.set("arenas." + arenaName + ".second", LocationSerializer.locationToString(arena.getPosition().get(1)));

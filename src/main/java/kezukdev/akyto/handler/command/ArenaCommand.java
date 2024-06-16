@@ -41,6 +41,7 @@ public class ArenaCommand implements CommandExecutor {
 			ChatColor.WHITE + "/arena delete <name>",
 			ChatColor.WHITE + "/arena setcorners <name>",
 			ChatColor.WHITE + "/arena tp <name>",
+			ChatColor.WHITE + "/arena save <name>",
 			"",
 			ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------"
 	};
@@ -106,6 +107,7 @@ public class ArenaCommand implements CommandExecutor {
 			sender.sendMessage(helpMessage);
 			return false;
 		}
+
 		if (args[0].equalsIgnoreCase("create")) {
 			if (args.length != 3) {
 				sender.sendMessage(helpMessage);
@@ -198,6 +200,7 @@ public class ArenaCommand implements CommandExecutor {
 			this.main.getManagerHandler().getArenaManager().getArena(args[1]).getPosition().set(args[0].contains("1") ? 0 : 1, LocationSerializer.fromBukkitLocation(playerSender.getLocation()));
 			sender.sendMessage(ChatColor.GREEN + "The " + (args[0].contains("1") ? "first" : "second") + " location is now setup for the " + args[1] + " arena!");
 		}
+
 		if (args[0].equalsIgnoreCase("seticon")) {
 			if (args.length != 2) {
 				sender.sendMessage(helpMessage);
@@ -209,6 +212,26 @@ public class ArenaCommand implements CommandExecutor {
 			}
 			this.main.getManagerHandler().getArenaManager().getArena(args[1]).setIcon(playerSender.getItemInHand().getType());
 			sender.sendMessage(ChatColor.GREEN + "The " + playerSender.getItemInHand().getType().toString() +" has been setted at icon of " + args[1] + " arena!");
+			return false;
+		}
+
+		if (args[0].equalsIgnoreCase("save")) {
+			if (args.length != 2) {
+				sender.sendMessage(ChatColor.RED + "Usage: /arena save <name>");
+				return false;
+			}
+
+			Arena target = this.main.getManagerHandler().getArenaManager().getArena(args[1]);
+
+			if (target == null) {
+				sender.sendMessage(ChatColor.RED + "Arena \"" + args[1] + "\" not found");
+				return false;
+			}
+
+			target.setSave(true);
+			sender.sendMessage(ChatColor.GREEN + args[1] + " will be saved at next restart");
+
+			return false;
 		}
 		return false;
 	}
