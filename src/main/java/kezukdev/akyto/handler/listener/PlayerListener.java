@@ -128,6 +128,7 @@ public class PlayerListener implements Listener {
                 event.setCancelled(true);
             }
         }
+        System.out.println("test");
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (profile.isInState(ProfileState.FREE)) {
 				if (Utils.getPartyByUUID(player.getUniqueId()) != null) {
@@ -206,10 +207,46 @@ public class PlayerListener implements Listener {
 					return;
 				}
 			}
-			if (profile.isInState(ProfileState.FIGHT)) {
-				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
+		}
+	}
+
+	@EventHandler
+	public void onFightInteract(final PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		final Profile profile = Utils.getProfiles(player.getUniqueId());
+		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+			System.out.println(event.getItem());
+			if (player.getItemInHand() == null) return;
+	        if (profile.isInState(ProfileState.FIGHT)) {
+	            final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
+	            if (player.getItemInHand().getType() == Material.ENDER_PEARL) {
+	                if (duel.getState().equals(DuelState.STARTING)) {
+	                    event.setUseItemInHand(Result.DENY);
+	                    player.sendMessage(ChatColor.RED + "You can't launch an enderpearl yet!");
+	                    player.updateInventory();
+	                    return;
+	                }
+	                DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
+	                if (!duelStatistics.hasPearlCooldown()) {
+	                	event.setUseItemInHand(Result.ALLOW);
+	                	event.setCancelled(false);
+	                    duelStatistics.applyEnderPearlCooldown();
+	                    new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
+	                    return;
+	                }
+	                event.setUseItemInHand(Result.DENY);
+	                player.sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
+	                player.updateInventory();
+	                return;
+	            }
+	            if (duel.getState().equals(DuelState.STARTING)) {
+	                if (event.getItem().getType().equals(Material.POTION) && event.getItem().getDurability() == 16421) {
+	                    event.setUseItemInHand(Result.DENY);
+	                    event.setCancelled(true);
+	                }
+	            } 
 				final Kit kit = duel.getKit();
-				if (event.getItem().getType().equals(Material.ENCHANTED_BOOK)) {
+				if (player.getItemInHand().getType().equals(Material.ENCHANTED_BOOK)) {
 					event.setUseItemInHand(Result.DENY);
 					player.closeInventory();
 					player.getInventory().clear();
@@ -218,7 +255,7 @@ public class PlayerListener implements Listener {
 					player.updateInventory();
 					return;
 				}
-				if (event.getItem().getType().equals(Material.BOOK)) {
+				if (player.getItemInHand().getType().equals(Material.BOOK)) {
 					final KitInterface kitI = (KitInterface) Utils.getDuelByUUID(player.getUniqueId()).getKit();
 					player.getInventory().setArmorContents(kitI.armor());
 					player.getInventory().setContents(kitI.content());
@@ -233,32 +270,7 @@ public class PlayerListener implements Listener {
 					player.updateInventory();
 					return;
 				}
-				final ItemStack item = event.getItem();
-				if (item.getType() == Material.ENDER_PEARL) {
-					if (duel.getState().equals(DuelState.STARTING)) {
-						event.setUseItemInHand(Result.DENY);
-						player.sendMessage(ChatColor.RED + "You can't launch an enderpearl yet!");
-						player.updateInventory();
-						return;
-					}
-					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
-					if (!duelStatistics.hasPearlCooldown()) {
-						duelStatistics.applyEnderPearlCooldown();
-						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
-						return;
-					}
-					event.setUseItemInHand(Result.DENY);
-					player.sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
-					player.updateInventory();
-					return;
-				}
-				if (duel.getState().equals(DuelState.STARTING)) {
-					if (item.getType().equals(Material.POTION) && item.getDurability() == 16421) {
-						event.setUseItemInHand(Result.DENY);
-						event.setCancelled(true);
-                    }
-				}
-			}
+	        }	
 		}
 	}
 	
