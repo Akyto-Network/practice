@@ -29,12 +29,9 @@ public class RespawnRunnable extends BukkitRunnable {
     public void run() {
         players.forEach(uuids -> uuids.forEach(uuid -> {
             Utils.sendToSpawn(uuid, true);
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                if (Bukkit.getPlayer(uuid) != null) {
-                    player.showPlayer(Bukkit.getPlayer(uuid));
-                    Bukkit.getPlayer(uuid).showPlayer(player);
-                }
-            });
+            if (Bukkit.getPlayer(uuid) != null) {
+            	MatchUtils.multiArena(uuid, true, false);
+            }
         }));
         final boolean ranked = duel.isRanked();
         final Kit kit = duel.getKit();

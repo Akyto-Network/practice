@@ -56,7 +56,7 @@ public class DuelManager {
 						MatchUtils.addKill(uuid, null, false);
 					}
 				}
-				MatchUtils.multiArena(uuid, false);
+				MatchUtils.multiArena(uuid, true, false);
 				Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(Utils.getOpponents(uuid).get(0)));
 				this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(Utils.getDuelByUUID(uuid).isRanked(), kit);
 				Utils.resetPlayer(uuid);

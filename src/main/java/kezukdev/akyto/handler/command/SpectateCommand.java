@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.UUID;
 
 import kezukdev.akyto.utils.Utils;
+import kezukdev.akyto.utils.match.MatchUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -77,15 +79,10 @@ public class SpectateCommand implements CommandExecutor {
             duel.getSpectators().remove(playerSender.getUniqueId());
             Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
                 Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
-                playerSender.hidePlayer(Bukkit.getPlayer(uuid));
             }));
         }
         targetDuel.getSpectators().add(playerSender.getUniqueId());
         if (!profileSender.isInState(ProfileState.SPECTATE)) {
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                player.hidePlayer(playerSender);
-                playerSender.hidePlayer(player);
-            });
             profileSender.setProfileState(ProfileState.SPECTATE);
             this.main.getManagerHandler().getItemManager().giveItems(playerSender.getUniqueId(), false);
         }
@@ -93,6 +90,7 @@ public class SpectateCommand implements CommandExecutor {
         List<List<UUID>> players = Arrays.asList(new ArrayList<>(targetDuel.getFirst()), new ArrayList<>(targetDuel.getSecond()));
         players.forEach(uuids -> uuids.forEach(uuid -> {
             playerSender.showPlayer(Bukkit.getPlayer(uuid));
+            MatchUtils.multiArena(playerSender.getUniqueId(), false, true);
             Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is now spectating.");
         }));
 

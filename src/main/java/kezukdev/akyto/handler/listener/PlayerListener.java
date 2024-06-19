@@ -128,7 +128,6 @@ public class PlayerListener implements Listener {
                 event.setCancelled(true);
             }
         }
-        System.out.println("test");
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (profile.isInState(ProfileState.FREE)) {
 				if (Utils.getPartyByUUID(player.getUniqueId()) != null) {
@@ -215,7 +214,6 @@ public class PlayerListener implements Listener {
 		final Player player = event.getPlayer();
 		final Profile profile = Utils.getProfiles(player.getUniqueId());
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-			System.out.println(event.getItem());
 			if (player.getItemInHand() == null) return;
 	        if (profile.isInState(ProfileState.FIGHT)) {
 	            final Duel duel = Utils.getDuelByUUID(player.getUniqueId());

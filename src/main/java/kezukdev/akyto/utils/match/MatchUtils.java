@@ -156,24 +156,40 @@ public class MatchUtils {
 		}
 	}
 	
-	public static void multiArena(final UUID uuid, final boolean display) {
+	public static void multiArena(final UUID uuid, final boolean display, boolean spectator) {
 	    if (!display) {
-	    	Bukkit.getOnlinePlayers().forEach(player -> {
-	    		Bukkit.getPlayer(uuid).hidePlayer(player);
-	    		player.hidePlayer(Bukkit.getPlayer(uuid));
-	    	});
 	    	final Duel duel = Utils.getDuelByUUID(uuid);
-	    	duel.getFirst().forEach(first -> {
-	    		if (Bukkit.getPlayer(first) == null) return;
-	    		Bukkit.getPlayer(first).showPlayer(Bukkit.getPlayer(uuid));
-	    		Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(first));
+	    	Practice.getAPI().getDuels().forEach(duels -> {
+	    		if (!spectator && duels != duel) return;
+    	    	duels.getFirst().forEach(first -> {
+    	    		if (Bukkit.getPlayer(first) == null) return;
+    	    		Bukkit.getPlayer(first).hidePlayer(Bukkit.getPlayer(uuid));
+    	    		Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(first));
+    	    	});
+    	    	duels.getSecond().forEach(second -> {
+    	    		if (Bukkit.getPlayer(second) == null) return;
+    	    		Bukkit.getPlayer(second).hidePlayer(Bukkit.getPlayer(uuid));
+    	    		Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(second));
+    	    	});
+    	    	if (spectator) {
+    				final Profile profile = Utils.getProfiles(uuid);
+    				final Player playerSender = Bukkit.getPlayer(uuid);
+    		    	if (!duels.getSpectators().isEmpty()) {
+    		            duels.getSpectators().forEach(spectators -> {
+    		                if (profile.getSpectateSettings().get(0)) playerSender.showPlayer(Bukkit.getPlayer(spectators));
+    		                if (!profile.getSpectateSettings().get(0)) playerSender.hidePlayer(Bukkit.getPlayer(spectators));
+    		            });	
+    		    	}
+    	    	}
 	    	});
-	    	duel.getSecond().forEach(second -> {
-	    		if (Bukkit.getPlayer(second) == null) return;
-	    		Bukkit.getPlayer(second).showPlayer(Bukkit.getPlayer(uuid));
-	    		Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(second));
+        }
+	    else {
+	    	Bukkit.getOnlinePlayers().forEach(players -> {
+	    		if (!players.canSee(Bukkit.getPlayer(uuid))) {
+	    			players.showPlayer(Bukkit.getPlayer(uuid));
+	    			Bukkit.getPlayer(uuid).showPlayer(players);
+	    		}
 	    	});
 	    }
 	}
-
 }
