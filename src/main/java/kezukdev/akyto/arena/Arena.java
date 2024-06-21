@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.bukkit.*;
 
+import gym.core.utils.location.LocationSerializer;
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.utils.location.LocationSerializer;
 import lombok.Getter;
 import lombok.Setter;
 

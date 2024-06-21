@@ -10,11 +10,11 @@ import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import gym.core.utils.components.ComponentJoiner;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
-import kezukdev.akyto.utils.chat.ComponentJoiner;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.chat.TextComponent;

@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import co.aikar.idb.DB;
+import gym.core.utils.FormatUtils;
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.leaderboard.Top;
 import lombok.Getter;
 

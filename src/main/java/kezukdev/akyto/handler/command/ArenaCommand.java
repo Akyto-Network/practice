@@ -1,6 +1,8 @@
 package kezukdev.akyto.handler.command;
 
 import com.google.common.collect.ImmutableList;
+
+import gym.core.utils.location.LocationSerializer;
 import it.unimi.dsi.fastutil.Pair;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;
@@ -15,16 +17,13 @@ import org.bukkit.entity.Player;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;
-import kezukdev.akyto.utils.location.LocationSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
-import java.util.jar.JarEntry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

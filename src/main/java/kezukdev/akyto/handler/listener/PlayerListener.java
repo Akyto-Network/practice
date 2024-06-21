@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import gym.core.Core;
+import gym.core.utils.FormatUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
@@ -34,7 +35,6 @@ import kezukdev.akyto.kit.KitInterface;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.runnable.PearlExpireRunnable;
-import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
 import kezukdev.akyto.utils.match.MatchUtils;
 import net.md_5.bungee.api.ChatColor;

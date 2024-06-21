@@ -6,7 +6,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import kezukdev.akyto.utils.FormatUtils;
 import kezukdev.akyto.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -22,6 +21,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Lists;
 
+import gym.core.utils.FormatUtils;
+import gym.core.utils.inventory.MultipageSerializer;
 import gym.core.utils.item.ItemUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
@@ -31,7 +32,6 @@ import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.handler.manager.QueueManager.QueueEntry;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.utils.inventory.MultipageSerializer;
 import kezukdev.akyto.utils.leaderboard.Top;
 import lombok.Getter;
 

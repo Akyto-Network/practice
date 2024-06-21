@@ -9,9 +9,9 @@ import java.util.Map.Entry;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import gym.core.utils.inventory.BukkitSerialization;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.profile.kiteditor.Edited;
-import kezukdev.akyto.utils.inventory.BukkitSerialization;
 
 public class FileSetup {
 	
