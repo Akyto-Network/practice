@@ -10,6 +10,8 @@ import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
+import gym.core.Core;
+import gym.core.profile.ProfileStatus;
 import gym.core.utils.components.ComponentJoiner;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
@@ -44,6 +46,7 @@ public class PartyManager {
 		this.parties.add(new PartyEntry(creator));
 		this.main.getServer().getPlayer(creator).sendMessage(ChatColor.GRAY + "You've just created your own party!");
 		this.main.getManagerHandler().getItemManager().giveItems(creator, false);
+		Core.API.getManagerHandler().getProfileManager().getProfiles().get(creator).setStatus(ProfileStatus.UNABLE);
 		this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 	}
 	
@@ -128,6 +131,7 @@ public class PartyManager {
 	    	        			(party.getMembers().size() % 2 == 0 ? ChatColor.YELLOW.toString() + ChatColor.ITALIC + "split" + ChatColor.GRAY + " (" + ChatColor.GOLD + (party.getMembers().size() / 2) + ChatColor.RED + "v" + ChatColor.GOLD + (party.getMembers().size() / 2) + ChatColor.GRAY + ")" : ChatColor.YELLOW.toString() + ChatColor.ITALIC + "FFA")});
 	        }
 	    });
+		Core.API.getManagerHandler().getProfileManager().getProfiles().get(invited).setStatus(ProfileStatus.UNABLE);
 	    this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 	    this.main.getManagerHandler().getItemManager().giveItems(invited, false);
 	}
@@ -144,6 +148,7 @@ public class PartyManager {
 				if (Utils.getProfiles(uuid) != null) {
 					if (profile.isInState(ProfileState.FREE)) {
 						this.main.getManagerHandler().getItemManager().giveItems(uuid, true);
+						Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.FREE);
 					}
 				}
 				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + Utils.getName(sender) + " to dissolve the party!");
@@ -153,6 +158,7 @@ public class PartyManager {
         } else {
 			party.getMembers().remove(sender);
 			if (profile.isInState(ProfileState.FREE)) {
+				Core.API.getManagerHandler().getProfileManager().getProfiles().get(sender).setStatus(ProfileStatus.FREE);
 				this.main.getManagerHandler().getItemManager().giveItems(sender, true);
 			}
 			if (profile.isInState(ProfileState.SPECTATE)) {

@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import com.google.common.collect.Lists;
 
 import co.aikar.idb.DB;
+import gym.core.Core;
+import gym.core.profile.ProfileStatus;
 import gym.core.utils.components.ComponentJoiner;
 import gym.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
@@ -71,6 +73,7 @@ public class DuelManager {
 				}
 				player.teleport(first.contains(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
 				DataUtils.addPlayedToData(uuid, kit);
+				Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.UNABLE);
 				Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
 				this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
 				if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }

@@ -14,6 +14,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import gym.core.Core;
+import gym.core.profile.ProfileStatus;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.cache.DuelState;
@@ -84,6 +86,7 @@ public class SpectateCommand implements CommandExecutor {
         targetDuel.getSpectators().add(playerSender.getUniqueId());
         if (!profileSender.isInState(ProfileState.SPECTATE)) {
             profileSender.setProfileState(ProfileState.SPECTATE);
+            Core.API.getManagerHandler().getProfileManager().getProfiles().get(playerSender.getUniqueId()).setStatus(ProfileStatus.UNABLE);
             this.main.getManagerHandler().getItemManager().giveItems(playerSender.getUniqueId(), false);
         }
 

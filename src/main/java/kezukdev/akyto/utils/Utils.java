@@ -10,6 +10,9 @@ import kezukdev.akyto.arena.ArenaType;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
+
+import gym.core.Core;
+import gym.core.profile.ProfileStatus;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.manager.PartyManager.PartyEntry;
@@ -71,6 +74,9 @@ public class Utils {
 		});
 		resetPlayer(uuid);
 		getProfiles(uuid).setProfileState(ProfileState.FREE);
+		if (!Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).isInState(ProfileStatus.MOD)) {
+			Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.FREE);	
+		}
 		Practice.getAPI().getManagerHandler().getItemManager().giveItems(uuid, false);
 		if (teleport) {
 			Bukkit.getPlayer(uuid).teleport(Practice.getAPI().getSpawn().getLocation());
@@ -85,6 +91,7 @@ public class Utils {
 		});
 		resetPlayer(uuid);
 		getProfiles(uuid).setProfileState(ProfileState.EDITOR);
+		Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.UNABLE);
 		Practice.getAPI().getManagerHandler().getProfileManager().getEditing().put(uuid, kit.name());
 		Practice.getAPI().getManagerHandler().getItemManager().giveItems(uuid, false);
 		Bukkit.getPlayer(uuid).teleport(Practice.getAPI().getEditor().getLocation());

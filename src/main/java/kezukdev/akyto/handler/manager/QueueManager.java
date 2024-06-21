@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 
 import com.google.common.collect.Sets;
 
+import gym.core.Core;
+import gym.core.profile.ProfileStatus;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
@@ -34,6 +36,7 @@ public class QueueManager {
         }
         this.main.getQueue().put(uuid, new QueueEntry(uuid, kit, ranked));
         Utils.getProfiles(uuid).setProfileState(ProfileState.QUEUE);
+        Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.UNABLE);
         this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
         this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
         Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "You have successfully joined the " + (ranked ? "" : "un") + "ranked " + ChatColor.stripColor(kit.displayName()) + " queue");
@@ -44,6 +47,7 @@ public class QueueManager {
         	final QueueEntry queue = this.main.getQueue().get(uuid);
         	this.main.getQueue().remove(uuid);
             Utils.getProfiles(uuid).setProfileState(ProfileState.FREE);
+            Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.FREE);
             this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
             this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(queue.isRanked(), queue.getKit());
             Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + "You have successfully left the queue");
