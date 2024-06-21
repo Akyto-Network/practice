@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import gym.core.utils.item.ItemUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
@@ -15,7 +16,6 @@ import kezukdev.akyto.kit.KitInterface;
 import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.utils.Utils;
-import kezukdev.akyto.utils.inventory.ItemUtils;
 
 public class ItemManager {
 	
@@ -48,14 +48,6 @@ public class ItemManager {
 			player.getInventory().setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + "Profile"));
 			player.getInventory().setItem(7, ItemUtils.createItems(Material.BOOK, ChatColor.GRAY + "Editor"));
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Settings"));
-			player.updateInventory();
-		}
-		if (profile.isInState(ProfileState.MOD)) {
-			player.getInventory().setItem(0, ItemUtils.createItems(Material.PAPER, ChatColor.YELLOW + "View CPS " + ChatColor.GRAY + "(Right-Click)"));
-			player.getInventory().setItem(1, ItemUtils.createItems(Material.PACKED_ICE, ChatColor.YELLOW + "Freeze " + ChatColor.GRAY + "(Right-Click)"));
-			player.getInventory().setItem(4, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.YELLOW + "Random Teleport " + ChatColor.GRAY + "(Right-Click)"));
-			player.getInventory().setItem(7, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.YELLOW + "View Stats " + ChatColor.GRAY + "(Right-Click)"));
-			player.getInventory().setItem(8, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Staff-Mode."));
 			player.updateInventory();
 		}
 		if (profile.isInState(ProfileState.QUEUE)) {

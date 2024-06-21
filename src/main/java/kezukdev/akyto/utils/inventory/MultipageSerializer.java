@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import gym.core.utils.item.ItemUtils;
+
 public class MultipageSerializer {
 
     private Inventory[] inventories;

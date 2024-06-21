@@ -22,6 +22,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Lists;
 
+import gym.core.utils.item.ItemUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;
@@ -30,7 +31,6 @@ import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.handler.manager.QueueManager.QueueEntry;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.utils.inventory.ItemUtils;
 import kezukdev.akyto.utils.inventory.MultipageSerializer;
 import kezukdev.akyto.utils.leaderboard.Top;
 import lombok.Getter;
