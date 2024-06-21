@@ -21,7 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Lists;
 
-import gym.core.utils.FormatUtils;
+import gym.core.utils.format.FormatUtils;
 import gym.core.utils.inventory.MultipageSerializer;
 import gym.core.utils.item.ItemUtils;
 import kezukdev.akyto.Practice;

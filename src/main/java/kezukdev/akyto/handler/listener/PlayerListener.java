@@ -24,7 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import gym.core.Core;
-import gym.core.utils.FormatUtils;
+import gym.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;

@@ -14,7 +14,7 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import co.aikar.idb.BukkitDB;
 import co.aikar.idb.DB;
-import gym.core.utils.FormatUtils;
+import gym.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.profile.Profile;
 
