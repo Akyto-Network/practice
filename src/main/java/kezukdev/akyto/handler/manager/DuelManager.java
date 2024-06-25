@@ -1,6 +1,7 @@
 package kezukdev.akyto.handler.manager;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import gg.potted.idb.DB;
 import org.bukkit.Bukkit;
@@ -108,15 +109,12 @@ public class DuelManager {
 					player.sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()] - Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
 				}
 				if (!duel.getSpectators().isEmpty()) {
-					player.sendMessage(" ");
-				    final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
-			        final TextComponent spectxt = new TextComponent(ChatColor.GRAY + "Spectators (" + duel.getSpectators().size() + ChatColor.GRAY + "): ");
-			        duel.getSpectators().forEach(spec -> {
-			        	final TextComponent stxt = new TextComponent(ChatColor.WHITE + Bukkit.getPlayer(spec).getName());
-			        	joiner.add(stxt);
-			        });
-			        spectxt.addExtra(joiner.toTextComponent());
-					player.spigot().sendMessage(spectxt);
+					player.sendMessage("");
+					String specMsg = ChatColor.GRAY + "Spectators (" + duel.getSpectators().size() + ChatColor.GRAY + "): " +
+							duel.getSpectators().stream()
+									.map(spec -> ChatColor.WHITE + Bukkit.getPlayer(spec).getName())
+									.collect(Collectors.joining(", "));
+					player.sendMessage(specMsg);
 				}
 				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
 			}
