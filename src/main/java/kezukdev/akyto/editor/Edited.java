@@ -1,4 +1,4 @@
-package kezukdev.akyto.profile.kiteditor;
+package kezukdev.akyto.editor;
 
 import lombok.Getter;
 import org.bukkit.inventory.ItemStack;

@@ -8,8 +8,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import gym.core.utils.CoreUtils;
 import gym.core.utils.components.ComponentJoiner;
-import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.kit.Kit;
@@ -25,14 +25,14 @@ public class MessageUtils {
 	public static TextComponent endMessage(final UUID winner, final UUID looser) {
 		TextComponent winnerComponent = new TextComponent("Winner: ");
 		winnerComponent.setColor(ChatColor.GREEN);
-		TextComponent winnerNameComponent = new TextComponent(Utils.getName(winner));
+		TextComponent winnerNameComponent = new TextComponent(CoreUtils.getName(winner));
 		winnerNameComponent.setColor(ChatColor.GRAY);
-		winnerNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(winner)));
+		winnerNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + CoreUtils.getName(winner)));
 		TextComponent loserComponent = new TextComponent("Loser: ");
 		loserComponent.setColor(ChatColor.RED);
-		TextComponent loserNameComponent = new TextComponent(Utils.getName(looser));
+		TextComponent loserNameComponent = new TextComponent(CoreUtils.getName(looser));
 		loserNameComponent.setColor(ChatColor.GRAY);
-		loserNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(looser)));
+		loserNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + CoreUtils.getName(looser)));
 		TextComponent separatorComponent = new TextComponent(ChatColor.GRAY + " - ");
 		winnerComponent.addExtra(winnerNameComponent);
 		loserComponent.addExtra(loserNameComponent);
@@ -44,18 +44,18 @@ public class MessageUtils {
 	public static void sendSplitMessage(final List<UUID> first, final List<UUID> second, final Kit ladder) {
 	    final ComponentJoiner joinerOne = new ComponentJoiner(ChatColor.GRAY + ", ");
 	    final ComponentJoiner joinerTwo = new ComponentJoiner(ChatColor.GRAY + ", ");
-        final TextComponent firsttxt = new TextComponent(ChatColor.DARK_GRAY + Utils.getName(first.get(0)) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
-        final TextComponent secondtxt = new TextComponent(ChatColor.DARK_GRAY + Utils.getName(second.get(0)) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
+        final TextComponent firsttxt = new TextComponent(ChatColor.DARK_GRAY + CoreUtils.getName(first.get(0)) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
+        final TextComponent secondtxt = new TextComponent(ChatColor.DARK_GRAY + CoreUtils.getName(second.get(0)) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
 	    first.forEach(uuid -> {
-	    	final TextComponent itxt = new TextComponent(Utils.getName(uuid));
+	    	final TextComponent itxt = new TextComponent(CoreUtils.getName(uuid));
 	        itxt.setColor(ChatColor.RED);
-	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + Practice.getAPI().getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
+	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + Utils.getProfiles(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
 	        joinerOne.add(itxt);
 	    });
 	    second.forEach(uuid -> {
-	    	final TextComponent itxt = new TextComponent(Utils.getName(uuid));
+	    	final TextComponent itxt = new TextComponent(CoreUtils.getName(uuid));
 	        itxt.setColor(ChatColor.RED);
-	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + Practice.getAPI().getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
+	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + Utils.getProfiles(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
 	        joinerTwo.add(itxt);
 	    });
 	    firsttxt.addExtra(joinerOne.toTextComponent());
@@ -76,10 +76,10 @@ public class MessageUtils {
             final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
             players.forEach(uuid -> {
                 for (UUID uuids : uuid) {
-                    final TextComponent itxt = new TextComponent(Utils.getName(uuids));
+                    final TextComponent itxt = new TextComponent(CoreUtils.getName(uuids));
                     itxt.setColor(ChatColor.WHITE);
-                    itxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + Utils.getName(uuids) + "'s inventory").create()));
-                    itxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(uuids)));
+                    itxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + CoreUtils.getName(uuids) + "'s inventory").create()));
+                    itxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + CoreUtils.getName(uuids)));
                     joiner.add(itxt);
 
                 }
@@ -90,7 +90,7 @@ public class MessageUtils {
                     if (Bukkit.getPlayer(uuids) != null) {
                     	Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
         				Bukkit.getPlayer(uuids).sendMessage(ChatColor.YELLOW + "Match Information");
-        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + Utils.getName(Utils.getDuelByUUID(uuids).getWinner().get(0)));
+        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + CoreUtils.getName(Utils.getDuelByUUID(uuids).getWinner().get(0)));
         				Bukkit.getPlayer(uuids).sendMessage(" ");
         				Bukkit.getPlayer(uuids).spigot().sendMessage(invComponent);
         				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
@@ -105,20 +105,20 @@ public class MessageUtils {
             final ComponentJoiner joinerWin = new ComponentJoiner(ChatColor.GRAY + ", ");
             final ComponentJoiner joinerLose = new ComponentJoiner(ChatColor.GRAY + ", ");
             duel.getWinner().forEach(uuid -> {
-                final TextComponent wtxt = new TextComponent(Utils.getName(uuid));
+                final TextComponent wtxt = new TextComponent(CoreUtils.getName(uuid));
                 wtxt.setColor(ChatColor.GREEN);
-                wtxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + Utils.getName(uuid) + "'s inventory").create()));
-                wtxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(uuid)));
+                wtxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + CoreUtils.getName(uuid) + "'s inventory").create()));
+                wtxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + CoreUtils.getName(uuid)));
                 joinerWin.add(wtxt);
             });
 
             List<UUID> losers = duel.getFirst().containsAll(duel.getWinner()) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 
             losers.forEach(uuid -> {
-                final TextComponent ltxt = new TextComponent(Utils.getName(uuid));
+                final TextComponent ltxt = new TextComponent(CoreUtils.getName(uuid));
                 ltxt.setColor(ChatColor.RED);
-                ltxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + Utils.getName(uuid) + "'s inventory").create()));
-                ltxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + Utils.getName(uuid)));
+                ltxt.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Click to view " + CoreUtils.getName(uuid) + "'s inventory").create()));
+                ltxt.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + CoreUtils.getName(uuid)));
 				joinerLose.add(ltxt);
             });
 

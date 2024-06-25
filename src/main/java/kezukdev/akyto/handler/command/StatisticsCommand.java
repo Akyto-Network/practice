@@ -1,6 +1,6 @@
 package kezukdev.akyto.handler.command;
 
-import kezukdev.akyto.profile.Profile;
+import gym.core.Core;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,8 +8,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.utils.Utils;
 
 public class StatisticsCommand implements CommandExecutor {
@@ -35,7 +36,7 @@ public class StatisticsCommand implements CommandExecutor {
 				return false;
 			}
 
-			playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(playerSender.getUniqueId()));
+			playerSender.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(playerSender.getUniqueId()));
 			return false;
 		}
 
@@ -52,7 +53,7 @@ public class StatisticsCommand implements CommandExecutor {
 				return false;
 			}
 
-			playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(target.getUniqueId()));
+			playerSender.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(target.getUniqueId()));
 			return false;
 		}
 

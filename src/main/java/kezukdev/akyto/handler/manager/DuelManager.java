@@ -2,14 +2,14 @@ package kezukdev.akyto.handler.manager;
 
 import java.util.*;
 
+import gg.potted.idb.DB;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
 
-import co.aikar.idb.DB;
 import gym.core.Core;
-import gym.core.profile.ProfileStatus;
+import gym.core.profile.ProfileState;
 import gym.core.utils.components.ComponentJoiner;
 import gym.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
@@ -18,7 +18,6 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.kit.Kit;
-import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.runnable.CountdownRunnable;
 import kezukdev.akyto.runnable.RespawnRunnable;
 import kezukdev.akyto.runnable.SumoRunnable;
@@ -73,7 +72,6 @@ public class DuelManager {
 				}
 				player.teleport(first.contains(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
 				DataUtils.addPlayedToData(uuid, kit);
-				Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.UNABLE);
 				Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
 				this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
 				if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
@@ -107,7 +105,7 @@ public class DuelManager {
 				player.sendMessage(ChatColor.YELLOW + "Match Information");
 				player.spigot().sendMessage(MessageUtils.endMessage(winner, looser));
 				if (duel.isRanked()) {
-					player.sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (main.getManagerHandler().getProfileManager().getProfiles().get(winner).getStats().get(2)[duel.getKit().id()] - main.getManagerHandler().getProfileManager().getProfiles().get(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
+					player.sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()] - Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
 				}
 				if (!duel.getSpectators().isEmpty()) {
 					player.sendMessage(" ");
@@ -128,11 +126,11 @@ public class DuelManager {
 		}
 		players.forEach(uuid -> {
 			if (duel.isRanked() && !duel.getSpectators().contains(uuid)) {
-		        final String elos = FormatUtils.getStringValue(this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid).getStats().get(2), ":");
+		        final String elos = FormatUtils.getStringValue(Utils.getProfiles(uuid).getStats().get(2), ":");
 		        DB.executeUpdateAsync("UPDATE playersdata SET elos=? WHERE name=?", elos, Bukkit.getServer().getPlayer(uuid).getName()).join();
 		        this.main.getManagerHandler().getInventoryManager().refreshLeaderboard();
 			}
-			this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid);
+			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames());
 			});
 		TagUtils.clearEntries(Arrays.asList(Lists.newArrayList(winner), Lists.newArrayList(looser)));
 		new RespawnRunnable(Collections.singletonList(players), this.main).runTaskLater(this.main, 70L);
@@ -146,7 +144,7 @@ public class DuelManager {
 		duel.getTimer().cancel();
 		duel.setState(DuelState.FINISHING);
 		MessageUtils.sendPartyComponent(Arrays.asList(winners, loosers));
-		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> this.main.getManagerHandler().getInventoryManager().generateProfileInventory(uuid)));
+		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames())));
 		TagUtils.clearEntries(Arrays.asList(winners, loosers));
 		new RespawnRunnable(Arrays.asList(winners, loosers), this.main).runTaskLater(this.main, 70L);
 	}

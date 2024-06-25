@@ -2,7 +2,6 @@ package kezukdev.akyto;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.board.SideBoard;
 import kezukdev.akyto.database.DatabaseSetup;
 import kezukdev.akyto.database.FileSetup;
-import kezukdev.akyto.database.MySQL;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.ManagerHandler;
 import kezukdev.akyto.handler.MiscHandler;
@@ -41,15 +39,9 @@ public class Practice extends JavaPlugin {
 	
 	private static Practice api;
 	
-	public static Practice getAPI() {
-		return api;
-	}
-	
 	private ManagerHandler managerHandler;
 	private MiscHandler miscHandler;
     private String hikariPath;
-    public Connection connection;
-	private MySQL mySQL;
     public File locationFile;
     public YamlConfiguration locationConfig;
     public LocationUtil spawn = new LocationUtil("spawn");
@@ -65,37 +57,48 @@ public class Practice extends JavaPlugin {
 	private FileSetup fileSetup;
 	private boolean debug;
 	
+	private String[] kitNames;
+	
 	public void onEnable() {
 		api = this;
+        this.loadConfig();
+        this.loadKit();
+        this.queue = new ConcurrentHashMap<>();
+		this.managerHandler = new ManagerHandler(this);
+		this.miscHandler = new MiscHandler(this);
+		this.fileSetup = new FileSetup(this);
+		new Aether(this, new SideBoard(this));
+	}
+	
+	public void onDisable() {
+		this.getFileSetup().saveEditor();
+		LocationUtil.getAll().forEach(locationHelper -> locationHelper.save(this));
+		try { 
+			this.managerHandler.getArenaManager().saveArenas();
+			this.locationConfig.save(locationFile);
+		} catch (IOException e) { e.printStackTrace(); }
+	}
+	
+	private void loadConfig() {
 		debug = getServer().getOptions().has("debug");
 		if (debug)
 			getLogger().info("Debug mode enabled");
 		this.saveDefaultConfig();
-		this.region = this.getConfig().getString("region");
-		this.hikariPath = this.getDataFolder() + "/hikari.properties";
-		this.saveResource("hikari.properties", false);
 		this.saveResource("locations.yml", false);
 		this.locationFile = new File(getDataFolder() + "/locations.yml");
 		this.locationConfig = YamlConfiguration.loadConfiguration(locationFile);
         for (LocationUtil locationHelper : LocationUtil.getAll()) {
             this.getServer().getConsoleSender().sendMessage(locationHelper.load(this) ? "The location " + locationHelper.getName() + " is successfully registered!" : "The location " + locationHelper.getName() + " is not registered!");
         }
-        this.kits = Arrays.asList(new NoDebuff(), new NoEnchant(), new Debuff(), new Gapple(), new Sumo(), new Soup(), new Axe());
-        this.queue = new ConcurrentHashMap<>();
-		this.managerHandler = new ManagerHandler(this);
-		this.miscHandler = new MiscHandler(this);
-		this.mySQL = new MySQL(this);
-		this.fileSetup = new FileSetup(this);
-		this.databaseSetup = new DatabaseSetup(this);
-		new Aether(this, new SideBoard(this));
 	}
 	
-	public void onDisable() {
-		this.databaseSetup.closeConnection();
-		LocationUtil.getAll().forEach(locationHelper -> locationHelper.save(this));
-		try { 
-			this.managerHandler.getArenaManager().saveArenas();
-			this.locationConfig.save(locationFile);
-		} catch (IOException e) { e.printStackTrace(); }
+	private void loadKit() {
+        this.kits = Arrays.asList(new NoDebuff(), new NoEnchant(), new Debuff(), new Gapple(), new Sumo(), new Soup(), new Axe());
+        this.kitNames = new String[this.kits.size()];
+        for (Kit kit : this.kits) { kitNames[kit.id()] = kit.displayName(); }
+	}
+	
+	public static Practice getAPI() {
+		return api;
 	}
 }

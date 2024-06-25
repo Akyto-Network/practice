@@ -2,6 +2,8 @@ package kezukdev.akyto.handler.listener;
 
 import java.util.*;
 
+import gym.core.utils.database.DatabaseType;
+import kezukdev.akyto.runnable.PearlExpireRunnable;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -24,6 +26,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import gym.core.Core;
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
 import gym.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
@@ -32,9 +36,6 @@ import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.kit.KitInterface;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
-import kezukdev.akyto.runnable.PearlExpireRunnable;
 import kezukdev.akyto.utils.Utils;
 import kezukdev.akyto.utils.match.MatchUtils;
 import net.md_5.bungee.api.ChatColor;
@@ -47,17 +48,14 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoin(final PlayerJoinEvent event) {
-		if (!event.getPlayer().isOnline())
-			return;
-
-		Profile playerProfile = new Profile(event.getPlayer().getUniqueId());
-		this.main.getManagerHandler().getProfileManager().getProfiles().put(event.getPlayer().getUniqueId(), playerProfile);
-		this.main.getDatabaseSetup().update(event.getPlayer().getUniqueId());
+		Core.API.getManagerHandler().getProfileManager().createProfile(event.getPlayer().getUniqueId());
+		final String[] kitNames = new String[this.main.getKits().size()];
+		for (Kit kit : this.main.getKits()) { kitNames[kit.id()] = kit.displayName(); }
+		Core.API.getDatabaseSetup().update(event.getPlayer().getUniqueId(), this.main.getKits().size(), kitNames);
 		this.main.getManagerHandler().getItemManager().giveItems(event.getPlayer().getUniqueId(), false);
 		Utils.resetPlayer(event.getPlayer().getUniqueId());
 		event.getPlayer().teleport(this.main.getSpawn().getLocation() == null ? event.getPlayer().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
 		this.main.getManagerHandler().getInventoryManager().generateSettingsInventory(event.getPlayer().getUniqueId());
-		this.main.getManagerHandler().getInventoryManager().generateProfileInventory(event.getPlayer().getUniqueId());
 	}
 
 	@EventHandler
@@ -87,7 +85,7 @@ public class PlayerListener implements Listener {
 				}
 			}	
 		}
-		this.main.getDatabaseSetup().exitAsync(event.getPlayer().getUniqueId());
+		this.main.getManagerHandler().getInventoryManager().removeUselessInventory(event.getPlayer().getUniqueId());
 	}
 	
 	@EventHandler
@@ -99,7 +97,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onFireExtinguish(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId());
+		Profile profile = Utils.getProfiles(player.getUniqueId());
 
 		if (!player.getGameMode().equals(GameMode.SURVIVAL))
 			return;
@@ -156,7 +154,7 @@ public class PlayerListener implements Listener {
 					this.main.getManagerHandler().getPartyManager().createParty(player.getUniqueId());
 				}
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }
-				if (event.getItem().getType().equals(Material.SKULL_ITEM)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId())); }
+				if (event.getItem().getType().equals(Material.SKULL_ITEM)) { player.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId())); }
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
 				return;
 			}
@@ -225,11 +223,11 @@ public class PlayerListener implements Listener {
 	                    return;
 	                }
 	                DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
-	                if (!duelStatistics.hasPearlCooldown()) {
+	                if (duelStatistics.getEnderPearlCooldown() <= 0L) {
 	                	event.setUseItemInHand(Result.ALLOW);
-	                	event.setCancelled(false);
-	                    duelStatistics.applyEnderPearlCooldown();
+						duelStatistics.applyEnderPearlCooldown();
 	                    new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
+						event.setCancelled(false);
 	                    return;
 	                }
 	                event.setUseItemInHand(Result.DENY);
@@ -286,7 +284,7 @@ public class PlayerListener implements Listener {
 	
 	@EventHandler(priority=EventPriority.LOW)
 	public void PlayerFoodChange(final FoodLevelChangeEvent event) {
-		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getEntity().getUniqueId());
+		final Profile profile = Utils.getProfiles(event.getEntity().getUniqueId());
 		if (profile.isInState(ProfileState.FIGHT)) {
 			final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup")) {
@@ -360,7 +358,7 @@ public class PlayerListener implements Listener {
 			MatchUtils.addDrops(items, killed.getUniqueId());
 		}
 		event.getDrops().clear();
-		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(killed.getUniqueId());
+		final Profile profile = Utils.getProfiles(killed.getUniqueId());
 		if ((profile.isInState(ProfileState.FIGHT))) {
             new BukkitRunnable() {
                 public void run() {
@@ -408,7 +406,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onTeleport(PlayerTeleportEvent event) {
 		Player teleported = event.getPlayer();
-		Profile profile = main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
+		Profile profile = Utils.getProfiles(teleported.getUniqueId());
 
 		if (profile == null)
 			return;

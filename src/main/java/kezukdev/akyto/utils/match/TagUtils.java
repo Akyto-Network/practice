@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import kezukdev.akyto.utils.Utils;
+import gym.core.utils.CoreUtils;
 
 public class TagUtils {
 	
@@ -21,11 +21,11 @@ public class TagUtils {
 			}
 			final Team team1 = sb.registerNewTeam("green");
 			team1.setPrefix(ChatColor.GREEN.toString());
-			team1.addEntry(Utils.getName(uuid));
+			team1.addEntry(CoreUtils.getName(uuid));
 			team1.setAllowFriendlyFire(false);
 			final Team team2 = sb.registerNewTeam("red");
 			team2.setPrefix(ChatColor.RED.toString());
-			second.forEach(secondUUID -> team2.addEntry(Utils.getName(secondUUID)));
+			second.forEach(secondUUID -> team2.addEntry(CoreUtils.getName(secondUUID)));
 			Bukkit.getPlayer(uuid).setScoreboard(sb);
 		});
 		second.forEach(uuid -> {
@@ -35,11 +35,11 @@ public class TagUtils {
 			}
 			final Team team1 = sb.registerNewTeam("green");
 			team1.setPrefix(ChatColor.GREEN.toString());
-			team1.addEntry(Utils.getName(uuid));
+			team1.addEntry(CoreUtils.getName(uuid));
 			team1.setAllowFriendlyFire(false);
 			final Team team2 = sb.registerNewTeam("red");
 			team2.setPrefix(ChatColor.RED.toString());
-			first.forEach(firstUUID -> team2.addEntry(Utils.getName(firstUUID)));
+			first.forEach(firstUUID -> team2.addEntry(CoreUtils.getName(firstUUID)));
 			Bukkit.getPlayer(uuid).setScoreboard(sb);
 		});
 	}

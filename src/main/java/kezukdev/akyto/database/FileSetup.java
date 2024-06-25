@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import gym.core.utils.inventory.BukkitSerialization;
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.profile.kiteditor.Edited;
+import kezukdev.akyto.editor.Edited;
 
 public class FileSetup {
 	
@@ -19,6 +19,7 @@ public class FileSetup {
 	
 	public FileSetup(final Practice main) { 
 		this.main = main;
+		this.loadEditor();
 	}
 	
 	public void loadEditor() {

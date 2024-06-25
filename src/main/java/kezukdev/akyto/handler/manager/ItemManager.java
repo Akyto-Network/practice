@@ -7,14 +7,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
 import gym.core.utils.item.ItemUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.kit.KitInterface;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.utils.Utils;
 
 public class ItemManager {
@@ -28,7 +28,7 @@ public class ItemManager {
 
 		if (player == null) return;
 
-		final Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(uuid);
+		final Profile profile = Utils.getProfiles(uuid);
 
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);

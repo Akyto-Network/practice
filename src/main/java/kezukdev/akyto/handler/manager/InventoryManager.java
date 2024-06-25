@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import gym.core.Core;
 import kezukdev.akyto.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -21,6 +22,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Lists;
 
+import gym.core.profile.Profile;
+import gym.core.utils.CoreUtils;
 import gym.core.utils.format.FormatUtils;
 import gym.core.utils.inventory.MultipageSerializer;
 import gym.core.utils.item.ItemUtils;
@@ -31,7 +34,6 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.handler.manager.QueueManager.QueueEntry;
 import kezukdev.akyto.kit.Kit;
-import kezukdev.akyto.profile.Profile;
 import kezukdev.akyto.utils.leaderboard.Top;
 import lombok.Getter;
 
@@ -52,7 +54,6 @@ public class InventoryManager {
     public MultipageSerializer partyMultipage;
 	private final ConcurrentMap<UUID, Inventory> previewInventory;
 	private final ConcurrentMap<UUID, Inventory> spectateInventory;
-	private final ConcurrentMap<UUID, Inventory> profileInventory;
 	private final ConcurrentMap<UUID, Inventory> settingsInventory;
 	private final ConcurrentMap<UUID, Inventory> settingsSpectateInventory;
 	
@@ -61,7 +62,6 @@ public class InventoryManager {
 		this.main = main;
 		this.previewInventory = new ConcurrentHashMap<>();
 		this.spectateInventory = new ConcurrentHashMap<>();
-		this.profileInventory = new ConcurrentHashMap<>();
 		this.settingsInventory = new ConcurrentHashMap<>();
 		this.settingsSpectateInventory = new ConcurrentHashMap<>();
 		this.spectateMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
@@ -92,10 +92,10 @@ public class InventoryManager {
         this.main.getManagerHandler().getPartyManager().getParties().forEach(party -> {
             final ItemStack item = new ItemStack(Material.SKULL_ITEM);
             final ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GOLD + Utils.getName(party.getCreator()) + "'s party");
+            meta.setDisplayName(ChatColor.GOLD + CoreUtils.getName(party.getCreator()) + "'s party");
             final List<String> lore = new ArrayList<>();
             lore.add(ChatColor.GRAY + "Member(s) [" + party.getMembers().size() + "]");
-            party.getMembers().forEach(member -> lore.add(ChatColor.GRAY + " -> " + ChatColor.WHITE + Utils.getName(member)));
+            party.getMembers().forEach(member -> lore.add(ChatColor.GRAY + " -> " + ChatColor.WHITE + CoreUtils.getName(member)));
             meta.setLore(lore);
             item.setItemMeta(meta);
             partys.add(item);
@@ -108,7 +108,7 @@ public class InventoryManager {
         this.main.getDuels().forEach(duel -> {
             final ItemStack item = new ItemStack(duel.getKit().material(), 1, duel.getKit().data());
             final ItemMeta meta = item.getItemMeta();
-            meta.setDisplayName(ChatColor.GREEN + Utils.getName(duel.getFirst().iterator().next()) + ChatColor.GRAY + " vs " + ChatColor.RED + Utils.getName(duel.getSecond().iterator().next()));
+            meta.setDisplayName(ChatColor.GREEN + CoreUtils.getName(duel.getFirst().iterator().next()) + ChatColor.GRAY + " vs " + ChatColor.RED + CoreUtils.getName(duel.getSecond().iterator().next()));
             meta.setLore(Arrays.asList(ChatColor.GRAY + "In: " + (duel.isRanked() ? ChatColor.GOLD + "Ranked" : ChatColor.YELLOW + "Unranked"), ChatColor.GRAY + "Kit: " + ChatColor.YELLOW + ChatColor.stripColor(duel.getKit().displayName())));
             item.setItemMeta(meta);
             matchs.add(item);
@@ -179,7 +179,7 @@ public class InventoryManager {
 	}
 	
 	public void generatePreviewInventory(final UUID uuid, final UUID opponent) {
-		final Inventory preview = Bukkit.createInventory(null, 54, ChatColor.DARK_GRAY + Utils.getName(uuid) + " preview's");
+		final Inventory preview = Bukkit.createInventory(null, 54, ChatColor.DARK_GRAY + CoreUtils.getName(uuid) + " preview's");
 		final DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid);
 		final Duel duel = Utils.getDuelByUUID(uuid);
 		final Kit kit = duel.getKit();
@@ -213,7 +213,7 @@ public class InventoryManager {
         loreStats.add(ChatColor.DARK_GRAY + "Hits" + ChatColor.RESET + ": " + duelStatistics.getHits());
         loreStats.add(ChatColor.DARK_GRAY + "Best Combo" + ChatColor.RESET + ": " + duelStatistics.getLongestHit());
 		preview.setItem(50, ItemUtils.createItems(Material.DIAMOND_SWORD, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
-        preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + Utils.getName(opponent)));
+        preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + CoreUtils.getName(opponent)));
         this.previewInventory.remove(uuid);
 		this.previewInventory.put(uuid, preview);
 	}
@@ -237,7 +237,7 @@ public class InventoryManager {
 	public void removeUselessInventory(final UUID uuid) {
 		this.settingsInventory.remove(uuid);
 		this.settingsSpectateInventory.remove(uuid);
-		this.profileInventory.remove(uuid);
+		Core.API.getManagerHandler().getInventoryManager().getProfileInventory().remove(uuid);
 	}
 	
 	private void generateSpectateSettingsInventory(final UUID uuid) {
@@ -272,50 +272,6 @@ public class InventoryManager {
 			meta.setLore(Collections.singletonList(profile.getSpectateSettings().get(id).equals(true) ? lore[0] : lore[1]));
 			item.setItemMeta(meta);
 		}
-	}
-	
-	public void generateProfileInventory(final UUID uuid) {
-		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + Utils.getName(uuid) + " profile");
-		final Profile profiles = Utils.getProfiles(uuid);
-        final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
-        for (int i = 0; i < 5; ++i) {
-            profile.setItem(i, glass);
-        }
-        List<String> kitLore = new ArrayList<>();
-        kitLore.add(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------");
-        this.main.getKits().forEach(kit -> {
-        	final int lose = profiles.getStats().get(0)[kit.id()] - profiles.getStats().get(1)[kit.id()];
-        	kitLore.add(kit.displayName() + ChatColor.GRAY + " (" + ChatColor.WHITE + profiles.getStats().get(2)[kit.id()] + ChatColor.GRAY + ") : " + ChatColor.GREEN + profiles.getStats().get(1)[kit.id()] +  ChatColor.GRAY + "/" + ChatColor.YELLOW + profiles.getStats().get(0)[kit.id()] + ChatColor.GRAY + "/" + ChatColor.RED + lose);
-        });
-        kitLore.add(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------");
-        List<String> playerLore = new ArrayList<>();
-        int totalWins = 0;
-        int totalPlayed = 0;
-        int totalElos = 0;
-        playerLore.add(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------");
-        for (Kit kit : this.main.getKits()) {
-            totalWins = totalWins + profiles.getStats().get(1)[kit.id()];
-            totalPlayed = totalPlayed + profiles.getStats().get(0)[kit.id()];
-            totalElos = totalElos + profiles.getStats().get(2)[kit.id()];
-        }
-        playerLore.add(ChatColor.DARK_GRAY + "Total Win" + ChatColor.GRAY + ": " + ChatColor.WHITE + totalWins);
-        playerLore.add(ChatColor.DARK_GRAY + "Total Played" + ChatColor.GRAY + ": " + ChatColor.WHITE + totalPlayed);
-        int loose = totalPlayed - totalWins;
-        playerLore.add(ChatColor.DARK_GRAY + "Total Loose" + ChatColor.GRAY + ": " + ChatColor.WHITE + loose);
-        playerLore.add(" ");
-        int globalElos = totalElos / this.main.getKits().size();
-        playerLore.add(ChatColor.DARK_GRAY + "Global Elo" + ChatColor.GRAY + ": " + ChatColor.WHITE + globalElos);
-        playerLore.add(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------");
-        ItemStack playerHead = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
-        meta.setOwner(Bukkit.getPlayer(uuid).getName());
-        meta.setDisplayName(ChatColor.GRAY + "Player Statistics");
-        meta.setLore(playerLore);
-        playerHead.setItemMeta(meta);
-        profile.setItem(1, ItemUtils.createItems(Material.BREWING_STAND_ITEM, ChatColor.GRAY + "Kit Statistics" + ChatColor.GRAY + ":", kitLore));
-        profile.setItem(3, playerHead);
-        this.profileInventory.remove(uuid);
-		this.profileInventory.put(uuid, profile);
 	}
 	
 	public void generateChangeSpectateInventory(final UUID playerUUID) {

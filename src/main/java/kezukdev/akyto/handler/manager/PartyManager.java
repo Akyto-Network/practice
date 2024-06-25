@@ -10,13 +10,12 @@ import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import gym.core.Core;
-import gym.core.profile.ProfileStatus;
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
+import gym.core.utils.CoreUtils;
 import gym.core.utils.components.ComponentJoiner;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
 import lombok.Getter;
 import lombok.Setter;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -46,7 +45,6 @@ public class PartyManager {
 		this.parties.add(new PartyEntry(creator));
 		this.main.getServer().getPlayer(creator).sendMessage(ChatColor.GRAY + "You've just created your own party!");
 		this.main.getManagerHandler().getItemManager().giveItems(creator, false);
-		Core.API.getManagerHandler().getProfileManager().getProfiles().get(creator).setStatus(ProfileStatus.UNABLE);
 		this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 	}
 	
@@ -61,13 +59,13 @@ public class PartyManager {
 		final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
 		party.getMembers().forEach(member -> {
 			if (!member.equals(party.getCreator())) {
-				final TextComponent itxt = new TextComponent(Utils.getName(member));
+				final TextComponent itxt = new TextComponent(CoreUtils.getName(member));
 				joiner.add(itxt);	
 			}
 		});
 		partyComponent.addExtra(joiner.toTextComponent());
 		Bukkit.getPlayer(sender).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-		Bukkit.getPlayer(sender).sendMessage(ChatColor.DARK_GRAY + "Leader" + ChatColor.GRAY + ": " + ChatColor.WHITE + Utils.getName(party.getCreator()));
+		Bukkit.getPlayer(sender).sendMessage(ChatColor.DARK_GRAY + "Leader" + ChatColor.GRAY + ": " + ChatColor.WHITE + CoreUtils.getName(party.getCreator()));
 		Bukkit.getPlayer(sender).spigot().sendMessage(partyComponent);
 		Bukkit.getPlayer(sender).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
 	}
@@ -126,12 +124,11 @@ public class PartyManager {
 	    party.getMembers().forEach(uuid -> {
 	        if (Bukkit.getPlayer(uuid) != null) {
 	        	Bukkit.getPlayer(uuid).sendMessage(new String[] {
-	        			ChatColor.GREEN + Utils.getName(invited) + " joined the party!",
+	        			ChatColor.GREEN + CoreUtils.getName(invited) + " joined the party!",
 	        			ChatColor.GRAY.toString() + ChatColor.ITALIC +  "We advise you to play " + 
 	    	        			(party.getMembers().size() % 2 == 0 ? ChatColor.YELLOW.toString() + ChatColor.ITALIC + "split" + ChatColor.GRAY + " (" + ChatColor.GOLD + (party.getMembers().size() / 2) + ChatColor.RED + "v" + ChatColor.GOLD + (party.getMembers().size() / 2) + ChatColor.GRAY + ")" : ChatColor.YELLOW.toString() + ChatColor.ITALIC + "FFA")});
 	        }
 	    });
-		Core.API.getManagerHandler().getProfileManager().getProfiles().get(invited).setStatus(ProfileStatus.UNABLE);
 	    this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 	    this.main.getManagerHandler().getItemManager().giveItems(invited, false);
 	}
@@ -148,24 +145,22 @@ public class PartyManager {
 				if (Utils.getProfiles(uuid) != null) {
 					if (profile.isInState(ProfileState.FREE)) {
 						this.main.getManagerHandler().getItemManager().giveItems(uuid, true);
-						Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.FREE);
 					}
 				}
-				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + Utils.getName(sender) + " to dissolve the party!");
+				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + CoreUtils.getName(sender) + " to dissolve the party!");
 			});
 			this.parties.remove(party);
 			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
         } else {
 			party.getMembers().remove(sender);
 			if (profile.isInState(ProfileState.FREE)) {
-				Core.API.getManagerHandler().getProfileManager().getProfiles().get(sender).setStatus(ProfileStatus.FREE);
 				this.main.getManagerHandler().getItemManager().giveItems(sender, true);
 			}
 			if (profile.isInState(ProfileState.SPECTATE)) {
 				Utils.sendToSpawn(sender, true);
 			}
 			party.getMembers().forEach(uuid -> {
-				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + Utils.getName(sender) + " left the party!");
+				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + CoreUtils.getName(sender) + " left the party!");
 			});
 			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
 		}

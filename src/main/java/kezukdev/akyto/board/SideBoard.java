@@ -5,20 +5,22 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import kezukdev.akyto.duel.cache.DuelStatistics;
-import kezukdev.akyto.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import com.bizarrealex.aether.scoreboard.Board;
 import com.bizarrealex.aether.scoreboard.BoardAdapter;
 import com.bizarrealex.aether.scoreboard.cooldown.BoardCooldown;
 
+import gym.core.Core;
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
+import gym.core.utils.CoreUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.handler.manager.PartyManager;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.utils.Utils;
 
 public class SideBoard implements BoardAdapter {
     private final Practice plugin;
@@ -34,7 +36,7 @@ public class SideBoard implements BoardAdapter {
 
     @Override
     public List<String> getScoreboard(final Player player, final Board board, final Set<BoardCooldown> cooldowns) {
-        final Profile pm = this.plugin.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId());
+        final Profile pm = Core.API.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId());
 
         if (pm == null) {
             this.plugin.getLogger().warning(player.getName() + "'s player data is null");
@@ -43,7 +45,7 @@ public class SideBoard implements BoardAdapter {
 
         // If player enabled scoreboard
         if (pm.getSettings().get(0)) {
-            if (pm.isInState(ProfileState.FREE, ProfileState.QUEUE)) {
+            if (pm.isInState(ProfileState.FREE, ProfileState.QUEUE, ProfileState.MOD)) {
                 return this.getLobbyBoard(player);
             }
             if (pm.isInState(ProfileState.FIGHT)) {
@@ -69,7 +71,7 @@ public class SideBoard implements BoardAdapter {
 
         if (playerParty != null) {
         	board.add(" ");
-        	board.add(ChatColor.DARK_GRAY + "Leader" + ChatColor.GRAY + ": " + ChatColor.WHITE + Utils.getName(playerParty.getCreator()));
+        	board.add(ChatColor.DARK_GRAY + "Leader" + ChatColor.GRAY + ": " + ChatColor.WHITE + CoreUtils.getName(playerParty.getCreator()));
         	board.add(ChatColor.DARK_GRAY + "Members" + ChatColor.GRAY + ": " + ChatColor.WHITE + (playerParty.getMembers().size() - 1));
         }
 
@@ -88,7 +90,7 @@ public class SideBoard implements BoardAdapter {
 
         if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
         	if (duel.getDuelType().equals(DuelType.SINGLE)) {
-                board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + Utils.getName(opps));
+                board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(opps));
         	}
 
         	if (duel.getDuelType().equals(DuelType.FFA)) {
@@ -120,7 +122,7 @@ public class SideBoard implements BoardAdapter {
         }
 
         if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
-        	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + Utils.getName(duel.getWinner().get(0)));
+        	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(duel.getWinner().get(0)));
         }
 
         board.add(" ");
@@ -136,8 +138,8 @@ public class SideBoard implements BoardAdapter {
         if (duel == null) duel = Utils.getDuelByUUID(player.getUniqueId());
         if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
         	if (duel.getDuelType().equals(DuelType.SINGLE)) {
-                final String first = Utils.getName(duel.getFirst().iterator().next());
-                final String second = Utils.getName(duel.getSecond().iterator().next());
+                final String first = CoreUtils.getName(duel.getFirst().iterator().next());
+                final String second = CoreUtils.getName(duel.getSecond().iterator().next());
                 board.add(ChatColor.GREEN + first);
                 board.add(ChatColor.DARK_GRAY + "    against");
                 board.add(ChatColor.RED + second);	
@@ -153,7 +155,7 @@ public class SideBoard implements BoardAdapter {
             board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(duel));
         }
         if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
-        	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + Utils.getName(duel.getWinner().get(0)));
+        	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(duel.getWinner().get(0)));
         }
         board.add(" ");
         board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");

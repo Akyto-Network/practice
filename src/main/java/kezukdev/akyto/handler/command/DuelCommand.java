@@ -9,11 +9,12 @@ import org.bukkit.entity.Player;
 
 import com.google.common.collect.Sets;
 
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
+import gym.core.utils.CoreUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.request.Request;
 import kezukdev.akyto.utils.Utils;
 
@@ -66,7 +67,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 			
-			if (Practice.getAPI().getManagerHandler().getRequestManager().getRequest().containsKey(Utils.getUUID(sender.getName()))) {
+			if (Practice.getAPI().getManagerHandler().getRequestManager().getRequest().containsKey(CoreUtils.getUUID(sender.getName()))) {
 				sender.sendMessage(ChatColor.RED + "There's a pending request in all of this :3");
 				return false;
 			}
@@ -99,7 +100,7 @@ public class DuelCommand implements CommandExecutor {
 			}
 			
 			Request request = Utils.getRequestByUUID(target.getUniqueId());
-			if (request == null || !request.getReceiver().equals(Utils.getUUID(sender.getName())) || request.getArena() == null || request.getKit() == null) {
+			if (request == null || !request.getReceiver().equals(CoreUtils.getUUID(sender.getName())) || request.getArena() == null || request.getKit() == null) {
 				sender.sendMessage(ChatColor.RED + "You have no request for a duel from " + target.getName());
 				return false;
 			}

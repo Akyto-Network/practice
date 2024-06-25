@@ -27,13 +27,14 @@ import org.bukkit.inventory.ItemStack;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
+import gym.core.utils.CoreUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
+import kezukdev.akyto.editor.Edited;
 import kezukdev.akyto.kit.Kit;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
-import kezukdev.akyto.profile.kiteditor.Edited;
 import net.md_5.bungee.api.ChatColor;
 
 public class InventoryListener implements Listener {
@@ -248,7 +249,7 @@ public class InventoryListener implements Listener {
 			if (event.getCurrentItem().getType().equals(Material.LEVER)) {
 				final String nextName = event.getCurrentItem().getItemMeta().getDisplayName().replace(ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": ", "");
 				event.getWhoClicked().closeInventory();
-				event.getWhoClicked().openInventory(inventoryManager.getPreviewInventory().get(Utils.getUUID(nextName)));
+				event.getWhoClicked().openInventory(inventoryManager.getPreviewInventory().get(CoreUtils.getUUID(nextName)));
 			}
 		}
 	}

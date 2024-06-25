@@ -13,12 +13,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
+import gym.core.utils.CoreUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.handler.ManagerHandler;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 
@@ -45,14 +46,14 @@ public class MatchUtils {
             allPlayers.forEach(uuids -> {
                 Player player = Bukkit.getPlayer(uuids);
                 if (player != null) {
-                    player.sendMessage(ChatColor.WHITE + Utils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer)));
+                    player.sendMessage(ChatColor.WHITE + CoreUtils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + CoreUtils.getName(killer)));
                 }
             });
             
             match.getSpectators().forEach(uuids -> {
                 Player spectator = Bukkit.getPlayer(uuids);
                 if (spectator != null) {
-                    spectator.sendMessage(ChatColor.WHITE + Utils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer)));
+                    spectator.sendMessage(ChatColor.WHITE + CoreUtils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + CoreUtils.getName(killer)));
                 }
             });
             if (disconnect) {
@@ -85,7 +86,7 @@ public class MatchUtils {
 				if (player != null) {
 					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
 					int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
-					player.sendMessage(ChatColor.WHITE + Utils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
+					player.sendMessage(ChatColor.WHITE + CoreUtils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + CoreUtils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
 				}
 			});
 
@@ -94,7 +95,7 @@ public class MatchUtils {
 				if (spectator != null) {
 					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
 					int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
-					spectator.sendMessage(ChatColor.WHITE + Utils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + Utils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
+					spectator.sendMessage(ChatColor.WHITE + CoreUtils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + CoreUtils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
 				}
 			});
             if (disconnect) {
@@ -161,6 +162,7 @@ public class MatchUtils {
 	    	final Duel duel = Utils.getDuelByUUID(uuid);
 	    	Practice.getAPI().getDuels().forEach(duels -> {
 	    		if (!spectator && duels != duel) return;
+	    		if (spectator && duels != Utils.getDuelBySpectator(uuid)) return;
     	    	duels.getFirst().forEach(first -> {
     	    		if (Bukkit.getPlayer(first) == null) return;
     	    		Bukkit.getPlayer(first).hidePlayer(Bukkit.getPlayer(uuid));

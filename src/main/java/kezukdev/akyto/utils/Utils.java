@@ -7,35 +7,19 @@ import java.util.UUID;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;
 
-import kezukdev.akyto.duel.cache.DuelStatistics;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import gym.core.Core;
-import gym.core.profile.ProfileStatus;
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.manager.PartyManager.PartyEntry;
 import kezukdev.akyto.kit.Kit;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.request.Request;
 
 public class Utils {
-
-	public static UUID getUUID(String playerName) {
-		Player target = Practice.getAPI().getServer().getPlayer(playerName);
-		if (target != null)
-			return target.getUniqueId();
-		return Practice.getAPI().getServer().getOfflinePlayer(playerName).getUniqueId();
-	}
-
-	public static String getName(UUID playerId) {
-		Player target = Practice.getAPI().getServer().getPlayer(playerId);
-		if (target != null)
-			return target.getName();
-		return Practice.getAPI().getServer().getOfflinePlayer(playerId).getName();
-	}
 
 	public static List<UUID> getOpponents(UUID uuid) {
         Duel duel = getDuelByUUID(uuid);
@@ -59,7 +43,7 @@ public class Utils {
 	}
 
 	public static Profile getProfiles(final UUID uuid) {
-		return Practice.getAPI().getManagerHandler().getProfileManager().getProfiles().get(uuid);
+		return Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid);
 	}
 	
 	public static PartyEntry getPartyByUUID(UUID uuid) {
@@ -74,8 +58,8 @@ public class Utils {
 		});
 		resetPlayer(uuid);
 		getProfiles(uuid).setProfileState(ProfileState.FREE);
-		if (!Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).isInState(ProfileStatus.MOD)) {
-			Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.FREE);	
+		if (!Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).isInState(ProfileState.MOD)) {
+			Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setProfileState(ProfileState.FREE);	
 		}
 		Practice.getAPI().getManagerHandler().getItemManager().giveItems(uuid, false);
 		if (teleport) {
@@ -91,7 +75,6 @@ public class Utils {
 		});
 		resetPlayer(uuid);
 		getProfiles(uuid).setProfileState(ProfileState.EDITOR);
-		Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setStatus(ProfileStatus.UNABLE);
 		Practice.getAPI().getManagerHandler().getProfileManager().getEditing().put(uuid, kit.name());
 		Practice.getAPI().getManagerHandler().getItemManager().giveItems(uuid, false);
 		Bukkit.getPlayer(uuid).teleport(Practice.getAPI().getEditor().getLocation());

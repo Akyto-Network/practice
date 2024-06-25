@@ -12,12 +12,11 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import akyto.spigot.aSpigot;
 import akyto.spigot.handler.MovementHandler;
-import gym.core.Core;
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.duel.cache.DuelStatistics;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
 import kezukdev.akyto.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
@@ -70,7 +69,7 @@ public class EntityListener implements Listener {
 			final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
 			final Profile profileDamager = Utils.getProfiles(event.getDamager().getUniqueId());
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
-				if (!gym.core.utils.Utils.hitAllowed(event.getDamager().getUniqueId())) {
+				if (!gym.core.utils.CoreUtils.hitAllowed(event.getDamager().getUniqueId())) {
 					event.setCancelled(true);
 					event.getDamager().sendMessage(ChatColor.RED + "Make high cps is strongly discouraged, your attack was disallow. Please make less cps.");
 					return;
@@ -106,7 +105,7 @@ public class EntityListener implements Listener {
 	
 	  @EventHandler
 	  public void onReceiveDroppedItems(PlayerPickupItemEvent event) {
-		  if (this.main.getManagerHandler().getProfileManager().getProfiles().get(event.getPlayer().getUniqueId()).isInState(ProfileState.FIGHT)) {
+		  if (Utils.getProfiles(event.getPlayer().getUniqueId()).isInState(ProfileState.FIGHT)) {
 			  if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.FINISHING)) {
 				  event.setCancelled(true);
 				  return;

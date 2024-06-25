@@ -1,8 +1,6 @@
 package kezukdev.akyto.runnable;
 
-import kezukdev.akyto.Practice;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
+import kezukdev.akyto.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Color;
@@ -11,6 +9,9 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitTask;
+
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -66,7 +67,7 @@ public class RgbArmorTask implements Runnable {
     @Override
     public void run() {
 
-        final Profile profile = Practice.getAPI().getManagerHandler().getProfileManager().getProfiles().get(this.entity.getUniqueId());
+        final Profile profile = Utils.getProfiles(this.entity.getUniqueId());
 
         if (this.entity.isDead() || profile == null || profile.isInState(ProfileState.FIGHT, ProfileState.EDITOR)) {
             this.stopTask();

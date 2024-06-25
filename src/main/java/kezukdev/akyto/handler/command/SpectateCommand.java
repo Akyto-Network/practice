@@ -14,13 +14,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import gym.core.Core;
-import gym.core.profile.ProfileStatus;
+import gym.core.profile.Profile;
+import gym.core.profile.ProfileState;
+import gym.core.utils.CoreUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.cache.DuelState;
-import kezukdev.akyto.profile.Profile;
-import kezukdev.akyto.profile.ProfileState;
 import net.md_5.bungee.api.ChatColor;
 
 public class SpectateCommand implements CommandExecutor {
@@ -59,7 +58,7 @@ public class SpectateCommand implements CommandExecutor {
             return false;
         }
 
-        final UUID targetUUID = Utils.getUUID(args[0]);
+        final UUID targetUUID = CoreUtils.getUUID(args[0]);
         final Duel targetDuel = Utils.getDuelByUUID(targetUUID);
         
         if (targetDuel == null) {
@@ -86,14 +85,12 @@ public class SpectateCommand implements CommandExecutor {
         targetDuel.getSpectators().add(playerSender.getUniqueId());
         if (!profileSender.isInState(ProfileState.SPECTATE)) {
             profileSender.setProfileState(ProfileState.SPECTATE);
-            Core.API.getManagerHandler().getProfileManager().getProfiles().get(playerSender.getUniqueId()).setStatus(ProfileStatus.UNABLE);
             this.main.getManagerHandler().getItemManager().giveItems(playerSender.getUniqueId(), false);
         }
-
+        MatchUtils.multiArena(playerSender.getUniqueId(), false, true);
         List<List<UUID>> players = Arrays.asList(new ArrayList<>(targetDuel.getFirst()), new ArrayList<>(targetDuel.getSecond()));
         players.forEach(uuids -> uuids.forEach(uuid -> {
             playerSender.showPlayer(Bukkit.getPlayer(uuid));
-            MatchUtils.multiArena(playerSender.getUniqueId(), false, true);
             Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is now spectating.");
         }));
 

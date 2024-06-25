@@ -6,7 +6,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-import co.aikar.idb.DB;
+import gg.potted.idb.DB;
+import gym.core.Core;
 import gym.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.utils.leaderboard.Top;
@@ -27,7 +28,7 @@ public class LeaderboardManager {
     
     public int getRowNumber(final String table) {
         try {
-            final PreparedStatement sts = this.main.connection.prepareStatement("select count(*) from " + table);
+            final PreparedStatement sts = Core.API.getConnection().prepareStatement("select count(*) from " + table);
             final ResultSet rs = sts.executeQuery();
             if (rs.next()) {
                 return rs.getInt("count(*)");
@@ -42,10 +43,10 @@ public class LeaderboardManager {
    public Map<String, int[]> getTopElo() {
        final Map<String, int[]> top_elo = new HashMap<>();
        try {
-    	   if (this.main.getConnection().isClosed()) {
-    		   this.main.getDatabaseSetup().setupHikariCP();
+    	   if (Core.API.getConnection().isClosed()) {
+    		   Core.API.getDatabaseSetup().setupHikariCP();
     	   }
-           final PreparedStatement sts = this.main.connection.prepareStatement("SELECT * FROM playersdata");
+           final PreparedStatement sts = Core.API.getConnection().prepareStatement("SELECT * FROM playersdata");
            final ResultSet rs = sts.executeQuery();
            //final ResultSetMetaData resultSetMetaData = rs.getMetaData();
            if (getRowNumber("playersdata") == 0) return top_elo;

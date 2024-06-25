@@ -17,7 +17,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import gym.core.Core;
-import gym.core.profile.ProfileStatus;
+import gym.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.utils.Utils;
@@ -27,7 +27,7 @@ public class CoreListener implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
-        if (Core.API.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId()).isInState(ProfileStatus.MOD)) {
+        if (Core.API.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId()).isInState(ProfileState.MOD)) {
         	if (event.getItem().getType().equals(Material.NETHER_STAR)) {
 				if (Practice.getAPI().getDuels().isEmpty()) {
 					player.sendMessage(ChatColor.RED + "0 player is in match!");
@@ -61,7 +61,7 @@ public class CoreListener implements Listener {
     
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
-    	if (Core.API.getManagerHandler().getProfileManager().getProfiles().get(event.getPlayer().getUniqueId()).isInState(ProfileStatus.MOD)) {
+    	if (Core.API.getManagerHandler().getProfileManager().getProfiles().get(event.getPlayer().getUniqueId()).isInState(ProfileState.MOD)) {
             Player clicker = event.getPlayer();
 			if (event.getRightClicked() instanceof Player) {
 				Player clicked = (Player) event.getRightClicked();
