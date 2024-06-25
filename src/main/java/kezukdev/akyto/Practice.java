@@ -17,7 +17,6 @@ import com.bizarrealex.aether.Aether;
 
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.board.SideBoard;
-import kezukdev.akyto.database.DatabaseSetup;
 import kezukdev.akyto.database.FileSetup;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.ManagerHandler;
@@ -41,19 +40,16 @@ public class Practice extends JavaPlugin {
 	
 	private ManagerHandler managerHandler;
 	private MiscHandler miscHandler;
-    private String hikariPath;
     public File locationFile;
     public YamlConfiguration locationConfig;
     public LocationUtil spawn = new LocationUtil("spawn");
     public LocationUtil editor = new LocationUtil("editor");
-    private String region;
     
 	private List<Kit> kits = new ArrayList<>();
 	private final List<Duel> duels = new ArrayList<>();
 	private ConcurrentMap<UUID, QueueEntry> queue;
     private final List<Arena> arenas = new ArrayList<>();
     private final HashMap<String, Arena> arenasMap = new HashMap<>();
-    private DatabaseSetup databaseSetup;
 	private FileSetup fileSetup;
 	private boolean debug;
 	

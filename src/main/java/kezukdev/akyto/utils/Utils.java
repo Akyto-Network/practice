@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import akyto.core.Core;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;
 
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
-import akyto.core.Core;
-import akyto.core.profile.Profile;
-import akyto.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.manager.PartyManager.PartyEntry;

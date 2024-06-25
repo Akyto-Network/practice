@@ -22,26 +22,26 @@ import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 
 public class EntityListener implements Listener {
-	
+
 	private final Practice main;
-	
-	public EntityListener(final Practice main) { 
+
+	public EntityListener(final Practice main) {
 		this.main = main;
-        aSpigot.INSTANCE.addMovementHandler(new MovementHandler() {
-            public void handleUpdateLocation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
-            	final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
-            	if (duel != null) {
-            		final String kitName = duel.getKit().name();
-            		if (kitName.equalsIgnoreCase("sumo") && duel.getState().equals(DuelState.STARTING)) {
-            			player.teleport(location1);
-            		}
-            	}
-            }
-            public void handleUpdateRotation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
-            }
-        });
+		aSpigot.INSTANCE.addMovementHandler(new MovementHandler() {
+			public void handleUpdateLocation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
+				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
+				if (duel != null) {
+					final String kitName = duel.getKit().name();
+					if (kitName.equalsIgnoreCase("sumo") && duel.getState().equals(DuelState.STARTING)) {
+						player.teleport(location1);
+					}
+				}
+			}
+			public void handleUpdateRotation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
+			}
+		});
 	}
-	
+
 	@EventHandler
 	public void onDamage(final EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player))
@@ -62,7 +62,7 @@ public class EntityListener implements Listener {
 		}
 		event.setCancelled(true);
 	}
-	
+
 	@EventHandler
 	public void onDamageByEntity(final EntityDamageByEntityEvent event) {
 		if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
@@ -91,7 +91,7 @@ public class EntityListener implements Listener {
 						statisticsVictim.setCombo(0);
 						if (statisticsDamager.getCombo() > statisticsDamager.getLongestHit()) {
 							statisticsDamager.setLongestHit(statisticsDamager.getCombo());
-						}	
+						}
 					}
 					if (duel.getKit().name().equals("sumo")) {
 						event.setDamage(0.0f);
@@ -102,17 +102,17 @@ public class EntityListener implements Listener {
 			event.setCancelled(true);
 		}
 	}
-	
-	  @EventHandler
-	  public void onReceiveDroppedItems(PlayerPickupItemEvent event) {
-		  if (Utils.getProfiles(event.getPlayer().getUniqueId()).isInState(ProfileState.FIGHT)) {
-			  if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.FINISHING)) {
-				  event.setCancelled(true);
-				  return;
-			  }
-			  return;
-		  }
-		  event.setCancelled(true);
-	  }
+
+	@EventHandler
+	public void onReceiveDroppedItems(PlayerPickupItemEvent event) {
+		if (Utils.getProfiles(event.getPlayer().getUniqueId()).isInState(ProfileState.FIGHT)) {
+			if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()).getState().equals(DuelState.FINISHING)) {
+				event.setCancelled(true);
+				return;
+			}
+			return;
+		}
+		event.setCancelled(true);
+	}
 
 }

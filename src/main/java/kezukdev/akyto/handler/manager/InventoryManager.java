@@ -156,7 +156,6 @@ public class InventoryManager {
 		}
 		this.partyEventInventory.setItem(1, ItemUtils.createItems(Material.IRON_AXE, ChatColor.DARK_GRAY + "Free For All"));
 		this.partyEventInventory.setItem(3, ItemUtils.createItems(Material.DIAMOND_CHESTPLATE, ChatColor.DARK_GRAY + "Split"));
-//		this.queueInventory[1].setItem(8, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #3" + ChatColor.WHITE + " Global"));
 	}
 	
 	public void refreshQueueInventory(boolean ranked, final Kit kit) {
@@ -167,11 +166,6 @@ public class InventoryManager {
         List<String> lore = new ArrayList<>();
         lore.add(ChatColor.GRAY + "Queueing: " + ChatColor.RESET + this.getQueuedFromLadder(kit, ranked));
         lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + this.getMatchedFromLadder(kit, ranked));
-//        if (ranked) {
-//            lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-//            Top[] top = main.getManagerHandler().getLeaderboardManager().getTop();
-//            lore.addAll(top[kit.id()].getLoreRanked());
-//        }
         meta.setLore(lore);
 		item.setItemMeta(meta);
 		inv.removeItem(inv.getItem(kit.id()));
@@ -302,29 +296,20 @@ public class InventoryManager {
 	            main.getManagerHandler().getLeaderboardManager().refresh();
 	            Top[] top = main.getManagerHandler().getLeaderboardManager().getTop();
 	            Top global_top = main.getManagerHandler().getLeaderboardManager().getGlobal();
-//				List<Inventory> inv = Arrays.asList(queueInventory[1], leaderboardInventory);
-				List<Inventory> inv = Collections.singletonList(leaderboardInventory);
-	            for (Inventory inventories : inv) {
-		            main.getKits().forEach(ladder -> {
-	                    ItemStack current = inventories.getItem(ladder.id());
-	                    ItemMeta meta = current.getItemMeta();
-	                    List<String> lore = new ArrayList<>();
-	                    if (inventories.getName().equalsIgnoreCase(queueInventory[1].getName())) {
-		                    lore.add(ChatColor.GRAY + "Queueing: " + ChatColor.RESET + getQueuedFromLadder(ladder, true));
-		                    lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + getMatchedFromLadder(ladder, true));	
-	                    }
-	                    lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                        lore.addAll(inventories.getName().equalsIgnoreCase(queueInventory[1].getName()) ? top[ladder.id()].getLoreRanked() : top[ladder.id()].getLore());
-	                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-	                    meta.setLore(lore);
-	                    current.setItemMeta(meta);	
-		            });
-		            ItemStack current = inventories.getItem(8);
-		            ItemMeta meta = current.getItemMeta();
-		            if (inventories.getName().equalsIgnoreCase(queueInventory[1].getName())) meta.setLore(global_top.getLoreRanked());
-                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) meta.setLore(global_top.getLore());
-		            current.setItemMeta(meta);
-	            }
+				main.getKits().forEach(ladder -> {
+					ItemStack current = leaderboardInventory.getItem(ladder.id());
+					ItemMeta meta = current.getItemMeta();
+					List<String> lore = new ArrayList<>();
+					lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+					lore.addAll(top[ladder.id()].getLore());
+					lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+					meta.setLore(lore);
+					current.setItemMeta(meta);
+				});
+				ItemStack current = leaderboardInventory.getItem(8);
+				ItemMeta meta = current.getItemMeta();
+				meta.setLore(global_top.getLore());
+				current.setItemMeta(meta);
 			}
 		}.runTaskLaterAsynchronously(this.main, 2L);
 	}
@@ -334,35 +319,24 @@ public class InventoryManager {
     	refresh.whenCompleteAsync((t, u) -> {
             Top[] top = this.main.getManagerHandler().getLeaderboardManager().getTop();
             Top global_top = this.main.getManagerHandler().getLeaderboardManager().getGlobal();
-            List<Inventory> inv = Arrays.asList(queueInventory[1], leaderboardInventory);
-            inv.forEach(inventories -> {
-                this.main.getKits().forEach(ladder -> {
-                    ItemStack current = this.queueInventory[1].getItem(ladder.id());
-                    ItemMeta meta = current.getItemMeta();
-                    List<String> lore = new ArrayList<>();
-                    if (inventories.getName().equalsIgnoreCase(queueInventory[1].getName())) {
-                        lore.add(ChatColor.GRAY + "Queueing: " + ChatColor.RESET + getQueuedFromLadder(ladder, true));
-                        lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + getMatchedFromLadder(ladder, true));	
-                    }
-                    lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                    lore.addAll(inventories.getName().equalsIgnoreCase(queueInventory[1].getName()) ? top[ladder.id()].getLoreRanked() : top[ladder.id()].getLore());
-                    if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                    meta.setLore(lore);
-                    meta.setLore(lore);
-                    current.setItemMeta(meta);	
-                });
-                ItemStack current = inventories.getItem(8);
-                ItemMeta meta = current.getItemMeta();
-	            if (inventories.getName().equalsIgnoreCase(queueInventory[1].getName())) meta.setLore(global_top.getLoreRanked());
-                if (inventories.getName().equalsIgnoreCase(leaderboardInventory.getName())) {
-                	List<String> list = Lists.newArrayList();
-                	list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                    list.addAll(global_top.getLore());
-                	list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
-                	meta.setLore(list);
-                }
-                current.setItemMeta(meta);
-            });
+			this.main.getKits().forEach(ladder -> {
+				ItemStack current = this.leaderboardInventory.getItem(ladder.id());
+				ItemMeta meta = current.getItemMeta();
+				List<String> lore = new ArrayList<>();
+				lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+				lore.addAll(top[ladder.id()].getLore());
+				lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+				meta.setLore(lore);
+				current.setItemMeta(meta);
+			});
+			ItemStack current = leaderboardInventory.getItem(8);
+			ItemMeta meta = current.getItemMeta();
+			List<String> list = Lists.newArrayList();
+			list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+			list.addAll(global_top.getLore());
+			list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+			meta.setLore(list);
+			current.setItemMeta(meta);
     	});
 	}
 

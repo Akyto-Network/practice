@@ -11,7 +11,6 @@ public class Top {
 
     private int elo_id;
     private final Map<String, Integer> topBoard = new HashMap<>();
-    private final ArrayList<String> loreRanked = new ArrayList<>();
     private final ArrayList<String> lore = new ArrayList<>();
 
     public Top(int elo_id, Map<String, int[]> map) {
@@ -36,9 +35,6 @@ public class Top {
 
         int x = 1;
         for (Map.Entry<String, Integer> entry : entries) {
-            if (x <= 3) {
-            	loreRanked.add(ChatColor.DARK_GRAY + "#" + x + " " + ChatColor.RED + entry.getKey() + ChatColor.GRAY + " (" + ChatColor.WHITE + entry.getValue() + ChatColor.GRAY + ")");
-            }
             if (x <= 10) {
             	lore.add(ChatColor.DARK_GRAY + "#" + x + " " + ChatColor.RED + entry.getKey() + ChatColor.GRAY + " (" + ChatColor.WHITE + entry.getValue() + ChatColor.GRAY + ")");
             }

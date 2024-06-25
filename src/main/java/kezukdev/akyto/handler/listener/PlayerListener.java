@@ -69,7 +69,8 @@ public class PlayerListener implements Listener {
 				this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(event.getPlayer().getUniqueId());
 			}
 			if (profile.isInState(ProfileState.SPECTATE)) {
-				final Duel duel = Utils.getDuelBySpectator(event.getPlayer().getUniqueId());
+				Duel duel = Utils.getDuelBySpectator(event.getPlayer().getUniqueId());
+				if (duel == null) duel = Utils.getDuelByUUID(event.getPlayer().getUniqueId());
 				duel.getSpectators().remove(event.getPlayer().getUniqueId());
 				Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.")));
 			}
@@ -338,6 +339,7 @@ public class PlayerListener implements Listener {
 		duelPlayers.addAll(duel.getSpectators());
 
 		duelPlayers.stream().map(Bukkit::getPlayer).forEach(player -> {
+			if (player == null) return;
 			player.playSound(deathLoc, Sound.AMBIENCE_THUNDER, 10000.0F, deathLoc.getPitch());
 		});
 
@@ -394,7 +396,8 @@ public class PlayerListener implements Listener {
                 this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).get(0)) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));
                 return;
             }
-        	MatchUtils.addKill(killed.getUniqueId(), killer == null ? null : killer.getUniqueId(), false);
+			//TODO: Made register last hitter and replace on at the place of : null.
+            MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);
 		}
 	}
 	

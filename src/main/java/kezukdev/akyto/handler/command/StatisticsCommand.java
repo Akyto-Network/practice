@@ -1,6 +1,8 @@
 package kezukdev.akyto.handler.command;
 
 import akyto.core.Core;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,8 +10,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import akyto.core.profile.Profile;
-import akyto.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.utils.Utils;
 
