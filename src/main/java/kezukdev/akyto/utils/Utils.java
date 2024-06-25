@@ -10,9 +10,9 @@ import kezukdev.akyto.arena.ArenaType;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
-import gym.core.Core;
-import gym.core.profile.Profile;
-import gym.core.profile.ProfileState;
+import akyto.core.Core;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.manager.PartyManager.PartyEntry;

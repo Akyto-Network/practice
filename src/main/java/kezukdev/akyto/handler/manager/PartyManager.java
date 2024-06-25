@@ -10,10 +10,10 @@ import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import gym.core.profile.Profile;
-import gym.core.profile.ProfileState;
-import gym.core.utils.CoreUtils;
-import gym.core.utils.components.ComponentJoiner;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
+import akyto.core.utils.CoreUtils;
+import akyto.core.utils.components.ComponentJoiner;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import lombok.Getter;

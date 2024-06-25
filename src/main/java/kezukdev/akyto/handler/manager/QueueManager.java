@@ -7,7 +7,7 @@ import org.bukkit.ChatColor;
 
 import com.google.common.collect.Sets;
 
-import gym.core.profile.ProfileState;
+import akyto.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;

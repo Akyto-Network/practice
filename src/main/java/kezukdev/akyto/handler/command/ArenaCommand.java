@@ -2,7 +2,7 @@ package kezukdev.akyto.handler.command;
 
 import com.google.common.collect.ImmutableList;
 
-import gym.core.utils.location.LocationSerializer;
+import akyto.core.utils.location.LocationSerializer;
 import it.unimi.dsi.fastutil.Pair;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;

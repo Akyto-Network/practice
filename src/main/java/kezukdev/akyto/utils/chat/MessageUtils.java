@@ -8,8 +8,8 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import gym.core.utils.CoreUtils;
-import gym.core.utils.components.ComponentJoiner;
+import akyto.core.utils.CoreUtils;
+import akyto.core.utils.components.ComponentJoiner;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;
 import kezukdev.akyto.kit.Kit;

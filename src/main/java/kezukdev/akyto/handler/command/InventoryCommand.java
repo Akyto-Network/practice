@@ -8,10 +8,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import gym.core.Core;
-import gym.core.profile.Profile;
-import gym.core.profile.ProfileState;
-import gym.core.utils.CoreUtils;
+import akyto.core.Core;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
+import akyto.core.utils.CoreUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.cache.DuelState;
 import net.md_5.bungee.api.ChatColor;

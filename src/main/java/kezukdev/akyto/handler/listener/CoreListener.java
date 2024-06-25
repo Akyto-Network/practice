@@ -16,8 +16,8 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import gym.core.Core;
-import gym.core.profile.ProfileState;
+import akyto.core.Core;
+import akyto.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.utils.Utils;

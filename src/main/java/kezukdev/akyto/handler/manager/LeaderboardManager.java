@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import gg.potted.idb.DB;
-import gym.core.Core;
-import gym.core.utils.format.FormatUtils;
+import akyto.core.Core;
+import akyto.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.utils.leaderboard.Top;
 import lombok.Getter;

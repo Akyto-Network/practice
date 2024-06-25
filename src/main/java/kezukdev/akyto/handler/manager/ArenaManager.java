@@ -8,8 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import gym.core.utils.config.Config;
-import gym.core.utils.location.LocationSerializer;
+import akyto.core.utils.config.Config;
+import akyto.core.utils.location.LocationSerializer;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;

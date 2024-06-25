@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import gym.core.utils.CoreUtils;
+import akyto.core.utils.CoreUtils;
 
 public class TagUtils {
 	

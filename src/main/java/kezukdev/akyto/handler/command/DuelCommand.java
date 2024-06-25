@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 
 import com.google.common.collect.Sets;
 
-import gym.core.profile.Profile;
-import gym.core.profile.ProfileState;
-import gym.core.utils.CoreUtils;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
+import akyto.core.utils.CoreUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;

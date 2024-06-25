@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import gym.core.utils.inventory.BukkitSerialization;
+import akyto.core.utils.inventory.BukkitSerialization;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.editor.Edited;
 

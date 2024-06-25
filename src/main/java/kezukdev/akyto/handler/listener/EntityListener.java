@@ -12,8 +12,8 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 
 import akyto.spigot.aSpigot;
 import akyto.spigot.handler.MovementHandler;
-import gym.core.profile.Profile;
-import gym.core.profile.ProfileState;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.duel.cache.DuelStatistics;
@@ -69,7 +69,7 @@ public class EntityListener implements Listener {
 			final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
 			final Profile profileDamager = Utils.getProfiles(event.getDamager().getUniqueId());
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
-				if (!gym.core.utils.CoreUtils.hitAllowed(event.getDamager().getUniqueId())) {
+				if (!akyto.core.utils.CoreUtils.hitAllowed(event.getDamager().getUniqueId())) {
 					event.setCancelled(true);
 					event.getDamager().sendMessage(ChatColor.RED + "Make high cps is strongly discouraged, your attack was disallow. Please make less cps.");
 					return;

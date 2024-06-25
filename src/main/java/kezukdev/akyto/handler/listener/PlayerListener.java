@@ -2,7 +2,7 @@ package kezukdev.akyto.handler.listener;
 
 import java.util.*;
 
-import gym.core.utils.database.DatabaseType;
+import akyto.core.utils.database.DatabaseType;
 import kezukdev.akyto.runnable.PearlExpireRunnable;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -25,10 +25,10 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import gym.core.Core;
-import gym.core.profile.Profile;
-import gym.core.profile.ProfileState;
-import gym.core.utils.format.FormatUtils;
+import akyto.core.Core;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
+import akyto.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.Duel.DuelType;

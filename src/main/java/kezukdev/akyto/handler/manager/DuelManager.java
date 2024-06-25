@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
 
-import gym.core.Core;
-import gym.core.profile.ProfileState;
-import gym.core.utils.components.ComponentJoiner;
-import gym.core.utils.format.FormatUtils;
+import akyto.core.Core;
+import akyto.core.profile.ProfileState;
+import akyto.core.utils.components.ComponentJoiner;
+import akyto.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.duel.Duel;
