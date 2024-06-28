@@ -40,21 +40,7 @@ public class ArenaManager {
 					Material.valueOf(arenaSection.getString(name + ".icon"))
 			);
 
-			if (arenaSection.isSet(name + ".corner1")) {
-				arena.setCorner1(LocationSerializer.stringToLocation(arenaSection.getString(name + ".corner1")));
-			}
-
-			if (arenaSection.isSet(name + ".corner2")) {
-				arena.setCorner2(LocationSerializer.stringToLocation(arenaSection.getString(name + ".corner2")));
-			}
-
 			this.main.getArenasMap().putIfAbsent(name, arena);
-
-			try {
-				arena.loadChunks();
-			} catch (Exception ex) {
-				this.main.getLogger().severe("Failed to load chunks for arena " + arena.getName() + ": " + ex.getMessage());
-			}
 		});
 	}
 
@@ -64,22 +50,10 @@ public class ArenaManager {
 		fileConfig.set("arenas", null);
 
 		this.main.getArenasMap().forEach((arenaName, arena) -> {
-			try {
-				arena.unloadChunks();
-			} catch (Exception ex) {
-				this.main.getLogger().severe("Failed to unload chunks for arena " + arena.getName() + ": " + ex.getMessage());
-			}
-		});
-
-		this.main.getArenasMap().forEach((arenaName, arena) -> {
 			fileConfig.set("arenas." + arenaName + ".first", LocationSerializer.locationToString(arena.getPosition().get(0)));
 			fileConfig.set("arenas." + arenaName + ".second", LocationSerializer.locationToString(arena.getPosition().get(1)));
 			fileConfig.set("arenas." + arenaName + ".type", arena.getArenaType().toString());
 			fileConfig.set("arenas." + arenaName + ".icon", arena.getIcon().toString());
-			if (arena.getCorner1() != null)
-				fileConfig.set("arenas." + arenaName + ".corner1", LocationSerializer.locationToString(arena.getCorner1()));
-			if (arena.getCorner2() != null)
-				fileConfig.set("arenas." + arenaName + ".corner2", LocationSerializer.locationToString(arena.getCorner2()));
 		});
 		this.config.save();
 	}

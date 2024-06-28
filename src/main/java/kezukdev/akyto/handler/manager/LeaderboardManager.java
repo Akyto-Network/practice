@@ -44,7 +44,7 @@ public class LeaderboardManager {
        final Map<String, int[]> top_elo = new HashMap<>();
        try {
     	   if (Core.API.getConnection().isClosed()) {
-    		   Core.API.getDatabaseSetup().setupHikariCP();
+    		   Core.API.setupHikariCP();
     	   }
            final PreparedStatement sts = Core.API.getConnection().prepareStatement("SELECT * FROM playersdata");
            final ResultSet rs = sts.executeQuery();

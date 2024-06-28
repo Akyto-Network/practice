@@ -147,13 +147,7 @@ public class PlayerListener implements Listener {
 				}
 				if (event.getItem().getType().equals(Material.IRON_SWORD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[0]); }
 				if (event.getItem().getType().equals(Material.DIAMOND_SWORD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[1]); }
-				if (event.getItem().getType().equals(Material.NAME_TAG)) {
-					if (!player.isOp()) {
-						player.sendMessage(ChatColor.RED + "Currently under working, exit at the next open :3");
-						return;
-					}
-					this.main.getManagerHandler().getPartyManager().createParty(player.getUniqueId());
-				}
+				if (event.getItem().getType().equals(Material.NAME_TAG)) { this.main.getManagerHandler().getPartyManager().createParty(player.getUniqueId()); }
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }
 				if (event.getItem().getType().equals(Material.SKULL_ITEM)) { player.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId())); }
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }

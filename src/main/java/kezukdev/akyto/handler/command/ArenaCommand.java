@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.Pair;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,18 +16,13 @@ import org.bukkit.entity.Player;
 import kezukdev.akyto.Practice;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ArenaCommand implements CommandExecutor {
-	
+
 	private final Practice main;
 	private final Map<UUID, Pair<Arena, Integer>> corners = new HashMap<>();
 	private static final String[] helpMessage = new String[] {
@@ -38,59 +32,14 @@ public class ArenaCommand implements CommandExecutor {
 			ChatColor.WHITE + "/arena create <name> <NORMAL/SUMO>",
 			ChatColor.WHITE + "/arena setpos<1/2> <name>",
 			ChatColor.WHITE + "/arena delete <name>",
-			ChatColor.WHITE + "/arena setcorners <name>",
 			ChatColor.WHITE + "/arena tp <name>",
 			ChatColor.WHITE + "/arena save <name>",
 			"",
 			ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------"
 	};
-	
+
 	public ArenaCommand(final Practice practice) {
 		this.main = practice;
-
-		// Event handler for setting arena corners
-		practice.getServer().getPluginManager().registerEvents(new Listener() {
-			@EventHandler
-			public void onCorner(PlayerInteractEvent event) {
-				Player player = event.getPlayer();
-				Block clicked = event.getClickedBlock();
-
-				if (clicked == null || !corners.containsKey(player.getUniqueId()))
-					return;
-
-				event.setCancelled(true);
-
-				Pair<Arena, Integer> editing = corners.remove(player.getUniqueId());
-				Arena target = editing.first();
-				int corner = editing.second();
-
-				LocationSerializer clickedLoc = LocationSerializer.fromBukkitLocation(clicked.getLocation());
-
-				if (corner == 1)
-					target.setCorner1(clickedLoc);
-				else
-					target.setCorner2(clickedLoc);
-
-				player.sendMessage(ChatColor.GREEN + String.format("Successfully set corner %d for arena %s to x=%f y=%f z=%f", corner, target.getName(), clickedLoc.getX(), clickedLoc.getY(), clickedLoc.getZ()));
-
-				if (corner == 2)
-					player.sendMessage(ChatColor.GREEN + "All corners have been set for arena " + target.getName() + "!");
-				else {
-					player.sendMessage(ChatColor.GREEN + "Left click on the second corner of " + target.getName());
-					corners.put(player.getUniqueId(), Pair.of(target, 2));
-				}
-			}
-
-			@EventHandler
-			public void onQuit(PlayerQuitEvent event) {
-				corners.remove(event.getPlayer().getUniqueId());
-			}
-
-			@EventHandler
-			public void onKick(PlayerKickEvent event) {
-				corners.remove(event.getPlayer().getUniqueId());
-			}
-		}, practice);
 	}
 
 	@Override
@@ -244,7 +193,7 @@ public class ArenaCommand implements CommandExecutor {
 			Validate.notNull(alias, "Alias cannot be null");
 
 			if (args.length < 2) {
-				return Stream.of("create", "setpos1", "setpos2", "setcorners", "delete", "tp")
+				return Stream.of("create", "setpos1", "setpos2", "delete", "tp")
 						.filter(sub -> args.length == 0 || sub.startsWith(args[0].toLowerCase()))
 						.collect(Collectors.toUnmodifiableList());
 			}
