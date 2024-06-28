@@ -183,14 +183,12 @@ public class InventoryManager {
         preview.setItem(38, Bukkit.getPlayer(uuid).getInventory().getArmorContents()[1]);
         preview.setItem(39, Bukkit.getPlayer(uuid).getInventory().getArmorContents()[0]);
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
+		final int addition = opponent != null ? 0 : +1;
         for (int i = 45; i < 54; ++i) {
             preview.setItem(i, glass);
         }
-        final List<String> loreInfos = new ArrayList<>();
-        loreInfos.add(ChatColor.DARK_GRAY + "Life Level" + ChatColor.RESET + ": " + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤");
-        loreInfos.add(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d));
-        preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", loreInfos));
-		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ")); // TODO Orginiser a la rimk
+        preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", Arrays.asList(FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤")));
+		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ", Arrays.asList(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d)))); // TODO Orginiser a la rimk
         List<String> effectsInfo = new ArrayList<>();
         if (!Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
             for(PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects()) effectsInfo.add(ChatColor.GRAY + potionEffect.getType().getName() + " " + (potionEffect.getAmplifier() + 1) + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
@@ -198,7 +196,7 @@ public class InventoryManager {
         if (Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
         	effectsInfo.add(ChatColor.RED + "No Effects.");
         }
-		preview.setItem(49, ItemUtils.createItems(Material.BREWING_STAND_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Effects Informations" + ChatColor.RESET + ": ", effectsInfo));
+		preview.setItem(49+addition, ItemUtils.createItems(Material.BREWING_STAND_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Effects Informations" + ChatColor.RESET + ": ", effectsInfo));
 
         final List<String> loreStats = new ArrayList<>();
         if (kit.name().equals("nodebuff") || kit.name().equals("debuff") || kit.name().equals("noenchant") || kit.name().equals("axe")) {
@@ -206,8 +204,8 @@ public class InventoryManager {
         }	
         loreStats.add(ChatColor.DARK_GRAY + "Hits" + ChatColor.RESET + ": " + duelStatistics.getHits());
         loreStats.add(ChatColor.DARK_GRAY + "Best Combo" + ChatColor.RESET + ": " + duelStatistics.getLongestHit());
-		preview.setItem(50, ItemUtils.createItems(Material.DIAMOND_SWORD, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
-        preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + CoreUtils.getName(opponent)));
+		preview.setItem(50+addition, ItemUtils.createItems(Material.DIAMOND_SWORD, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
+		if (opponent != null) preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + CoreUtils.getName(opponent)));
         this.previewInventory.remove(uuid);
 		this.previewInventory.put(uuid, preview);
 	}

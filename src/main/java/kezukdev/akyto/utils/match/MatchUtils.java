@@ -29,13 +29,14 @@ public class MatchUtils {
         final Duel match = Utils.getDuelByUUID(uuid);
         final ManagerHandler managerHandler = Practice.getAPI().getManagerHandler();
         if (match == null) return;
+		if (disconnect) {
+			match.getDisconnected().add(uuid);
+		}
+		managerHandler.getInventoryManager().generatePreviewInventory(uuid, killer);
         if (match.getDuelType().equals(DuelType.FFA)) {
         	match.getAlives().remove(uuid);
             if (match.getAlives().size() == 1) {
-            	if (killer != null) {
-            		managerHandler.getInventoryManager().generatePreviewInventory(killer, uuid);
-            	}
-                managerHandler.getDuelManager().endMultiple(killer);
+				managerHandler.getDuelManager().endMultiple(match.getAlives().stream().toList().getFirst());
                 return;
             }
 
@@ -56,24 +57,16 @@ public class MatchUtils {
                     spectator.sendMessage(ChatColor.WHITE + CoreUtils.getName(uuid) +  ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + CoreUtils.getName(killer)));
                 }
             });
-            if (disconnect) {
-                match.getFirst().remove(uuid);
-                match.getSecond().remove(uuid);
-            	return;
-            }
             if (Bukkit.getPlayer(uuid) != null) {
                 addSpectateParty(uuid);
             }
         }
 
         if (match.getDuelType().equals(DuelType.SPLIT)) {
-            match.getFirstAlives().remove(uuid);
-            match.getSecondAlives().remove(uuid);
-            if (killer != null) {
-            	managerHandler.getInventoryManager().generatePreviewInventory(killer, uuid);
-            }
+			if (match.getFirstAlives().contains(uuid)) match.getFirstAlives().remove(uuid);
+			if (match.getSecondAlives().contains(uuid)) match.getSecondAlives().remove(uuid);
             if (match.getFirstAlives().isEmpty() || match.getSecondAlives().isEmpty()) {
-                managerHandler.getDuelManager().endMultiple(killer);
+                managerHandler.getDuelManager().endMultiple(killer == null ? (match.getFirst().contains(uuid) ? match.getSecondAlives().stream().toList().getFirst() : match.getFirstAlives().stream().toList().getFirst()) : killer);
                 return;
             }
 
@@ -98,11 +91,6 @@ public class MatchUtils {
 					spectator.sendMessage(ChatColor.WHITE + CoreUtils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + CoreUtils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
 				}
 			});
-            if (disconnect) {
-                match.getFirst().remove(uuid);
-                match.getSecond().remove(uuid);
-            	return;
-            }
 			if (Bukkit.getPlayer(uuid) != null)
 				addSpectateParty(uuid);
         }
@@ -115,14 +103,12 @@ public class MatchUtils {
     		duel.getAlives().forEach(alives -> {
     			Bukkit.getPlayer(alives).hidePlayer(Bukkit.getPlayer(uuid));
     			Utils.getProfiles(uuid).setProfileState(ProfileState.SPECTATE);
-    			managerHandler.getItemManager().giveItems(uuid, false);
     		});
     	}
     	if (duel.getDuelType().equals(DuelType.SPLIT)) {
     		Arrays.asList(duel.getFirstAlives(), duel.getSecondAlives()).forEach(alivesArray -> alivesArray.forEach(alives -> {
                 Bukkit.getPlayer(alives).hidePlayer(Bukkit.getPlayer(uuid));
                 Utils.getProfiles(uuid).setProfileState(ProfileState.SPECTATE);
-                managerHandler.getItemManager().giveItems(uuid, false);
             }));
     	}
 		final Profile profile = Utils.getProfiles(uuid);
@@ -132,6 +118,7 @@ public class MatchUtils {
 				if (!profile.getSpectateSettings().get(0)) Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(spectator));
 			});
 		}
+		managerHandler.getItemManager().giveItems(uuid, false);
 		if (profile.getSpectateSettings().get(1)) Bukkit.getPlayer(uuid).setFlySpeed(0.1f);
 		if (!profile.getSpectateSettings().get(1)) Bukkit.getPlayer(uuid).setFlySpeed(0.25f);
     }

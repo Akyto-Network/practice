@@ -2,6 +2,7 @@ package kezukdev.akyto.runnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -16,13 +17,13 @@ import kezukdev.akyto.utils.match.MatchUtils;
 public class RespawnRunnable extends BukkitRunnable {
     
     private final Practice main;
-    private final List<List<UUID>> players;
+    private final List<Set<UUID>> players;
     private final Duel duel;
     
-    public RespawnRunnable(final List<List<UUID>> players, final Practice main) {
+    public RespawnRunnable(final List<Set<UUID>> players, final Practice main) {
         this.main = main;
         this.players = players;
-        this.duel = Utils.getDuelByUUID(players.get(0).get(0));
+        this.duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst());
     }
 
     @Override

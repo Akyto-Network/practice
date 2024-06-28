@@ -56,13 +56,11 @@ public class ItemManager {
 		}
 		// -> Inversé les status ?
 		if (profile.isInState(ProfileState.SPECTATE)) {
-			Duel duel = Utils.getDuelBySpectator(uuid);
-			if (duel == null) duel = Utils.getDuelByUUID(uuid);
 			player.setAllowFlight(true);
 			player.setFlying(true);
-			if (duel.getDuelType().equals(DuelType.SINGLE)) player.getInventory().setItem(0, ItemUtils.createItems(Material.CHEST, ChatColor.DARK_GRAY + "Teleport to another " + ChatColor.WHITE + "player" + ChatColor.DARK_GRAY + "."));
-			player.getInventory().setItem(duel.getDuelType().equals(DuelType.SINGLE) ? 3 : 0, ItemUtils.createItems(Material.REDSTONE_COMPARATOR, ChatColor.DARK_GRAY + "Settings"));
-			if (duel.getDuelType().equals(DuelType.SINGLE)) player.getInventory().setItem(5, ItemUtils.createItems(Material.COMPASS, ChatColor.DARK_GRAY + "Spectate another " + ChatColor.WHITE + "match" + ChatColor.DARK_GRAY + "."));	
+			if (Utils.getPartyByUUID(uuid) == null) player.getInventory().setItem(0, ItemUtils.createItems(Material.CHEST, ChatColor.DARK_GRAY + "Teleport to another " + ChatColor.WHITE + "player" + ChatColor.DARK_GRAY + "."));
+			player.getInventory().setItem(Utils.getPartyByUUID(uuid) == null ? 3 : 0, ItemUtils.createItems(Material.REDSTONE_COMPARATOR, ChatColor.DARK_GRAY + "Settings"));
+			if (Utils.getPartyByUUID(uuid) == null) player.getInventory().setItem(5, ItemUtils.createItems(Material.COMPASS, ChatColor.DARK_GRAY + "Spectate another " + ChatColor.WHITE + "match" + ChatColor.DARK_GRAY + "."));
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Spectating."));
 			player.updateInventory();
 		}

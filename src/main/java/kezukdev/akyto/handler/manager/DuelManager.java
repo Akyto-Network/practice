@@ -3,6 +3,7 @@ package kezukdev.akyto.handler.manager;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.Sets;
 import gg.potted.idb.DB;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -51,7 +52,7 @@ public class DuelManager {
 			uuids.forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) == null) {
 					if (duel.getDuelType().equals(DuelType.SINGLE)) {
-						this.endSingle(first.get(0).equals(uuid) ? second.get(0) : first.get(0));
+						this.endSingle(first.getFirst().equals(uuid) ? second.getFirst() : first.getFirst());
 						return;
 					}
 					else {
@@ -59,7 +60,7 @@ public class DuelManager {
 					}
 				}
 				MatchUtils.multiArena(uuid, true, false);
-				Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(Utils.getOpponents(uuid).get(0)));
+				Utils.getOpponents(uuid).forEach(ops -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(ops))); // Fix Tracker problem
 				this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(Utils.getDuelByUUID(uuid).isRanked(), kit);
 				Utils.resetPlayer(uuid);
 				final Player player = Bukkit.getPlayer(uuid);
@@ -130,19 +131,32 @@ public class DuelManager {
 			}
 			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames());
 			});
-		TagUtils.clearEntries(Arrays.asList(Lists.newArrayList(winner), Lists.newArrayList(looser)));
-		new RespawnRunnable(Collections.singletonList(players), this.main).runTaskLater(this.main, 70L);
+		TagUtils.clearEntries(Arrays.asList(Sets.newHashSet(winner), Sets.newHashSet(looser)));
+		new RespawnRunnable(Collections.singletonList(Sets.newHashSet(players)), this.main).runTaskLater(this.main, 70L);
 	}
 
 	public void endMultiple(final UUID winner) {
 		final Duel duel = Utils.getDuelByUUID(winner);
-		final List<UUID> winners = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getFirst()) : new ArrayList<>(duel.getSecond());
-		final List<UUID> loosers = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
+		final Set<UUID> winners = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getFirst()) : Sets.newHashSet(duel.getSecond());
+		final Set<UUID> loosers = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getSecond()) : Sets.newHashSet(duel.getFirst());
 		duel.getWinner().addAll(winners);
-		duel.getTimer().cancel();
+		if (duel.getTimer() != null){
+			duel.getTimer().cancel();
+		}
+		winners.forEach(uuid -> Practice.getAPI().getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, loosers.stream().toList().getFirst()));
 		duel.setState(DuelState.FINISHING);
 		MessageUtils.sendPartyComponent(Arrays.asList(winners, loosers));
-		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames())));
+		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> {
+			if (Bukkit.getPlayer(uuid) != null) {
+				Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames());
+			}
+		}));
+		Arrays.asList(winners, loosers).forEach(teams -> teams.forEach(players -> {
+			if(Bukkit.getPlayer(players) == null) {
+				if (winners.contains(players)) winners.remove(players);
+				if (loosers.contains(players)) loosers.remove(players);
+			}
+		}));
 		TagUtils.clearEntries(Arrays.asList(winners, loosers));
 		new RespawnRunnable(Arrays.asList(winners, loosers), this.main).runTaskLater(this.main, 70L);
 	}

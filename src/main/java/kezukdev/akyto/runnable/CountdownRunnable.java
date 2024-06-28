@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.UUID;
 
+import kezukdev.akyto.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -39,6 +41,11 @@ public class CountdownRunnable extends BukkitRunnable {
 		}
 
 		counter -= 1;
+		if (counter == 4) {
+			players.forEach(uuids -> uuids.forEach(uuid -> {
+				Utils.getOpponents(uuid).forEach(opps -> Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(opps)));
+			}));
+		}
 		if (counter > 0) {
             players.forEach(uuids -> uuids.forEach(uuid -> {
 				final Player player = main.getServer().getPlayer(uuid);

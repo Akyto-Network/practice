@@ -1,9 +1,6 @@
 package kezukdev.akyto.utils.chat;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -69,8 +66,8 @@ public class MessageUtils {
 	    });
 	}
 	
-	public static void sendPartyComponent(final List<List<UUID>> players) {
-		final Duel duel = Utils.getDuelByUUID(players.get(0).get(0));
+	public static void sendPartyComponent(final List<Set<UUID>> players) {
+		final Duel duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst());
 		if (duel.getDuelType().equals(DuelType.FFA)) {
 			TextComponent invComponent = new TextComponent(ChatColor.YELLOW + "Inventorie(s)" + ChatColor.GRAY + ": ");
             final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
@@ -90,7 +87,7 @@ public class MessageUtils {
                     if (Bukkit.getPlayer(uuids) != null) {
                     	Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
         				Bukkit.getPlayer(uuids).sendMessage(ChatColor.YELLOW + "Match Information");
-        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + CoreUtils.getName(Utils.getDuelByUUID(uuids).getWinner().get(0)));
+        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + CoreUtils.getName(Utils.getDuelByUUID(uuids).getWinner().getFirst()));
         				Bukkit.getPlayer(uuids).sendMessage(" ");
         				Bukkit.getPlayer(uuids).spigot().sendMessage(invComponent);
         				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");

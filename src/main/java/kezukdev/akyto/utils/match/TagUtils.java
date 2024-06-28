@@ -1,8 +1,11 @@
 package kezukdev.akyto.utils.match;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import kezukdev.akyto.duel.Duel;
+import kezukdev.akyto.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -44,9 +47,18 @@ public class TagUtils {
 		});
 	}
 	
-	public static void clearEntries(final List<List<UUID>> players) {
-		players.get(0).forEach(first -> clearNameTags(Bukkit.getPlayer(first)));
-		players.get(1).forEach(first -> clearNameTags(Bukkit.getPlayer(first)));
+	public static void clearEntries(final List<Set<UUID>> players) {
+		final Duel duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst());
+		players.get(0).forEach(first -> {
+			if (Bukkit.getPlayer(first) != null || !duel.getDisconnected().contains(first)) {
+				clearNameTags(Bukkit.getPlayer(first));
+			}
+		});
+		players.get(1).forEach(first -> {
+			if (Bukkit.getPlayer(first) != null || !duel.getDisconnected().contains(first)) {
+				clearNameTags(Bukkit.getPlayer(first));
+			}
+		});
 	}
 	
     public static void clearNameTags(Player player) {

@@ -27,6 +27,7 @@ public class Duel {
     public long duration;
     public Timer timer;
     private List<UUID> winner;
+	private List<UUID> disconnected;
     public Arena arena;
 	
 	public Duel(final Practice main, final Set<UUID> first, final Set<UUID> second, final boolean ranked, final Kit kit, final Duel.DuelType type, final Arena arena) {
@@ -36,6 +37,7 @@ public class Duel {
 		this.spectators = new HashSet<>();
 		this.dropped = new HashSet<>();
 		this.ranked = ranked;
+		if (!type.equals(DuelType.SINGLE)) this.disconnected = new ArrayList<>();
 		if (type.equals(DuelType.FFA)) {
 			this.alives = new HashSet<>(first);
 			this.alives.addAll(second);
