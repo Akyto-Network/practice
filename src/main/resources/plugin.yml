@@ -22,4 +22,7 @@ commands:
     aliases: [lb, leaderb, top, leadertop]
   party:
     aliases: [p, group, parties]
+  reset:
+    aliases: [statsreset, tweak]
+    description: 'Reset global data of targeted player!'
   

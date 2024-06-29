@@ -24,7 +24,7 @@ public class TagUtils {
 			}
 			final Team team1 = sb.registerNewTeam("green");
 			team1.setPrefix(ChatColor.GREEN.toString());
-			team1.addEntry(CoreUtils.getName(uuid));
+			first.forEach(firstUUID -> team1.addEntry(CoreUtils.getName(firstUUID)));
 			team1.setAllowFriendlyFire(false);
 			final Team team2 = sb.registerNewTeam("red");
 			team2.setPrefix(ChatColor.RED.toString());
@@ -38,7 +38,7 @@ public class TagUtils {
 			}
 			final Team team1 = sb.registerNewTeam("green");
 			team1.setPrefix(ChatColor.GREEN.toString());
-			team1.addEntry(CoreUtils.getName(uuid));
+			second.forEach(secondUUID -> team1.addEntry(CoreUtils.getName(secondUUID)));
 			team1.setAllowFriendlyFire(false);
 			final Team team2 = sb.registerNewTeam("red");
 			team2.setPrefix(ChatColor.RED.toString());

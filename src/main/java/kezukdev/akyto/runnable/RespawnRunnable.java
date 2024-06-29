@@ -23,7 +23,7 @@ public class RespawnRunnable extends BukkitRunnable {
     public RespawnRunnable(final List<Set<UUID>> players, final Practice main) {
         this.main = main;
         this.players = players;
-        this.duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst());
+        this.duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst()) != null ? Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst()) : Utils.getDuelByUUID(players.getLast().stream().toList().getFirst());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class RespawnRunnable extends BukkitRunnable {
         }));
         final boolean ranked = duel.isRanked();
         final Kit kit = duel.getKit();
-		MatchUtils.clearDrops(new ArrayList<>(duel.getFirst()).get(0) != null ? new ArrayList<>(duel.getFirst()).get(0) : new ArrayList<>(duel.getSecond()).get(0));
+		MatchUtils.clearDrops(new ArrayList<>(duel.getFirst()).getFirst() != null ? new ArrayList<>(duel.getFirst()).getFirst() : new ArrayList<>(duel.getSecond()).getFirst());
         main.getDuels().remove(duel);
         main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);	
         main.getManagerHandler().getInventoryManager().refreshSpectateInventory();

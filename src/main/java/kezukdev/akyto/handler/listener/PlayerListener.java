@@ -207,7 +207,7 @@ public class PlayerListener implements Listener {
 		final Player player = event.getPlayer();
 		final Profile profile = Utils.getProfiles(player.getUniqueId());
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-			if (player.getItemInHand() == null) return;
+			if (player.getItemInHand() == null || event.getItem() == null) return;
 	        if (profile.isInState(ProfileState.FIGHT)) {
 	            final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 	            if (player.getItemInHand().getType() == Material.ENDER_PEARL) {
@@ -218,7 +218,7 @@ public class PlayerListener implements Listener {
 	                    return;
 	                }
 	                DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
-	                if (duelStatistics.getEnderPearlCooldown() <= 0L) {
+	                if (!duelStatistics.hasPearlCooldown()) {
 	                	event.setUseItemInHand(Result.ALLOW);
 						duelStatistics.applyEnderPearlCooldown();
 	                    new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);

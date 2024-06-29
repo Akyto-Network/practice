@@ -1,17 +1,11 @@
 package kezukdev.akyto.handler;
 
 import java.util.Arrays;
+
+import kezukdev.akyto.handler.command.*;
 import org.bukkit.Bukkit;
 
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.handler.command.ArenaCommand;
-import kezukdev.akyto.handler.command.DuelCommand;
-import kezukdev.akyto.handler.command.InventoryCommand;
-import kezukdev.akyto.handler.command.LeaderboardCommand;
-import kezukdev.akyto.handler.command.LocationsCommand;
-import kezukdev.akyto.handler.command.PartyCommand;
-import kezukdev.akyto.handler.command.SpectateCommand;
-import kezukdev.akyto.handler.command.StatisticsCommand;
 import kezukdev.akyto.handler.listener.CoreListener;
 import kezukdev.akyto.handler.listener.EntityListener;
 import kezukdev.akyto.handler.listener.InventoryListener;
@@ -36,6 +30,7 @@ public class MiscHandler {
 		main.getCommand("stats").setExecutor(new StatisticsCommand(main));
 		main.getCommand("leaderboard").setExecutor(new LeaderboardCommand(main));
 		main.getCommand("party").setExecutor(new PartyCommand(main));
+		main.getCommand("reset").setExecutor(new ResetCommand());
 	}
 
 }
