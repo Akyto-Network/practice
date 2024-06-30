@@ -1,8 +1,10 @@
 package kezukdev.akyto.handler.manager;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import akyto.core.utils.CoreUtils;
 import com.google.common.collect.Sets;
 import gg.potted.idb.DB;
 import org.bukkit.Bukkit;
@@ -41,7 +43,7 @@ public class DuelManager {
 	public DuelManager(final Practice main) { this.main = main; }
 	
 	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
-		final Duel duel = Utils.getDuelByUUID(first.get(0));
+		final Duel duel = Utils.getDuelByUUID(first.getFirst());
 		Arena arena = duel.getArena() != null ? duel.getArena() : this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
 		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
 		TagUtils.setupTeams(first, second);
@@ -66,8 +68,8 @@ public class DuelManager {
 				final Player player = Bukkit.getPlayer(uuid);
 				if (duel.getDuelType().equals(DuelType.SINGLE)) {
 					player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " +
-					ChatColor.WHITE + (first.get(0).equals(uuid) ? Bukkit.getPlayer(second.get(0)).getName() : Bukkit.getPlayer(first.get(0)).getName()) +
-					(duel.isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + Utils.getProfiles(Utils.getOpponents(uuid).get(0)).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
+					ChatColor.WHITE + (first.getFirst().equals(uuid) ? CoreUtils.getName(second.getFirst()) : CoreUtils.getName(first.getFirst())) +
+					(duel.isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + Utils.getProfiles(Utils.getOpponents(uuid).getFirst()).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
 				}
 				if (duel.getDuelType().equals(DuelType.FFA)) {
 					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
@@ -126,8 +128,8 @@ public class DuelManager {
 		players.forEach(uuid -> {
 			if (duel.isRanked() && !duel.getSpectators().contains(uuid)) {
 		        final String elos = FormatUtils.getStringValue(Utils.getProfiles(uuid).getStats().get(2), ":");
-		        DB.executeUpdateAsync("UPDATE playersdata SET elos=? WHERE name=?", elos, Bukkit.getServer().getPlayer(uuid).getName()).join();
-		        this.main.getManagerHandler().getInventoryManager().refreshLeaderboard();
+				CompletableFuture<Void> update = CompletableFuture.runAsync(() -> DB.executeUpdateAsync("UPDATE playersdata SET elos=? WHERE name=?", elos, Bukkit.getServer().getPlayer(uuid).getName()));
+		        update.whenCompleteAsync((t, u) -> this.main.getManagerHandler().getInventoryManager().refreshLeaderboard());
 			}
 			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames());
 			});

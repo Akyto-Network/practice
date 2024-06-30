@@ -1,5 +1,7 @@
 package kezukdev.akyto.runnable;
 
+import akyto.core.Core;
+import akyto.core.utils.CoreUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -21,9 +23,9 @@ public class RequestExpireRunnable extends BukkitRunnable {
 			this.cancel();
 			return;
 		}
-		Bukkit.getPlayer(request.getRequester()).sendMessage(ChatColor.RED + "Your duel request for " + (Bukkit.getPlayer(request.getReceiver()) != null ? Bukkit.getPlayer(request.getReceiver()).getName() : Bukkit.getOfflinePlayer(request.getReceiver()).getName()) + " expires");
+		Bukkit.getPlayer(request.getRequester()).sendMessage(ChatColor.RED + "Your duel request to " + CoreUtils.getName(request.getReceiver()) + " expires");
 		if (Bukkit.getPlayer(request.getReceiver()) != null) {
-			Bukkit.getPlayer(request.getReceiver()).sendMessage(ChatColor.RED + "The duel request of " + (Bukkit.getPlayer(request.getRequester()) != null ? Bukkit.getPlayer(request.getRequester()).getName() : Bukkit.getOfflinePlayer(request.getRequester()).getName()) + " have expired!");
+			Bukkit.getPlayer(request.getReceiver()).sendMessage(ChatColor.RED + "The duel request of " + CoreUtils.getName(request.getRequester()) + " have expired!");
 		}
 		Practice.getAPI().getManagerHandler().getRequestManager().removeRequest(request.getRequester());
 	}

@@ -43,7 +43,11 @@ public class InventoryCommand implements CommandExecutor {
             return false;
         }
 
-        final UUID targetUUID = CoreUtils.getUUID(args[0]);
+        String name = args[0];
+        if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[0])) {
+            name = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]);
+        }
+        final UUID targetUUID = CoreUtils.getUUID(name);
 
         if (this.main.getManagerHandler().getInventoryManager().getPreviewInventory().get(targetUUID) == null) {
             sender.sendMessage(ChatColor.WHITE + args[0] + ChatColor.RED + " inventory does not exist.");

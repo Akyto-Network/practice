@@ -41,8 +41,8 @@ public class MessageUtils {
 	public static void sendSplitMessage(final List<UUID> first, final List<UUID> second, final Kit ladder) {
 	    final ComponentJoiner joinerOne = new ComponentJoiner(ChatColor.GRAY + ", ");
 	    final ComponentJoiner joinerTwo = new ComponentJoiner(ChatColor.GRAY + ", ");
-        final TextComponent firsttxt = new TextComponent(ChatColor.DARK_GRAY + CoreUtils.getName(first.get(0)) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
-        final TextComponent secondtxt = new TextComponent(ChatColor.DARK_GRAY + CoreUtils.getName(second.get(0)) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
+        final TextComponent firsttxt = new TextComponent(ChatColor.DARK_GRAY + CoreUtils.getName(first.getFirst()) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
+        final TextComponent secondtxt = new TextComponent(ChatColor.DARK_GRAY + CoreUtils.getName(second.getFirst()) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
 	    first.forEach(uuid -> {
 	    	final TextComponent itxt = new TextComponent(CoreUtils.getName(uuid));
 	        itxt.setColor(ChatColor.RED);

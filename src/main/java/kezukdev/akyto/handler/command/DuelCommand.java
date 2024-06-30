@@ -1,5 +1,7 @@
 package kezukdev.akyto.handler.command;
 
+import akyto.core.Core;
+import kezukdev.akyto.handler.manager.RequestManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -46,7 +48,9 @@ public class DuelCommand implements CommandExecutor {
 
 		if (args.length == 1) {
 			Player target = Bukkit.getPlayer(args[0]);
-
+			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[0])) {
+				target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]));
+			}
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[0] + " not found on akyto.");
 				return false;
@@ -66,8 +70,8 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
 			}
-			
-			if (Practice.getAPI().getManagerHandler().getRequestManager().getRequest().containsKey(CoreUtils.getUUID(sender.getName()))) {
+			final RequestManager requestManager = Practice.getAPI().getManagerHandler().getRequestManager();
+			if (requestManager.getRequest().containsKey(CoreUtils.getUUID(sender.getName()))) {
 				sender.sendMessage(ChatColor.RED + "There's a pending request in all of this :3");
 				return false;
 			}
@@ -82,8 +86,7 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "This player doesn't accept any duel request!");
 				return false;
 			}
-
-			this.main.getManagerHandler().getRequestManager().createPullRequest(playerSender.getUniqueId(), target.getUniqueId());
+			requestManager.createPullRequest(playerSender.getUniqueId(), target.getUniqueId());
 		}
 
 		if (args.length == 2 && args[0].equalsIgnoreCase("accept")) {
@@ -92,7 +95,10 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 
-			final Player target = Bukkit.getPlayer(args[1]);
+			Player target = Bukkit.getPlayer(args[1]);
+			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
+				target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
+			}
 
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[1] + " not found on akyto.");
@@ -106,7 +112,7 @@ public class DuelCommand implements CommandExecutor {
 			}
 			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
 			if (!targetProfile.isInState(ProfileState.FREE)) {
-				sender.sendMessage(ChatColor.RED + target.getDisplayName() + " is not free now.");
+				sender.sendMessage(ChatColor.RED + args[1] + " is not free now.");
 				return false;
 			}
 			new Duel(this.main, Sets.newHashSet(target.getUniqueId()), Sets.newHashSet(playerSender.getUniqueId()), false, request.getKit(), DuelType.SINGLE, request.getArena());
