@@ -31,7 +31,10 @@ public class ResetCommand implements CommandExecutor {
             return false;
         }
         final Player target = Bukkit.getPlayer(args[0]);
-        final String playerName = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getName() : Bukkit.getPlayer(args[0]).getName();
+        String playerName = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getName() : Bukkit.getPlayer(args[0]).getName();
+        if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[0])) {
+            playerName = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]);
+        }
         final UUID uuid = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getUniqueId() : Bukkit.getPlayer(args[0]).getUniqueId();
         final int[] newArrayElo = new int[Practice.getAPI().getKits().size()];
         final int[] newArrayWin = new int[Practice.getAPI().getKits().size()];
@@ -41,12 +44,13 @@ public class ResetCommand implements CommandExecutor {
             newArrayWin[i] = 0;
             newArrayPlayed[i] = 0;
         }
+        final String finalPlayerName = playerName;
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-            Core.API.getDatabaseSetup().resetElos(playerName, newArrayElo, newArrayWin, newArrayPlayed);
+            Core.API.getDatabaseSetup().resetElos(finalPlayerName, newArrayElo, newArrayWin, newArrayPlayed);
         });
         future.whenCompleteAsync((t, u) -> {
             Practice.getAPI().getManagerHandler().getInventoryManager().refreshLeaderboard();
-            Bukkit.getLogger().warning(playerName + " global data is now cleared by " + sender.getName());
+            Bukkit.getLogger().warning(finalPlayerName + " global data is now cleared by " + sender.getName());
         });
         if (target != null) {
             final Profile profile = Utils.getProfiles(target.getUniqueId());

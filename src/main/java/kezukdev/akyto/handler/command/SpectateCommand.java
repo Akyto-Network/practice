@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import akyto.core.Core;
 import kezukdev.akyto.utils.Utils;
 import kezukdev.akyto.utils.match.MatchUtils;
 
@@ -58,7 +59,16 @@ public class SpectateCommand implements CommandExecutor {
             return false;
         }
 
-        final UUID targetUUID = CoreUtils.getUUID(args[0]);
+        String name = args[0];
+        if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(name)){
+            sender.sendMessage(ChatColor.WHITE + args[0] + ChatColor.RED + " isn't in fight.");
+            return false;
+        }
+        if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(name)){
+            name = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(name);
+        }
+
+        final UUID targetUUID = CoreUtils.getUUID(name);
         final Duel targetDuel = Utils.getDuelByUUID(targetUUID);
         
         if (targetDuel == null) {

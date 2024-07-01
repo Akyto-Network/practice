@@ -1,5 +1,6 @@
 package kezukdev.akyto.handler.command;
 
+import akyto.core.Core;
 import kezukdev.akyto.handler.manager.PartyManager;
 import kezukdev.akyto.request.Request;
 import kezukdev.akyto.request.Request.RequestType;
@@ -86,7 +87,16 @@ public class PartyCommand implements CommandExecutor {
 					return false;
 				}
 
-				final Player target = Bukkit.getPlayer(args[1]);
+				Player target = Bukkit.getPlayer(args[1]);
+
+				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(args[1])) {
+					sender.sendMessage(ChatColor.RED + args[1] + " is not online.");
+					return false;
+				}
+
+				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
+					target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
+				}
 
 				if (target == null) {
 					sender.sendMessage(ChatColor.RED + args[1] + " is not online.");
@@ -117,15 +127,25 @@ public class PartyCommand implements CommandExecutor {
             }
 
 			if (args[0].equalsIgnoreCase("kick")) {
-				partyManager.kickParty(playerSender.getUniqueId(), Bukkit.getPlayer(args[1]).getUniqueId());
+				Player target = Bukkit.getPlayer(args[1]);
+				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
+					target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
+				}
+				partyManager.kickParty(playerSender.getUniqueId(), target.getUniqueId());
 				return false;
 			}
 
 			if (args[0].equalsIgnoreCase("join")) {
-				final Player target = Bukkit.getPlayer(args[1]);
-
+				Player target = Bukkit.getPlayer(args[1]);
+				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(args[1])) {
+					sender.sendMessage(ChatColor.RED + args[1] + " is not online.");
+					return false;
+				}
+				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
+					target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
+				}
 				if (target == null) {
-					sender.sendMessage(ChatColor.RED + "This player is not online");
+					sender.sendMessage(ChatColor.RED + args[1] + " is not online.");
 					return false;
 				}
 

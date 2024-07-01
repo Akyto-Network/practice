@@ -44,6 +44,10 @@ public class InventoryCommand implements CommandExecutor {
         }
 
         String name = args[0];
+        if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(args[0])) {
+            sender.sendMessage(org.bukkit.ChatColor.RED + args[0] + " not found on akyto.");
+            return false;
+        }
         if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[0])) {
             name = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]);
         }

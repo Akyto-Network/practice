@@ -46,13 +46,16 @@ public class StatisticsCommand implements CommandExecutor {
 				return false;
 			}
 
-			final Player target = Bukkit.getPlayer(args[0]);
+			Player target = Bukkit.getPlayer(args[0]);
+
+			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[0]))
+				target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]));
 
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not online.");
 				return false;
 			}
-
+			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.getAPI().getKits().size(), Practice.getAPI().getKitNames());
 			playerSender.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(target.getUniqueId()));
 			return false;
 		}
