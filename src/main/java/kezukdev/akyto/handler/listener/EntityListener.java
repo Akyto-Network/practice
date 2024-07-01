@@ -1,5 +1,7 @@
 package kezukdev.akyto.handler.listener;
 
+import akyto.core.Core;
+import akyto.core.utils.CoreUtils;
 import kezukdev.akyto.duel.Duel;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -69,9 +71,9 @@ public class EntityListener implements Listener {
 			final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
 			final Profile profileDamager = Utils.getProfiles(event.getDamager().getUniqueId());
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
-				if (!akyto.core.utils.CoreUtils.hitAllowed(event.getDamager().getUniqueId())) {
+				if (!profileDamager.isAllowClick()) {
 					event.setCancelled(true);
-					event.getDamager().sendMessage(ChatColor.RED + "Make high cps is strongly discouraged, your attack was disallow. Please make less cps.");
+					event.getDamager().sendMessage(CoreUtils.translate(Core.API.getLoaderHandler().getMessage().getClickCancel()));
 					return;
 				}
 				final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
