@@ -46,7 +46,9 @@ public class DuelManager {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
 		Arena arena = duel.getArena() != null ? duel.getArena() : this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
 		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
-		TagUtils.setupTeams(first, second);
+		if (!duel.getDuelType().equals(DuelType.FFA)){
+			TagUtils.setupTeams(first, second);
+		}
 		if (duel.getDuelType().equals(DuelType.SPLIT)) {
 			MessageUtils.sendSplitMessage(first, second, kit);
 		}
@@ -63,6 +65,7 @@ public class DuelManager {
 				}
 				MatchUtils.multiArena(uuid, true, false);
 				Utils.getOpponents(uuid).forEach(ops -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(ops))); // Fix Tracker problem
+				Utils.getAllies(uuid).forEach(allies -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(allies))); // Fix Tracker problem
 				this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(Utils.getDuelByUUID(uuid).isRanked(), kit);
 				Utils.resetPlayer(uuid);
 				final Player player = Bukkit.getPlayer(uuid);
@@ -159,7 +162,9 @@ public class DuelManager {
 				if (loosers.contains(players)) loosers.remove(players);
 			}
 		}));
-		TagUtils.clearEntries(Arrays.asList(winners, loosers));
+		if (!duel.getDuelType().equals(DuelType.FFA)) {
+			TagUtils.clearEntries(Arrays.asList(winners, loosers));
+		}
 		new RespawnRunnable(Arrays.asList(winners, loosers), this.main).runTaskLater(this.main, 70L);
 	}
 }

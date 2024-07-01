@@ -4,6 +4,7 @@ import java.util.*;
 
 import akyto.core.utils.database.DatabaseType;
 import kezukdev.akyto.runnable.PearlExpireRunnable;
+import kezukdev.akyto.utils.match.TagUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -60,6 +61,7 @@ public class PlayerListener implements Listener {
 
 	@EventHandler
 	public void onPlayerLeft(final PlayerQuitEvent event) {
+		final Player leaver = event.getPlayer();
 		final Profile profile = Utils.getProfiles(event.getPlayer().getUniqueId());
 		if (event.getPlayer().isOnline() && profile != null) {
 			if (Utils.getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
@@ -69,19 +71,20 @@ public class PlayerListener implements Listener {
 				this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(event.getPlayer().getUniqueId());
 			}
 			if (profile.isInState(ProfileState.SPECTATE)) {
-				Duel duel = Utils.getDuelBySpectator(event.getPlayer().getUniqueId());
-				if (duel == null) duel = Utils.getDuelByUUID(event.getPlayer().getUniqueId());
-				duel.getSpectators().remove(event.getPlayer().getUniqueId());
+				Duel duel = Utils.getDuelBySpectator(leaver.getUniqueId());
+				if (duel == null) duel = Utils.getDuelByUUID(leaver.getUniqueId());
+				duel.getSpectators().remove(leaver.getUniqueId());
 				Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.")));
 			}
 			if (profile.isInState(ProfileState.FIGHT)) {
-				if (Utils.getDuelByUUID(event.getPlayer().getUniqueId()) != null) {
-					final Duel duel = Utils.getDuelByUUID(event.getPlayer().getUniqueId());
+				if (Utils.getDuelByUUID(leaver.getUniqueId()) != null) {
+					final Duel duel = Utils.getDuelByUUID(leaver.getUniqueId());
 					if (!duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
-						this.main.getManagerHandler().getDuelManager().endSingle(duel.getFirst().contains(event.getPlayer().getUniqueId()) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));
+						duel.getDisconnected().add(leaver.getUniqueId());
+						this.main.getManagerHandler().getDuelManager().endSingle(duel.getFirst().contains(leaver.getUniqueId()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
 					}
 					if (!duel.getState().equals(DuelState.FINISHING) && (duel.getDuelType().equals(DuelType.FFA) || duel.getDuelType().equals(DuelType.SPLIT))) {
-						MatchUtils.addKill(event.getPlayer().getUniqueId(), null, true);
+						MatchUtils.addKill(leaver.getUniqueId(), null, true);
 					}
 				}
 			}	
@@ -173,14 +176,29 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.REDSTONE_COMPARATOR)) { 
 					player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsSpectateInventory().get(player.getUniqueId()));
 				}
-				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) { 
-					final Duel duel = Utils.getDuelBySpectator(player.getUniqueId());
-					duel.getSpectators().remove(player.getUniqueId());
-					Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
-						Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + player.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
-						player.hidePlayer(Bukkit.getPlayer(uuid));
-					}));
-					Utils.sendToSpawn(player.getUniqueId(), true);
+				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) {
+					if (Utils.getDuelBySpectator(player.getUniqueId()) != null){
+						final Duel duel = Utils.getDuelBySpectator(player.getUniqueId());
+						duel.getSpectators().remove(player.getUniqueId());
+						Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
+							Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + player.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
+							player.hidePlayer(Bukkit.getPlayer(uuid));
+						}));
+						Utils.sendToSpawn(player.getUniqueId(), true);
+					}
+					else {
+						final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
+						duel.getDisconnected().add(player.getUniqueId());
+						if (!duel.getDuelType().equals(DuelType.FFA)) {
+							TagUtils.clearNameTags(player);
+						}
+						Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
+							Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + player.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
+							player.hidePlayer(Bukkit.getPlayer(uuid));
+						}));
+						profile.setProfileState(ProfileState.FREE);
+						Utils.sendToSpawn(player.getUniqueId(), true);
+					}
 					return;
 				}
 			}

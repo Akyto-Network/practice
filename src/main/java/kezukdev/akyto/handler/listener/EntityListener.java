@@ -20,7 +20,6 @@ import kezukdev.akyto.Practice;
 import kezukdev.akyto.duel.cache.DuelState;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.utils.Utils;
-import net.md_5.bungee.api.ChatColor;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 
 public class EntityListener implements Listener {

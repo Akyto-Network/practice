@@ -26,6 +26,11 @@ public class Utils {
         return duel.getFirst().contains(uuid) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
 	}
 
+	public static List<UUID> getAllies(UUID uuid) {
+		Duel duel = getDuelByUUID(uuid);
+		return duel.getFirst().contains(uuid) ? new ArrayList<>(duel.getFirst()) : new ArrayList<>(duel.getSecond());
+	}
+
 	public static Duel getDuelByUUID(UUID uuid) {
 	    return Practice.getAPI().getDuels().stream().filter(duel -> duel.getFirst().contains(uuid) || duel.getSecond().contains(uuid)).findFirst().orElse(null);
 	}

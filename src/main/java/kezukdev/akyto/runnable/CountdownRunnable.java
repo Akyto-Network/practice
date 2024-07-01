@@ -44,6 +44,7 @@ public class CountdownRunnable extends BukkitRunnable {
 		if (counter == 4) {
 			players.forEach(uuids -> uuids.forEach(uuid -> {
 				Utils.getOpponents(uuid).forEach(opps -> Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(opps)));
+				Utils.getAllies(uuid).forEach(allies -> Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(allies)));
 			}));
 		}
 		if (counter > 0) {

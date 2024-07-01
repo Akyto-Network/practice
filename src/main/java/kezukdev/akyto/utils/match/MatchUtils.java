@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -58,13 +59,15 @@ public class MatchUtils {
                 }
             });
             if (Bukkit.getPlayer(uuid) != null) {
-                addSpectateParty(uuid);
+				Bukkit.getScheduler().runTaskLater(Practice.getAPI(), () -> {
+					addSpectateParty(uuid);
+				}, 2L);
             }
         }
 
         if (match.getDuelType().equals(DuelType.SPLIT)) {
-			if (match.getFirstAlives().contains(uuid)) match.getFirstAlives().remove(uuid);
-			if (match.getSecondAlives().contains(uuid)) match.getSecondAlives().remove(uuid);
+			match.getFirstAlives().remove(uuid);
+			match.getSecondAlives().remove(uuid);
             if (match.getFirstAlives().isEmpty() || match.getSecondAlives().isEmpty()) {
                 managerHandler.getDuelManager().endMultiple(killer == null ? (match.getFirst().contains(uuid) ? match.getSecondAlives().stream().toList().getFirst() : match.getFirstAlives().stream().toList().getFirst()) : killer);
                 return;
@@ -72,13 +75,13 @@ public class MatchUtils {
 
 			List<UUID> allPlayers = Stream.of(match.getFirst(), match.getSecond())
 					.flatMap(Collection::stream)
-					.collect(Collectors.toList());
+					.toList();
 
 			allPlayers.forEach(uuids -> {
 				Player player = Bukkit.getPlayer(uuids);
 				if (player != null) {
 					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
-					int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
+					int totalSize = match.getFirst().contains(uuid) ? match.getFirst().size() : match.getSecond().size();
 					player.sendMessage(ChatColor.WHITE + CoreUtils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + CoreUtils.getName(killer) +ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
 				}
 			});
@@ -86,13 +89,15 @@ public class MatchUtils {
 			match.getSpectators().forEach(uuids -> {
 				Player spectator = Bukkit.getPlayer(uuids);
 				if (spectator != null) {
-					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size() : match.getSecondAlives().size();
+					int aliveSize = match.getFirstAlives().contains(uuid) ? match.getFirstAlives().size()-1 : match.getSecondAlives().size()-1;
 					int totalSize = match.getFirst().contains(uuid) ? match.getSecond().size() : match.getFirst().size();
 					spectator.sendMessage(ChatColor.WHITE + CoreUtils.getName(uuid) + ChatColor.GRAY + (killer == null ? " died." : " has been killed by " + ChatColor.WHITE + CoreUtils.getName(killer) + ChatColor.GRAY + " (" + ChatColor.GREEN + aliveSize + ChatColor.GRAY + "/" + ChatColor.RED + totalSize + ChatColor.GRAY + ")"));
 				}
 			});
 			if (Bukkit.getPlayer(uuid) != null)
-				addSpectateParty(uuid);
+				Bukkit.getScheduler().runTaskLater(Practice.getAPI(), () -> {
+					addSpectateParty(uuid);
+				}, 2L);
         }
     }
     
@@ -114,8 +119,8 @@ public class MatchUtils {
 		final Profile profile = Utils.getProfiles(uuid);
 		if (!duel.getSpectators().isEmpty()) {
 			duel.getSpectators().forEach(spectator -> {
-				if (profile.getSpectateSettings().get(0)) Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(spectator));
-				if (!profile.getSpectateSettings().get(0)) Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(spectator));
+				if (profile.getSpectateSettings().getFirst()) Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(spectator));
+				if (!profile.getSpectateSettings().getFirst()) Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(spectator));
 			});
 		}
 		managerHandler.getItemManager().giveItems(uuid, false);

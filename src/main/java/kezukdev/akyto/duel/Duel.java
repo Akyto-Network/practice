@@ -37,7 +37,7 @@ public class Duel {
 		this.spectators = new HashSet<>();
 		this.dropped = new HashSet<>();
 		this.ranked = ranked;
-		if (!type.equals(DuelType.SINGLE)) this.disconnected = new ArrayList<>();
+		this.disconnected = new ArrayList<>();
 		if (type.equals(DuelType.FFA)) {
 			this.alives = new HashSet<>(first);
 			this.alives.addAll(second);

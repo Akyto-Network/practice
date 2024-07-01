@@ -29,9 +29,11 @@ public class RespawnRunnable extends BukkitRunnable {
     @Override
     public void run() {
         players.forEach(uuids -> uuids.forEach(uuid -> {
-            Utils.sendToSpawn(uuid, true);
-            if (Bukkit.getPlayer(uuid) != null) {
-            	MatchUtils.multiArena(uuid, true, false);
+            if (!duel.getDisconnected().contains(uuid)) {
+                Utils.sendToSpawn(uuid, true);
+                if (Bukkit.getPlayer(uuid) != null) {
+                    MatchUtils.multiArena(uuid, true, false);
+                }
             }
         }));
         final boolean ranked = duel.isRanked();
