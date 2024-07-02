@@ -18,18 +18,20 @@ public class RespawnRunnable extends BukkitRunnable {
     
     private final Practice main;
     private final List<Set<UUID>> players;
-    private final Duel duel;
+    private Duel duel;
     
     public RespawnRunnable(final List<Set<UUID>> players, final Practice main) {
         this.main = main;
         this.players = players;
-        this.duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst()) != null ? Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst()) : Utils.getDuelByUUID(players.getLast().stream().toList().getFirst());
+        this.duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst()) != null ? Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst()) : Utils.getDuelByUUID(players.get(1).stream().toList().getFirst());
     }
 
     @Override
     public void run() {
         players.forEach(uuids -> uuids.forEach(uuid -> {
-            if (!duel.getDisconnected().contains(uuid)) {
+            Duel duelGetter = duel;
+            if (duel == null) duelGetter = Utils.getDuelBySpectator(uuid);
+            if (!duelGetter.getDisconnected().contains(uuid)) {
                 Utils.sendToSpawn(uuid, true);
                 if (Bukkit.getPlayer(uuid) != null) {
                     MatchUtils.multiArena(uuid, true, false);
