@@ -23,7 +23,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.collect.Lists;
 
-import akyto.core.profile.Profile;
 import akyto.core.utils.CoreUtils;
 import akyto.core.utils.format.FormatUtils;
 import akyto.core.utils.inventory.MultipageSerializer;
@@ -188,12 +187,11 @@ public class InventoryManager {
         for (int i = 45; i < 54; ++i) {
             preview.setItem(i, glass);
         }
-        preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", Arrays.asList(FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤")));
+        preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", Arrays.asList(ChatColor.RESET + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤")));
 		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ", Arrays.asList(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d)))); // TODO Orginiser a la rimk
         List<String> effectsInfo = new ArrayList<>();
-        if (!Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
-            for(PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects()) effectsInfo.add(ChatColor.GRAY + potionEffect.getType().getName() + " " + (potionEffect.getAmplifier() + 1) + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
-        }
+		for (PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects())
+			effectsInfo.add(ChatColor.GRAY + potionEffect.formatted() + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
         if (Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
         	effectsInfo.add(ChatColor.RED + "No Effects.");
         }
