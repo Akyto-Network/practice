@@ -1,8 +1,6 @@
 package kezukdev.akyto.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import akyto.core.Core;
 import akyto.core.profile.Profile;
@@ -10,7 +8,9 @@ import akyto.core.profile.ProfileState;
 import kezukdev.akyto.arena.Arena;
 import kezukdev.akyto.arena.ArenaType;
 
+import kezukdev.akyto.utils.match.MatchUtils;
 import org.bukkit.*;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
 import kezukdev.akyto.Practice;
@@ -18,8 +18,20 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.manager.PartyManager.PartyEntry;
 import kezukdev.akyto.kit.Kit;
 import kezukdev.akyto.request.Request;
+import org.bukkit.inventory.ItemStack;
 
 public class Utils {
+
+	static HashSet<ItemStack> blockedItems = new HashSet<>(Arrays.asList(
+			new ItemStack(Material.POTION),
+			new ItemStack(Material.MUSHROOM_SOUP),
+			new ItemStack(Material.ENDER_PEARL),
+			new ItemStack(Material.BOWL),
+			new ItemStack(Material.GOLDEN_APPLE),
+			new ItemStack(Material.COOKED_BEEF),
+			new ItemStack(Material.GOLDEN_CARROT),
+			new ItemStack(Material.GRILLED_PORK)
+	));
 
 	public static List<UUID> getOpponents(UUID uuid) {
         Duel duel = getDuelByUUID(uuid);
@@ -104,5 +116,23 @@ public class Utils {
 		player.closeInventory();
 		player.setGameMode(GameMode.SURVIVAL);
 		player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
+	}
+
+	public static void drops(final UUID player, final List<ItemStack> drop, final Location deathLoc) {
+		final Profile profile = Utils.getProfiles(player);
+		if (profile.getSettings()[5] == 1) {
+			for (ItemStack item : drop) {
+				if (item.getType().toString().contains("DIAMOND_") ||item.getType().toString().contains("IRON_")) {
+					final Item items = Bukkit.getPlayer(player).getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()), Bukkit.getPlayer(player), true);
+					MatchUtils.addDrops(items, player);
+				}
+			}
+		}
+		if (profile.getSettings()[5] == 2) {
+			for (ItemStack item : drop) {
+				final Item items = Bukkit.getPlayer(player).getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()), Bukkit.getPlayer(player), true);
+				MatchUtils.addDrops(items, player);
+			}
+		}
 	}
 }

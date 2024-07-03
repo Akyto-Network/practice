@@ -1,6 +1,8 @@
 package kezukdev.akyto.handler.listener;
 
 import akyto.core.Core;
+import akyto.core.handler.manager.ProfileManager;
+import akyto.core.settings.NormalSettings;
 import kezukdev.akyto.handler.manager.InventoryManager;
 import kezukdev.akyto.request.Request;
 import kezukdev.akyto.request.Request.RequestType;
@@ -177,55 +179,19 @@ public class InventoryListener implements Listener {
 		}
 		if (inventory.equals(inventoryManager.getSettingsInventory().get(event.getWhoClicked().getUniqueId()))) {
 			if (is_glass) return;
+			final int setting = NormalSettings.getSettingsBySlot(event.getRawSlot());
+			final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
+			profileManager.changeSettings(setting, Bukkit.getPlayer(event.getWhoClicked().getUniqueId()), true);
+			profileManager.refreshSettingLore(inventory, event.getWhoClicked().getUniqueId(), event.getRawSlot(), setting,true);
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
-			if (itemMaterial.equals(Material.PAINTING)) {
-				profile.getSettings().set(0, profile.getSettings().getFirst() ? Boolean.FALSE : Boolean.TRUE);
-				event.getWhoClicked().closeInventory();
-				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, false);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().getFirst() ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r scoreboard");
-				return;
-			}
-			if (itemMaterial.equals(Material.BLAZE_POWDER)) {
-				profile.getSettings().set(1, profile.getSettings().get(1) ? Boolean.FALSE : Boolean.TRUE);
-				event.getWhoClicked().closeInventory();
-				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, false);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSettings().get(1) ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled") + ChatColor.DARK_GRAY + " you'r duel request");
-				return;
-			}
-			if (itemMaterial.equals(Material.WATCH)) {
-				profile.getSettings().set(2, profile.getSettings().get(2) ? Boolean.FALSE : Boolean.TRUE);
-				event.getWhoClicked().closeInventory();
-				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 2, false);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "Time set to " + (profile.getSettings().get(2) ? ChatColor.YELLOW + "day" : ChatColor.BLUE + "night"));
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setPlayerTime(profile.getSettings().get(2) ? 0L : 18000L, true);
-				return;
-			}
 		}
 		if (inventory.equals(inventoryManager.getSettingsSpectateInventory().get(event.getWhoClicked().getUniqueId()))) {
 			if (is_glass) return;
-			if (itemMaterial.equals(Material.DIAMOND)) {
-				profile.getSpectateSettings().set(0, profile.getSpectateSettings().getFirst() ? Boolean.FALSE : Boolean.TRUE);
-				event.getWhoClicked().closeInventory();
-				final Duel duel = Utils.getDuelBySpectator(event.getWhoClicked().getUniqueId());
-				if (!duel.getSpectators().isEmpty()) {
-					duel.getSpectators().forEach(spectator -> {
-						if (profile.getSpectateSettings().getFirst()) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).showPlayer(Bukkit.getPlayer(spectator));
-						if (!profile.getSpectateSettings().getFirst()) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).hidePlayer(Bukkit.getPlayer(spectator));
-					});
-				}
-				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 0, true);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been " + (profile.getSpectateSettings().get(0) ? ChatColor.GREEN + "show" : ChatColor.RED + "hide") + ChatColor.DARK_GRAY + " other spectators");
-				return;
-			}
-			if (itemMaterial.equals(Material.FEATHER)) {
-				profile.getSpectateSettings().set(1, profile.getSpectateSettings().get(1) ? Boolean.FALSE : Boolean.TRUE);
-				event.getWhoClicked().closeInventory();
-				if (profile.getSpectateSettings().get(1)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.1f);
-				if (!profile.getSpectateSettings().get(1)) Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).setFlySpeed(0.25f);
-				inventoryManager.refreshSettingsInventory(event.getWhoClicked().getUniqueId(), 1, true);
-				Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.DARK_GRAY + "You've been set the fly speed to " + (profile.getSpectateSettings().get(1) ? ChatColor.YELLOW + "x1.0" : ChatColor.GOLD + "x2.5"));
-				return;
+			final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
+			if (!itemMaterial.equals(Material.EMERALD)) {
+				profileManager.changeSettings(event.getSlot(), Bukkit.getPlayer(event.getWhoClicked().getUniqueId()), false);
+				profileManager.refreshSettingsLoreInv(inventory, event.getWhoClicked().getUniqueId(), false);
 			}
 			if (itemMaterial.equals(Material.EMERALD)) {
 				event.getWhoClicked().openInventory(inventoryManager.getSettingsInventory().get(event.getWhoClicked().getUniqueId()));

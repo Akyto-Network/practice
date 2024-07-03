@@ -367,29 +367,22 @@ public class PlayerListener implements Listener {
 		event.setDroppedExp(0);
 		killed.setLevel(0);
 		killed.setExp(0);
-		for (ItemStack item : event.getDrops()) {
-			final Item items = killed.getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()), killed);
-			MatchUtils.addDrops(items, killed.getUniqueId());
+		if (!duel.getDuelType().equals(DuelType.SINGLE)) {
+			for (ItemStack item : event.getDrops()) {
+				final Item items = killed.getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()), killed);
+				MatchUtils.addDrops(items, killed.getUniqueId());
+			}
 		}
+		Utils.drops(killed.getUniqueId(), event.getDrops(), deathLoc);
+		if (killer != null) Utils.drops(killer.getUniqueId(), event.getDrops(), deathLoc);
 		event.getDrops().clear();
 		final Profile profile = Utils.getProfiles(killed.getUniqueId());
 		if ((profile.isInState(ProfileState.FIGHT))) {
             new BukkitRunnable() {
                 public void run() {
                     try {
-						// Does the same as the reflection code below
 						CraftServer server = (CraftServer) killed.getServer();
 						server.getHandle().moveToWorld(((CraftPlayer) killed).getHandle(), 0, false);
-
-//                        final Object nmsPlayer = killed.getClass().getMethod("getHandle", new Class[0]).invoke(killed);
-//                        final Object con = nmsPlayer.getClass().getDeclaredField("playerConnection").get(nmsPlayer);
-//                        final Class<?> EntityPlayer = Class.forName(nmsPlayer.getClass().getPackage().getName() + ".EntityPlayer");
-//                        final Field minecraftServer = con.getClass().getDeclaredField("minecraftServer");
-//                        minecraftServer.setAccessible(true);
-//                        final Object mcserver = minecraftServer.get(con);
-//                        final Object playerlist = mcserver.getClass().getDeclaredMethod("getPlayerList", new Class[0]).invoke(mcserver);
-//                        final Method moveToWorld = playerlist.getClass().getMethod("moveToWorld", EntityPlayer, Integer.TYPE, Boolean.TYPE);
-//                        moveToWorld.invoke(playerlist, nmsPlayer, 0, false);
                     }
                     catch (Exception ex) {
                     	killed.spigot().respawn();
@@ -405,10 +398,9 @@ public class PlayerListener implements Listener {
             	}
             }.runTaskLater(main, 19L);
             if (duel.getDuelType().equals(DuelType.SINGLE)) {
-                this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).get(0)) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0));
+                this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).getFirst()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
                 return;
             }
-			//TODO: Made register last hitter and replace on at the place of : null.
             MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);
 		}
 	}

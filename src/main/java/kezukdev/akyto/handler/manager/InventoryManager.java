@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import akyto.core.Core;
+import akyto.core.handler.manager.ProfileManager;
 import kezukdev.akyto.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -211,18 +212,22 @@ public class InventoryManager {
 	}
 	
 	public void generateSettingsInventory(final UUID uuid) {
-		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Settings");
-		final Profile profiles = Utils.getProfiles(uuid);
+		final Inventory profile = Bukkit.createInventory(null, 9, ChatColor.DARK_GRAY + "Settings");
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
         for (int i = 0; i < 5; ++i) {
             profile.setItem(i, glass);
         }
-        String[] lore = new String[] {ChatColor.GREEN + "Enable", ChatColor.RED + "Disable"};
-        profile.setItem(0, ItemUtils.createItems(Material.PAINTING, ChatColor.DARK_GRAY + "Scoreboard" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSettings().get(0).equals(true) ? lore[0] : lore[1])));
-        profile.setItem(1, ItemUtils.createItems(Material.BLAZE_POWDER, ChatColor.DARK_GRAY + "Duel Request" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSettings().get(1).equals(true) ? lore[0] : lore[1])));
-        profile.setItem(2, ItemUtils.createItems(Material.WATCH, ChatColor.DARK_GRAY + "Time" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSettings().get(2).equals(true) ? ChatColor.YELLOW + "Day" : ChatColor.BLUE + "Night")));
+		final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
+        profile.setItem(0, ItemUtils.createItems(Material.PAINTING, ChatColor.DARK_GRAY + "Scoreboard" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(1, ItemUtils.createItems(Material.BLAZE_POWDER, ChatColor.DARK_GRAY + "Duel Request" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(2, ItemUtils.createItems(Material.WATCH, ChatColor.DARK_GRAY + "Time" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(3, ItemUtils.createItems(Material.REDSTONE, ChatColor.DARK_GRAY + "Spectator" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.DARK_GRAY + "Private Message" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.DARK_GRAY + "Drops" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(6, ItemUtils.createItems(Material.BONE, ChatColor.DARK_GRAY + "Clear Inventory" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
         this.settingsInventory.remove(uuid);
 		this.settingsInventory.put(uuid, profile);
+		profileManager.refreshSettingsLoreInv(profile, uuid, true);
 		this.generateSpectateSettingsInventory(uuid);
 	}
 	
@@ -234,35 +239,29 @@ public class InventoryManager {
 	
 	private void generateSpectateSettingsInventory(final UUID uuid) {
 		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Spectate Settings");
-		final Profile profiles = Utils.getProfiles(uuid);
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
         for (int i = 0; i < 5; ++i) {
             profile.setItem(i, glass);
         }
-        String[] lore = new String[] {ChatColor.GREEN + "Enable", ChatColor.RED + "Disable"};
-        profile.setItem(0, ItemUtils.createItems(Material.DIAMOND, ChatColor.DARK_GRAY + "Display Other Spectators" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSpectateSettings().get(0).equals(true) ? lore[0] : lore[1])));
-        profile.setItem(1, ItemUtils.createItems(Material.FEATHER, ChatColor.DARK_GRAY + "Fly Speed" + ChatColor.GRAY + ":", Collections.singletonList(profiles.getSpectateSettings().get(1).equals(true) ? "x1.0" : "x2.5")));
-        profile.setItem(4, ItemUtils.createItems(Material.EMERALD, ChatColor.DARK_GRAY + "Global Settings"));
+        profile.setItem(0, ItemUtils.createItems(Material.DIAMOND, ChatColor.DARK_GRAY + "Display Other Spectators" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(1, ItemUtils.createItems(Material.FEATHER, ChatColor.DARK_GRAY + "Fly Speed", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(4, ItemUtils.createItems(Material.EMERALD, ChatColor.DARK_GRAY + "Global Settings", Arrays.asList(ChatColor.YELLOW + "Loading...")));
         this.settingsSpectateInventory.remove(uuid);
 		this.settingsSpectateInventory.put(uuid, profile);
+		final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
+		profileManager.refreshSettingsLoreInv(profile, uuid, false);
+
 	}
-	
+
 	public void refreshSettingsInventory(final UUID uuid, final int id, final boolean spectate) {
-		final Profile profile = Utils.getProfiles(uuid);
+		final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
 		if (!spectate) {
 			final Inventory inv = this.settingsInventory.get(uuid);
-			final ItemStack item = inv.getItem(id);
-			final ItemMeta meta = item.getItemMeta();
-			String[] lore = id == 2 ? new String[] {ChatColor.BLUE + "Night", ChatColor.YELLOW + "Day"} : new String[] {ChatColor.GREEN + "Enable", ChatColor.RED + "Disable"};
-			meta.setLore(Collections.singletonList(profile.getSettings().get(id).equals(true) ? lore[0] : lore[1]));
-			item.setItemMeta(meta);	
+			profileManager.refreshSettingsLoreInv(inv, uuid, true);
+
 		} else {
 			final Inventory inv = this.settingsSpectateInventory.get(uuid);
-			final ItemStack item = inv.getItem(id);
-			final ItemMeta meta = item.getItemMeta();
-			String[] lore = id == 1 ? new String[] {ChatColor.YELLOW + "x1.0", ChatColor.GOLD + "x2.5"} : new String[] {ChatColor.GREEN + "Enable", ChatColor.RED + "Disable"};
-			meta.setLore(Collections.singletonList(profile.getSpectateSettings().get(id).equals(true) ? lore[0] : lore[1]));
-			item.setItemMeta(meta);
+			profileManager.refreshSettingsLoreInv(inv, uuid, false);
 		}
 	}
 	

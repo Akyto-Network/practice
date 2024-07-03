@@ -95,7 +95,7 @@ public class DuelManager {
 			duel.getTimer().cancel();	
 		}
 		duel.setState(DuelState.FINISHING);
-		final UUID looser = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0);
+		final UUID looser = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst();
 		List<UUID> players = new ArrayList<>();
 		players.add(winner);
 		players.add(looser);
@@ -104,7 +104,10 @@ public class DuelManager {
 		players.forEach(uuid -> {
 			if (!duel.getSpectators().contains(uuid)) {
 				this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid).removeEnderPearlCooldown();
-				this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, Utils.getOpponents(uuid).get(0));
+				this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, Utils.getOpponents(uuid).getFirst());
+				if (Utils.getProfiles(winner).getSettings()[6] != 1){
+					Bukkit.getPlayer(winner).getInventory().clear();
+				}
 			}
 			Player player = Bukkit.getPlayer(uuid);
 			if (player != null) {

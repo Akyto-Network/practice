@@ -81,6 +81,15 @@ public class SpectateCommand implements CommandExecutor {
             return false;
         }
 
+        Arrays.asList(targetDuel.getFirst(), targetDuel.getSecond()).forEach(players -> players.forEach(uuids -> {
+            final Profile profile = Utils.getProfiles(uuids);
+            if (profile.getSettings()[4] != 0) {
+                if (((Player) sender).getOpenInventory() != null) ((Player) sender).closeInventory();
+                sender.sendMessage(ChatColor.RED + "This fight does not accept spectators!");
+                return;
+            }
+        }));
+
         if (profileSender.isInState(ProfileState.SPECTATE)) {
             final Duel duel = Utils.getDuelBySpectator(playerSender.getUniqueId());
             if (duel.equals(Utils.getDuelByUUID(targetUUID))) {
@@ -106,13 +115,13 @@ public class SpectateCommand implements CommandExecutor {
 
         if (!targetDuel.getSpectators().isEmpty()) {
             targetDuel.getSpectators().forEach(spectator -> {
-                if (profileSender.getSpectateSettings().get(0)) playerSender.showPlayer(Bukkit.getPlayer(spectator));
-                if (!profileSender.getSpectateSettings().get(0)) playerSender.hidePlayer(Bukkit.getPlayer(spectator));
+                if (profileSender.getSettings()[8] != 1) playerSender.showPlayer(Bukkit.getPlayer(spectator));
+                if (profileSender.getSettings()[8] != 0) playerSender.hidePlayer(Bukkit.getPlayer(spectator));
             });
         }
 
-        if (profileSender.getSpectateSettings().get(1)) playerSender.setFlySpeed(0.1f);
-        if (!profileSender.getSpectateSettings().get(1)) playerSender.setFlySpeed(0.25f);
+        if (profileSender.getSettings()[7] != 1) playerSender.setFlySpeed(0.1f);
+        if (profileSender.getSettings()[7] != 0) playerSender.setFlySpeed(0.25f);
         playerSender.teleport(Bukkit.getPlayer(targetUUID).getLocation());
         this.main.getManagerHandler().getInventoryManager().generateChangeSpectateInventory(playerSender.getUniqueId());
         return false;

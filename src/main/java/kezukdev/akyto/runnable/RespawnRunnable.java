@@ -15,35 +15,45 @@ import kezukdev.akyto.utils.Utils;
 import kezukdev.akyto.utils.match.MatchUtils;
 
 public class RespawnRunnable extends BukkitRunnable {
-    
+
     private final Practice main;
     private final List<Set<UUID>> players;
     private Duel duel;
-    
+
     public RespawnRunnable(final List<Set<UUID>> players, final Practice main) {
         this.main = main;
         this.players = players;
-        this.duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst()) != null ? Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst()) : Utils.getDuelByUUID(players.get(1).stream().toList().getFirst());
+
+        if (!players.isEmpty() && !players.get(0).isEmpty()) {
+            UUID firstPlayerUUID = players.get(0).iterator().next();
+            duel = Utils.getDuelByUUID(firstPlayerUUID);
+        }
     }
 
     @Override
     public void run() {
-        players.forEach(uuids -> uuids.forEach(uuid -> {
-            Duel duelGetter = duel;
-            if (duel == null) duelGetter = Utils.getDuelBySpectator(uuid);
-            if (!duelGetter.getDisconnected().contains(uuid)) {
-                Utils.sendToSpawn(uuid, true);
-                if (Bukkit.getPlayer(uuid) != null) {
-                    MatchUtils.multiArena(uuid, true, false);
+        for (Set<UUID> uuids : players) {
+            for (UUID uuid : uuids) {
+                Duel duelGetter = duel != null ? duel : Utils.getDuelBySpectator(uuid);
+                if (duelGetter != null && !duelGetter.getDisconnected().contains(uuid)) {
+                    Utils.sendToSpawn(uuid, true);
+                    if (Bukkit.getPlayer(uuid) != null) {
+                        MatchUtils.multiArena(uuid, true, false);
+                    }
                 }
             }
-        }));
-        final boolean ranked = duel.isRanked();
-        final Kit kit = duel.getKit();
-		MatchUtils.clearDrops(new ArrayList<>(duel.getFirst()).getFirst() != null ? new ArrayList<>(duel.getFirst()).getFirst() : new ArrayList<>(duel.getSecond()).getFirst());
-        main.getDuels().remove(duel);
-        main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);	
-        main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
+        }
+
+        if (duel != null) {
+            final boolean ranked = duel.isRanked();
+            final Kit kit = duel.getKit();
+            UUID firstPlayerUUID = duel.getFirst().iterator().next();
+            MatchUtils.clearDrops(firstPlayerUUID);
+            main.getDuels().remove(duel);
+            main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
+            main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
+        }
+
         cancel();
     }
 }

@@ -119,13 +119,13 @@ public class MatchUtils {
 		final Profile profile = Utils.getProfiles(uuid);
 		if (!duel.getSpectators().isEmpty()) {
 			duel.getSpectators().forEach(spectator -> {
-				if (profile.getSpectateSettings().getFirst()) Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(spectator));
-				if (!profile.getSpectateSettings().getFirst()) Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(spectator));
+				if (profile.getSettings()[8] != 1) Bukkit.getPlayer(uuid).showPlayer(Bukkit.getPlayer(spectator));
+				if (profile.getSettings()[8] != 0) Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(spectator));
 			});
 		}
 		managerHandler.getItemManager().giveItems(uuid, false);
-		if (profile.getSpectateSettings().get(1)) Bukkit.getPlayer(uuid).setFlySpeed(0.1f);
-		if (!profile.getSpectateSettings().get(1)) Bukkit.getPlayer(uuid).setFlySpeed(0.25f);
+		if (profile.getSettings()[7] != 0) Bukkit.getPlayer(uuid).setFlySpeed(0.1f);
+		if (profile.getSettings()[7] != 1) Bukkit.getPlayer(uuid).setFlySpeed(0.25f);
     }
     
 	public static void addDrops(Item item, final UUID uuid) {
@@ -170,8 +170,8 @@ public class MatchUtils {
     				final Player playerSender = Bukkit.getPlayer(uuid);
     		    	if (!duels.getSpectators().isEmpty()) {
     		            duels.getSpectators().forEach(spectators -> {
-    		                if (profile.getSpectateSettings().get(0)) playerSender.showPlayer(Bukkit.getPlayer(spectators));
-    		                if (!profile.getSpectateSettings().get(0)) playerSender.hidePlayer(Bukkit.getPlayer(spectators));
+    		                if (profile.getSettings()[8] != 1) playerSender.showPlayer(Bukkit.getPlayer(spectators));
+    		                if (profile.getSettings()[8] != 0) playerSender.hidePlayer(Bukkit.getPlayer(spectators));
     		            });	
     		    	}
     	    	}

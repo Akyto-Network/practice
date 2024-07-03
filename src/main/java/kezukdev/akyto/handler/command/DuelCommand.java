@@ -66,7 +66,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 
-			if (!senderProfile.getSettings().get(1)) {
+			if (senderProfile.getSettings()[1] != 0) {
 				sender.sendMessage(ChatColor.RED + "You have disabled your duel request in your settings!");
 				return false;
 			}
@@ -87,7 +87,7 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + target.getName() + " is not available at the moment");
 				return false;
 			}
-			if (!targetProfile.getSettings().get(1)) {
+			if (targetProfile.getSettings()[1] != 0) {
 				sender.sendMessage(ChatColor.RED + "This player doesn't accept any duel request!");
 				return false;
 			}
