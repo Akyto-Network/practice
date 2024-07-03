@@ -212,7 +212,7 @@ public class InventoryManager {
 	public void generateSettingsInventory(final UUID uuid) {
 		final Inventory profile = Bukkit.createInventory(null, 9, ChatColor.DARK_GRAY + "Settings");
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 9; ++i) {
             profile.setItem(i, glass);
         }
 		final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
@@ -223,6 +223,7 @@ public class InventoryManager {
 		profile.setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.DARK_GRAY + "Private Message" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
 		profile.setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.DARK_GRAY + "Drops" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
 		profile.setItem(6, ItemUtils.createItems(Material.BONE, ChatColor.DARK_GRAY + "Clear Inventory" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(8, ItemUtils.createItems(Material.FIREWORK, ChatColor.DARK_GRAY + "Death Effects" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
         this.settingsInventory.remove(uuid);
 		this.settingsInventory.put(uuid, profile);
 		profileManager.refreshSettingsLoreInv(profile, uuid, true);

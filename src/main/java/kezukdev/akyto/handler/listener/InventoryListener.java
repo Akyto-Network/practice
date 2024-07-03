@@ -3,6 +3,7 @@ package kezukdev.akyto.handler.listener;
 import akyto.core.Core;
 import akyto.core.handler.manager.ProfileManager;
 import akyto.core.settings.NormalSettings;
+import akyto.core.settings.SpectateSettings;
 import kezukdev.akyto.handler.manager.InventoryManager;
 import kezukdev.akyto.request.Request;
 import kezukdev.akyto.request.Request.RequestType;
@@ -190,8 +191,9 @@ public class InventoryListener implements Listener {
 			if (is_glass) return;
 			final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
 			if (!itemMaterial.equals(Material.EMERALD)) {
-				profileManager.changeSettings(event.getSlot(), Bukkit.getPlayer(event.getWhoClicked().getUniqueId()), false);
-				profileManager.refreshSettingsLoreInv(inventory, event.getWhoClicked().getUniqueId(), false);
+				final int setting = SpectateSettings.getSettingsBySlot(event.getRawSlot());
+				profileManager.changeSettings(setting, Bukkit.getPlayer(event.getWhoClicked().getUniqueId()), false);
+				profileManager.refreshSettingLore(inventory, event.getWhoClicked().getUniqueId(), event.getRawSlot(), setting,false);
 			}
 			if (itemMaterial.equals(Material.EMERALD)) {
 				event.getWhoClicked().openInventory(inventoryManager.getSettingsInventory().get(event.getWhoClicked().getUniqueId()));

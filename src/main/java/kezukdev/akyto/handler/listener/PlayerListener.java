@@ -2,9 +2,12 @@ package kezukdev.akyto.handler.listener;
 
 import java.util.*;
 
+import akyto.core.effect.Effects;
 import akyto.core.utils.database.DatabaseType;
+import akyto.core.utils.particle.ParticleUtils;
 import kezukdev.akyto.runnable.PearlExpireRunnable;
 import kezukdev.akyto.utils.match.TagUtils;
+import net.minecraft.server.v1_8_R3.EnumParticle;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -402,6 +405,16 @@ public class PlayerListener implements Listener {
                 return;
             }
             MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);
+			if (killer != null) {
+				final Profile killerProfile = Utils.getProfiles(killer.getUniqueId());
+				if(killerProfile.getSettings()[9] != 0) {
+					Effects deathEffect = Core.API.getEffects().get(killerProfile.getSettings()[9]);
+					if (killer != null) deathEffect.invoke(killer, deathLoc);
+					deathEffect.invoke(killed, deathLoc);
+				}
+			}
+			ParticleUtils utils = new ParticleUtils(EnumParticle.SMOKE_LARGE, deathLoc, 0.5f, 0.5f, 0.5f, 0.08f, 50);
+			utils.sendToAll();
 		}
 	}
 	
