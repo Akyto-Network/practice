@@ -22,17 +22,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class Utils {
 
-	static HashSet<ItemStack> blockedItems = new HashSet<>(Arrays.asList(
-			new ItemStack(Material.POTION),
-			new ItemStack(Material.MUSHROOM_SOUP),
-			new ItemStack(Material.ENDER_PEARL),
-			new ItemStack(Material.BOWL),
-			new ItemStack(Material.GOLDEN_APPLE),
-			new ItemStack(Material.COOKED_BEEF),
-			new ItemStack(Material.GOLDEN_CARROT),
-			new ItemStack(Material.GRILLED_PORK)
-	));
-
 	public static List<UUID> getOpponents(UUID uuid) {
         Duel duel = getDuelByUUID(uuid);
         return duel.getFirst().contains(uuid) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());

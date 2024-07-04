@@ -2,6 +2,7 @@ package kezukdev.akyto.handler.listener;
 
 import akyto.core.Core;
 import akyto.core.handler.manager.ProfileManager;
+import akyto.core.particle.ParticleEntry;
 import akyto.core.settings.NormalSettings;
 import akyto.core.settings.SpectateSettings;
 import kezukdev.akyto.handler.manager.InventoryManager;
@@ -180,12 +181,32 @@ public class InventoryListener implements Listener {
 		}
 		if (inventory.equals(inventoryManager.getSettingsInventory().get(event.getWhoClicked().getUniqueId()))) {
 			if (is_glass) return;
+			event.setResult(Result.DENY);
+			event.setCancelled(true);
+			if (itemMaterial.equals(Material.FIREWORK)) {
+				event.getWhoClicked().openInventory(Core.API.getManagerHandler().getInventoryManager().getParticlesInventory());
+				return;
+			}
 			final int setting = NormalSettings.getSettingsBySlot(event.getRawSlot());
 			final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
 			profileManager.changeSettings(setting, Bukkit.getPlayer(event.getWhoClicked().getUniqueId()), true);
 			profileManager.refreshSettingLore(inventory, event.getWhoClicked().getUniqueId(), event.getRawSlot(), setting,true);
-			event.setResult(Result.DENY);
-			event.setCancelled(true);
+		}
+		if (inventory.equals(Core.API.getManagerHandler().getInventoryManager().getParticlesInventory())) {
+			final ParticleEntry particleEntry = CoreUtils.getParticleByName(event.getCurrentItem().getItemMeta().getDisplayName());
+			if (!event.getWhoClicked().hasPermission(particleEntry.getPermission())) {
+				event.getWhoClicked().sendMessage(new String[] {
+						ChatColor.RED + "You do not have the required permissions.",
+						ChatColor.RED + "To own them please provide yourself with a rank owning them on our store: " + ChatColor.YELLOW + "www.akyto.club"
+				});
+				event.getWhoClicked().closeInventory();
+				return;
+			}
+			profile.setEffect(particleEntry.getSection());
+			event.getWhoClicked().closeInventory();
+			event.getWhoClicked().sendMessage(new String[] {
+					ChatColor.YELLOW + "You have just applied " + particleEntry.getName() + ChatColor.YELLOW + ", now as soon as you kill someone this effect will play"
+			});
 		}
 		if (inventory.equals(inventoryManager.getSettingsSpectateInventory().get(event.getWhoClicked().getUniqueId()))) {
 			if (is_glass) return;

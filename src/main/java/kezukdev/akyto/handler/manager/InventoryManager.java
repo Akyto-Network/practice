@@ -223,7 +223,7 @@ public class InventoryManager {
 		profile.setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.DARK_GRAY + "Private Message" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
 		profile.setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.DARK_GRAY + "Drops" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
 		profile.setItem(6, ItemUtils.createItems(Material.BONE, ChatColor.DARK_GRAY + "Clear Inventory" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(8, ItemUtils.createItems(Material.FIREWORK, ChatColor.DARK_GRAY + "Death Effects" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(8, ItemUtils.createItems(Material.FIREWORK, ChatColor.DARK_GRAY + "Death Effects" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Click here to select a death effect")));
         this.settingsInventory.remove(uuid);
 		this.settingsInventory.put(uuid, profile);
 		profileManager.refreshSettingsLoreInv(profile, uuid, true);

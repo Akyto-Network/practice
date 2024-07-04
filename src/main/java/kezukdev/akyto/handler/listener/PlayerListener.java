@@ -2,7 +2,8 @@ package kezukdev.akyto.handler.listener;
 
 import java.util.*;
 
-import akyto.core.effect.Effects;
+import akyto.core.particle.ParticleEntry;
+import akyto.core.utils.CoreUtils;
 import akyto.core.utils.database.DatabaseType;
 import akyto.core.utils.particle.ParticleUtils;
 import kezukdev.akyto.runnable.PearlExpireRunnable;
@@ -356,6 +357,14 @@ public class PlayerListener implements Listener {
 		duelPlayers.stream().map(Bukkit::getPlayer).forEach(player -> {
 			if (player == null) return;
 			player.playSound(deathLoc, Sound.AMBIENCE_THUNDER, 10000.0F, deathLoc.getPitch());
+			if (killer != null) {
+				final Profile profileKiller = Utils.getProfiles(killer.getUniqueId());
+				if (!profileKiller.getEffect().equals("none")) {
+					final ParticleEntry particleEntry = CoreUtils.getParticleBySection(profileKiller.getEffect());
+					ParticleUtils particle = new ParticleUtils(particleEntry.getParticle(), deathLoc, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount());
+					particle.sendToPlayer(player);
+				}
+			}
 		});
 
 		if (killer != null) {
@@ -405,16 +414,6 @@ public class PlayerListener implements Listener {
                 return;
             }
             MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);
-			if (killer != null) {
-				final Profile killerProfile = Utils.getProfiles(killer.getUniqueId());
-				if(killerProfile.getSettings()[9] != 0) {
-					Effects deathEffect = Core.API.getEffects().get(killerProfile.getSettings()[9]);
-					if (killer != null) deathEffect.invoke(killer, deathLoc);
-					deathEffect.invoke(killed, deathLoc);
-				}
-			}
-			ParticleUtils utils = new ParticleUtils(EnumParticle.SMOKE_LARGE, deathLoc, 0.5f, 0.5f, 0.5f, 0.08f, 50);
-			utils.sendToAll();
 		}
 	}
 	
