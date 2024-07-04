@@ -4,11 +4,8 @@ import java.util.*;
 
 import akyto.core.particle.ParticleEntry;
 import akyto.core.utils.CoreUtils;
-import akyto.core.utils.database.DatabaseType;
-import akyto.core.utils.particle.ParticleUtils;
 import kezukdev.akyto.runnable.PearlExpireRunnable;
 import kezukdev.akyto.utils.match.TagUtils;
-import net.minecraft.server.v1_8_R3.EnumParticle;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -361,21 +358,12 @@ public class PlayerListener implements Listener {
 				final Profile profileKiller = Utils.getProfiles(killer.getUniqueId());
 				if (!profileKiller.getEffect().equals("none")) {
 					final ParticleEntry particleEntry = CoreUtils.getParticleBySection(profileKiller.getEffect());
-					ParticleUtils particle = new ParticleUtils(particleEntry.getParticle(), deathLoc, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount());
-					particle.sendToPlayer(player);
+					final Location deathLocationClone = deathLoc.clone();
+					killer.spigot().playEffect(deathLocationClone.add(0, 0.5d, 0), particleEntry.getParticle(), 0,0, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount(), 192);
+					killed.spigot().playEffect(deathLocationClone.add(0, 0.5d, 0), particleEntry.getParticle(), 0,0, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount(), 192);
 				}
 			}
 		});
-
-		if (killer != null) {
-
-			if (killer.getUniqueId().equals(UUID.fromString("fb4f1dd4-e9c3-47ed-8a1b-17de9e80ae1e"))) {
-				killer.spigot().playEffect(deathLoc.add(0, 1D, 0), Effect.FLAME, 0, 0, 0.6F, 0.1F, 0.6F, 0.2F, 10, 192);
-				for (int i = 0 ; i < 10 ; i++) {
-					killer.spigot().playEffect(deathLoc.add(0, 0.75D, 0), Effect.LAVA_POP, 0, 0, 0.5F, 0.2F, 0.5F, 0F, 3, 192);
-				}
-			}
-		}
 		event.setDroppedExp(0);
 		killed.setLevel(0);
 		killed.setExp(0);

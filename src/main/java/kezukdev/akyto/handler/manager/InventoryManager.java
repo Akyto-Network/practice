@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import akyto.core.Core;
 import akyto.core.handler.manager.ProfileManager;
+import akyto.core.profile.Profile;
 import kezukdev.akyto.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
@@ -56,6 +57,7 @@ public class InventoryManager {
 	private final ConcurrentMap<UUID, Inventory> spectateInventory;
 	private final ConcurrentMap<UUID, Inventory> settingsInventory;
 	private final ConcurrentMap<UUID, Inventory> settingsSpectateInventory;
+	private final ConcurrentMap<UUID, Inventory> effectsInventory;
 	
 	
 	public InventoryManager(final Practice main) {
@@ -64,6 +66,7 @@ public class InventoryManager {
 		this.spectateInventory = new ConcurrentHashMap<>();
 		this.settingsInventory = new ConcurrentHashMap<>();
 		this.settingsSpectateInventory = new ConcurrentHashMap<>();
+		this.effectsInventory = new ConcurrentHashMap<>();
 		this.spectateMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
 		this.partyMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Partys", ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "));
 		this.queueInventory[0] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Unranked queue:");
@@ -228,11 +231,35 @@ public class InventoryManager {
 		this.settingsInventory.put(uuid, profile);
 		profileManager.refreshSettingsLoreInv(profile, uuid, true);
 		this.generateSpectateSettingsInventory(uuid);
+		this.generateEffectsInventory(uuid);
+	}
+
+	public void generateEffectsInventory(final UUID uuid) {
+		final Profile profile = Utils.getProfiles(uuid);
+		final Inventory effectsBase = Core.API.getManagerHandler().getInventoryManager().getParticlesInventory();
+		final Inventory inv = Bukkit.createInventory(null, effectsBase.getSize(), effectsBase.getName());
+		Core.API.getParticles().forEach(particleEntry ->  {
+			final String perm = Bukkit.getPlayer(uuid).hasPermission(particleEntry.getPermission()) ? ChatColor.GREEN + "Yes" : ChatColor.RED + "No";
+			List<String> lores = Lists.newArrayList();
+			lores.add(ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + "---------------------");
+			particleEntry.getLore().forEach(str -> lores.add(CoreUtils.translate(str)));
+			lores.add(" ");
+			lores.add(ChatColor.GRAY + "Owned: " + perm);
+			if (profile.getEffect().equals(particleEntry.getSection())) {
+				lores.add(" ");
+				lores.add(ChatColor.GRAY + " » " + ChatColor.GREEN + "Currently enabled");
+			}
+			lores.add(ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + "---------------------");
+			inv.addItem(ItemUtils.createItems(particleEntry.getIcon(), particleEntry.getName(), lores));
+		});
+		this.effectsInventory.remove(uuid);
+		this.effectsInventory.put(uuid, inv);
 	}
 	
 	public void removeUselessInventory(final UUID uuid) {
 		this.settingsInventory.remove(uuid);
 		this.settingsSpectateInventory.remove(uuid);
+		this.effectsInventory.remove(uuid);
 		Core.API.getManagerHandler().getInventoryManager().getProfileInventory().remove(uuid);
 	}
 	

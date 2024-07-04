@@ -184,7 +184,7 @@ public class InventoryListener implements Listener {
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
 			if (itemMaterial.equals(Material.FIREWORK)) {
-				event.getWhoClicked().openInventory(Core.API.getManagerHandler().getInventoryManager().getParticlesInventory());
+				event.getWhoClicked().openInventory(inventoryManager.getEffectsInventory().get(event.getWhoClicked().getUniqueId()));
 				return;
 			}
 			final int setting = NormalSettings.getSettingsBySlot(event.getRawSlot());
@@ -192,7 +192,7 @@ public class InventoryListener implements Listener {
 			profileManager.changeSettings(setting, Bukkit.getPlayer(event.getWhoClicked().getUniqueId()), true);
 			profileManager.refreshSettingLore(inventory, event.getWhoClicked().getUniqueId(), event.getRawSlot(), setting,true);
 		}
-		if (inventory.equals(Core.API.getManagerHandler().getInventoryManager().getParticlesInventory())) {
+		if (inventory.equals(inventoryManager.getEffectsInventory().get(event.getWhoClicked().getUniqueId()))) {
 			final ParticleEntry particleEntry = CoreUtils.getParticleByName(event.getCurrentItem().getItemMeta().getDisplayName());
 			if (!event.getWhoClicked().hasPermission(particleEntry.getPermission())) {
 				event.getWhoClicked().sendMessage(new String[] {
@@ -204,6 +204,7 @@ public class InventoryListener implements Listener {
 			}
 			profile.setEffect(particleEntry.getSection());
 			event.getWhoClicked().closeInventory();
+			Practice.getAPI().getManagerHandler().getInventoryManager().generateEffectsInventory(event.getWhoClicked().getUniqueId());
 			event.getWhoClicked().sendMessage(new String[] {
 					ChatColor.YELLOW + "You have just applied " + particleEntry.getName() + ChatColor.YELLOW + ", now as soon as you kill someone this effect will play"
 			});
