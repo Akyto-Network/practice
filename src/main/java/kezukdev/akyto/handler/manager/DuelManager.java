@@ -140,7 +140,8 @@ public class DuelManager {
 			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames());
 			});
 		TagUtils.clearEntries(Arrays.asList(Sets.newHashSet(winner), Sets.newHashSet(looser)));
-		new RespawnRunnable(Collections.singletonList(Sets.newHashSet(players)), this.main).runTaskLater(this.main, 70L);
+		if (!duel.getSpectators().isEmpty()) players.removeAll(duel.getSpectators());
+		new RespawnRunnable(Collections.singletonList(Sets.newHashSet(players)), duel.getSpectators().stream().toList(), this.main).runTaskLater(this.main, 70L);
 	}
 
 	public void endMultiple(final UUID winner) {
@@ -168,6 +169,6 @@ public class DuelManager {
 		if (!duel.getDuelType().equals(DuelType.FFA)) {
 			TagUtils.clearEntries(Arrays.asList(winners, loosers));
 		}
-		new RespawnRunnable(Arrays.asList(winners, loosers), this.main).runTaskLater(this.main, 70L);
+		new RespawnRunnable(Arrays.asList(winners, loosers), duel.getSpectators().stream().toList(), this.main).runTaskLater(this.main, 70L);
 	}
 }
