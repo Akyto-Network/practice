@@ -150,11 +150,14 @@ public class InventoryManager {
 			final List<Inventory> invs = Arrays.asList(this.queueInventory[0], this.queueInventory[1], this.queueInventory[2], this.queueInventory[3], this.queueInventory[4], this.leaderboardInventory);
 			invs.forEach(inv -> {
 				meta.setLore(Arrays.asList(ChatColor.GRAY + "Queueing: " + ChatColor.RESET + this.getQueuedFromLadder(kit, !inv.equals(this.queueInventory[0])), ChatColor.GRAY + "Fighting: " + ChatColor.RESET + this.getMatchedFromLadder(kit, !inv.equals(this.queueInventory[0]))));
-				if (inv.equals(this.queueInventory[2]) || inv.equals(this.leaderboardInventory)) {
+				if (inv.equals(this.queueInventory[2]) || inv.equals(this.queueInventory[3]) || inv.equals(this.queueInventory[4]) || inv.equals(this.leaderboardInventory)) {
 					meta.setLore(null);
 				}
 				item.setItemMeta(meta);
-				inv.setItem(kit.id(), item);
+				final boolean playableInParty = (!inv.equals(this.queueInventory[3]) || !inv.equals(this.queueInventory[4]));
+				if ((!inv.equals(this.queueInventory[3]) || !inv.equals(this.queueInventory[4])) && !kit.name().contains("sumo")) {
+					inv.setItem(playableInParty ? (kit.id() > 3 ? kit.id()-1 : kit.id()) : kit.id(), item);
+				}
 			});
 		}
 		this.partyEventInventory.setItem(1, ItemUtils.createItems(Material.IRON_AXE, ChatColor.DARK_GRAY + "Free For All"));

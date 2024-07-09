@@ -118,7 +118,7 @@ public class InventoryListener implements Listener {
 			    for (int i = size / 2; i < size; i++) {
 			        secondTeam.add(shuffle.get(i));
 			    }
-			    Kit kit = Kit.getLadderByID(event.getSlot(), main);
+			    Kit kit = Kit.getLadderByDisplay(event.getCurrentItem().getItemMeta().getDisplayName(), main);
 			    new Duel(main, Sets.newHashSet(firstTeam), Sets.newHashSet(secondTeam),false,  kit, inventory.equals(inventoryManager.getQueueInventory()[3]) ? DuelType.FFA : DuelType.SPLIT, null);
 			}
 			if (inventory.equals(inventoryManager.getEditorInventory()[0])) {
