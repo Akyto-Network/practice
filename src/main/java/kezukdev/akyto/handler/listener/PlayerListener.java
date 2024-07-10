@@ -1,6 +1,7 @@
 package kezukdev.akyto.handler.listener;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import akyto.core.particle.ParticleEntry;
 import akyto.core.utils.CoreUtils;
@@ -144,6 +145,17 @@ public class PlayerListener implements Listener {
 						}
 						if (!(Utils.getPartyByUUID(player.getUniqueId()).getMembers().size() > 1)) {
 							player.sendMessage(ChatColor.RED + "You must have at least two members to launch an event!");
+							return;
+						}
+						AtomicBoolean membersInMatch = new AtomicBoolean(false);
+						Utils.getPartyByUUID(player.getUniqueId()).getMembers().forEach(members -> {
+							final Profile profiles = Utils.getProfiles(members);
+							if (profiles.isInState(ProfileState.FIGHT, ProfileState.EDITOR, ProfileState.MOD, ProfileState.SPECTATE, ProfileState.QUEUE)) {
+								membersInMatch.set(true);
+							}
+						});
+						if (membersInMatch.get()) {
+							player.sendMessage(ChatColor.RED + "You cannot start a match while members are unavailable");
 							return;
 						}
 						player.openInventory(this.main.getManagerHandler().getInventoryManager().getPartyEventInventory());

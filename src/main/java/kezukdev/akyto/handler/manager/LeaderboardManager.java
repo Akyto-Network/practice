@@ -10,7 +10,7 @@ import gg.potted.idb.DB;
 import akyto.core.Core;
 import akyto.core.utils.format.FormatUtils;
 import kezukdev.akyto.Practice;
-import kezukdev.akyto.utils.leaderboard.Top;
+import akyto.core.utils.leaderboard.Top;
 import lombok.Getter;
 
 // CREDITS TO TETELIE FOR THIS CLASS //

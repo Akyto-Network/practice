@@ -35,7 +35,7 @@ import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.duel.cache.DuelStatistics;
 import kezukdev.akyto.handler.manager.QueueManager.QueueEntry;
 import kezukdev.akyto.kit.Kit;
-import kezukdev.akyto.utils.leaderboard.Top;
+import akyto.core.utils.leaderboard.Top;
 import lombok.Getter;
 
 @Getter
@@ -154,9 +154,17 @@ public class InventoryManager {
 					meta.setLore(null);
 				}
 				item.setItemMeta(meta);
-				final boolean playableInParty = (!inv.equals(this.queueInventory[3]) || !inv.equals(this.queueInventory[4]));
-				if ((!inv.equals(this.queueInventory[3]) || !inv.equals(this.queueInventory[4])) && !kit.name().contains("sumo")) {
-					inv.setItem(playableInParty ? (kit.id() > 3 ? kit.id()-1 : kit.id()) : kit.id(), item);
+				final boolean isSumoKit = kit.name().contains("sumo");
+				final boolean isInventory3Or4 = inv.equals(this.queueInventory[3]) || inv.equals(this.queueInventory[4]);
+
+				if (isSumoKit && isInventory3Or4) {
+					int kitId = kit.id();
+					if (kitId > 3) {
+						kitId--;
+					}
+					inv.setItem(kitId, item);
+				} else if (!isInventory3Or4) {
+					inv.setItem(kit.id(), item);
 				}
 			});
 		}

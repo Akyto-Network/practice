@@ -45,7 +45,16 @@ public class Practice extends JavaPlugin {
     public LocationUtil spawn = new LocationUtil("spawn");
     public LocationUtil editor = new LocationUtil("editor");
     
-	private List<Kit> kits = new ArrayList<>();
+	private List<Kit> kits = Arrays.asList(
+			new NoDebuff(),
+			new NoEnchant(),
+			new Debuff(),
+			new Gapple(),
+			new Sumo(),
+			new Soup(),
+			new Axe()
+	);
+
 	private final List<Duel> duels = new ArrayList<>();
 	private ConcurrentMap<UUID, QueueEntry> queue;
     private final List<Arena> arenas = new ArrayList<>();
@@ -89,7 +98,6 @@ public class Practice extends JavaPlugin {
 	}
 	
 	private void loadKit() {
-        this.kits = Arrays.asList(new NoDebuff(), new NoEnchant(), new Debuff(), new Gapple(), new Sumo(), new Soup(), new Axe());
         this.kitNames = new String[this.kits.size()];
         for (Kit kit : this.kits) { kitNames[kit.id()] = kit.displayName(); }
 	}
