@@ -157,7 +157,7 @@ public class InventoryManager {
 				final boolean isSumoKit = kit.name().contains("sumo");
 				final boolean isInventory3Or4 = inv.equals(this.queueInventory[3]) || inv.equals(this.queueInventory[4]);
 
-				if (isSumoKit && isInventory3Or4) {
+				if (!isSumoKit && isInventory3Or4) {
 					int kitId = kit.id();
 					if (kitId > 3) {
 						kitId--;
