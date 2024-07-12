@@ -126,6 +126,8 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 			new Duel(this.main, Sets.newHashSet(target.getUniqueId()), Sets.newHashSet(playerSender.getUniqueId()), false, request.getKit(), DuelType.SINGLE, request.getArena());
+			this.main.getManagerHandler().getRequestManager().getExpireRunnable().get(target.getUniqueId()).cancel();
+			this.main.getManagerHandler().getRequestManager().getExpireRunnable().remove(target.getUniqueId());
 			this.main.getManagerHandler().getRequestManager().getRequest().remove(target.getUniqueId());
 		}
 		return false;

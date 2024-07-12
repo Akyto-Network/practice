@@ -23,10 +23,12 @@ public class RequestManager {
 	
 	private final Practice main;
 	private final HashMap<UUID, Request> request;
+	private final HashMap<UUID, RequestExpireRunnable> expireRunnable;
 	
 	public RequestManager(final Practice main) {
 		this.main = main;
 		this.request = new HashMap<>();
+		this.expireRunnable = new HashMap<>();
 	}
 	
 	public void createPullRequest(final UUID sender, final UUID target) {
@@ -46,7 +48,9 @@ public class RequestManager {
 		comp.setClickEvent(new ClickEvent(Action.RUN_COMMAND, (type.equals(RequestType.DUEL) ? "/duel accept " : "/party join ") + CoreUtils.getName(sender)));
 		Bukkit.getPlayer(request.getReceiver()).spigot().sendMessage(comp);
 		if (type.equals(RequestType.DUEL)) {
-			new RequestExpireRunnable(request).runTaskLaterAsynchronously(main, 20 * 20L);
+			final RequestExpireRunnable runnable = new RequestExpireRunnable(request);
+			this.expireRunnable.put(sender, runnable);
+			runnable.runTaskLaterAsynchronously(main, 20 * 20L);
 		}
 	}
 	
