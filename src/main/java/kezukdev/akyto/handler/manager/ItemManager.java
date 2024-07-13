@@ -45,6 +45,7 @@ public class ItemManager {
 			player.getInventory().setItem(0, ItemUtils.createItems(Material.IRON_SWORD, ChatColor.GRAY + "Unranked", true));
 			player.getInventory().setItem(1, ItemUtils.createItems(Material.DIAMOND_SWORD, ChatColor.GRAY + "Ranked", true));
 			player.getInventory().setItem(3, ItemUtils.createItems(Material.NAME_TAG, ChatColor.GRAY + "Create party"));
+			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_COMPARATOR, ChatColor.GRAY + "Utils"));
 			player.getInventory().setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + "Profile"));
 			player.getInventory().setItem(7, ItemUtils.createItems(Material.BOOK, ChatColor.GRAY + "Editor"));
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Settings"));

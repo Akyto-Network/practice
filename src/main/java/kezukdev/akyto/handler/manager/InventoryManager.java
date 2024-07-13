@@ -49,6 +49,7 @@ public class InventoryManager {
 	private final Inventory[] queueInventory = new Inventory[5];
 	private final Inventory[] arenaInventory = new Inventory[2];
 	private final Inventory[] editorInventory = new Inventory[3];
+	private final Inventory utilsInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Utils");
 	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
 	private final Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
     public MultipageSerializer spectateMultipage;
@@ -88,6 +89,12 @@ public class InventoryManager {
 		this.setQueueInventory();
 		this.runnableLeaderboardInventory();
 		this.setEditorInventory();
+		this.setUtilsInventory();
+	}
+
+	private void setUtilsInventory() {
+		this.utilsInventory.setItem(1, ItemUtils.createItems(Material.PAPER, ChatColor.GRAY + "Tags"));
+		this.utilsInventory.setItem(3, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Leaderboard"));
 	}
 
 	public void refreshPartyInventory() {
@@ -271,6 +278,7 @@ public class InventoryManager {
 		this.settingsInventory.remove(uuid);
 		this.settingsSpectateInventory.remove(uuid);
 		this.effectsInventory.remove(uuid);
+		Core.API.getManagerHandler().getInventoryManager().getCommonTags().remove(uuid);
 		Core.API.getManagerHandler().getInventoryManager().getProfileInventory().remove(uuid);
 	}
 	

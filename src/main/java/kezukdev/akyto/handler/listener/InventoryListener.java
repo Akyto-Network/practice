@@ -98,6 +98,15 @@ public class InventoryListener implements Listener {
 				this.main.getManagerHandler().getRequestManager().sendNotification(event.getWhoClicked().getUniqueId(), RequestType.DUEL);
 				event.getWhoClicked().closeInventory();
 			}
+			if (inventory.equals(inventoryManager.getUtilsInventory())) {
+				if (itemMaterial.equals(Material.PAPER)) {
+					Core.API.getManagerHandler().getInventoryManager().generateCommonTagInventory(event.getWhoClicked().getUniqueId());
+					event.getWhoClicked().openInventory(Core.API.getManagerHandler().getInventoryManager().getCommonTags().get(event.getWhoClicked().getUniqueId()));
+				}
+				if (itemMaterial.equals(Material.EMERALD)) {
+					event.getWhoClicked().openInventory(inventoryManager.getLeaderboardInventory());
+				}
+			}
 			if (inventory.equals(inventoryManager.getPartyEventInventory())) {
 				if (itemMaterial.equals(Material.IRON_AXE)) {
 					event.getWhoClicked().openInventory(inventoryManager.getQueueInventory()[3]);

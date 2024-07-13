@@ -120,8 +120,8 @@ public class SpectateCommand implements CommandExecutor {
             });
         }
 
-        if (profileSender.getSettings()[6] != 1) playerSender.setFlySpeed(0.1f);
-        if (profileSender.getSettings()[6] != 0) playerSender.setFlySpeed(0.25f);
+        if (profileSender.getSettings()[7] != 1) playerSender.setFlySpeed(0.2f);
+        if (profileSender.getSettings()[7] != 0) playerSender.setFlySpeed(0.45f);
         playerSender.teleport(Bukkit.getPlayer(targetUUID).getLocation());
         this.main.getManagerHandler().getInventoryManager().generateChangeSpectateInventory(playerSender.getUniqueId());
         return false;

@@ -140,6 +140,7 @@ public class PartyManager {
 		}
 		final Profile profile = Utils.getProfiles(sender);
 		final PartyEntry party = Utils.getPartyByUUID(sender);
+		final InventoryManager inventoryManager = this.main.getManagerHandler().getInventoryManager();
 		if (party.getCreator().equals(sender)) {
 			party.getMembers().forEach(uuid -> {
 				if (Utils.getProfiles(uuid) != null) {
@@ -150,7 +151,7 @@ public class PartyManager {
 				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + CoreUtils.getName(sender) + " to dissolve the party!");
 			});
 			this.parties.remove(party);
-			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
+			inventoryManager.refreshPartyInventory();
         } else {
 			party.getMembers().remove(sender);
 			if (profile.isInState(ProfileState.FREE)) {
@@ -162,7 +163,7 @@ public class PartyManager {
 			party.getMembers().forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) != null) Bukkit.getPlayer(uuid).sendMessage(ChatColor.RED + CoreUtils.getName(sender) + " left the party!");
 			});
-			this.main.getManagerHandler().getInventoryManager().refreshPartyInventory();
+			inventoryManager.refreshPartyInventory();
 		}
 	}
 	
