@@ -14,6 +14,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -238,39 +239,45 @@ public class PlayerListener implements Listener {
 	public void onFightInteract(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		final Profile profile = Utils.getProfiles(player.getUniqueId());
+
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (player.getItemInHand() == null || event.getItem() == null) return;
-	        if (profile.isInState(ProfileState.FIGHT)) {
-	            final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
-	            if (player.getItemInHand().getType() == Material.ENDER_PEARL) {
-	                if (duel.getState().equals(DuelState.STARTING)) {
-	                    event.setUseItemInHand(Result.DENY);
-	                    player.sendMessage(ChatColor.RED + "You can't launch an enderpearl yet!");
-	                    player.updateInventory();
-	                    return;
-	                }
-	                DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
-	                if (!duelStatistics.hasPearlCooldown()) {
-	                	event.setUseItemInHand(Result.ALLOW);
+
+			if (profile.isInState(ProfileState.FIGHT)) {
+				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
+				if (player.getItemInHand().getType() == Material.ENDER_PEARL) {
+					if (duel.getState().equals(DuelState.STARTING)) {
+						event.setUseItemInHand(Event.Result.DENY);
+						player.sendMessage(ChatColor.RED + "You can't launch an enderpearl yet!");
+						player.updateInventory();
+						return;
+					}
+
+					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
+					if (!duelStatistics.hasPearlCooldown()) {
 						duelStatistics.applyEnderPearlCooldown();
-	                    new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
+						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
+						event.setUseItemInHand(Event.Result.ALLOW);
 						event.setCancelled(false);
-	                    return;
-	                }
-	                event.setUseItemInHand(Result.DENY);
-	                player.sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
-	                player.updateInventory();
-	                return;
-	            }
-	            if (duel.getState().equals(DuelState.STARTING)) {
-	                if (event.getItem().getType().equals(Material.POTION) && event.getItem().getDurability() == 16421) {
-	                    event.setUseItemInHand(Result.DENY);
-	                    event.setCancelled(true);
-	                }
-	            } 
+						return;
+					}
+
+					event.setUseItemInHand(Event.Result.DENY);
+					player.sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
+					player.updateInventory();
+					return;
+				}
+
+				if (duel.getState().equals(DuelState.STARTING)) {
+					if (event.getItem().getType().equals(Material.POTION) && event.getItem().getDurability() == 16421) {
+						event.setUseItemInHand(Event.Result.DENY);
+						event.setCancelled(true);
+					}
+				}
+
 				final Kit kit = duel.getKit();
 				if (player.getItemInHand().getType().equals(Material.ENCHANTED_BOOK)) {
-					event.setUseItemInHand(Result.DENY);
+					event.setUseItemInHand(Event.Result.DENY);
 					player.closeInventory();
 					player.getInventory().clear();
 					player.getInventory().setArmorContents(this.main.getManagerHandler().getProfileManager().getEditor().get(player.getUniqueId()).get(kit.name()).getArmorContent());
@@ -278,6 +285,7 @@ public class PlayerListener implements Listener {
 					player.updateInventory();
 					return;
 				}
+
 				if (player.getItemInHand().getType().equals(Material.BOOK)) {
 					final KitInterface kitI = (KitInterface) Utils.getDuelByUUID(player.getUniqueId()).getKit();
 					player.getInventory().setArmorContents(kitI.armor());
@@ -285,17 +293,18 @@ public class PlayerListener implements Listener {
 					player.updateInventory();
 					return;
 				}
+
 				if (!player.isDead() && player.getItemInHand().getType() == Material.MUSHROOM_SOUP && player.getHealth() < player.getMaxHealth()) {
 					final double newHealth = Math.min(player.getHealth() + 7.0D, player.getMaxHealth());
 					player.setHealth(newHealth);
-					player.updateInventory();
 					player.getItemInHand().setType(Material.BOWL);
 					player.updateInventory();
 					return;
 				}
-	        }	
+			}
 		}
 	}
+
 	
 	@EventHandler(priority=EventPriority.LOW)
 	public void PlayerPlaceBlockEvent(final BlockPlaceEvent event) {

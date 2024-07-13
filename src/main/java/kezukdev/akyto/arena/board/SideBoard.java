@@ -1,4 +1,4 @@
-package kezukdev.akyto.board;
+package kezukdev.akyto.arena.board;
 
 import java.text.DecimalFormat;
 import java.util.*;

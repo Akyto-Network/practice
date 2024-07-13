@@ -63,7 +63,7 @@ public class DuelManager {
 						MatchUtils.addKill(uuid, null, false);
 					}
 				}
-				MatchUtils.multiArena(uuid, true, false);
+				MatchUtils.multiArena(uuid, false, false);
 				Utils.getOpponents(uuid).forEach(ops -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(ops))); // Fix Tracker problem
 				Utils.getAllies(uuid).forEach(allies -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(allies))); // Fix Tracker problem
 				this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(Utils.getDuelByUUID(uuid).isRanked(), kit);

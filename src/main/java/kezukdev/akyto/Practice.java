@@ -16,7 +16,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.bizarrealex.aether.Aether;
 
 import kezukdev.akyto.arena.Arena;
-import kezukdev.akyto.board.SideBoard;
+import kezukdev.akyto.arena.board.SideBoard;
 import kezukdev.akyto.database.FileSetup;
 import kezukdev.akyto.duel.Duel;
 import kezukdev.akyto.handler.ManagerHandler;

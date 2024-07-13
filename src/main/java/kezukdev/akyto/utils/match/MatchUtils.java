@@ -148,42 +148,72 @@ public class MatchUtils {
 			entities.remove();
 		}
 	}
-	
+
 	public static void multiArena(final UUID uuid, final boolean display, boolean spectator) {
-	    if (!display) {
-	    	final Duel duel = Utils.getDuelByUUID(uuid);
-	    	Practice.getAPI().getDuels().forEach(duels -> {
-	    		if (!spectator && duels != duel) return;
-	    		if (spectator && duels != Utils.getDuelBySpectator(uuid)) return;
-    	    	duels.getFirst().forEach(first -> {
-    	    		if (Bukkit.getPlayer(first) == null) return;
-    	    		Bukkit.getPlayer(first).hidePlayer(Bukkit.getPlayer(uuid));
-    	    		Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(first));
-    	    	});
-    	    	duels.getSecond().forEach(second -> {
-    	    		if (Bukkit.getPlayer(second) == null) return;
-    	    		Bukkit.getPlayer(second).hidePlayer(Bukkit.getPlayer(uuid));
-    	    		Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(second));
-    	    	});
-    	    	if (spectator) {
-    				final Profile profile = Utils.getProfiles(uuid);
-    				final Player playerSender = Bukkit.getPlayer(uuid);
-    		    	if (!duels.getSpectators().isEmpty()) {
-    		            duels.getSpectators().forEach(spectators -> {
-    		                if (profile.getSettings()[8] != 1) playerSender.showPlayer(Bukkit.getPlayer(spectators));
-    		                if (profile.getSettings()[8] != 0) playerSender.hidePlayer(Bukkit.getPlayer(spectators));
-    		            });	
-    		    	}
-    	    	}
-	    	});
-        }
-	    else {
-	    	Bukkit.getOnlinePlayers().forEach(players -> {
-	    		if (!players.canSee(Bukkit.getPlayer(uuid))) {
-	    			players.showPlayer(Bukkit.getPlayer(uuid));
-	    			Bukkit.getPlayer(uuid).showPlayer(players);
-	    		}
-	    	});
-	    }
+		Player targetPlayer = Bukkit.getPlayer(uuid);
+		if (targetPlayer == null) return;
+
+		if (!display) {
+			final Duel duel = Utils.getDuelByUUID(uuid);
+
+			Practice.getAPI().getDuels().forEach(duels -> {
+				boolean isSameDuel = duels == duel || (spectator && duels == Utils.getDuelBySpectator(uuid));
+
+				duels.getFirst().forEach(first -> {
+					Player firstPlayer = Bukkit.getPlayer(first);
+					if (firstPlayer != null) {
+						if (isSameDuel) {
+							firstPlayer.showPlayer(targetPlayer);
+							targetPlayer.showPlayer(firstPlayer);
+						} else {
+							firstPlayer.hidePlayer(targetPlayer);
+							targetPlayer.hidePlayer(firstPlayer);
+						}
+					}
+				});
+
+				duels.getSecond().forEach(second -> {
+					Player secondPlayer = Bukkit.getPlayer(second);
+					if (secondPlayer != null) {
+						if (isSameDuel) {
+							secondPlayer.showPlayer(targetPlayer);
+							targetPlayer.showPlayer(secondPlayer);
+						} else {
+							secondPlayer.hidePlayer(targetPlayer);
+							targetPlayer.hidePlayer(secondPlayer);
+						}
+					}
+				});
+
+				if (spectator) {
+					final Profile profile = Utils.getProfiles(uuid);
+					if (profile == null) return;
+					final Player playerSender = targetPlayer;
+
+					duels.getSpectators().forEach(spectators -> {
+						Player spectatorPlayer = Bukkit.getPlayer(spectators);
+						if (spectatorPlayer != null) {
+							if (isSameDuel) {
+								if (profile.getSettings()[8] != 1) {
+									playerSender.showPlayer(spectatorPlayer);
+								} else if (profile.getSettings()[8] != 0) {
+									playerSender.hidePlayer(spectatorPlayer);
+								}
+							} else {
+								playerSender.hidePlayer(spectatorPlayer);
+							}
+						}
+					});
+				}
+			});
+		} else {
+			Bukkit.getOnlinePlayers().forEach(players -> {
+				if (!players.canSee(targetPlayer)) {
+					players.showPlayer(targetPlayer);
+					targetPlayer.showPlayer(players);
+				}
+			});
+		}
 	}
+
 }
