@@ -1,8 +1,10 @@
-name: aPractice
+name: Addon
 authors: [kezukdev, Greentor]
 version: 1.0
-description: Akyto practice developed by Kezuk
-main: kezukdev.akyto.Practice
+description: Practice api maded by Akyto developers teams.
+main: akyto.practice.Practice
+depend:
+  - Universal
 commands:
   duel:
     aliases: [d, duels]
