@@ -2,7 +2,6 @@ package akyto.practice.handler.listener;
 
 import akyto.core.Core;
 import akyto.core.handler.manager.ProfileManager;
-import akyto.core.particle.ParticleEntry;
 import akyto.core.settings.NormalSettings;
 import akyto.core.settings.SpectateSettings;
 import akyto.practice.handler.manager.InventoryManager;
@@ -201,23 +200,6 @@ public class InventoryListener implements Listener {
 			profileManager.changeSettings(setting, Bukkit.getPlayer(event.getWhoClicked().getUniqueId()), true);
 			profileManager.refreshSettingLore(inventory, event.getWhoClicked().getUniqueId(), event.getRawSlot(), setting,true);
 		}
-		if (inventory.equals(inventoryManager.getEffectsInventory().get(event.getWhoClicked().getUniqueId()))) {
-			final ParticleEntry particleEntry = CoreUtils.getParticleByName(event.getCurrentItem().getItemMeta().getDisplayName());
-			if (!event.getWhoClicked().hasPermission(particleEntry.getPermission())) {
-				event.getWhoClicked().sendMessage(new String[] {
-						ChatColor.RED + "You do not have the required permissions.",
-						ChatColor.RED + "To own them please provide yourself with a rank owning them on our store: " + ChatColor.YELLOW + "www.akyto.club"
-				});
-				event.getWhoClicked().closeInventory();
-				return;
-			}
-			profile.setEffect(particleEntry.getSection());
-			event.getWhoClicked().closeInventory();
-			Practice.getAPI().getManagerHandler().getInventoryManager().generateEffectsInventory(event.getWhoClicked().getUniqueId());
-			event.getWhoClicked().sendMessage(new String[] {
-					ChatColor.YELLOW + "You have just applied " + particleEntry.getName() + ChatColor.YELLOW + ", now as soon as you kill someone this effect will play"
-			});
-		}
 		if (inventory.equals(inventoryManager.getSettingsSpectateInventory().get(event.getWhoClicked().getUniqueId()))) {
 			if (is_glass) return;
 			final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
@@ -249,9 +231,6 @@ public class InventoryListener implements Listener {
 			if (event.getCurrentItem().getType().equals(Material.LEVER)) {
 				String nextName = event.getCurrentItem().getItemMeta().getDisplayName().replace(ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": ", "");
 				event.getWhoClicked().closeInventory();
-				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(nextName)) {
-					nextName = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(nextName);
-				}
 				event.getWhoClicked().openInventory(inventoryManager.getPreviewInventory().get(CoreUtils.getUUID(nextName)));
 			}
 		}

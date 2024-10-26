@@ -211,8 +211,9 @@ public class InventoryManager {
         preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", Arrays.asList(ChatColor.RESET + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤")));
 		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ", Arrays.asList(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d)))); // TODO Orginiser a la rimk
         List<String> effectsInfo = new ArrayList<>();
-		for (PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects())
-			effectsInfo.add(ChatColor.GRAY + potionEffect.formatted() + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
+		if (!Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
+			for(PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects()) effectsInfo.add(ChatColor.GRAY + potionEffect.getType().getName() + " " + (potionEffect.getAmplifier() + 1) + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
+		}
         if (Bukkit.getPlayer(uuid).getActivePotionEffects().isEmpty()) {
         	effectsInfo.add(ChatColor.RED + "No Effects.");
         }
@@ -249,29 +250,6 @@ public class InventoryManager {
 		this.settingsInventory.put(uuid, profile);
 		profileManager.refreshSettingsLoreInv(profile, uuid, true);
 		this.generateSpectateSettingsInventory(uuid);
-		this.generateEffectsInventory(uuid);
-	}
-
-	public void generateEffectsInventory(final UUID uuid) {
-		final Profile profile = Utils.getProfiles(uuid);
-		final Inventory effectsBase = Core.API.getManagerHandler().getInventoryManager().getParticlesInventory();
-		final Inventory inv = Bukkit.createInventory(null, effectsBase.getSize(), effectsBase.getName());
-		Core.API.getParticles().forEach(particleEntry ->  {
-			final String perm = Bukkit.getPlayer(uuid).hasPermission(particleEntry.getPermission()) ? ChatColor.GREEN + "Yes" : ChatColor.RED + "No";
-			List<String> lores = Lists.newArrayList();
-			lores.add(ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + "---------------------");
-			particleEntry.getLore().forEach(str -> lores.add(CoreUtils.translate(str)));
-			lores.add(" ");
-			lores.add(ChatColor.GRAY + "Owned: " + perm);
-			if (profile.getEffect().equals(particleEntry.getSection())) {
-				lores.add(" ");
-				lores.add(ChatColor.GRAY + " » " + ChatColor.GREEN + "Currently enabled");
-			}
-			lores.add(ChatColor.GRAY + ChatColor.STRIKETHROUGH.toString() + "---------------------");
-			inv.addItem(ItemUtils.createItems(particleEntry.getIcon(), particleEntry.getName(), lores));
-		});
-		this.effectsInventory.remove(uuid);
-		this.effectsInventory.put(uuid, inv);
 	}
 	
 	public void removeUselessInventory(final UUID uuid) {

@@ -48,9 +48,6 @@ public class StatisticsCommand implements CommandExecutor {
 
 			Player target = Bukkit.getPlayer(args[0]);
 
-			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[0]))
-				target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]));
-
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not online.");
 				return false;

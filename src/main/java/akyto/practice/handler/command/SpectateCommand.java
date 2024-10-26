@@ -60,13 +60,6 @@ public class SpectateCommand implements CommandExecutor {
         }
 
         String name = args[0];
-        if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(name)){
-            sender.sendMessage(ChatColor.WHITE + args[0] + ChatColor.RED + " isn't in fight.");
-            return false;
-        }
-        if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(name)){
-            name = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(name);
-        }
 
         final UUID targetUUID = CoreUtils.getUUID(name);
         final Duel targetDuel = Utils.getDuelByUUID(targetUUID);

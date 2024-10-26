@@ -28,9 +28,6 @@ public class ResetCommand implements CommandExecutor {
         }
         final Player target = Bukkit.getPlayer(args[0]);
         String playerName = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getName() : Bukkit.getPlayer(args[0]).getName();
-        if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[0])) {
-            playerName = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]);
-        }
         final UUID uuid = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getUniqueId() : Bukkit.getPlayer(args[0]).getUniqueId();
         final int[] newArrayElo = new int[Practice.getAPI().getKits().size()];
         final int[] newArrayWin = new int[Practice.getAPI().getKits().size()];

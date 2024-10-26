@@ -3,7 +3,6 @@ package akyto.practice.handler.command;
 import com.google.common.collect.ImmutableList;
 
 import akyto.core.utils.location.LocationSerializer;
-import it.unimi.dsi.fastutil.Pair;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,7 +23,6 @@ import java.util.stream.Stream;
 public class ArenaCommand implements CommandExecutor {
 
 	private final Practice main;
-	private final Map<UUID, Pair<Arena, Integer>> corners = new HashMap<>();
 	private static final String[] helpMessage = new String[] {
 			ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------",
 			"",
@@ -94,25 +92,6 @@ public class ArenaCommand implements CommandExecutor {
 				}
 			}
 			sender.sendMessage(ChatColor.RED + "Not any location to teleport to :(");
-			return false;
-		}
-
-		if (args[0].equalsIgnoreCase("setcorners")) {
-			if (args.length != 2) {
-				sender.sendMessage(ChatColor.RED + "Usage: /arena setcorners <name>");
-				return false;
-			}
-
-			Arena target = this.main.getManagerHandler().getArenaManager().getArena(args[1]);
-
-			if (target == null) {
-				sender.sendMessage(ChatColor.RED + "Arena \"" + args[1] + "\" not found");
-				return false;
-			}
-
-			corners.put(playerSender.getUniqueId(), Pair.of(target, 1));
-			sender.sendMessage(ChatColor.GREEN + "Left click on the first corner of " + target.getName());
-
 			return false;
 		}
 

@@ -11,16 +11,13 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-
-import akyto.spigot.aSpigot;
-import akyto.spigot.handler.MovementHandler;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.duel.cache.DuelState;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.utils.Utils;
-import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
+import net.minecraft.server.v1_7_R4.PacketPlayInFlying;
 
 public class EntityListener implements Listener {
 
@@ -28,26 +25,15 @@ public class EntityListener implements Listener {
 
 	public EntityListener(final Practice main) {
 		this.main = main;
-		aSpigot.INSTANCE.addMovementHandler(new MovementHandler() {
-			public void handleUpdateLocation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
-				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
-				if (duel != null) {
-					final String kitName = duel.getKit().name();
-					if (kitName.equalsIgnoreCase("sumo") && duel.getState().equals(DuelState.STARTING)) {
-						player.teleport(location1);
-					}
-				}
-			}
-			public void handleUpdateRotation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
-			}
-		});
 	}
 
 	@EventHandler
 	public void onDamage(final EntityDamageEvent event) {
 		if (!(event.getEntity() instanceof Player))
 			return;
-
+		if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)){
+			event.getEntity().teleport(this.main.getSpawn().getLocation() == null ? event.getEntity().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
+		}
 		final Profile profile = Utils.getProfiles(event.getEntity().getUniqueId());
 
 		if (profile != null && profile.isInState(ProfileState.FIGHT)) {
@@ -72,7 +58,7 @@ public class EntityListener implements Listener {
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
 				if (!profileDamager.isAllowClick()) {
 					event.setCancelled(true);
-					event.getDamager().sendMessage(CoreUtils.translate(Core.API.getLoaderHandler().getMessage().getClickCancel()));
+					((Player) event.getDamager()).getPlayer().sendMessage(CoreUtils.translate(Core.API.getLoaderHandler().getMessage().getClickCancel()));
 					return;
 				}
 				final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());

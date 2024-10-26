@@ -107,21 +107,4 @@ public class Utils {
 		player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
 	}
 
-	public static void drops(final UUID player, final List<ItemStack> drop, final Location deathLoc) {
-		final Profile profile = Utils.getProfiles(player);
-		if (profile.getSettings()[5] == 1) {
-			for (ItemStack item : drop) {
-				if (item.getType().toString().contains("DIAMOND_") ||item.getType().toString().contains("IRON_")) {
-					final Item items = Bukkit.getPlayer(player).getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()), Bukkit.getPlayer(player), true);
-					MatchUtils.addDrops(items, player);
-				}
-			}
-		}
-		if (profile.getSettings()[5] == 2) {
-			for (ItemStack item : drop) {
-				final Item items = Bukkit.getPlayer(player).getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()), Bukkit.getPlayer(player), true);
-				MatchUtils.addDrops(items, player);
-			}
-		}
-	}
 }

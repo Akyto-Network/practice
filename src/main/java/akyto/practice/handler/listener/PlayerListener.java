@@ -3,14 +3,13 @@ package akyto.practice.handler.listener;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import akyto.core.particle.ParticleEntry;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.runnable.PearlExpireRunnable;
 import akyto.practice.utils.match.TagUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -168,8 +167,6 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.REDSTONE_COMPARATOR)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getUtilsInventory()); }
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }
 				if (event.getItem().getType().equals(Material.SKULL_ITEM)) {
-					final String[] kitNames = new String[];
-					Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(player.getUniqueId(), Practice.getAPI().getKits().size() + );
 					player.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId()));
 				}
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
@@ -366,10 +363,6 @@ public class PlayerListener implements Listener {
 
 		event.setDeathMessage(null);
 
-		LightningStrike lightning = deathLoc.getWorld().strikeLightningEffect(deathLoc);
-		lightning.setFireTicks(0);
-		lightning.setSilent(true);
-
 		final Duel duel = Utils.getDuelByUUID(killed.getUniqueId());
 
 		Set<UUID> duelPlayers = new HashSet<>();
@@ -382,12 +375,6 @@ public class PlayerListener implements Listener {
 			player.playSound(deathLoc, Sound.AMBIENCE_THUNDER, 10000.0F, deathLoc.getPitch());
 			if (killer != null) {
 				final Profile profileKiller = Utils.getProfiles(killer.getUniqueId());
-				if (!profileKiller.getEffect().equals("none")) {
-					final ParticleEntry particleEntry = CoreUtils.getParticleBySection(profileKiller.getEffect());
-					final Location deathLocationClone = deathLoc.clone();
-					killer.spigot().playEffect(deathLocationClone.add(0, 0.5d, 0), particleEntry.getParticle(), 0,0, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount(), 192);
-					killed.spigot().playEffect(deathLocationClone.add(0, 0.5d, 0), particleEntry.getParticle(), 0,0, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount(), 192);
-				}
 			}
 		});
 		event.setDroppedExp(0);
@@ -399,8 +386,7 @@ public class PlayerListener implements Listener {
 				MatchUtils.addDrops(items, killed.getUniqueId());
 			}
 		}
-		Utils.drops(killed.getUniqueId(), event.getDrops(), deathLoc);
-		if (killer != null) Utils.drops(killer.getUniqueId(), event.getDrops(), deathLoc);
+
 		event.getDrops().clear();
 		final Profile profile = Utils.getProfiles(killed.getUniqueId());
 		if ((profile.isInState(ProfileState.FIGHT))) {

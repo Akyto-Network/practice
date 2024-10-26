@@ -85,10 +85,6 @@ public class Practice extends JavaPlugin {
 	}
 
 	private void loadConfig() {
-		debug = getServer().getOptions().has("debug");
-		if (debug)
-			getLogger().info("Debug mode enabled");
-		this.saveDefaultConfig();
 		this.saveResource("locations.yml", false);
 		this.locationFile = new File(getDataFolder() + "/locations.yml");
 		this.locationConfig = YamlConfiguration.loadConfiguration(locationFile);

@@ -47,15 +47,7 @@ public class DuelCommand implements CommandExecutor {
 		}
 
 		if (args.length == 1) {
-			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(args[0])) {
-				sender.sendMessage(ChatColor.RED + args[0] + " not found on akyto.");
-				return false;
-			}
 			Player target = Bukkit.getPlayer(args[0]);
-
-			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[0])) {
-				target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]));
-			}
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[0] + " not found on akyto.");
 				return false;
@@ -101,14 +93,6 @@ public class DuelCommand implements CommandExecutor {
 			}
 
 			Player target = Bukkit.getPlayer(args[1]);
-			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
-				target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
-			}
-
-			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(args[1])) {
-				sender.sendMessage(ChatColor.RED + args[1] + " not found on akyto.");
-				return false;
-			}
 
 			if (target == null) {
 				sender.sendMessage(ChatColor.RED + args[1] + " not found on akyto.");

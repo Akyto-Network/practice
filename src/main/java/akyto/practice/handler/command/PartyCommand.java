@@ -89,15 +89,6 @@ public class PartyCommand implements CommandExecutor {
 
 				Player target = Bukkit.getPlayer(args[1]);
 
-				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(args[1])) {
-					sender.sendMessage(ChatColor.RED + args[1] + " is not online.");
-					return false;
-				}
-
-				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
-					target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
-				}
-
 				if (target == null) {
 					sender.sendMessage(ChatColor.RED + args[1] + " is not online.");
 					return false;
@@ -128,22 +119,12 @@ public class PartyCommand implements CommandExecutor {
 
 			if (args[0].equalsIgnoreCase("kick")) {
 				Player target = Bukkit.getPlayer(args[1]);
-				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
-					target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
-				}
 				partyManager.kickParty(playerSender.getUniqueId(), target.getUniqueId());
 				return false;
 			}
 
 			if (args[0].equalsIgnoreCase("join")) {
 				Player target = Bukkit.getPlayer(args[1]);
-				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsValue(args[1])) {
-					sender.sendMessage(ChatColor.RED + args[1] + " is not online.");
-					return false;
-				}
-				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
-					target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
-				}
 				if (target == null) {
 					sender.sendMessage(ChatColor.RED + args[1] + " is not online.");
 					return false;
