@@ -9,8 +9,8 @@ import akyto.practice.runnable.PearlExpireRunnable;
 import akyto.practice.utils.match.TagUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -168,8 +168,6 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.REDSTONE_COMPARATOR)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getUtilsInventory()); }
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }
 				if (event.getItem().getType().equals(Material.SKULL_ITEM)) {
-					final String[] kitNames = new String[];
-					Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(player.getUniqueId(), Practice.getAPI().getKits().size() + );
 					player.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId()));
 				}
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
@@ -395,7 +393,7 @@ public class PlayerListener implements Listener {
 		killed.setExp(0);
 		if (!duel.getDuelType().equals(DuelType.SINGLE)) {
 			for (ItemStack item : event.getDrops()) {
-				final Item items = killed.getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()), killed);
+				final Item items = killed.getWorld().dropItemNaturally(killed, deathLoc, new ItemStack(item.clone()));
 				MatchUtils.addDrops(items, killed.getUniqueId());
 			}
 		}
@@ -449,25 +447,6 @@ public class PlayerListener implements Listener {
 			event.setCancelled(true);
 			return;
 		}
-//		if (!event.getTo().equals(this.main.getSpawn().getLocation() == null ? teleported.getWorld().getSpawnLocation() : this.main.getSpawn().getLocation()))
-//			return;
-//
-//		if (RgbArmorTask.getArmored().contains(teleported.getUniqueId()))
-//			return;
-//
-//		Profile profile = this.main.getManagerHandler().getProfileManager().getProfiles().get(teleported.getUniqueId());
-//
-//		if (profile == null || teleported.hasPermission("akyto.rgbchest")) // TODO add setting check
-//			return;
-//
-//		RgbArmorTask rgbArmor = new RgbArmorTask(teleported);
-//		BukkitTask rgbArmorTask = this.main.getServer().getScheduler().runTaskTimerAsynchronously(
-//				this.main,
-//				rgbArmor,
-//				40L,
-//				1L
-//		);
-//		rgbArmor.setTask(rgbArmorTask);
 	}
 
 }

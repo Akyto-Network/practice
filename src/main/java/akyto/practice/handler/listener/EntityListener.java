@@ -3,6 +3,9 @@ package akyto.practice.handler.listener;
 import akyto.core.Core;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.duel.Duel;
+import com.sathonay.npaper.handler.MovementHandler;
+import com.sathonay.npaper.nPaper;
+import net.minecraft.server.v1_7_R4.PacketPlayInFlying;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,15 +15,12 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
-import akyto.spigot.aSpigot;
-import akyto.spigot.handler.MovementHandler;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.duel.cache.DuelState;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.utils.Utils;
-import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 
 public class EntityListener implements Listener {
 
@@ -28,17 +28,18 @@ public class EntityListener implements Listener {
 
 	public EntityListener(final Practice main) {
 		this.main = main;
-		aSpigot.INSTANCE.addMovementHandler(new MovementHandler() {
-			public void handleUpdateLocation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
+		nPaper.INSTANCE.addMovementHandler(new MovementHandler() {
+			public void handleUpdateLocation(Player player, Location to, Location from, PacketPlayInFlying packet) {
 				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 				if (duel != null) {
 					final String kitName = duel.getKit().name();
 					if (kitName.equalsIgnoreCase("sumo") && duel.getState().equals(DuelState.STARTING)) {
-						player.teleport(location1);
+						player.teleport(to);
 					}
 				}
 			}
-			public void handleUpdateRotation(final Player player, final Location location, final Location location1, final PacketPlayInFlying packetPlayInFlying) {
+			public void handleUpdateRotation(Player player, Location to, Location from, PacketPlayInFlying packet) {
+
 			}
 		});
 	}
@@ -72,7 +73,7 @@ public class EntityListener implements Listener {
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
 				if (!profileDamager.isAllowClick()) {
 					event.setCancelled(true);
-					event.getDamager().sendMessage(CoreUtils.translate(Core.API.getLoaderHandler().getMessage().getClickCancel()));
+					((Player) event.getDamager()).getPlayer().sendMessage(CoreUtils.translate(Core.API.getLoaderHandler().getMessage().getClickCancel()));
 					return;
 				}
 				final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());

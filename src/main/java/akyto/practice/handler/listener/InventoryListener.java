@@ -9,6 +9,7 @@ import akyto.practice.handler.manager.InventoryManager;
 import akyto.practice.request.Request;
 import akyto.practice.request.Request.RequestType;
 import akyto.practice.utils.Utils;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -63,7 +64,8 @@ public class InventoryListener implements Listener {
 		}
 		final Inventory inventory = event.getClickedInventory();
 		final Material itemMaterial = event.getCurrentItem().getType();
-		final Profile profile = Utils.getProfiles(event.getWhoClicked().getUniqueId());
+		final Player player = Bukkit.getPlayer(event.getWhoClicked().getUniqueId());
+		final Profile profile = Utils.getProfiles(player.getUniqueId());
 		if (inventory.equals(inventoryManager.getLeaderboardInventory())) {
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
@@ -80,20 +82,20 @@ public class InventoryListener implements Listener {
 				return;
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[0])) {
-				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(event.getWhoClicked().getUniqueId(), Kit.getLadderByID(event.getSlot(), main), false);
+				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(player.getUniqueId(), Kit.getLadderByID(event.getSlot(), main), false);
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[1])) {
-				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(event.getWhoClicked().getUniqueId(), Kit.getLadderByID(event.getSlot(), main), true);
+				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(player.getUniqueId(), Kit.getLadderByID(event.getSlot(), main), true);
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[2])) {
-				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
+				final Request request = Utils.getRequestByUUID(player.getUniqueId());
 				request.setKit(Kit.getLadderByID(event.getSlot(), main));
 				event.getWhoClicked().openInventory(Kit.getLadderByID(event.getSlot(), main).name().equalsIgnoreCase("sumo") ? this.main.getManagerHandler().getInventoryManager().getArenaInventory()[1] : this.main.getManagerHandler().getInventoryManager().getArenaInventory()[0]);
 			}
 			if (inventory.equals(inventoryManager.getArenaInventory()[0]) || inventory.equals(inventoryManager.getArenaInventory()[1])) {
-				final Request request = Utils.getRequestByUUID(event.getWhoClicked().getUniqueId());
+				final Request request = Utils.getRequestByUUID(player.getUniqueId());
 				request.setArena(event.getCurrentItem().getType().equals(Material.TRAP_DOOR) ? this.main.getManagerHandler().getArenaManager().getRandomArena(request.getKit().arenaType()) : Utils.getArenaByIcon(event.getCurrentItem().getType(), request.getKit().arenaType()));
 				this.main.getManagerHandler().getRequestManager().sendNotification(event.getWhoClicked().getUniqueId(), RequestType.DUEL);
 				event.getWhoClicked().closeInventory();
@@ -204,7 +206,7 @@ public class InventoryListener implements Listener {
 		if (inventory.equals(inventoryManager.getEffectsInventory().get(event.getWhoClicked().getUniqueId()))) {
 			final ParticleEntry particleEntry = CoreUtils.getParticleByName(event.getCurrentItem().getItemMeta().getDisplayName());
 			if (!event.getWhoClicked().hasPermission(particleEntry.getPermission())) {
-				event.getWhoClicked().sendMessage(new String[] {
+				player.sendMessage(new String[] {
 						ChatColor.RED + "You do not have the required permissions.",
 						ChatColor.RED + "To own them please provide yourself with a rank owning them on our store: " + ChatColor.YELLOW + "www.akyto.club"
 				});
@@ -214,7 +216,7 @@ public class InventoryListener implements Listener {
 			profile.setEffect(particleEntry.getSection());
 			event.getWhoClicked().closeInventory();
 			Practice.getAPI().getManagerHandler().getInventoryManager().generateEffectsInventory(event.getWhoClicked().getUniqueId());
-			event.getWhoClicked().sendMessage(new String[] {
+			player.sendMessage(new String[] {
 					ChatColor.YELLOW + "You have just applied " + particleEntry.getName() + ChatColor.YELLOW + ", now as soon as you kill someone this effect will play"
 			});
 		}
