@@ -130,6 +130,7 @@ public class ArenaCommand implements CommandExecutor {
 			}
 
 			this.main.getArenasMap().remove(args[1].toLowerCase());
+			this.main.getArenas().remove(target);
 
 			sender.sendMessage(ChatColor.GREEN + "Successfully deleted " + args[1]);
 
