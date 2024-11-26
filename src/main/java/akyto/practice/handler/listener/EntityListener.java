@@ -51,15 +51,21 @@ public class EntityListener implements Listener {
 
 		final Profile profile = Utils.getProfiles(event.getEntity().getUniqueId());
 
-		if (profile != null && profile.isInState(ProfileState.FIGHT)) {
+		if (profile != null) {
+			if (profile.isInState(ProfileState.FREE) && event.getCause().equals(DamageCause.VOID)) {
+				event.getEntity().teleport(this.main.getSpawn().getLocation() == null ? event.getEntity().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
+			}
 
-			final Duel playerDuel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
+			if (profile.isInState(ProfileState.FIGHT)) {
 
-			if (playerDuel != null && playerDuel.getState().equals(DuelState.PLAYING)) {
-				if (playerDuel.getKit().name().equals("sumo")) {
-					event.setDamage(0.0f);
+				final Duel playerDuel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
+
+				if (playerDuel != null && playerDuel.getState().equals(DuelState.PLAYING)) {
+					if (playerDuel.getKit().name().equals("sumo")) {
+						event.setDamage(0.0f);
+					}
+					return;
 				}
-				return;
 			}
 		}
 		event.setCancelled(true);

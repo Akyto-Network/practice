@@ -10,6 +10,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import akyto.core.Core;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -76,6 +79,12 @@ public class Practice extends JavaPlugin {
 	}
 
 	public void onDisable() {
+		if (!Bukkit.getOnlinePlayers().isEmpty()) {
+			Bukkit.getOnlinePlayers().forEach(player -> {
+				Core.API.getDatabaseSetup().exit(player.getUniqueId());
+				player.kickPlayer(ChatColor.RED + "Restart is going on.");
+			});
+		}
 		this.getFileSetup().saveEditor();
 		LocationUtil.getAll().forEach(locationHelper -> locationHelper.save(this));
 		try {
