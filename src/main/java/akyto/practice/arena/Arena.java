@@ -24,6 +24,5 @@ public class Arena {
         position = Arrays.asList(loc1, loc2);
         this.arenaType = arenaType;
         this.icon = icon;
-        main.getArenas().add(this);
     }
 }

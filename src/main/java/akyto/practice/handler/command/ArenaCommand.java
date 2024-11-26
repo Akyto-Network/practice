@@ -69,7 +69,7 @@ public class ArenaCommand implements CommandExecutor {
 				return false;
 			}
             ArenaType.valueOf(args[2].toUpperCase());
-            this.main.getArenasMap().putIfAbsent(name, new Arena(main, name, LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), ArenaType.valueOf(args[2].toUpperCase()), Material.PAPER));
+            this.main.getArenas().putIfAbsent(name, new Arena(main, name, LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), ArenaType.valueOf(args[2].toUpperCase()), Material.PAPER));
 			sender.sendMessage(ChatColor.GREEN + "You have succesfully create the " + args[1] + " arena into the " + args[2] + " type!");
 			return false;
 		}
@@ -129,8 +129,7 @@ public class ArenaCommand implements CommandExecutor {
 				return false;
 			}
 
-			this.main.getArenasMap().remove(args[1].toLowerCase());
-			this.main.getArenas().remove(target);
+			this.main.getArenas().remove(args[1].toLowerCase());
 
 			sender.sendMessage(ChatColor.GREEN + "Successfully deleted " + args[1]);
 
@@ -200,7 +199,7 @@ public class ArenaCommand implements CommandExecutor {
 			}
 
 			if (args.length < 3) {
-				return Practice.getAPI().getArenasMap().keySet().stream()
+				return Practice.getAPI().getArenas().keySet().stream()
 						.filter(sub -> sub.startsWith(args[1].toLowerCase()))
 						.collect(Collectors.toUnmodifiableList());
 			}

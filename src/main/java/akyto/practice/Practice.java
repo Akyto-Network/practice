@@ -60,8 +60,7 @@ public class Practice extends JavaPlugin {
 
 	private final List<Duel> duels = new ArrayList<>();
 	private ConcurrentMap<UUID, QueueEntry> queue;
-	private final List<Arena> arenas = new ArrayList<>();
-	private final HashMap<String, Arena> arenasMap = new HashMap<>();
+	private final HashMap<String, Arena> arenas = new HashMap<>();
 	private FileSetup fileSetup;
 	private boolean debug;
 

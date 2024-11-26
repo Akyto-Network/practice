@@ -40,7 +40,7 @@ public class ArenaManager {
 					Material.valueOf(arenaSection.getString(name + ".icon"))
 			);
 
-			this.main.getArenasMap().putIfAbsent(name, arena);
+			this.main.getArenas().putIfAbsent(name, arena);
 		});
 	}
 
@@ -49,7 +49,7 @@ public class ArenaManager {
 		FileConfiguration fileConfig = this.config.getConfig();
 		fileConfig.set("arenas", null);
 
-		this.main.getArenasMap().forEach((arenaName, arena) -> {
+		this.main.getArenas().forEach((arenaName, arena) -> {
 			fileConfig.set("arenas." + arenaName + ".first", LocationSerializer.locationToString(arena.getPosition().get(0)));
 			fileConfig.set("arenas." + arenaName + ".second", LocationSerializer.locationToString(arena.getPosition().get(1)));
 			fileConfig.set("arenas." + arenaName + ".type", arena.getArenaType().toString());
@@ -60,17 +60,17 @@ public class ArenaManager {
 
 	public void reloadArenas() {
 		saveArenas();
-		this.main.getArenasMap().clear();
+		this.main.getArenas().clear();
 		loadArenas();
 	}
 
     public Arena getRandomArena(ArenaType arenaType) {
-        List<Arena> availableArena = this.main.getArenas().stream().filter(arenaManager -> arenaManager.getArenaType() == arenaType).collect(Collectors.toList());
+        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == arenaType).collect(Collectors.toList());
         Collections.shuffle(availableArena);
         return availableArena.isEmpty() ? null : availableArena.getFirst();
     }
 
 	public Arena getArena(String name) {
-		return this.main.getArenasMap().get(name.toLowerCase());
+		return this.main.getArenas().get(name.toLowerCase());
 	}
 }

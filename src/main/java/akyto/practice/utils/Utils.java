@@ -37,7 +37,7 @@ public class Utils {
 	}
 
 	public static Arena getArenaByIcon(Material icon, ArenaType arenaType) {
-		return Practice.getAPI().getArenas().stream().filter(arena -> arena.getIcon().equals(icon) && arena.getArenaType().equals(arenaType)).findFirst().orElse(null);
+		return Practice.getAPI().getArenas().values().stream().filter(arena -> arena.getIcon().equals(icon) && arena.getArenaType().equals(arenaType)).findFirst().orElse(null);
 	}
 	
 	public static Request getRequestByUUID(UUID uuid) {
