@@ -195,13 +195,13 @@ public class ArenaCommand implements CommandExecutor {
 			if (args.length < 2) {
 				return Stream.of("create", "setpos1", "setpos2", "delete", "tp")
 						.filter(sub -> args.length == 0 || sub.startsWith(args[0].toLowerCase()))
-						.collect(Collectors.toUnmodifiableList());
+						.toList();
 			}
 
 			if (args.length < 3) {
 				return Practice.getAPI().getArenas().keySet().stream()
 						.filter(sub -> sub.startsWith(args[1].toLowerCase()))
-						.collect(Collectors.toUnmodifiableList());
+						.toList();
 			}
 
 			return ImmutableList.of();

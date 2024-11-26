@@ -2,7 +2,9 @@ package akyto.practice.handler.manager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,6 +20,7 @@ public class ArenaManager {
 	
 	private final Practice main;
 	private final Config config;
+	private final Random rng = new Random();
 	
 	public ArenaManager(final Practice main) { 
 		this.main = main;
@@ -65,9 +68,8 @@ public class ArenaManager {
 	}
 
     public Arena getRandomArena(ArenaType arenaType) {
-        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == arenaType).collect(Collectors.toList());
-        Collections.shuffle(availableArena);
-        return availableArena.isEmpty() ? null : availableArena.getFirst();
+        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == arenaType).toList();
+        return availableArena.isEmpty() ? null : availableArena.get(rng.nextInt(availableArena.size()));
     }
 
 	public Arena getArena(String name) {
