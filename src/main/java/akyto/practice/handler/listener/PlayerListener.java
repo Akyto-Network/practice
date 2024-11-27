@@ -80,8 +80,8 @@ public class PlayerListener implements Listener {
 				Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + event.getPlayer().getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.")));
 			}
 			if (profile.isInState(ProfileState.FIGHT)) {
-				if (Utils.getDuelByUUID(leaver.getUniqueId()) != null) {
-					final Duel duel = Utils.getDuelByUUID(leaver.getUniqueId());
+				final Duel duel = Utils.getDuelByUUID(leaver.getUniqueId());
+				if (duel != null) {
 					if (!duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
 						duel.getDisconnected().add(leaver.getUniqueId());
 						this.main.getManagerHandler().getDuelManager().endSingle(duel.getFirst().contains(leaver.getUniqueId()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
@@ -94,11 +94,12 @@ public class PlayerListener implements Listener {
 		}
 		this.main.getManagerHandler().getInventoryManager().removeUselessInventory(event.getPlayer().getUniqueId());
 	}
-	
-	@EventHandler
-	public void onPlayerKick(final PlayerKickEvent event) {
-		this.onPlayerLeft(new PlayerQuitEvent(event.getPlayer(), null));
-	}
+
+	// Depend on the spigot build
+//	@EventHandler
+//	public void onPlayerKick(final PlayerKickEvent event) {
+//		this.onPlayerLeft(new PlayerQuitEvent(event.getPlayer(), null));
+//	}
 
 	// Limit fire extinguish to fights
 	@EventHandler
