@@ -31,6 +31,7 @@ public class MiscHandler {
 		main.getCommand("leaderboard").setExecutor(new LeaderboardCommand(main));
 		main.getCommand("party").setExecutor(new PartyCommand(main));
 		main.getCommand("reset").setExecutor(new ResetCommand());
+//		main.getCommand("showcase").setExecutor(new ShowCaseCommand(main)); // TODO
 	}
 
 }

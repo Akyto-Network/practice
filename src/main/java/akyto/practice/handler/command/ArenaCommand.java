@@ -199,7 +199,7 @@ public class ArenaCommand implements CommandExecutor {
 			}
 
 			if (args.length < 3) {
-				return Practice.getAPI().getArenas().keySet().stream()
+				return Practice.API.getArenas().keySet().stream()
 						.filter(sub -> sub.startsWith(args[1].toLowerCase()))
 						.toList();
 			}

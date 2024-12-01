@@ -29,12 +29,12 @@ public class CoreListener implements Listener {
 		Player player = event.getPlayer();
         if (Core.API.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId()).isInState(ProfileState.MOD)) {
         	if (event.getItem().getType().equals(Material.NETHER_STAR)) {
-				if (Practice.getAPI().getDuels().isEmpty()) {
+				if (Practice.API.getDuels().isEmpty()) {
 					player.sendMessage(ChatColor.RED + "0 player is in match!");
 					return;
 				}
 				final List<UUID> playersInMatch = new ArrayList<>();
-				Practice.getAPI().getDuels().forEach(duel -> {
+				Practice.API.getDuels().forEach(duel -> {
 					playersInMatch.addAll(duel.getFirst());
 					playersInMatch.addAll(duel.getSecond());
 				});

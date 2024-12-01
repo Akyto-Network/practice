@@ -55,7 +55,7 @@ public class StatisticsCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not online.");
 				return false;
 			}
-			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.getAPI().getKits().size(), Practice.getAPI().getKitNames());
+			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.API.getKits().size(), Practice.API.getKitNames());
 			playerSender.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(target.getUniqueId()));
 			return false;
 		}

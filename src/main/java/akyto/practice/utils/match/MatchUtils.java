@@ -27,7 +27,7 @@ public class MatchUtils {
 	
     public static void addKill(final UUID uuid, final UUID killer, boolean disconnect) {
         final Duel match = Utils.getDuelByUUID(uuid);
-        final ManagerHandler managerHandler = Practice.getAPI().getManagerHandler();
+        final ManagerHandler managerHandler = Practice.API.getManagerHandler();
         if (match == null) return;
 		if (disconnect) {
 			match.getDisconnected().add(uuid);
@@ -58,7 +58,7 @@ public class MatchUtils {
                 }
             });
             if (Bukkit.getPlayer(uuid) != null) {
-				Bukkit.getScheduler().runTaskLater(Practice.getAPI(), () -> {
+				Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
 					addSpectateParty(uuid);
 				}, 2L);
             }
@@ -94,14 +94,14 @@ public class MatchUtils {
 				}
 			});
 			if (Bukkit.getPlayer(uuid) != null)
-				Bukkit.getScheduler().runTaskLater(Practice.getAPI(), () -> {
+				Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
 					addSpectateParty(uuid);
 				}, 2L);
         }
     }
     
     private static void addSpectateParty(final UUID uuid) {
-        final ManagerHandler managerHandler = Practice.getAPI().getManagerHandler();
+        final ManagerHandler managerHandler = Practice.API.getManagerHandler();
     	final Duel duel = Utils.getDuelByUUID(uuid);
     	if (duel.getDuelType().equals(DuelType.FFA)) {
     		duel.getAlives().forEach(alives -> {
@@ -155,7 +155,7 @@ public class MatchUtils {
 		if (!display) {
 			final Duel duel = Utils.getDuelByUUID(uuid);
 
-			Practice.getAPI().getDuels().forEach(duels -> {
+			Practice.API.getDuels().forEach(duels -> {
 				boolean isSameDuel = duels == duel || (spectator && duels == Utils.getDuelBySpectator(uuid));
 
 				duels.getFirst().forEach(first -> {

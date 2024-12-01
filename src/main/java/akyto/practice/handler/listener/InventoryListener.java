@@ -215,7 +215,7 @@ public class InventoryListener implements Listener {
 			}
 			profile.setEffect(particleEntry.getSection());
 			event.getWhoClicked().closeInventory();
-			Practice.getAPI().getManagerHandler().getInventoryManager().generateEffectsInventory(event.getWhoClicked().getUniqueId());
+			Practice.API.getManagerHandler().getInventoryManager().generateEffectsInventory(event.getWhoClicked().getUniqueId());
 			player.sendMessage(new String[] {
 					ChatColor.YELLOW + "You have just applied " + particleEntry.getName() + ChatColor.YELLOW + ", now as soon as you kill someone this effect will play"
 			});

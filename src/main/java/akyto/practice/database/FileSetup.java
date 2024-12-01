@@ -41,7 +41,7 @@ public class FileSetup {
 				this.main.getManagerHandler().getProfileManager().getEditor().putIfAbsent(UUID.fromString(str), mapLadder);
 			}	
 			long endTime = System.currentTimeMillis();
-			System.out.println("[AkytoPractice] Edited-Kit: Succesfuly loaded in " + (endTime - timeUnit) + "ms!");
+			Practice.API.getLogger().info("[AkytoPractice] Edited-Kit: Succesfuly loaded in " + (endTime - timeUnit) + "ms!");
 		}
 	}
 
@@ -73,7 +73,7 @@ public class FileSetup {
 				}
 			}	
 			final long endTime = System.currentTimeMillis();
-			System.out.println("[AkytoPractice] Edited-Kit: Succesfully saved in: " + (endTime - startTime) + "ms!");
+			Practice.API.getLogger().info("[AkytoPractice] Edited-Kit: Succesfully saved in: " + (endTime - startTime) + "ms!");
 		}
 	}
 

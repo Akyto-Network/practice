@@ -150,7 +150,7 @@ public class DuelManager {
 		if (duel.getTimer() != null){
 			duel.getTimer().cancel();
 		}
-		winners.forEach(uuid -> Practice.getAPI().getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, loosers.stream().toList().getFirst()));
+		winners.forEach(uuid -> Practice.API.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, loosers.stream().toList().getFirst()));
 		duel.setState(DuelState.FINISHING);
 		MessageUtils.sendPartyComponent(Arrays.asList(winners, loosers));
 		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> {

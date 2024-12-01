@@ -39,7 +39,7 @@ import lombok.Getter;
 @Getter
 public class Practice extends JavaPlugin {
 
-	private static Practice api;
+	public static Practice API;
 
 	private ManagerHandler managerHandler;
 	private MiscHandler miscHandler;
@@ -47,8 +47,9 @@ public class Practice extends JavaPlugin {
 	public YamlConfiguration locationConfig;
 	public LocationUtil spawn = new LocationUtil("spawn");
 	public LocationUtil editor = new LocationUtil("editor");
+	public LocationUtil showcase = new LocationUtil("showcase");
 
-	private List<Kit> kits = Arrays.asList(
+	private final List<Kit> kits = Arrays.asList(
 			new NoDebuff(),
 			new NoEnchant(),
 			new Debuff(),
@@ -67,7 +68,7 @@ public class Practice extends JavaPlugin {
 	private String[] kitNames;
 
 	public void onEnable() {
-		api = this;
+		API = this;
 		this.loadConfig();
 		this.loadKit();
 		this.queue = new ConcurrentHashMap<>();
@@ -85,7 +86,7 @@ public class Practice extends JavaPlugin {
 			});
 		}
 		this.getFileSetup().saveEditor();
-		LocationUtil.getAll().forEach(locationHelper -> locationHelper.save(this));
+		LocationUtil.getAll().values().forEach(locationHelper -> locationHelper.save(this));
 		try {
 			this.managerHandler.getArenaManager().saveArenas();
 			this.locationConfig.save(locationFile);
@@ -99,7 +100,7 @@ public class Practice extends JavaPlugin {
 		this.saveResource("locations.yml", false);
 		this.locationFile = new File(getDataFolder() + "/locations.yml");
 		this.locationConfig = YamlConfiguration.loadConfiguration(locationFile);
-		for (LocationUtil locationHelper : LocationUtil.getAll()) {
+		for (LocationUtil locationHelper : LocationUtil.getAll().values()) {
 			this.getServer().getConsoleSender().sendMessage(locationHelper.load(this) ? "The location " + locationHelper.getName() + " is successfully registered!" : "The location " + locationHelper.getName() + " is not registered!");
 		}
 	}
@@ -107,9 +108,5 @@ public class Practice extends JavaPlugin {
 	private void loadKit() {
 		this.kitNames = new String[this.kits.size()];
 		for (Kit kit : this.kits) { kitNames[kit.id()] = kit.displayName(); }
-	}
-
-	public static Practice getAPI() {
-		return api;
 	}
 }

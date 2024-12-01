@@ -259,7 +259,7 @@ public class PlayerListener implements Listener {
 					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
 					if (!duelStatistics.hasPearlCooldown()) {
 						duelStatistics.applyEnderPearlCooldown();
-						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.getAPI(), 320L);
+						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.API, 320L);
 						event.setUseItemInHand(Event.Result.ALLOW);
 						event.setCancelled(false);
 						return;

@@ -1,7 +1,6 @@
 package akyto.practice.utils.location;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -12,7 +11,7 @@ import lombok.Setter;
 
 public @Getter @Setter class LocationUtil {
 
-    @Getter static List<LocationUtil> all = new ArrayList<>();
+    @Getter static HashMap<String, LocationUtil> all = new HashMap<>();
 
     private String name;
     private Location location;
@@ -21,7 +20,7 @@ public @Getter @Setter class LocationUtil {
         this.name = name;
         this.location = location;
 
-        all.add(this);
+        all.put(name, this);
     }
 
     public LocationUtil(String name) {
@@ -54,7 +53,6 @@ public @Getter @Setter class LocationUtil {
     }
 
     public static LocationUtil getLocationHelper(String name) {
-        return all.stream().filter(locationHelper -> locationHelper.getName().equals(name)).findFirst().orElse(null);
+        return all.get(name);
     }
-
 }

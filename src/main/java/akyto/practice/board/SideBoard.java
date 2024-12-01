@@ -115,7 +115,7 @@ public class SideBoard implements BoardAdapter {
                 final double time = statistics.getEnderPearlCooldown() / 1000.0D;
                 final DecimalFormat df = new DecimalFormat("#.#");
                 board.add(ChatColor.RED + "Enderpearl" + ChatColor.GRAY + ": " + ChatColor.RESET + df.format(time) + "s");
-        		final float timeInf = Practice.getAPI().getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
+        		final float timeInf = Practice.API.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
         		player.setExp(timeInf);
         		player.setLevel((int) time);
             }

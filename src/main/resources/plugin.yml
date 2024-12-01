@@ -27,4 +27,7 @@ commands:
   reset:
     aliases: [statsreset, tweak]
     description: 'Reset global data of targeted player!'
+  showcase:
+    aliases: [pack, resourcepack]
+    description: "Send the player to the resource pack showcase room."
   

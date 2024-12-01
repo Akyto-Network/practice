@@ -32,10 +32,10 @@ public class ResetCommand implements CommandExecutor {
             playerName = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[0]);
         }
         final UUID uuid = Bukkit.getPlayer(args[0]) == null ? Bukkit.getOfflinePlayer(args[0]).getUniqueId() : Bukkit.getPlayer(args[0]).getUniqueId();
-        final int[] newArrayElo = new int[Practice.getAPI().getKits().size()];
-        final int[] newArrayWin = new int[Practice.getAPI().getKits().size()];
-        final int[] newArrayPlayed = new int[Practice.getAPI().getKits().size()];
-        for (int i = 0; i < Practice.getAPI().getKits().size(); i++) {
+        final int[] newArrayElo = new int[Practice.API.getKits().size()];
+        final int[] newArrayWin = new int[Practice.API.getKits().size()];
+        final int[] newArrayPlayed = new int[Practice.API.getKits().size()];
+        for (int i = 0; i < Practice.API.getKits().size(); i++) {
             newArrayElo[i] = 1000;
             newArrayWin[i] = 0;
             newArrayPlayed[i] = 0;
@@ -45,7 +45,7 @@ public class ResetCommand implements CommandExecutor {
             Core.API.getDatabaseSetup().resetElos(finalPlayerName, newArrayElo, newArrayWin, newArrayPlayed);
         });
         future.whenCompleteAsync((t, u) -> {
-            Practice.getAPI().getManagerHandler().getInventoryManager().refreshLeaderboard();
+            Practice.API.getManagerHandler().getInventoryManager().refreshLeaderboard();
             Bukkit.getLogger().warning(finalPlayerName + " global data is now cleared by " + sender.getName());
         });
         if (target != null) {
@@ -53,7 +53,7 @@ public class ResetCommand implements CommandExecutor {
             profile.getStats().set(2, newArrayElo);
             profile.getStats().set(1, newArrayWin);
             profile.getStats().set(0, newArrayPlayed);
-            Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.getAPI().getKits().size(), Practice.getAPI().getKitNames());
+            Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.API.getKits().size(), Practice.API.getKitNames());
         }
         sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.RED + "Admin" + ChatColor.GRAY + "] " + ChatColor.YELLOW + args[0] + ChatColor.RED + " statistics has been clear!");
         return false;

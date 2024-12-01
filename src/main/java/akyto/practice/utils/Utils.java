@@ -33,19 +33,19 @@ public class Utils {
 	}
 
 	public static Duel getDuelByUUID(UUID uuid) {
-	    return Practice.getAPI().getDuels().stream().filter(duel -> duel.getFirst().contains(uuid) || duel.getSecond().contains(uuid)).findFirst().orElse(null);
+	    return Practice.API.getDuels().stream().filter(duel -> duel.getFirst().contains(uuid) || duel.getSecond().contains(uuid)).findFirst().orElse(null);
 	}
 
 	public static Arena getArenaByIcon(Material icon, ArenaType arenaType) {
-		return Practice.getAPI().getArenas().values().stream().filter(arena -> arena.getIcon().equals(icon) && arena.getArenaType().equals(arenaType)).findFirst().orElse(null);
+		return Practice.API.getArenas().values().stream().filter(arena -> arena.getIcon().equals(icon) && arena.getArenaType().equals(arenaType)).findFirst().orElse(null);
 	}
 	
 	public static Request getRequestByUUID(UUID uuid) {
-	    return Practice.getAPI().getManagerHandler().getRequestManager().getRequest().get(uuid);
+	    return Practice.API.getManagerHandler().getRequestManager().getRequest().get(uuid);
 	}
 	
 	public static Duel getDuelBySpectator(UUID uuid) {
-	    return Practice.getAPI().getDuels().stream().filter(duel -> duel.getSpectators().contains(uuid)).findFirst().orElse(null);
+	    return Practice.API.getDuels().stream().filter(duel -> duel.getSpectators().contains(uuid)).findFirst().orElse(null);
 	}
 
 	public static Profile getProfiles(final UUID uuid) {
@@ -53,7 +53,7 @@ public class Utils {
 	}
 	
 	public static PartyEntry getPartyByUUID(UUID uuid) {
-		return Practice.getAPI().getManagerHandler().getPartyManager().getParties().stream().filter(party -> party.getMembers().contains(uuid)).findFirst().orElse(null);
+		return Practice.API.getManagerHandler().getPartyManager().getParties().stream().filter(party -> party.getMembers().contains(uuid)).findFirst().orElse(null);
 	}
 	
 	public static void sendToSpawn(final UUID uuid, final boolean teleport) {
@@ -67,9 +67,9 @@ public class Utils {
 		if (!Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).isInState(ProfileState.MOD)) {
 			Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setProfileState(ProfileState.FREE);	
 		}
-		Practice.getAPI().getManagerHandler().getItemManager().giveItems(uuid, false);
+		Practice.API.getManagerHandler().getItemManager().giveItems(uuid, false);
 		if (teleport) {
-			Bukkit.getPlayer(uuid).teleport(Practice.getAPI().getSpawn().getLocation());
+			Bukkit.getPlayer(uuid).teleport(Practice.API.getSpawn().getLocation());
 		}
 	}
 	
@@ -81,9 +81,9 @@ public class Utils {
 		});
 		resetPlayer(uuid);
 		getProfiles(uuid).setProfileState(ProfileState.EDITOR);
-		Practice.getAPI().getManagerHandler().getProfileManager().getEditing().put(uuid, kit.name());
-		Practice.getAPI().getManagerHandler().getItemManager().giveItems(uuid, false);
-		Bukkit.getPlayer(uuid).teleport(Practice.getAPI().getEditor().getLocation());
+		Practice.API.getManagerHandler().getProfileManager().getEditing().put(uuid, kit.name());
+		Practice.API.getManagerHandler().getItemManager().giveItems(uuid, false);
+		Bukkit.getPlayer(uuid).teleport(Practice.API.getEditor().getLocation());
 	}
 	
 	public static void resetPlayer(final UUID uuid) {

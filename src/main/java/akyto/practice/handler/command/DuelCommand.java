@@ -75,7 +75,7 @@ public class DuelCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
 			}
-			final RequestManager requestManager = Practice.getAPI().getManagerHandler().getRequestManager();
+			final RequestManager requestManager = Practice.API.getManagerHandler().getRequestManager();
 			if (requestManager.getRequest().containsKey(CoreUtils.getUUID(sender.getName()))) {
 				sender.sendMessage(ChatColor.RED + "There's a pending request in all of this :3");
 				return false;
