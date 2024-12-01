@@ -101,7 +101,7 @@ public class Practice extends JavaPlugin {
 		this.locationFile = new File(getDataFolder() + "/locations.yml");
 		this.locationConfig = YamlConfiguration.loadConfiguration(locationFile);
 		for (LocationUtil locationHelper : LocationUtil.getAll().values()) {
-			this.getServer().getConsoleSender().sendMessage(locationHelper.load(this) ? "The location " + locationHelper.getName() + " is successfully registered!" : "The location " + locationHelper.getName() + " is not registered!");
+			getLogger().info(locationHelper.load(this) ? "The location " + locationHelper.getName() + " is successfully registered!" : "The location " + locationHelper.getName() + " is not registered!");
 		}
 	}
 
