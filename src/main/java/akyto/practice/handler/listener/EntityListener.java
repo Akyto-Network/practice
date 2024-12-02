@@ -68,6 +68,7 @@ public class EntityListener implements Listener {
 				}
 			}
 		}
+		event.getEntity().setFireTicks(0);
 		event.setCancelled(true);
 	}
 
