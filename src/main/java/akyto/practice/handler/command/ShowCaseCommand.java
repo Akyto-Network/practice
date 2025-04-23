@@ -4,7 +4,7 @@ import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.utils.NPCUtils;
 import akyto.practice.utils.Utils;
-import net.minecraft.server.v1_7_R4.EntityPlayer;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;

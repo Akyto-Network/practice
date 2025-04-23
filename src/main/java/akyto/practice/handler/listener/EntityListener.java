@@ -3,9 +3,9 @@ package akyto.practice.handler.listener;
 import akyto.core.Core;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.duel.Duel;
-import com.sathonay.npaper.handler.MovementHandler;
-import com.sathonay.npaper.nPaper;
-import net.minecraft.server.v1_7_R4.PacketPlayInFlying;
+import akyto.spigot.aSpigot;
+import akyto.spigot.handler.MovementHandler;
+import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -29,7 +29,7 @@ public class EntityListener implements Listener {
 
 	public EntityListener(final Practice main) {
 		this.main = main;
-		nPaper.INSTANCE.addMovementHandler(new MovementHandler() {
+		aSpigot.INSTANCE.addMovementHandler(new MovementHandler() {
 			public void handleUpdateLocation(Player player, Location to, Location from, PacketPlayInFlying packet) {
 				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 				if (duel != null) {

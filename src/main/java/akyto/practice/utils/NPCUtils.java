@@ -1,14 +1,14 @@
 package akyto.practice.utils;
 
 import akyto.practice.Practice;
-import net.minecraft.server.v1_7_R4.*;
-import net.minecraft.util.com.mojang.authlib.GameProfile;
-import net.minecraft.util.com.mojang.authlib.properties.Property;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import net.minecraft.server.v1_8_R3.*;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
-import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -60,7 +60,7 @@ public class NPCUtils {
         for (EntityPlayer npc : npcs) {
             if (player.getWorld().getUID() != npc.getWorld().getWorld().getUID())
                 continue;
-            connection.sendPacket(new PacketPlayOutPlayerInfo(npc, PacketPlayOutPlayerInfo.PlayerInfo.ADD_PLAYER));
+            connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER));
             connection.sendPacket(new PacketPlayOutNamedEntitySpawn(npc));
             connection.sendPacket(new PacketPlayOutEntityHeadRotation(npc, (byte) ((npc.yaw % 360.) * 256 / 360)));
             DataWatcher watcher = npc.getDataWatcher();
@@ -69,7 +69,7 @@ public class NPCUtils {
 
             if (player.getServer().getOnlinePlayers().stream().noneMatch(p -> p.getPlayer().getName().equals(npc.getName()))) {
                 player.getServer().getScheduler().runTaskLaterAsynchronously(Practice.API, () -> {
-                    connection.sendPacket(new PacketPlayOutPlayerInfo(npc, PacketPlayOutPlayerInfo.PlayerInfo.REMOVE_PLAYER));
+                    connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER));
                 }, 60L);
             }
         }
