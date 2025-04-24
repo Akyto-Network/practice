@@ -31,7 +31,11 @@ public class EntityListener implements Listener {
 		this.main = main;
 		aSpigot.INSTANCE.addMovementHandler(new MovementHandler() {
 			@Override
-			public void handleUpdateRotation(Player player, Location to, Location from, net.minecraft.server.PacketPlayInFlying packet) {
+			public void handleUpdateRotation(Player player, Location to, Location from, PacketPlayInFlying packet) {
+			}
+
+			@Override
+			public void handleUpdateLocation(Player player, Location to, Location from, PacketPlayInFlying packet) {
 				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 				if (duel != null) {
 					final String kitName = duel.getKit().name();
@@ -40,9 +44,6 @@ public class EntityListener implements Listener {
 					}
 				}
 			}
-
-			@Override
-			public void handleUpdateLocation(Player player, Location to, Location from, net.minecraft.server.PacketPlayInFlying packet) { }
 		});
 	}
 
