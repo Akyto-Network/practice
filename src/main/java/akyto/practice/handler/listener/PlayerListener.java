@@ -264,10 +264,11 @@ public class PlayerListener implements Listener {
 						event.setCancelled(false);
 						return;
 					}
-
-					event.setUseItemInHand(Event.Result.DENY);
-					player.sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
-					player.updateInventory();
+					else {
+						event.setUseItemInHand(Event.Result.DENY);
+						player.sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
+						player.updateInventory();
+					}
 					return;
 				}
 
@@ -446,6 +447,7 @@ public class PlayerListener implements Listener {
 		// Prevent pearl teleporting after fight MAY NOT BE PERFECT !
 		if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL) && !profile.isInState(ProfileState.FIGHT)) {
 			event.setCancelled(true);
+			System.out.println("Pearl cancelled #1");
 			return;
 		}
 	}

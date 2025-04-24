@@ -179,7 +179,7 @@ public class InventoryListener implements Listener {
 					event.getWhoClicked().closeInventory();
 					Bukkit.getPlayer(event.getWhoClicked().getUniqueId()).sendMessage(ChatColor.GREEN + "You have been saved the kit!");
 				}
-				if (itemMaterial.equals(Material.PAPER)) {
+				if (itemMaterial.equals(Material.WRITTEN_BOOK)) {
 					if (this.main.getManagerHandler().getProfileManager().getEditor().get(event.getWhoClicked().getUniqueId()).get(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId())) != null) {
 						event.getWhoClicked().getInventory().setArmorContents(this.main.getManagerHandler().getProfileManager().getEditor().get(event.getWhoClicked().getUniqueId()).get(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId())).getArmorContent());
 						event.getWhoClicked().getInventory().setContents(this.main.getManagerHandler().getProfileManager().getEditor().get(event.getWhoClicked().getUniqueId()).get(this.main.getManagerHandler().getProfileManager().getEditing().get(event.getWhoClicked().getUniqueId())).getContent());
