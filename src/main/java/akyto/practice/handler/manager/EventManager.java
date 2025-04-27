@@ -65,7 +65,7 @@ public class EventManager {
         requestMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Join " + type + " event!").create()));
         Bukkit.getOnlinePlayers().forEach(player -> player.spigot().sendMessage(requestMessage));
         if (Bukkit.getPlayer(creator) != null) {
-            Bukkit.getPlayer(creator).teleport(main.getSumoEvent().getLocation());
+            Bukkit.getPlayer(creator).teleport(main.getSumoEvent().getLocation()); // TODO: Conditions with type to teleport to the correct event locations.
         }
         this.setEventState(EventState.WAITING);
         this.alives = Lists.newArrayList(creator);
@@ -96,7 +96,7 @@ public class EventManager {
         player.teleport(this.main.getSumoEvent().getLocation());
     }
 
-    public void leaveEvent(final UUID leaver) {
+    public void leaveEvent(final UUID leaver, final boolean disconnect) {
         if (this.getEventState().equals(EventState.FREE)) {
             Bukkit.getPlayer(leaver).sendMessage(ChatColor.RED + "We're sorry, but there are no " + this.type + " events currently available.");
             return;
@@ -104,11 +104,16 @@ public class EventManager {
         if (this.getEventState().equals(EventState.WAITING)) {
             this.members.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(Bukkit.getPlayer(leaver).getName() + ChatColor.RED + " has left " + this.type + " event!"));
         }
-        if (this.alives.contains(leaver)) this.alives.remove(leaver);
-        this.members.remove(leaver);
-        Utils.sendToSpawn(leaver, true);
-        if (this.alives.isEmpty()) {
-            this.setEventState(EventState.FREE);
+        if (this.getEventState().equals(EventState.STARTING) || this.getEventState().equals(EventState.FIGHT)) {
+            this.endMatch(this.getPlayersSelected().get(0).equals(leaver) ? this.getPlayersSelected().get(1) : this.getPlayersSelected().get(0));
+        }
+        if (!disconnect) {
+            if (this.alives.contains(leaver)) this.alives.remove(leaver);
+            this.members.remove(leaver);
+            Utils.sendToSpawn(leaver, true);
+            if (this.alives.isEmpty()) {
+                this.setEventState(EventState.FREE);
+            }
         }
     }
 

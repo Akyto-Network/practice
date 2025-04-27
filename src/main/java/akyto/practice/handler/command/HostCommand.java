@@ -30,10 +30,11 @@ public class HostCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
                 return false;
             }
-            if (!args[0].equalsIgnoreCase("sumo") || !args[0].equalsIgnoreCase("oitc")){
+            if (!args[0].equalsIgnoreCase("sumo")){
                 sender.sendMessage(ChatColor.RED + "/host <sumo/oitc>");
                 return false;
             }
+            System.out.println(args[0]);
             if (args[0].equalsIgnoreCase("sumo") && main.getSumoEvent().getLocation() == null) {
                 sender.sendMessage(ChatColor.RED + "Sorry but no maps was set!");
                 return false;

@@ -40,6 +40,7 @@ public class CooldownEventRunnable extends BukkitRunnable {
                 }
             });
             this.main.getManagerHandler().getEventManager().setEventState(EventState.FIGHT);
+            new SumoEventRunnable(main).runTaskTimer(this.main, 5L, 5L);
             this.cancel();
         }
         if (counter > 0) {

@@ -23,17 +23,22 @@ public class LocationsCommand implements CommandExecutor {
 			return false;
 		}
 
-		if (args.length != 1) {
-			sender.sendMessage(ChatColor.RED + "/location set<spawn/editor/showcase/sumoEvent>");
+		if (args.length != 2) {
+			sender.sendMessage(ChatColor.RED + "/location set <spawn/editor/showcase/sumoEvent/sumoFirst/sumoSecond>");
 			return false;
 		}
 
-		if (args[0].contains("spawn") || args[0].contains("editor") || args[0].contains("showcase") || args[0].contains("sumoEvent")) {
-			LocationUtil.getLocationHelper(args[0]).setLocation(Bukkit.getPlayer(sender.getName()).getLocation());
-			sender.sendMessage(ChatColor.GREEN + "The location " + ChatColor.WHITE + args[0] + ChatColor.GREEN + " has been set!");
+		if (args[1].contains("spawn") ||
+				args[1].contains("editor") ||
+				args[1].contains("showcase") ||
+				args[1].contains("sumoEvent") ||
+				args[1].contains("sumoFirst") ||
+				args[1].contains("sumoSecond")) {
+			LocationUtil.getLocationHelper(args[1]).setLocation(Bukkit.getPlayer(sender.getName()).getLocation());
+			sender.sendMessage(ChatColor.GREEN + "The location " + ChatColor.WHITE + args[1] + ChatColor.GREEN + " has been set!");
 		}
 		else {
-			sender.sendMessage(ChatColor.RED + "/location set<spawn/editor/showcase/sumoEvent>");
+			sender.sendMessage(ChatColor.RED + "/location set <spawn/editor/showcase/sumoEvent/sumoFirst/sumoSecond>");
 			return false;
 		}
 		return false;
