@@ -1,15 +1,7 @@
 package akyto.practice.handler;
 
 import akyto.practice.Practice;
-import akyto.practice.handler.manager.ArenaManager;
-import akyto.practice.handler.manager.DuelManager;
-import akyto.practice.handler.manager.InventoryManager;
-import akyto.practice.handler.manager.ItemManager;
-import akyto.practice.handler.manager.LeaderboardManager;
-import akyto.practice.handler.manager.PartyManager;
-import akyto.practice.handler.manager.ProfileManager;
-import akyto.practice.handler.manager.QueueManager;
-import akyto.practice.handler.manager.RequestManager;
+import akyto.practice.handler.manager.*;
 import lombok.Getter;
 
 @Getter
@@ -24,6 +16,7 @@ public class ManagerHandler {
 	private final ArenaManager arenaManager;
 	private final PartyManager partyManager;
 	private final RequestManager requestManager;
+	private final EventManager eventManager;
 	
 	public ManagerHandler(final Practice main) {
 		this.profileManager = new ProfileManager();

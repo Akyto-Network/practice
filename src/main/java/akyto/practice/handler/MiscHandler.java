@@ -32,6 +32,7 @@ public class MiscHandler {
 		main.getCommand("party").setExecutor(new PartyCommand(main));
 		main.getCommand("reset").setExecutor(new ResetCommand());
 		main.getCommand("build").setExecutor(new BuildCommand(main));
+		main.getCommand("host").setExecutor(new HostCommand(main));
 //		main.getCommand("showcase").setExecutor(new ShowCaseCommand(main)); // TODO
 	}
 
