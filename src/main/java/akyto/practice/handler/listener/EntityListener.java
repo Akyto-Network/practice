@@ -27,6 +27,7 @@ public class EntityListener implements Listener {
 
 	private final Practice main;
 
+
 	public EntityListener(final Practice main) {
 		this.main = main;
 		aSpigot.INSTANCE.addMovementHandler(new MovementHandler() {

@@ -35,5 +35,6 @@ public class ManagerHandler {
 		this.inventoryManager = new InventoryManager(main);
 		this.requestManager = new RequestManager(main);
 		this.partyManager = new PartyManager(main);
+		this.eventManager = new EventManager(main);
 	}
 }

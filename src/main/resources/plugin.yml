@@ -30,4 +30,5 @@ commands:
   showcase:
     aliases: [pack, resourcepack]
     description: "Send the player to the resource pack showcase room."
+  build:
   
