@@ -258,10 +258,11 @@ public class PlayerListener implements Listener {
 
 					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
 					if (!duelStatistics.hasPearlCooldown()) {
-						duelStatistics.applyEnderPearlCooldown();
-						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.API, 320L);
 						event.setUseItemInHand(Event.Result.ALLOW);
 						event.setCancelled(false);
+						duelStatistics.applyEnderPearlCooldown();
+						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.API, 320L);
+						System.out.println("Pearl Cooldown");
 						return;
 					}
 					else {
@@ -447,7 +448,6 @@ public class PlayerListener implements Listener {
 		// Prevent pearl teleporting after fight MAY NOT BE PERFECT !
 		if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL) && !profile.isInState(ProfileState.FIGHT)) {
 			event.setCancelled(true);
-			System.out.println("Pearl cancelled #1");
 			return;
 		}
 	}

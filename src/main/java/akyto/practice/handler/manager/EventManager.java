@@ -32,7 +32,7 @@ public class EventManager {
         this.eventState = EventState.FREE;
     }
 
-    public void startEvent(final UUID creator) {
+    public void startEvent(final UUID creator, String type) {
         if (this.getCooldown() > 0L) {
             final double time = this.getCooldown() / 1000.0D;
             final DecimalFormat df  = new DecimalFormat("##.##");
@@ -41,6 +41,9 @@ public class EventManager {
         }
         if(!this.getEventState().equals(EventState.FREE)) {
             Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "Another event is currently underway, please \"/join\" to join!");
+        }
+        if (Bukkit.getPlayer(creator) != null) {
+            Bukkit.getPlayer(creator).teleport(main.getSumoEvent().getLocation());
         }
         this.setEventState(EventState.WAITING);
         this.alives = Lists.newArrayList(creator);
