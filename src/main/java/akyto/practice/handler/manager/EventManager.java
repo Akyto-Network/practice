@@ -4,6 +4,8 @@ package akyto.practice.handler.manager;
 import akyto.core.event.EventState;
 import akyto.practice.Practice;
 import com.google.common.collect.Lists;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -12,21 +14,17 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 public class EventManager {
 
     private Practice main;
+    @Setter
     private EventState eventState;
-    public EventState getEventState() { return eventState; }
-    public void setEventState(EventState eventState) { this.eventState = eventState; }
-    private java.util.List<UUID> alives;
-    public java.util.List<UUID> getAlives() { return alives; }
-    private java.util.List<UUID> members;
-    public java.util.List<UUID> getMembers() { return members; }
+    private List<UUID> alives;
+    private List<UUID> members;
     private Location waitingLocation = new Location(Bukkit.getWorld("world"), 10980.572d, 101.00000d, 10999.431d, -89.3f, -0.4f);
-    private java.util.List<UUID> playersSelected;
-    public List<UUID> getPlayersSelected() { return playersSelected; }
+    private List<UUID> playersSelected;
     private Integer minimumToStart = 4;
-    public Integer getMinimumToStart() { return minimumToStart; }
     private Long cooldown = 0L;
 
     public EventManager(final Practice main) {
@@ -52,6 +50,4 @@ public class EventManager {
         return Math.max(0L, this.cooldown - System.currentTimeMillis());
     }
 
-
-
-    }
+}

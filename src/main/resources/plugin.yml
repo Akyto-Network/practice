@@ -32,3 +32,4 @@ commands:
     description: "Send the player to the resource pack showcase room."
   build:
   host:
+  

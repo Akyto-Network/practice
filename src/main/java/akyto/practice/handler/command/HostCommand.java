@@ -10,7 +10,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitWorker;
 
 public class HostCommand implements CommandExecutor {
 
@@ -20,12 +19,8 @@ public class HostCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof Player)) {
-            if (args.length != 0) {
-                sender.sendMessage(ChatColor.GRAY + "*" + ChatColor.RED + "/host sumo");
-                return false;
-            }
-            if (args.length == 0){
-                final Player player = (Player) sender;
+            if (args.length == 1){
+                final Player player = Bukkit.getPlayer(sender.getName());
                 final Profile pm = Utils.getProfiles(player.getUniqueId());
                 if (pm.getProfileState() != ProfileState.FREE) {
                     sender.sendMessage(ChatColor.RED + "You cannot do this right now");
@@ -35,7 +30,13 @@ public class HostCommand implements CommandExecutor {
                     sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
                     return false;
                 }
-                this.main.getManagerHandler().getManager
+                if (args[0].equalsIgnoreCase("sumo")){
+                    this.main.getManagerHandler().getEventManager().startEvent(player.getUniqueId());
+                }
+            }
+            else {
+                sender.sendMessage(ChatColor.GRAY + "*" + ChatColor.RED + "/host sumo");
+                return false;
             }
             return false;
         }
