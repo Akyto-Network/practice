@@ -18,29 +18,32 @@ public class HostCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!(sender instanceof Player)) {
-            if (args.length == 1){
-                final Player player = Bukkit.getPlayer(sender.getName());
-                final Profile pm = Utils.getProfiles(player.getUniqueId());
-                if (pm.getProfileState() != ProfileState.FREE) {
-                    sender.sendMessage(ChatColor.RED + "You cannot do this right now");
-                    return false;
-                }
-                if(!sender.hasPermission("akyto.host")) {
-                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
-                    return false;
-                }
-                if (args[0].equalsIgnoreCase("sumo")){
-                    this.main.getManagerHandler().getEventManager().startEvent(player.getUniqueId());
-                }
-            }
-            else {
-                sender.sendMessage(ChatColor.GRAY + "*" + ChatColor.RED + "/host sumo");
+        if(!(sender instanceof Player)) { sender.sendMessage(ChatColor.RED + "Unvailable for CMD"); return false; }
+        if (args.length == 1){
+            final Player player = Bukkit.getPlayer(sender.getName());
+            final Profile pm = Utils.getProfiles(player.getUniqueId());
+            if (pm.getProfileState() != ProfileState.FREE) {
+                sender.sendMessage(ChatColor.RED + "You cannot do this right now");
                 return false;
             }
+            if(!sender.hasPermission("akyto.host")) {
+                sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
+                return false;
+            }
+            if (!args[0].equalsIgnoreCase("sumo") || !args[0].equalsIgnoreCase("oitc")){
+                sender.sendMessage(ChatColor.RED + "/host <sumo/oitc>");
+                return false;
+            }
+            if (args[0].equalsIgnoreCase("sumo") && main.getSumoEvent().getLocation() == null) {
+                sender.sendMessage(ChatColor.RED + "Sorry but no maps was set!");
+                return false;
+            }
+            this.main.getManagerHandler().getEventManager().startEvent(player.getUniqueId(), args[0].toLowerCase());
+        }
+        else {
+            sender.sendMessage(ChatColor.GRAY + "*" + ChatColor.RED + " /host sumo");
             return false;
         }
-
 
         return false;
     }

@@ -48,7 +48,9 @@ public class Practice extends JavaPlugin {
 	public LocationUtil spawn = new LocationUtil("spawn");
 	public LocationUtil editor = new LocationUtil("editor");
 	public LocationUtil showcase = new LocationUtil("showcase");
+	public LocationUtil sumoEvent = new LocationUtil("sumoEvent");
 
+	// TODO: Fork ladder from GYM -> Kezuk
 	private final List<Kit> kits = Arrays.asList(
 			new NoDebuff(),
 			new NoEnchant(),
