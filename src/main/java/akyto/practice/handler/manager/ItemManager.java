@@ -49,8 +49,8 @@ public class ItemManager {
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Settings"));
 			player.updateInventory();
 		}
-		if (profile.isInState(ProfileState.QUEUE)) {
-			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Queue."));
+		if (profile.isInState(ProfileState.QUEUE) || profile.isInState(ProfileState.EVENT)) {
+			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave " + (profile.isInState(ProfileState.QUEUE) ? "Queue" : "Event") + "."));
 			player.updateInventory();
 		}
 		// -> Inversé les status ?
