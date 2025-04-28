@@ -2,7 +2,7 @@ package akyto.practice.handler.manager;
 
 
 import akyto.core.Core;
-import akyto.core.event.EventState;
+import akyto.practice.event.EventState;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;

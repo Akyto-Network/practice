@@ -1,7 +1,7 @@
 package akyto.practice.handler.listener;
 
 import akyto.core.Core;
-import akyto.core.event.EventState;
+import akyto.practice.event.EventState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.duel.Duel;
 import akyto.practice.handler.manager.EventManager;

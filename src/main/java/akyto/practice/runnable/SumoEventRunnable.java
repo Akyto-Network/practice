@@ -1,15 +1,11 @@
 package akyto.practice.runnable;
 
-import akyto.core.event.EventState;
+import akyto.practice.event.EventState;
 import akyto.practice.Practice;
-import akyto.practice.duel.Duel;
-import akyto.practice.duel.cache.DuelState;
 import akyto.practice.handler.manager.EventManager;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class SumoEventRunnable extends BukkitRunnable {
