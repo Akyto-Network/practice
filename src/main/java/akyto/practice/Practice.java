@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import akyto.core.Core;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -51,6 +52,8 @@ public class Practice extends JavaPlugin {
 	public LocationUtil sumoEvent = new LocationUtil("sumoEvent");
 	public LocationUtil sumoFirst = new LocationUtil("sumoFirst");
 	public LocationUtil sumoSecond = new LocationUtil("sumoSecond");
+	public LocationUtil oitcEvent = new LocationUtil("oitcEvent");
+	public List<LocationUtil> oitcLoc = Lists.newArrayList();
 
 	// TODO: Fork ladder from GYM -> Kezuk
 	private final List<Kit> kits = Arrays.asList(
@@ -73,6 +76,9 @@ public class Practice extends JavaPlugin {
 
 	public void onEnable() {
 		API = this;
+		for (int i = 0; i < 16; i++) {
+			oitcLoc.add(new LocationUtil("oitc"+i));
+		}
 		this.loadConfig();
 		this.loadKit();
 		this.queue = new ConcurrentHashMap<>();

@@ -23,7 +23,7 @@ public class MiscHandler {
 		PluginCommand arenaCommand = main.getCommand("arena");
 		arenaCommand.setExecutor(new ArenaCommand(main));
 		arenaCommand.setTabCompleter(new ArenaCommand.Completer());
-		main.getCommand("locations").setExecutor(new LocationsCommand());
+		main.getCommand("locations").setExecutor(new LocationsCommand(main));
 		main.getCommand("inventory").setExecutor(new InventoryCommand(main));
 		main.getCommand("spectate").setExecutor(new SpectateCommand(main));
 		main.getCommand("duel").setExecutor(new DuelCommand(main));

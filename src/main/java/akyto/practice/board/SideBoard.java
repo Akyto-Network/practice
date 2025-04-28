@@ -76,7 +76,7 @@ public class SideBoard implements BoardAdapter {
         }
 
         board.add(" ");
-        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");
+        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.net");
         board.add(spacer);
         return board;
     }
@@ -126,7 +126,7 @@ public class SideBoard implements BoardAdapter {
         }
 
         board.add(" ");
-        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");
+        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.net");
         board.add(spacer);
         return board;
     }
@@ -158,7 +158,7 @@ public class SideBoard implements BoardAdapter {
         	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(duel.getWinner().get(0)));
         }
         board.add(" ");
-        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.club");
+        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.net");
         board.add(spacer);
         return board;
     }
