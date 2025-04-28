@@ -266,7 +266,6 @@ public class PlayerListener implements Listener {
 						event.setCancelled(false);
 						duelStatistics.applyEnderPearlCooldown();
 						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.API, 320L);
-						System.out.println("Pearl Cooldown");
 						return;
 					}
 					else {
