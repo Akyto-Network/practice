@@ -73,6 +73,9 @@ public class PlayerListener implements Listener {
 			if (profile.isInState(ProfileState.QUEUE)) {
 				this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(event.getPlayer().getUniqueId());
 			}
+			if (profile.isInState(ProfileState.EVENT)) {
+				this.main.getManagerHandler().getEventManager().leaveEvent(leaver.getUniqueId(), true);
+			}
 			if (profile.isInState(ProfileState.SPECTATE)) {
 				Duel duel = Utils.getDuelBySpectator(leaver.getUniqueId());
 				if (duel == null) duel = Utils.getDuelByUUID(leaver.getUniqueId());
@@ -174,9 +177,10 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
 				return;
 			}
-			if (profile.isInState(ProfileState.QUEUE)) {
+			if (profile.isInState(ProfileState.QUEUE) || profile.isInState(ProfileState.EVENT)) {
 				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) {
-					this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(player.getUniqueId());
+					if (profile.isInState(ProfileState.QUEUE)) this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(player.getUniqueId());
+					if (profile.isInState(ProfileState.EVENT)) this.main.getManagerHandler().getEventManager().leaveEvent(player.getUniqueId(), false);
 				}
 				return;
 			}	

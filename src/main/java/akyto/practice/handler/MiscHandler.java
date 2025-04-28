@@ -33,6 +33,7 @@ public class MiscHandler {
 		main.getCommand("reset").setExecutor(new ResetCommand());
 		main.getCommand("build").setExecutor(new BuildCommand(main));
 		main.getCommand("host").setExecutor(new HostCommand(main));
+		main.getCommand("join").setExecutor(new JoinCommand(main));
 //		main.getCommand("showcase").setExecutor(new ShowCaseCommand(main)); // TODO
 	}
 

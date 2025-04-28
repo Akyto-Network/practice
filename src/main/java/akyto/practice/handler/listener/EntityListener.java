@@ -1,8 +1,10 @@
 package akyto.practice.handler.listener;
 
 import akyto.core.Core;
+import akyto.practice.event.EventState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.duel.Duel;
+import akyto.practice.handler.manager.EventManager;
 import akyto.spigot.aSpigot;
 import akyto.spigot.handler.MovementHandler;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
@@ -37,6 +39,17 @@ public class EntityListener implements Listener {
 
 			@Override
 			public void handleUpdateLocation(Player player, Location to, Location from, PacketPlayInFlying packet) {
+				// Sumo Event
+				final Profile profile = Core.API.getManagerHandler().getProfileManager().getProfile(player.getUniqueId());
+				if (profile.isInState(ProfileState.EVENT)) {
+					final EventManager eventManager = main.getManagerHandler().getEventManager();
+					if (eventManager.getType().equalsIgnoreCase("sumo")) {
+						if (eventManager.getPlayersSelected().contains(player.getUniqueId()) && eventManager.getEventState().equals(EventState.STARTING)) {
+							player.teleport(to);
+						}
+					}
+				}
+				// Sumo Duel
 				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 				if (duel != null) {
 					final String kitName = duel.getKit().name();
@@ -71,6 +84,16 @@ public class EntityListener implements Listener {
 					return;
 				}
 			}
+
+			if (profile.isInState(ProfileState.EVENT)) {
+				final EventManager eventManager = main.getManagerHandler().getEventManager();
+				if (eventManager.getType().equalsIgnoreCase("sumo")) {
+					if (eventManager.getEventState().equals(EventState.FIGHT) && eventManager.getPlayersSelected().contains(event.getEntity().getUniqueId())) {
+						event.setDamage(0.0f);
+						return;
+					}
+				}
+			}
 		}
 		event.getEntity().setFireTicks(0);
 		event.setCancelled(true);
@@ -81,6 +104,17 @@ public class EntityListener implements Listener {
 		if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
 			final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
 			final Profile profileDamager = Utils.getProfiles(event.getDamager().getUniqueId());
+			if (victimProfile.isInState(ProfileState.EVENT) && profileDamager.isInState(ProfileState.EVENT)) {
+				final EventManager eventManager = main.getManagerHandler().getEventManager();
+				if (eventManager.getType().equalsIgnoreCase("sumo")) {
+					if (eventManager.getEventState().equals(EventState.FIGHT)) {
+						if (eventManager.getPlayersSelected().contains(event.getDamager().getUniqueId()) || eventManager.getPlayersSelected().contains(event.getEntity().getUniqueId())){
+							event.setDamage(0.0f);
+							return;
+						}
+					}
+				}
+			}
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
 				if (!profileDamager.isAllowClick()) {
 					event.setCancelled(true);

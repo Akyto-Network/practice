@@ -1,6 +1,6 @@
 package akyto.practice.runnable;
 
-import akyto.core.event.EventState;
+import akyto.practice.event.EventState;
 import akyto.practice.Practice;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,6 +40,7 @@ public class CooldownEventRunnable extends BukkitRunnable {
                 }
             });
             this.main.getManagerHandler().getEventManager().setEventState(EventState.FIGHT);
+            new SumoEventRunnable(main).runTaskTimer(this.main, 5L, 5L);
             this.cancel();
         }
         if (counter > 0) {
