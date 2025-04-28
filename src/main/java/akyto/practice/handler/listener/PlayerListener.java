@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import akyto.core.particle.ParticleEntry;
 import akyto.core.utils.CoreUtils;
-import akyto.practice.runnable.PearlExpireRunnable;
 import akyto.practice.utils.match.TagUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -259,21 +258,6 @@ public class PlayerListener implements Listener {
 						player.updateInventory();
 						return;
 					}
-
-					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
-					if (!duelStatistics.hasPearlCooldown()) {
-						event.setUseItemInHand(Event.Result.ALLOW);
-						event.setCancelled(false);
-						duelStatistics.applyEnderPearlCooldown();
-						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.API, 320L);
-						return;
-					}
-					else {
-						event.setUseItemInHand(Event.Result.DENY);
-						player.sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
-						player.updateInventory();
-					}
-					return;
 				}
 
 				if (duel.getState().equals(DuelState.STARTING)) {

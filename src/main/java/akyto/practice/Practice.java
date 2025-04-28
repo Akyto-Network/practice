@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import akyto.core.Core;
+import akyto.practice.runnable.ExpBarRunnable;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -85,6 +86,7 @@ public class Practice extends JavaPlugin {
 		this.managerHandler = new ManagerHandler(this);
 		this.miscHandler = new MiscHandler(this);
 		this.fileSetup = new FileSetup(this);
+		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new ExpBarRunnable(), 2L, 2L);
 		new Aether(this, new SideBoard(this));
 	}
 

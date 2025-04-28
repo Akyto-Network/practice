@@ -2,6 +2,8 @@ package akyto.practice.handler;
 
 import akyto.practice.Practice;
 import akyto.practice.handler.manager.*;
+import akyto.practice.handler.manager.TimerManager;
+import akyto.practice.utils.timer.impl.EnderpearlTimer;
 import lombok.Getter;
 
 @Getter
@@ -17,6 +19,7 @@ public class ManagerHandler {
 	private final PartyManager partyManager;
 	private final RequestManager requestManager;
 	private final EventManager eventManager;
+	private final TimerManager timerManager;
 	
 	public ManagerHandler(final Practice main) {
 		this.profileManager = new ProfileManager();
@@ -29,5 +32,9 @@ public class ManagerHandler {
 		this.requestManager = new RequestManager(main);
 		this.partyManager = new PartyManager(main);
 		this.eventManager = new EventManager(main);
+		this.timerManager = new TimerManager(main);
+		if (this.timerManager.getTimer(EnderpearlTimer.class) == null) {
+			this.timerManager.registerTimer(new EnderpearlTimer());
+		}
 	}
 }
