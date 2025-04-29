@@ -56,6 +56,7 @@ public class EventManager {
         }
         if(!this.getEventState().equals(EventState.FREE)) {
             Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "Another event is currently underway, please \"/join\" to join!");
+            return;
         }
         this.type = type.toLowerCase();
         this.setEventState(EventState.WAITING);
