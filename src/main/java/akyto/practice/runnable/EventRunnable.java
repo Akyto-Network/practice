@@ -27,7 +27,7 @@ public class EventRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (this.main.getManagerHandler().getEventManager().getAlives().size() < this.main.getManagerHandler().getEventManager().getMinimumToStart()) {
+        if (this.main.getManagerHandler().getEventManager().getMembers().size() < this.main.getManagerHandler().getEventManager().getMinimumToStart()) {
             this.cancel();
             return;
         }
@@ -40,7 +40,8 @@ public class EventRunnable extends BukkitRunnable {
                     player.sendMessage(ChatColor.DARK_GRAY + "The " + this.type + " event has begun" + ChatColor.GRAY + "," + ChatColor.WHITE + " good luck.");
                 }
             });
-            this.main.getManagerHandler().getEventManager().pickPlayer();
+            if (this.type.equals("sumo")) this.main.getManagerHandler().getEventManager().pickPlayer();
+            if (this.type.equals("oitc")) this.main.getManagerHandler().getEventManager().launchOitc();
             this.cancel();
         }
         if (counter == 30) {

@@ -8,8 +8,8 @@ import akyto.practice.handler.manager.EventManager;
 import akyto.spigot.aSpigot;
 import akyto.spigot.handler.MovementHandler;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,6 +24,7 @@ import akyto.practice.Practice;
 import akyto.practice.duel.cache.DuelState;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.utils.Utils;
+import org.bukkit.inventory.ItemStack;
 
 public class EntityListener implements Listener {
 
@@ -93,6 +94,11 @@ public class EntityListener implements Listener {
 						return;
 					}
 				}
+				if (eventManager.getType().equalsIgnoreCase("oitc")) {
+					if (eventManager.getEventState().equals(EventState.FIGHT)){
+						return;
+					}
+				}
 			}
 		}
 		event.getEntity().setFireTicks(0);
@@ -113,6 +119,10 @@ public class EntityListener implements Listener {
 							return;
 						}
 					}
+				}
+				if (eventManager.getType().equalsIgnoreCase("oitc")) {
+					event.setDamage(2.5f);
+					return;
 				}
 			}
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
@@ -147,6 +157,39 @@ public class EntityListener implements Listener {
 				}
 			}
 			event.setCancelled(true);
+		}
+		else if (event.getDamager() instanceof Arrow) {
+			Arrow arrow = (Arrow) event.getDamager();
+			Player shooter = (Player) arrow.getShooter();
+			if (shooter != null) {
+				final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
+				final Profile profileDamager = Utils.getProfiles(shooter.getUniqueId());
+				if (victimProfile.isInState(ProfileState.EVENT) && profileDamager.isInState(ProfileState.EVENT)) {
+					final EventManager eventManager = main.getManagerHandler().getEventManager();
+					if (eventManager.getType().equalsIgnoreCase("oitc")) {
+						if (eventManager.getEventState().equals(EventState.FIGHT)) {
+							event.setDamage(200.0f);
+							victimProfile.setDeath(victimProfile.getDeath() + 1);
+							profileDamager.setKill(profileDamager.getKill() + 1);
+							eventManager.getMembers().forEach(member -> {
+								if (Bukkit.getPlayer(member) != null) {
+									final Player player = Bukkit.getPlayer(member);
+									player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_RED + "OITC" + ChatColor.GRAY + "] " + ChatColor.GREEN + shooter.getName() + ChatColor.GRAY + " shot " + ChatColor.RED + event.getEntity().getName());
+								}
+							});
+							if (Bukkit.getPlayer(shooter.getUniqueId()) != null) {
+								final Player player = Bukkit.getPlayer(shooter.getUniqueId());
+								player.getInventory().addItem(new ItemStack(Material.ARROW));
+								player.updateInventory();
+							}
+							if (profileDamager.getKill() >= 5) {
+								eventManager.endMatch(shooter.getUniqueId(), event.getEntity().getUniqueId());
+							}
+							return;
+						}
+					}
+				}
+			}
 		}
 	}
 

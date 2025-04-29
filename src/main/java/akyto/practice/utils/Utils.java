@@ -9,6 +9,7 @@ import akyto.practice.arena.Arena;
 import akyto.practice.arena.ArenaType;
 
 import akyto.practice.utils.match.MatchUtils;
+import akyto.practice.utils.timer.impl.EnderpearlTimer;
 import org.bukkit.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -71,6 +72,7 @@ public class Utils {
 		if (teleport) {
 			Bukkit.getPlayer(uuid).teleport(Practice.API.getSpawn().getLocation());
 		}
+		Practice.API.getManagerHandler().getTimerManager().getTimer(EnderpearlTimer.class).clearCooldown(Bukkit.getPlayer(uuid));
 	}
 	
 	public static void sendToEditor(final UUID uuid, final Kit kit) {

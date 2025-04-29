@@ -2,6 +2,7 @@ package akyto.practice.handler.manager;
 
 import java.util.UUID;
 
+import akyto.practice.event.EventState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,6 +15,7 @@ import akyto.practice.Practice;
 import akyto.practice.kit.Kit;
 import akyto.practice.kit.KitInterface;
 import akyto.practice.utils.Utils;
+import org.bukkit.inventory.ItemStack;
 
 public class ItemManager {
 	
@@ -49,9 +51,18 @@ public class ItemManager {
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Settings"));
 			player.updateInventory();
 		}
-		if (profile.isInState(ProfileState.QUEUE) || profile.isInState(ProfileState.EVENT)) {
+		if (profile.isInState(ProfileState.QUEUE) || (profile.isInState(ProfileState.EVENT) && this.main.getManagerHandler().getEventManager().getEventState().equals(EventState.WAITING))) {
 			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave " + (profile.isInState(ProfileState.QUEUE) ? "Queue" : "Event") + "."));
 			player.updateInventory();
+		}
+		if (profile.isInState(ProfileState.EVENT)) {
+			final EventManager eventManager = this.main.getManagerHandler().getEventManager();
+			if (eventManager.getEventState().equals(EventState.FIGHT) && eventManager.getType().equals("oitc")) {
+				player.getInventory().setItem(0, ItemUtils.createItems(Material.WOOD_SWORD, ChatColor.GRAY + "Slicer", true));
+				player.getInventory().setItem(1, ItemUtils.createItems(Material.BOW, ChatColor.GRAY + "Harpoon", true));
+				player.getInventory().setItem(8, new ItemStack(Material.ARROW));
+				player.updateInventory();
+			}
 		}
 		// -> Inversé les status ?
 		if (profile.isInState(ProfileState.SPECTATE)) {

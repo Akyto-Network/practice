@@ -129,6 +129,6 @@ public class Soup extends Kit implements KitInterface {
 
 	@Override
 	public List<PotionEffect> potionEffect() {
-		return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, 99999999, 1));
+		return Collections.singletonList(new PotionEffect(PotionEffectType.SPEED, 99999999, 0));
 	}
 }

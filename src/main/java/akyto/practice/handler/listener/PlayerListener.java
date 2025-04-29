@@ -5,12 +5,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import akyto.core.particle.ParticleEntry;
 import akyto.core.utils.CoreUtils;
-import akyto.practice.runnable.PearlExpireRunnable;
+import akyto.practice.event.EventState;
+import akyto.practice.handler.manager.EventManager;
 import akyto.practice.utils.match.TagUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -22,6 +24,7 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
@@ -58,6 +61,7 @@ public class PlayerListener implements Listener {
 		Core.API.getDatabaseSetup().update(event.getPlayer().getUniqueId(), this.main.getKits().size(), kitNames);
 		this.main.getManagerHandler().getItemManager().giveItems(event.getPlayer().getUniqueId(), false);
 		Utils.resetPlayer(event.getPlayer().getUniqueId());
+		event.getPlayer().setMaximumNoDamageTicks(20);
 		event.getPlayer().teleport(this.main.getSpawn().getLocation() == null ? event.getPlayer().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
 		this.main.getManagerHandler().getInventoryManager().generateSettingsInventory(event.getPlayer().getUniqueId());
 	}
@@ -259,22 +263,6 @@ public class PlayerListener implements Listener {
 						player.updateInventory();
 						return;
 					}
-
-					DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
-					if (!duelStatistics.hasPearlCooldown()) {
-						event.setUseItemInHand(Event.Result.ALLOW);
-						event.setCancelled(false);
-						duelStatistics.applyEnderPearlCooldown();
-						new PearlExpireRunnable(player, duel).runTaskLaterAsynchronously(Practice.API, 320L);
-						System.out.println("Pearl Cooldown");
-						return;
-					}
-					else {
-						event.setUseItemInHand(Event.Result.DENY);
-						player.sendMessage(ChatColor.RED + "Cooldown expires in " + ChatColor.WHITE + FormatUtils.formatTime(duelStatistics.getEnderPearlCooldown(), 1000.0d) + ChatColor.RED + " second(s)!");
-						player.updateInventory();
-					}
-					return;
 				}
 
 				if (duel.getState().equals(DuelState.STARTING)) {
@@ -371,68 +359,102 @@ public class PlayerListener implements Listener {
 
 		event.setDeathMessage(null);
 
+		final Profile victimProfile = Utils.getProfiles(killed.getUniqueId());
+		final Profile profileDamager = Utils.getProfiles(killer.getUniqueId());
+		if (victimProfile.isInState(ProfileState.EVENT) && profileDamager.isInState(ProfileState.EVENT)) {
+			event.getDrops().clear();
+			final EventManager eventManager = this.main.getManagerHandler().getEventManager();
+			if (eventManager.getType().equals("oitc") && eventManager.getEventState().equals(EventState.FIGHT)) {
+				if (!killed.getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
+					victimProfile.setDeath(victimProfile.getDeath()+1);
+					profileDamager.setKill(profileDamager.getKill()+1);
+					if (profileDamager.getKill() >= 5) {
+						eventManager.endMatch(killer.getUniqueId(), killed.getUniqueId());
+						return;
+					}
+					eventManager.getMembers().forEach(member -> {
+						if (Bukkit.getPlayer(member) != null) {
+							final Player player = Bukkit.getPlayer(member);
+							player.sendMessage(org.bukkit.ChatColor.GRAY + "[" + org.bukkit.ChatColor.DARK_RED + "OITC" + org.bukkit.ChatColor.GRAY + "] " + org.bukkit.ChatColor.GREEN + killer.getName() + org.bukkit.ChatColor.GRAY + " slashed " + org.bukkit.ChatColor.RED + killed.getName());
+						}
+					});
+					killer.getInventory().addItem(new ItemStack(Material.ARROW));
+					killer.updateInventory();
+				}
+				killed.spigot().respawn();
+				Random random = new Random();
+				int randomNumber = random.nextInt(16);
+				Bukkit.getScheduler().runTaskLater(main, () -> {
+					killed.teleport(this.main.getOitcLoc().get(randomNumber).getLocation());
+					this.main.getManagerHandler().getItemManager().giveItems(killed.getUniqueId(), false);
+				}, 2L);
+			}
+			return;
+		}
+
 		LightningStrike lightning = deathLoc.getWorld().strikeLightningEffect(deathLoc);
 		lightning.setFireTicks(0);
 		lightning.setSilent(true);
 
 		final Duel duel = Utils.getDuelByUUID(killed.getUniqueId());
+		if (duel != null) {
+			Set<UUID> duelPlayers = new HashSet<>();
+			duelPlayers.addAll(duel.getFirst());
+			duelPlayers.addAll(duel.getSecond());
+			duelPlayers.addAll(duel.getSpectators());
 
-		Set<UUID> duelPlayers = new HashSet<>();
-		duelPlayers.addAll(duel.getFirst());
-		duelPlayers.addAll(duel.getSecond());
-		duelPlayers.addAll(duel.getSpectators());
-
-		duelPlayers.stream().map(Bukkit::getPlayer).forEach(player -> {
-			if (player == null) return;
-			player.playSound(deathLoc, Sound.AMBIENCE_THUNDER, 10000.0F, deathLoc.getPitch());
-			if (killer != null) {
-				final Profile profileKiller = Utils.getProfiles(killer.getUniqueId());
-				if (!profileKiller.getEffect().equals("none")) {
-					final ParticleEntry particleEntry = CoreUtils.getParticleBySection(profileKiller.getEffect());
-					final Location deathLocationClone = deathLoc.clone();
-					killer.spigot().playEffect(deathLocationClone.add(0, 0.5d, 0), particleEntry.getParticle(), 0,0, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount(), 192);
-					killed.spigot().playEffect(deathLocationClone.add(0, 0.5d, 0), particleEntry.getParticle(), 0,0, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount(), 192);
+			duelPlayers.stream().map(Bukkit::getPlayer).forEach(player -> {
+				if (player == null) return;
+				player.playSound(deathLoc, Sound.AMBIENCE_THUNDER, 10000.0F, deathLoc.getPitch());
+				if (killer != null) {
+					final Profile profileKiller = Utils.getProfiles(killer.getUniqueId());
+					if (!profileKiller.getEffect().equals("none")) {
+						final ParticleEntry particleEntry = CoreUtils.getParticleBySection(profileKiller.getEffect());
+						final Location deathLocationClone = deathLoc.clone();
+						killer.spigot().playEffect(deathLocationClone.add(0, 0.5d, 0), particleEntry.getParticle(), 0,0, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount(), 192);
+						killed.spigot().playEffect(deathLocationClone.add(0, 0.5d, 0), particleEntry.getParticle(), 0,0, particleEntry.getXOffSet(), particleEntry.getYOffSet(), particleEntry.getZOffSet(), particleEntry.getSpeed(), particleEntry.getAmount(), 192);
+					}
+				}
+			});
+			event.setDroppedExp(0);
+			killed.setLevel(0);
+			killed.setExp(0);
+			if (!duel.getDuelType().equals(DuelType.SINGLE)) {
+				for (ItemStack item : event.getDrops()) {
+					final Item items = killed.getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()) ,killed);
+					MatchUtils.addDrops(items, killed.getUniqueId());
 				}
 			}
-		});
-		event.setDroppedExp(0);
-		killed.setLevel(0);
-		killed.setExp(0);
-		if (!duel.getDuelType().equals(DuelType.SINGLE)) {
-			for (ItemStack item : event.getDrops()) {
-				final Item items = killed.getWorld().dropItemNaturally(deathLoc, new ItemStack(item.clone()) ,killed);
-				MatchUtils.addDrops(items, killed.getUniqueId());
+			Utils.drops(killed.getUniqueId(), event.getDrops(), deathLoc);
+			if (killer != null) Utils.drops(killer.getUniqueId(), event.getDrops(), deathLoc);
+			event.getDrops().clear();
+			final Profile profile = Utils.getProfiles(killed.getUniqueId());
+			if ((profile.isInState(ProfileState.FIGHT))) {
+				new BukkitRunnable() {
+					public void run() {
+						try {
+							CraftServer server = (CraftServer) killed.getServer();
+							server.getHandle().moveToWorld(((CraftPlayer) killed).getHandle(), 0, false);
+						}
+						catch (Exception ex) {
+							killed.spigot().respawn();
+							ex.printStackTrace();
+						}
+						killed.teleport(deathLoc);
+					}
+				}.runTaskLater(this.main, 20L);
+				new BukkitRunnable() {
+					public void run() {
+						if (killer != null)
+							killer.hidePlayer(killed);
+					}
+				}.runTaskLater(main, 19L);
+				if (duel.getDuelType().equals(DuelType.SINGLE)) {
+					this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).getFirst()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
+					return;
+				}
+				MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);
 			}
-		}
-		Utils.drops(killed.getUniqueId(), event.getDrops(), deathLoc);
-		if (killer != null) Utils.drops(killer.getUniqueId(), event.getDrops(), deathLoc);
-		event.getDrops().clear();
-		final Profile profile = Utils.getProfiles(killed.getUniqueId());
-		if ((profile.isInState(ProfileState.FIGHT))) {
-            new BukkitRunnable() {
-                public void run() {
-                    try {
-						CraftServer server = (CraftServer) killed.getServer();
-						server.getHandle().moveToWorld(((CraftPlayer) killed).getHandle(), 0, false);
-                    }
-                    catch (Exception ex) {
-                    	killed.spigot().respawn();
-                        ex.printStackTrace();
-                    }
-        			killed.teleport(deathLoc);
-                }
-            }.runTaskLater(this.main, 20L);
-            new BukkitRunnable() {
-            	public void run() {
-                    if (killer != null)
-                    	killer.hidePlayer(killed);
-            	}
-            }.runTaskLater(main, 19L);
-            if (duel.getDuelType().equals(DuelType.SINGLE)) {
-                this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).getFirst()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
-                return;
-            }
-            MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);
 		}
 	}
 	

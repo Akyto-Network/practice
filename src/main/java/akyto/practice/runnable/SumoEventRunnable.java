@@ -26,7 +26,9 @@ public class SumoEventRunnable extends BukkitRunnable {
         	final Player player = main.getServer().getPlayer(uuid);
             if (player != null && player.getLocation().getBlock().isLiquid()) {
                 this.cancel();
-                eventManager.endMatch(eventManager.getPlayersSelected().get(0) == player.getUniqueId() ? eventManager.getPlayersSelected().get(1) : eventManager.getPlayersSelected().get(0));
+                final UUID winner = eventManager.getPlayersSelected().get(0) == player.getUniqueId() ? eventManager.getPlayersSelected().get(1) : eventManager.getPlayersSelected().get(0);
+                final UUID looser = player.getUniqueId();
+                eventManager.endMatch(winner, looser);
                 break;
             }
         }

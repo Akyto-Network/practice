@@ -30,22 +30,21 @@ public class HostCommand implements CommandExecutor {
                 sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
                 return false;
             }
-            if (!args[0].equalsIgnoreCase("sumo")){
-                sender.sendMessage(ChatColor.RED + "/host <sumo/oitc>");
+            final String arg = args[0];
+            if (arg.equals("sumo") || arg.equals("oitc")){
+                if (main.getSumoEvent().getLocation() == null || main.getOitcEvent().getLocation() == null) {
+                    sender.sendMessage(ChatColor.RED + "Sorry but no maps was set!");
+                    return false;
+                }
+                this.main.getManagerHandler().getEventManager().startEvent(player.getUniqueId(), args[0].toLowerCase());
                 return false;
             }
-            System.out.println(args[0]);
-            if (args[0].equalsIgnoreCase("sumo") && main.getSumoEvent().getLocation() == null) {
-                sender.sendMessage(ChatColor.RED + "Sorry but no maps was set!");
-                return false;
-            }
-            this.main.getManagerHandler().getEventManager().startEvent(player.getUniqueId(), args[0].toLowerCase());
-        }
-        else {
-            sender.sendMessage(ChatColor.GRAY + "*" + ChatColor.RED + " /host sumo");
+            sender.sendMessage(ChatColor.RED + "/host <sumo/oitc>");
             return false;
         }
-
-        return false;
+        else {
+            sender.sendMessage(ChatColor.RED + " /host <sumo/oitc>");
+            return false;
+        }
     }
 }
