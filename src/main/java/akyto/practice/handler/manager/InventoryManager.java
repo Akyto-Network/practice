@@ -46,10 +46,11 @@ public class InventoryManager {
             DateFormat.SHORT);
 	
 	private final Practice main;
-	private final Inventory[] queueInventory = new Inventory[5];
+	private final Inventory[] queueInventory = new Inventory[6];
 	private final Inventory[] arenaInventory = new Inventory[2];
 	private final Inventory[] editorInventory = new Inventory[3];
-	private final Inventory hostInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Event");
+	private final Inventory hostInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Events:");
+	private final Inventory tournamentInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Tournament Size:");
 	private final Inventory utilsInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Utils");
 	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
 	private final Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
@@ -76,6 +77,7 @@ public class InventoryManager {
 		this.queueInventory[2] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select duel kit:");
 		this.queueInventory[3] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select ffa kit:");
 		this.queueInventory[4] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select split kit:");
+		this.queueInventory[5] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select tournament kit:");
 		this.arenaInventory[0] = Bukkit.createInventory(null, 9*4, ChatColor.GRAY + "Select Normal Arena:");
 		this.arenaInventory[1] = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Select Sumo Arena:");
 		for (Arena arena : this.main.getArenas().values()) {
@@ -92,6 +94,15 @@ public class InventoryManager {
 		this.setEditorInventory();
 		this.setUtilsInventory();
 		this.setHostInventory();
+		this.setTournamentInventory();
+	}
+
+	private void setTournamentInventory() {
+		this.tournamentInventory.setItem(0, ItemUtils.createItems(Material.IRON_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "1v1"));
+		this.tournamentInventory.setItem(1, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
+		this.tournamentInventory.setItem(2, ItemUtils.createItems(Material.DIAMOND_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "2v2"));
+		this.tournamentInventory.setItem(3, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
+		this.tournamentInventory.setItem(4, ItemUtils.createItems(Material.EMERALD_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "3v3"));
 	}
 
 	private void setUtilsInventory() {
@@ -163,15 +174,15 @@ public class InventoryManager {
 			final ItemStack item = new ItemStack(kit.material(), 1, kit.data());
 			final ItemMeta meta = item.getItemMeta();
 			meta.setDisplayName(kit.displayName());
-			final List<Inventory> invs = Arrays.asList(this.queueInventory[0], this.queueInventory[1], this.queueInventory[2], this.queueInventory[3], this.queueInventory[4], this.leaderboardInventory);
+			final List<Inventory> invs = Arrays.asList(this.queueInventory[0], this.queueInventory[1], this.queueInventory[2], this.queueInventory[3], this.queueInventory[4], this.queueInventory[5], this.leaderboardInventory);
 			invs.forEach(inv -> {
 				meta.setLore(Arrays.asList(ChatColor.GRAY + "Queueing: " + ChatColor.RESET + this.getQueuedFromLadder(kit, !inv.equals(this.queueInventory[0])), ChatColor.GRAY + "Fighting: " + ChatColor.RESET + this.getMatchedFromLadder(kit, !inv.equals(this.queueInventory[0]))));
-				if (inv.equals(this.queueInventory[2]) || inv.equals(this.queueInventory[3]) || inv.equals(this.queueInventory[4]) || inv.equals(this.leaderboardInventory)) {
+				if (inv.equals(this.queueInventory[2]) || inv.equals(this.queueInventory[3]) || inv.equals(this.queueInventory[4]) ||  inv.equals(this.queueInventory[5]) || inv.equals(this.leaderboardInventory)) {
 					meta.setLore(null);
 				}
 				item.setItemMeta(meta);
 				final boolean isSumoKit = kit.name().contains("sumo");
-				final boolean isInventory3Or4 = inv.equals(this.queueInventory[3]) || inv.equals(this.queueInventory[4]);
+				final boolean isInventory3Or4 = inv.equals(this.queueInventory[3]) || inv.equals(this.queueInventory[4]) || inv.equals(this.queueInventory[5]);
 
 				if (!isSumoKit && isInventory3Or4) {
 					int kitId = kit.id();

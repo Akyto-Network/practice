@@ -20,6 +20,7 @@ public class ManagerHandler {
 	private final RequestManager requestManager;
 	private final EventManager eventManager;
 	private final TimerManager timerManager;
+	private final TournamentManager tournamentManager;
 	
 	public ManagerHandler(final Practice main) {
 		this.profileManager = new ProfileManager();
@@ -36,5 +37,6 @@ public class ManagerHandler {
 		if (this.timerManager.getTimer(EnderpearlTimer.class) == null) {
 			this.timerManager.registerTimer(new EnderpearlTimer());
 		}
+		this.tournamentManager = new TournamentManager(main);
 	}
 }

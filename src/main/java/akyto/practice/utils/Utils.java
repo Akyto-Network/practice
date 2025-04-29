@@ -8,6 +8,7 @@ import akyto.core.profile.ProfileState;
 import akyto.practice.arena.Arena;
 import akyto.practice.arena.ArenaType;
 
+import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.match.MatchUtils;
 import akyto.practice.utils.timer.impl.EnderpearlTimer;
 import org.bukkit.*;
@@ -125,5 +126,14 @@ public class Utils {
 				MatchUtils.addDrops(items, player);
 			}
 		}
+	}
+
+	public static TournamentEntry getTournamentByPlayerUUID(UUID playerUUID) {
+		for (TournamentEntry entry : Practice.API.getManagerHandler().getTournamentManager().getAllTournaments()) {
+			if (entry.getParticipants().contains(playerUUID)) {
+				return entry;
+			}
+		}
+		return null;
 	}
 }

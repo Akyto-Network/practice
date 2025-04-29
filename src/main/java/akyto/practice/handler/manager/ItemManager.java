@@ -3,6 +3,8 @@ package akyto.practice.handler.manager;
 import java.util.UUID;
 
 import akyto.practice.event.EventState;
+import akyto.practice.tournament.TournamentEntry;
+import akyto.practice.tournament.TournamentState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -55,6 +57,15 @@ public class ItemManager {
 			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave " + (profile.isInState(ProfileState.QUEUE) ? "Queue" : "Event") + "."));
 			player.updateInventory();
 		}
+		if (profile.isInState(ProfileState.TOURNAMENT)) {
+			final TournamentEntry entry = Utils.getTournamentByPlayerUUID(player.getUniqueId());
+			if (entry != null) {
+				if (entry.getTournamentState().equals(TournamentState.WAITING)) {
+					player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Tournament."));
+					player.updateInventory();
+				}
+			}
+		}
 		if (profile.isInState(ProfileState.EVENT)) {
 			final EventManager eventManager = this.main.getManagerHandler().getEventManager();
 			if (eventManager.getEventState().equals(EventState.FIGHT) && eventManager.getType().equals("oitc")) {
@@ -80,7 +91,7 @@ public class ItemManager {
 			player.getInventory().setContents(kit.content());
 			player.updateInventory();
 		}
-		if (profile.isInState(ProfileState.FIGHT)) {
+		if (profile.isInState(ProfileState.FIGHT) || (profile.isInState(ProfileState.TOURNAMENT) && Utils.getTournamentByPlayerUUID(player.getUniqueId()).getTournamentState().equals(TournamentState.FIGHT))) {
 			final Kit kit = Utils.getDuelByUUID(uuid).getKit();
 			final KitInterface kitI = (KitInterface) Utils.getDuelByUUID(uuid).getKit();
 			if (this.main.getManagerHandler().getProfileManager().getEditor().containsKey(uuid)) {

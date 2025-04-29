@@ -1,9 +1,11 @@
 package akyto.practice.handler.manager;
 
+import akyto.core.profile.Profile;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.kit.Kit;
 import akyto.practice.tournament.TournamentEntry;
+import akyto.practice.tournament.TournamentState;
 import akyto.practice.utils.Utils;
 import akyto.core.profile.ProfileState;
 import org.bukkit.Bukkit;
@@ -31,18 +33,16 @@ public class TournamentManager implements Listener {
         Bukkit.getPluginManager().registerEvents(this, main);
     }
 
-    public UUID createTournament(Player creator, List<UUID> players, Kit kit, int teamSize) {
+    public UUID createTournament(Player creator, Kit kit, int teamSize) {
         if (!Utils.getProfiles(creator.getUniqueId()).isInState(ProfileState.FREE)) {
             creator.sendMessage(ChatColor.RED + "You must be in FREE state to create a tournament!");
             return null;
         }
-
         UUID tournamentId = UUID.randomUUID();
-        TournamentEntry entry = new TournamentEntry(tournamentId, kit, teamSize, players);
+        TournamentEntry entry = new TournamentEntry(creator.getUniqueId(), tournamentId, kit, teamSize);
         tournaments.put(tournamentId, entry);
-
-        startCountdown(entry);
-
+        final Profile profile = Utils.getProfiles(creator.getUniqueId());
+        profile.setProfileState(ProfileState.TOURNAMENT);
         return tournamentId;
     }
 
@@ -85,7 +85,6 @@ public class TournamentManager implements Listener {
             }
             return;
         }
-
         runTournamentRound(entry);
     }
 
@@ -111,7 +110,7 @@ public class TournamentManager implements Listener {
             List<UUID> team2 = new ArrayList<>(participants.subList(Math.min(i + teamSize, participants.size()), Math.min(i + 2 * teamSize, participants.size())));
 
             if (team1.isEmpty() || team2.isEmpty()) continue;
-
+            entry.setTournamentState(TournamentState.FIGHT);
             Duel duel = new Duel(main, new HashSet<>(team1), new HashSet<>(team2), false, entry.getKit(), Duel.DuelType.SPLIT, null);
             CompletableFuture<List<UUID>> future = new CompletableFuture<>();
             activeDuels.put(duel, future);
@@ -127,7 +126,7 @@ public class TournamentManager implements Listener {
         Bukkit.getScheduler().runTaskLater(main, () -> {
             List<UUID> winner = determineWinner(duel);
             future.complete(winner);
-        }, 20L); // Simulate a delay
+        }, 20L);
     }
 
     private List<UUID> determineWinner(Duel duel) {
@@ -147,6 +146,10 @@ public class TournamentManager implements Listener {
         activeDuels.clear();
         entry.getParticipants().retainAll(winners);
         runTournamentRound(entry);
+    }
+
+    public Collection<TournamentEntry> getAllTournaments() {
+        return tournaments.values();
     }
 
     public TournamentEntry getTournamentEntry(UUID tournamentId) {
@@ -182,12 +185,14 @@ public class TournamentManager implements Listener {
         if (!canJoinTournament(player, tournamentId)) {
             return;
         }
-
         TournamentEntry entry = tournaments.get(tournamentId);
         if (entry != null) {
             int teamSize = entry.getTeamSize();
             PartyManager.PartyEntry party = Utils.getPartyByUUID(player.getUniqueId());
-
+            int miniToStart = teamSize * 2;
+            if (entry.getParticipants().size() == miniToStart) {
+                startCountdown(entry);
+            }
             if (teamSize == 1) {
                 entry.getParticipants().add(player.getUniqueId());
                 notifyParticipants(entry, player.getName() + " has joined the tournament!");
@@ -209,15 +214,16 @@ public class TournamentManager implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        UUID playerId = event.getPlayer().getUniqueId();
+    public void leaveTournament(final UUID playerId) {
         for (TournamentEntry entry : tournaments.values()) {
-            if (entry.getParticipants().remove(playerId)) {
+            if (entry.getParticipants().contains(playerId)) {
                 if (entry.getTeamSize() > 1) {
                     disqualifyTeam(entry, playerId);
+                } else {
+                    entry.getParticipants().remove(playerId);
                 }
-                notifyParticipants(entry, event.getPlayer().getName() + " has left the tournament!");
+                notifyParticipants(entry, Bukkit.getPlayer(playerId).getName() + " has left the tournament!");
+                break;
             }
         }
     }
@@ -226,6 +232,42 @@ public class TournamentManager implements Listener {
         PartyManager.PartyEntry party = Utils.getPartyByUUID(playerId);
         if (party != null) {
             entry.getParticipants().removeAll(party.getMembers());
+        }
+    }
+
+    public void handleTournamentDeath(Player killed, Player killer, TournamentEntry tournamentEntry) {
+        int teamSize = tournamentEntry.getTeamSize();
+
+        if (teamSize == 1) {
+            tournamentEntry.getParticipants().remove(killed.getUniqueId());
+            notifyParticipants(tournamentEntry, (killer != null ? killer.getName() : "Environment") + " has eliminated " + killed.getName() + " from the tournament!");
+
+            if (tournamentEntry.getParticipants().size() == 1) {
+                UUID winnerId = tournamentEntry.getParticipants().get(0);
+                Bukkit.broadcastMessage(ChatColor.GOLD + "Tournament ended! Winner: " + Bukkit.getPlayer(winnerId).getName());
+                return;
+            }
+        } else {
+            Duel duel = Utils.getDuelByUUID(killed.getUniqueId());
+            PartyManager.PartyEntry party = Utils.getPartyByUUID(killed.getUniqueId());
+            if (duel != null) {
+                if (duel.getFirstAlives().contains(killed.getUniqueId())) duel.getFirstAlives().remove(killed.getUniqueId());
+                if (duel.getSecondAlives().contains(killed.getUniqueId())) duel.getFirstAlives().remove(killed.getUniqueId());
+                if (duel.getFirstAlives().isEmpty() || duel.getSecondAlives().isEmpty()) {
+                    tournamentEntry.getParticipants().removeAll(duel.getFirst().contains(killed.getUniqueId()) ? duel.getFirst() : duel.getSecond());
+                    notifyParticipants(tournamentEntry, "Team led by " + Bukkit.getPlayer(party.getCreator()).getName() + " has been eliminated from the tournament!");
+
+                    if (tournamentEntry.getParticipants().size() <= teamSize) {
+                        UUID winnerId = tournamentEntry.getParticipants().get(0);
+                        Bukkit.broadcastMessage(ChatColor.GOLD + "Tournament ended! Winner: " + Bukkit.getPlayer(winnerId).getName());
+                        return;
+                    }
+                }
+            }
+        }
+
+        if (activeDuels.isEmpty()) {
+            runTournamentRound(tournamentEntry);
         }
     }
 }
