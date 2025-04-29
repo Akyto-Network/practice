@@ -110,7 +110,7 @@ public class SideBoard implements BoardAdapter {
 
             board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(duel));
             board.add(" ");
-            board.add(ChatColor.DARK_GRAY + "Ping" + ChatColor.GRAY + player.getPing());
+            board.add(ChatColor.DARK_GRAY + "Ping" + ChatColor.GRAY + ": " + ChatColor.WHITE + player.getPing());
             DuelStatistics statistics = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
             if (statistics != null && statistics.getEnderPearlCooldown() != 0L) {
                 final double time = statistics.getEnderPearlCooldown() / 1000.0D;

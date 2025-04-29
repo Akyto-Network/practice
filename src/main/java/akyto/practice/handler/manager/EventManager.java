@@ -19,6 +19,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 
@@ -68,7 +69,7 @@ public class EventManager {
         requestMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GRAY + "Join " + type + " event!").create()));
         Bukkit.getOnlinePlayers().forEach(player -> player.spigot().sendMessage(requestMessage));
         if (Bukkit.getPlayer(creator) != null) {
-            Bukkit.getPlayer(creator).teleport(main.getSumoEvent().getLocation()); // TODO: Conditions with type to teleport to the correct event locations.
+            Bukkit.getPlayer(creator).teleport(this.type.equals("sumo") ? this.main.getSumoEvent().getLocation() : this.main.getOitcEvent().getLocation()); // TODO: Conditions with type to teleport to the correct event locations.
         }
         this.setEventState(EventState.WAITING);
         this.alives = Lists.newArrayList(creator);
@@ -107,29 +108,31 @@ public class EventManager {
         if (this.getEventState().equals(EventState.WAITING)) {
             this.members.forEach(uuid -> Bukkit.getPlayer(uuid).sendMessage(Bukkit.getPlayer(leaver).getName() + ChatColor.RED + " has left " + this.type + " event!"));
         }
-        if (this.getEventState().equals(EventState.STARTING) || this.getEventState().equals(EventState.FIGHT)) {
-            final UUID winner = this.getPlayersSelected().get(0).equals(leaver) ? this.getPlayersSelected().get(1) : this.getPlayersSelected().get(0);
-            this.endMatch(winner, leaver);
+        if (this.getType().equalsIgnoreCase("sumo")) {
+            if (this.getEventState().equals(EventState.STARTING) || this.getEventState().equals(EventState.FIGHT)) {
+                final UUID winner = this.getPlayersSelected().get(0).equals(leaver) ? this.getPlayersSelected().get(1) : this.getPlayersSelected().get(0);
+                this.endMatch(winner, leaver);
+            }
+        }
+        this.members.remove(leaver);
+        if (this.alives.contains(leaver) && this.type.equals("sumo")) this.alives.remove(leaver);
+        if (this.alives.isEmpty()) {
+            this.setEventState(EventState.FREE);
         }
         if (!disconnect) {
-            if (this.alives.contains(leaver) && this.type.equals("sumo")) this.alives.remove(leaver);
-            this.members.remove(leaver);
             Utils.sendToSpawn(leaver, true);
-            if (this.alives.isEmpty()) {
-                this.setEventState(EventState.FREE);
-            }
         }
     }
 
     public void launchOitc() {
         this.setEventState(EventState.FIGHT);
+        final Iterator<LocationUtil> loc = this.main.getOitcLoc().iterator();
         this.members.forEach(members -> {
-            if (Bukkit.getPlayer(members) != null && this.main.getOitcLoc().iterator().hasNext()) {
-                LocationUtil locationUtil = this.main.getOitcLoc().iterator().next();
+            if (Bukkit.getPlayer(members) != null && loc.hasNext()) {
                 final Player player = Bukkit.getPlayer(members);
                 player.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_RED + "OITC" + ChatColor.GRAY + "] " + ChatColor.WHITE + "Event has begun!");
                 this.main.getManagerHandler().getItemManager().giveItems(members, false);
-                player.teleport(locationUtil.getLocation());
+                player.teleport(loc.next().getLocation());
             }
         });
     }

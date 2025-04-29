@@ -27,7 +27,7 @@ public class EventRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (this.main.getManagerHandler().getEventManager().getAlives().size() < this.main.getManagerHandler().getEventManager().getMinimumToStart()) {
+        if (this.main.getManagerHandler().getEventManager().getMembers().size() < this.main.getManagerHandler().getEventManager().getMinimumToStart()) {
             this.cancel();
             return;
         }

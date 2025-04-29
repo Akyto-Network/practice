@@ -3,13 +3,10 @@ package akyto.practice.handler;
 import java.util.Arrays;
 
 import akyto.practice.handler.command.*;
+import akyto.practice.handler.listener.*;
 import org.bukkit.Bukkit;
 
 import akyto.practice.Practice;
-import akyto.practice.handler.listener.CoreListener;
-import akyto.practice.handler.listener.EntityListener;
-import akyto.practice.handler.listener.InventoryListener;
-import akyto.practice.handler.listener.PlayerListener;
 import org.bukkit.command.PluginCommand;
 
 public class MiscHandler {
