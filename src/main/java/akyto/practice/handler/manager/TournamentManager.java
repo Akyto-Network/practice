@@ -41,8 +41,7 @@ public class TournamentManager implements Listener {
         UUID tournamentId = UUID.randomUUID();
         TournamentEntry entry = new TournamentEntry(creator.getUniqueId(), tournamentId, kit, teamSize);
         tournaments.put(tournamentId, entry);
-        final Profile profile = Utils.getProfiles(creator.getUniqueId());
-        profile.setProfileState(ProfileState.TOURNAMENT);
+        creator.sendMessage(ChatColor.GREEN + "Tournament as been created in " + kit.displayName() + " in " + teamSize + "vs" + teamSize);
         return tournamentId;
     }
 
@@ -69,7 +68,7 @@ public class TournamentManager implements Listener {
 
                 timeLeft--;
             }
-        }.runTaskTimer(main, 0L, 20L); // Run every second
+        }.runTaskTimer(main, 0L, 20L);
     }
 
     private void startTournament(TournamentEntry entry) {
@@ -196,6 +195,9 @@ public class TournamentManager implements Listener {
             if (teamSize == 1) {
                 entry.getParticipants().add(player.getUniqueId());
                 notifyParticipants(entry, player.getName() + " has joined the tournament!");
+                final Profile profile = Utils.getProfiles(player.getUniqueId());
+                profile.setProfileState(ProfileState.TOURNAMENT);
+                this.main.getManagerHandler().getItemManager().giveItems(player.getUniqueId(), false);
             } else if (party != null && party.getMembers().size() == teamSize) {
                 entry.getParticipants().addAll(party.getMembers());
                 notifyParticipants(entry, "Party led by " + player.getName() + " has joined the tournament!");

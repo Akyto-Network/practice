@@ -260,7 +260,7 @@ public class PlayerListener implements Listener {
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (player.getItemInHand() == null || event.getItem() == null) return;
 
-			if (profile.isInState(ProfileState.FIGHT) || profile.isInState(ProfileState.TOURNAMENT)) {
+			if (profile.isInState(ProfileState.FIGHT) || (profile.isInState(ProfileState.TOURNAMENT) && Utils.getTournamentByPlayerUUID(player.getUniqueId()).getTournamentState().equals(TournamentState.FIGHT))) {
 				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 				if (player.getItemInHand().getType() == Material.ENDER_PEARL) {
 					if (duel.getState().equals(DuelState.STARTING)) {

@@ -33,4 +33,5 @@ commands:
   build:
   host:
   join:
+  tournament:
   

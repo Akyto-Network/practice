@@ -4,10 +4,12 @@ import java.util.UUID;
 
 import akyto.practice.Practice;
 import akyto.practice.utils.timer.event.TimerExpireEvent;
+import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+@Getter
 public class TimerCooldown {
     private final Timer timer;
     private final UUID owner;
@@ -86,18 +88,6 @@ public class TimerCooldown {
             this.eventNotificationTask.cancel();
             this.eventNotificationTask = null;
         }
-    }
-
-    public Timer getTimer() {
-        return this.timer;
-    }
-
-    public long getExpiryMillis() {
-        return this.expiryMillis;
-    }
-
-    public long getPauseMillis() {
-        return this.pauseMillis;
     }
 
     protected void setPauseMillis(long pauseMillis) {
