@@ -106,6 +106,7 @@ public class PartyManager {
 	    }
 	    final PartyEntry party = Utils.getPartyByUUID(inviter);
 	    party.getMembers().add(invited);
+		party.getAlives().add(invited);
 	    if (Utils.getDuelByUUID(inviter) != null) {
 	    	final Duel duel = Utils.getDuelByUUID(inviter);
 	        Utils.getProfiles(invited).setProfileState(ProfileState.SPECTATE);
@@ -153,6 +154,7 @@ public class PartyManager {
 			this.parties.remove(party);
 			inventoryManager.refreshPartyInventory();
         } else {
+			party.getAlives().remove(sender);
 			party.getMembers().remove(sender);
 			if (profile.isInState(ProfileState.FREE)) {
 				this.main.getManagerHandler().getItemManager().giveItems(sender, true);
@@ -172,13 +174,16 @@ public class PartyManager {
 		
 		private UUID creator;
 		private Set<UUID> members;
+		private List<UUID> alives;
 		private boolean open;
 		
 		public PartyEntry(final UUID creator) {
 			this.creator = creator;
 			this.open = false;
 			this.members = new HashSet<>();
+			this.alives = new ArrayList<>();
 			this.members.add(creator);
+			this.alives.add(creator);
 		}
 	}
 }

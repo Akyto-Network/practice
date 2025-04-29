@@ -116,7 +116,7 @@ public class EventManager {
         }
         this.members.remove(leaver);
         if (this.alives.contains(leaver) && this.type.equals("sumo")) this.alives.remove(leaver);
-        if (this.alives.isEmpty()) {
+        if (this.members.isEmpty()) {
             this.setEventState(EventState.FREE);
         }
         if (!disconnect) {
