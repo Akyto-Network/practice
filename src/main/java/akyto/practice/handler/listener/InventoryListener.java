@@ -81,6 +81,18 @@ public class InventoryListener implements Listener {
 				event.setResult(Result.DENY);
 				return;
 			}
+			if (inventory.equals(inventoryManager.getHostInventory())) {
+				if (event.getCurrentItem().getType().equals(Material.ANVIL)) {
+					this.main.getManagerHandler().getEventManager().startEvent(player.getUniqueId(), "sumo");
+					player.closeInventory();
+				}
+				if (inventory.equals(inventoryManager.getHostInventory())) {
+					if (event.getCurrentItem().getType().equals(Material.DIAMOND_AXE)) {
+						this.main.getManagerHandler().getEventManager().startEvent(player.getUniqueId(), "oitc");
+						player.closeInventory();
+					}
+				}
+			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[0])) {
 				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(player.getUniqueId(), Kit.getLadderByID(event.getSlot(), main), false);
 				event.getWhoClicked().closeInventory();

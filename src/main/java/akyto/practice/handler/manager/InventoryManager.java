@@ -49,10 +49,11 @@ public class InventoryManager {
 	private final Inventory[] queueInventory = new Inventory[5];
 	private final Inventory[] arenaInventory = new Inventory[2];
 	private final Inventory[] editorInventory = new Inventory[3];
+	private final Inventory hostInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Event");
 	private final Inventory utilsInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Utils");
 	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
 	private final Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
-    public MultipageSerializer spectateMultipage;
+	public MultipageSerializer spectateMultipage;
     public MultipageSerializer partyMultipage;
 	private final ConcurrentMap<UUID, Inventory> previewInventory;
 	private final ConcurrentMap<UUID, Inventory> spectateInventory;
@@ -90,13 +91,18 @@ public class InventoryManager {
 		this.runnableLeaderboardInventory();
 		this.setEditorInventory();
 		this.setUtilsInventory();
+		this.setHostInventory();
 	}
 
 	private void setUtilsInventory() {
 		this.utilsInventory.setItem(1, ItemUtils.createItems(Material.PAPER, ChatColor.GRAY + "Tags"));
 		this.utilsInventory.setItem(3, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Leaderboard"));
 	}
+   private void setHostInventory() {
+  		this.hostInventory.setItem(0, ItemUtils.createItems(Material.ANVIL, ChatColor.RED + " » " + ChatColor.GOLD + "Sumo Event"));
+	    this.hostInventory.setItem(3, ItemUtils.createItems(Material.DIAMOND_AXE, ChatColor.RED + " » " + ChatColor.GOLD + "OITC"));
 
+   }
 	public void refreshPartyInventory() {
         List<ItemStack> partys = new ArrayList<>();
         this.main.getManagerHandler().getPartyManager().getParties().forEach(party -> {

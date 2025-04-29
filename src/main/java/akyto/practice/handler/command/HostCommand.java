@@ -18,33 +18,27 @@ public class HostCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!(sender instanceof Player)) { sender.sendMessage(ChatColor.RED + "Unvailable for CMD"); return false; }
-        if (args.length == 1){
-            final Player player = Bukkit.getPlayer(sender.getName());
-            final Profile pm = Utils.getProfiles(player.getUniqueId());
-            if (pm.getProfileState() != ProfileState.FREE) {
-                sender.sendMessage(ChatColor.RED + "You cannot do this right now");
-                return false;
-            }
-            if(!sender.hasPermission("akyto.host")) {
-                sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
-                return false;
-            }
-            final String arg = args[0];
-            if (arg.equals("sumo") || arg.equals("oitc")){
-                if (main.getSumoEvent().getLocation() == null || main.getOitcEvent().getLocation() == null) {
-                    sender.sendMessage(ChatColor.RED + "Sorry but no maps was set!");
-                    return false;
-                }
-                this.main.getManagerHandler().getEventManager().startEvent(player.getUniqueId(), args[0].toLowerCase());
-                return false;
-            }
-            sender.sendMessage(ChatColor.RED + "/host <sumo/oitc>");
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ChatColor.RED + "Unvailable for CMD");
             return false;
         }
-        else {
-            sender.sendMessage(ChatColor.RED + " /host <sumo/oitc>");
+        final Player player = Bukkit.getPlayer(sender.getName());
+        final Profile pm = Utils.getProfiles(player.getUniqueId());
+        if (pm.getProfileState() != ProfileState.FREE) {
+            sender.sendMessage(ChatColor.RED + "You cannot do this right now");
             return false;
         }
+        if (!sender.hasPermission("akyto.host")) {
+            sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
+            return false;
+        }
+        if (main.getSumoEvent().getLocation() == null || main.getOitcEvent().getLocation() == null) {
+            sender.sendMessage(ChatColor.RED + "Sorry but no maps was set!");
+            return false;
+        }
+        final Player playerSender = (Player) sender;
+        playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getHostInventory());
+
+        return false;
     }
 }
