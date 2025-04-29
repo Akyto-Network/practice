@@ -53,7 +53,10 @@ public class SideBoard implements BoardAdapter {
             }
             if (pm.isInState(ProfileState.SPECTATE)) {
             	return this.getSpecBoard(player);
-            }	
+            }
+            if (pm.isInState(ProfileState.EVENT)) {
+
+            }
         }
         return null;
     }

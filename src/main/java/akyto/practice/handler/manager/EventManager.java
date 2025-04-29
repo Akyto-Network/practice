@@ -38,7 +38,7 @@ public class EventManager {
     private List<UUID> alives;
     private List<UUID> members;
     private List<UUID> playersSelected;
-    private Integer minimumToStart = 4;
+    private Integer minimumToStart = 2;
     private Long cooldown = 0L;
     private String type;
 

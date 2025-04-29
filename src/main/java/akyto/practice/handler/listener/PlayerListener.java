@@ -12,6 +12,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -60,6 +61,7 @@ public class PlayerListener implements Listener {
 		Core.API.getDatabaseSetup().update(event.getPlayer().getUniqueId(), this.main.getKits().size(), kitNames);
 		this.main.getManagerHandler().getItemManager().giveItems(event.getPlayer().getUniqueId(), false);
 		Utils.resetPlayer(event.getPlayer().getUniqueId());
+		event.getPlayer().setMaximumNoDamageTicks(20);
 		event.getPlayer().teleport(this.main.getSpawn().getLocation() == null ? event.getPlayer().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
 		this.main.getManagerHandler().getInventoryManager().generateSettingsInventory(event.getPlayer().getUniqueId());
 	}
@@ -363,11 +365,12 @@ public class PlayerListener implements Listener {
 			event.getDrops().clear();
 			final EventManager eventManager = this.main.getManagerHandler().getEventManager();
 			if (eventManager.getType().equals("oitc") && eventManager.getEventState().equals(EventState.FIGHT)) {
-				if (!event.getEntity().getLastDamageCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
+				if (!killed.getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
 					victimProfile.setDeath(victimProfile.getDeath()+1);
 					profileDamager.setKill(profileDamager.getKill()+1);
-					if (profileDamager.getKill() >= 45) {
+					if (profileDamager.getKill() >= 5) {
 						eventManager.endMatch(killer.getUniqueId(), killed.getUniqueId());
+						return;
 					}
 					eventManager.getMembers().forEach(member -> {
 						if (Bukkit.getPlayer(member) != null) {
@@ -375,9 +378,18 @@ public class PlayerListener implements Listener {
 							player.sendMessage(org.bukkit.ChatColor.GRAY + "[" + org.bukkit.ChatColor.DARK_RED + "OITC" + org.bukkit.ChatColor.GRAY + "] " + org.bukkit.ChatColor.GREEN + killer.getName() + org.bukkit.ChatColor.GRAY + " slashed " + org.bukkit.ChatColor.RED + killed.getName());
 						}
 					});
+					killer.getInventory().addItem(new ItemStack(Material.ARROW));
+					killer.updateInventory();
 				}
 				killed.spigot().respawn();
+				Random random = new Random();
+				int randomNumber = random.nextInt(16);
+				Bukkit.getScheduler().runTaskLater(main, () -> {
+					killed.teleport(this.main.getOitcLoc().get(randomNumber).getLocation());
+					this.main.getManagerHandler().getItemManager().giveItems(killed.getUniqueId(), false);
+				}, 2L);
 			}
+			return;
 		}
 
 		LightningStrike lightning = deathLoc.getWorld().strikeLightningEffect(deathLoc);
