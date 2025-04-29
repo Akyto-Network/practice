@@ -99,8 +99,11 @@ public class InventoryManager {
 		this.utilsInventory.setItem(3, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Leaderboard"));
 	}
    private void setHostInventory() {
-  		this.hostInventory.setItem(0, ItemUtils.createItems(Material.ANVIL, ChatColor.RED + " » " + ChatColor.GOLD + "Sumo Event"));
-	    this.hostInventory.setItem(3, ItemUtils.createItems(Material.DIAMOND_AXE, ChatColor.RED + " » " + ChatColor.GOLD + "OITC"));
+  		this.hostInventory.setItem(1, ItemUtils.createItems(Material.ANVIL, ChatColor.RED + " » " + ChatColor.GOLD + "Sumo Event"));
+	    this.hostInventory.setItem(3, ItemUtils.createItems(Material.DIAMOND_AXE, ChatColor.RED + " » " + ChatColor.GOLD + "OITC Event"));
+		this.hostInventory.setItem(0, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
+	   this.hostInventory.setItem(2, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
+	   this.hostInventory.setItem(4, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
 
    }
 	public void refreshPartyInventory() {

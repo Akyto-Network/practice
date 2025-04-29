@@ -176,10 +176,10 @@ public class SideBoard implements BoardAdapter {
         final List<String> board = new LinkedList<>();
         final EventManager eventManager = this.plugin.getManagerHandler().getEventManager();
         board.add(spacer);
-        board.add(ChatColor.DARK_GRAY + eventManager.getType().toLowerCase() + " Event");
+        board.add(ChatColor.DARK_GRAY + eventManager.getType().toLowerCase().toUpperCase() + " Event");
         board.add(" ");
         if (eventManager.getEventState().equals(EventState.WAITING)) {
-            board.add(ChatColor.DARK_GRAY + "Players" + ChatColor.GRAY + ": " + ChatColor.WHITE + eventManager.getMembers().size());
+            board.add(ChatColor.DARK_GRAY + "Players" + ChatColor.GRAY + " : " + ChatColor.WHITE + eventManager.getMembers().size());
         }
         if (eventManager.getType().equalsIgnoreCase("sumo")) {
             if (eventManager.getEventState().equals(EventState.STARTING) || eventManager.getEventState().equals(EventState.FIGHT)) {
