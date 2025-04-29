@@ -3,8 +3,13 @@ package akyto.practice.board;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import akyto.practice.duel.cache.DuelStatistics;
+import akyto.practice.event.EventState;
+import akyto.practice.handler.manager.EventManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import com.bizarrealex.aether.scoreboard.Board;
@@ -55,7 +60,7 @@ public class SideBoard implements BoardAdapter {
             	return this.getSpecBoard(player);
             }
             if (pm.isInState(ProfileState.EVENT)) {
-
+                return this.getEventBoard(player);
             }
         }
         return null;
@@ -113,7 +118,7 @@ public class SideBoard implements BoardAdapter {
 
             board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(duel));
             board.add(" ");
-            board.add(ChatColor.DARK_GRAY + "Ping" + ChatColor.GRAY + ": " + ChatColor.WHITE + player.getPing());
+            board.add(ChatColor.DARK_GRAY + "Ping" + ChatColor.GRAY + ": " + ChatColor.WHITE + player.getPing() + "ms");
             DuelStatistics statistics = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
             if (statistics != null && statistics.getEnderPearlCooldown() != 0L) {
                 final double time = statistics.getEnderPearlCooldown() / 1000.0D;
@@ -160,6 +165,57 @@ public class SideBoard implements BoardAdapter {
         }
         if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
         	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(duel.getWinner().get(0)));
+        }
+        board.add(" ");
+        board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.net");
+        board.add(spacer);
+        return board;
+    }
+
+    private List<String> getEventBoard(final Player player) {
+        final List<String> board = new LinkedList<>();
+        final EventManager eventManager = this.plugin.getManagerHandler().getEventManager();
+        board.add(spacer);
+        board.add(ChatColor.DARK_GRAY + eventManager.getType().toLowerCase() + " Event");
+        board.add(" ");
+        if (eventManager.getEventState().equals(EventState.WAITING)) {
+            board.add(ChatColor.DARK_GRAY + "Players" + ChatColor.GRAY + ": " + ChatColor.WHITE + eventManager.getMembers().size());
+        }
+        if (eventManager.getType().equalsIgnoreCase("sumo")) {
+            if (eventManager.getEventState().equals(EventState.STARTING) || eventManager.getEventState().equals(EventState.FIGHT)) {
+                final Player player1 = Bukkit.getPlayer(eventManager.getPlayersSelected().get(0));
+                final Player player2 = Bukkit.getPlayer(eventManager.getPlayersSelected().get(1));
+                board.add(ChatColor.GREEN + player1.getName());
+                board.add(ChatColor.DARK_GRAY + "    against");
+                board.add(ChatColor.RED + player2.getName());
+            }
+            if (eventManager.getEventState().equals(EventState.ENDING)) {
+                AtomicReference<UUID> winner = new AtomicReference<>();
+                eventManager.getPlayersSelected().forEach(selected -> {
+                    if (eventManager.getAlives().contains(selected)) {
+                        winner.set(selected);
+                    }
+                });
+                board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.WHITE + Bukkit.getPlayer(winner.get()).getName());
+            }
+        }
+        if (eventManager.getType().equalsIgnoreCase("oitc")) {
+            if (eventManager.getEventState().equals(EventState.FIGHT)) {
+                List<Profile> memberProfiles = eventManager.getMembers().stream()
+                        .map(memberUUID -> Utils.getProfiles(memberUUID))
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                memberProfiles.sort((p1, p2) -> Integer.compare(p2.getKill(), p1.getKill()));
+                int limit = eventManager.getMembers().size();
+                if (eventManager.getMembers().size() >= 5) limit = 5;
+                for (int i = 0; i < limit; i++) {
+                    Profile profile = memberProfiles.get(i);
+                    Player member = Bukkit.getPlayer(profile.getUuid());
+                    if (member != null) {
+                        board.add(ChatColor.WHITE + member.getName() + ": " + ChatColor.GREEN + profile.getKill() + " kills");
+                    }
+                }
+            }
         }
         board.add(" ");
         board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.net");
