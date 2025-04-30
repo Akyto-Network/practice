@@ -133,4 +133,27 @@ public class MessageUtils {
             }));
 		}
 	}
+
+
+	public static void sendTournamentRequestMessage(Player player, String tournamentId, String kitName, int teamSize) {
+		TextComponent header = new TextComponent(org.bukkit.ChatColor.GRAY + " (*) " + org.bukkit.ChatColor.DARK_RED + org.bukkit.ChatColor.BOLD + "Tournament" + org.bukkit.ChatColor.GRAY + ": ");
+		TextComponent kitLine = new TextComponent(org.bukkit.ChatColor.RED + "Kit" + org.bukkit.ChatColor.GRAY + ": " + org.bukkit.ChatColor.WHITE + ChatColor.stripColor(kitName));
+		TextComponent teamSizeLine = new TextComponent(org.bukkit.ChatColor.RED + "Team Size" + org.bukkit.ChatColor.GRAY + ": " + org.bukkit.ChatColor.WHITE + teamSize + "v" + teamSize);
+
+		header.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/join " + tournamentId));
+		header.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(org.bukkit.ChatColor.GRAY + "Join the " + ChatColor.stripColor(kitName) + " tournament!").create()));
+
+		kitLine.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/join " + tournamentId));
+		kitLine.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(org.bukkit.ChatColor.GRAY + "Join the " + ChatColor.stripColor(kitName) + " tournament!").create()));
+
+		teamSizeLine.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/join " + tournamentId));
+		teamSizeLine.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(org.bukkit.ChatColor.GRAY + "Join the " + ChatColor.stripColor(kitName) + " tournament!").create()));
+
+		player.sendMessage(org.bukkit.ChatColor.GRAY.toString() + org.bukkit.ChatColor.STRIKETHROUGH + "----------------------------");
+		player.spigot().sendMessage(header);
+		player.sendMessage(" ");
+		player.spigot().sendMessage(kitLine);
+		player.spigot().sendMessage(teamSizeLine);
+		player.sendMessage(org.bukkit.ChatColor.GRAY.toString() + org.bukkit.ChatColor.STRIKETHROUGH + "----------------------------");
+	}
 }

@@ -1,6 +1,7 @@
 package akyto.practice.handler.manager;
 
 import akyto.core.profile.Profile;
+import akyto.core.utils.CoreUtils;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.kit.Kit;
@@ -8,6 +9,11 @@ import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.tournament.TournamentState;
 import akyto.practice.utils.Utils;
 import akyto.core.profile.ProfileState;
+import akyto.practice.utils.chat.MessageUtils;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -38,14 +44,28 @@ public class TournamentManager implements Listener {
             creator.sendMessage(ChatColor.RED + "You must be in FREE state to create a tournament!");
             return null;
         }
+        if (teamSize > 1) {
+            if (Utils.getPartyByUUID(creator.getUniqueId()) == null) {
+                creator.sendMessage(ChatColor.RED + "You must be into party for launch a tournament into " + teamSize + " vs " + teamSize + ".");
+                return null;
+            }
+            if (Utils.getPartyByUUID(creator.getUniqueId()).getMembers().size() != teamSize) {
+                creator.sendMessage(ChatColor.RED + "You must be " + teamSize + " in your party to launch a tournament of this size.");
+                return null;
+            }
+        }
         UUID tournamentId = UUID.randomUUID();
         TournamentEntry entry = new TournamentEntry(creator.getUniqueId(), tournamentId, kit, teamSize);
         tournaments.put(tournamentId, entry);
-        creator.sendMessage(ChatColor.GREEN + "Tournament as been created in " + kit.displayName() + " in " + teamSize + "vs" + teamSize);
+        creator.sendMessage(ChatColor.GREEN + "Tournament as been created into " + ChatColor.stripColor(kit.displayName()) + " in " + teamSize + "vs" + teamSize + " team size!");
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            MessageUtils.sendTournamentRequestMessage(player, String.valueOf(tournamentId), kit.displayName(), teamSize);
+        });
         return tournamentId;
     }
 
     private void startCountdown(TournamentEntry entry) {
+        System.out.println("START COUNTDOWN");
         new BukkitRunnable() {
             int timeLeft = countdownDuration;
 
@@ -189,7 +209,8 @@ public class TournamentManager implements Listener {
             int teamSize = entry.getTeamSize();
             PartyManager.PartyEntry party = Utils.getPartyByUUID(player.getUniqueId());
             int miniToStart = teamSize * 2;
-            if (entry.getParticipants().size() == miniToStart) {
+            int inTourney = entry.getParticipants().size()+1;
+            if (inTourney == miniToStart) {
                 startCountdown(entry);
             }
             if (teamSize == 1) {
@@ -217,14 +238,33 @@ public class TournamentManager implements Listener {
     }
 
     public void leaveTournament(final UUID playerId) {
+        final String leaverName = CoreUtils.getName(playerId);
         for (TournamentEntry entry : tournaments.values()) {
             if (entry.getParticipants().contains(playerId)) {
                 if (entry.getTeamSize() > 1) {
                     disqualifyTeam(entry, playerId);
+                    if (entry.getTournamentState().equals(TournamentState.WAITING)) {
+                        final PartyManager.PartyEntry partyEntry = Utils.getPartyByUUID(playerId);
+                        partyEntry.getMembers().forEach(member -> {
+                            final Player player = Bukkit.getPlayer(member);
+                            Utils.sendToSpawn(member, true);
+                            player.sendMessage(ChatColor.RED + leaverName + " leave the tournament, the rest of the party left to.");
+                        });
+                    }
                 } else {
                     entry.getParticipants().remove(playerId);
                 }
-                notifyParticipants(entry, Bukkit.getPlayer(playerId).getName() + " has left the tournament!");
+                notifyParticipants(entry, leaverName + " has left the tournament!");
+                if (entry.getTournamentState().equals(TournamentState.WAITING)) {
+                    final Player player = Bukkit.getPlayer(playerId);
+                    if (player != null) {
+                        Utils.sendToSpawn(playerId, true);
+                        player.sendMessage(ChatColor.RED + "You left the tournament.");
+                    }
+                }
+                if (entry.getParticipants().isEmpty()) {
+                    tournaments.remove(entry.getId());
+                }
                 break;
             }
         }
