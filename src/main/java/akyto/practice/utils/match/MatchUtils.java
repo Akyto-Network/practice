@@ -1,12 +1,17 @@
 package akyto.practice.utils.match;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import akyto.core.Core;
+import akyto.practice.duel.cache.DuelState;
+import akyto.practice.handler.manager.PartyManager;
+import akyto.practice.handler.manager.TournamentManager;
+import akyto.practice.tournament.TournamentEntry;
+import akyto.practice.utils.chat.MessageHelper;
+import akyto.practice.utils.chat.MessageUtils;
+import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -203,6 +208,109 @@ public class MatchUtils {
 				}
 			});
 		}
+	}
+
+	// TOURNAMENT //
+
+	public static void handleTournamentDeath(Player killed, Player killer, TournamentEntry tournamentEntry) {
+		int teamSize = tournamentEntry.getTeamSize();
+		final TournamentManager tournamentManager = Practice.API.getManagerHandler().getTournamentManager();
+		Duel duel = Utils.getDuelByUUID(killed.getUniqueId());
+
+		MessageHelper.notifyUUID(tournamentEntry.getParticipants(), TournamentManager.prefix + (killer != null ? "&a" + killer.getName() : "&aEnvironment") + " &rhas eliminated &c" + killed.getName() + " &r!");
+		tournamentManager.getActiveDuels().remove(duel);
+
+		if (duel != null) {
+			final Set<UUID> winner = duel.getFirst().contains(killed.getUniqueId()) ? duel.getSecond() : duel.getFirst();
+			final Set<UUID> loser = duel.getFirst().contains(killed.getUniqueId()) ? duel.getFirst() : duel.getSecond();
+			tournamentEntry.getParticipants().removeAll(loser);
+			TagUtils.clearEntries(Arrays.asList(winner, loser));
+
+			if (duel.getTimer() != null) {
+				duel.getTimer().cancel();
+			}
+
+			winner.forEach(uuid -> Practice.API.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, loser.stream().findFirst().orElse(null)));
+			duel.setState(DuelState.FINISHING);
+			final List<UUID> players = Lists.newArrayList();
+			players.add(loser.stream().toList().getFirst());
+			players.add(winner.stream().toList().getFirst());
+			MessageUtils.sendSingleEndMessage(duel, players, winner.stream().toList().getFirst(), killed.getUniqueId());
+			Arrays.asList(winner, loser).forEach(uuids -> uuids.forEach(uuid -> {
+				if (Bukkit.getPlayer(uuid) != null) {
+					Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, Practice.API.getKits().size(), Practice.API.getKitNames());
+				}
+			}));
+
+			Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
+				players.forEach(uuid -> {
+					Utils.sendToSpawn(uuid, true);
+					MatchUtils.clearDrops(uuid);
+				});
+				Practice.API.getDuels().remove(duel);
+			}, 10L);
+		}
+
+		if (tournamentManager.getActiveDuels().isEmpty()) {
+			if (tournamentEntry.getParticipants().size() <= teamSize) {
+				UUID winnerId = tournamentEntry.getParticipants().getFirst();
+				Bukkit.broadcastMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
+				final String winnerName = CoreUtils.getName(winnerId);
+				Bukkit.broadcastMessage(TournamentManager.prefix + ChatColor.RED + winnerName + ChatColor.WHITE + " won the tournament!");
+				Bukkit.broadcastMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
+				tournamentManager.getTournaments().remove(tournamentEntry.getId());
+				return;
+			}
+
+			tournamentEntry.getParticipants().forEach(participant -> {
+				final Player player = Bukkit.getPlayer(participant);
+				if (player != null) {
+					player.sendMessage(ChatColor.GREEN + "Next round gonna start!");
+				}
+			});
+			Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
+				runTournamentRound(tournamentEntry);
+			}, 60L);
+		}
+	}
+
+	public static void runTournamentRound(TournamentEntry entry) {
+		int teamSize = entry.getTeamSize();
+		final TournamentManager tournamentManager = Practice.API.getManagerHandler().getTournamentManager();
+
+		if (entry.getParticipants().size() <= teamSize) {
+			UUID winnerId = entry.getParticipants().getFirst();
+			Bukkit.broadcastMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------");
+			final String winnerName = CoreUtils.getName(winnerId);
+			Bukkit.broadcastMessage(TournamentManager.prefix + ChatColor.RED + winnerName + ChatColor.WHITE + " won the tournament!");
+			Bukkit.broadcastMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------");
+			tournamentManager.getTournaments().remove(entry.getId());
+			return;
+		}
+
+		if (entry.getTeamSize() == 1 && entry.getParticipants().size() % 2 != 0) {
+			UUID byePlayer = entry.getParticipants().get(entry.getParticipants().size() - 1);
+			Player bye = Bukkit.getPlayer(byePlayer);
+			if (bye != null) {
+				bye.sendMessage(org.bukkit.ChatColor.YELLOW + "You have been qualified for the next round due to an odd number of players.");
+			}
+			entry.getByePlayer().add(byePlayer);
+			entry.getParticipants().remove(byePlayer);
+		}
+
+		Collections.shuffle(entry.getParticipants());
+
+		for (int i = 0; i < entry.getParticipants().size(); i += 2 * entry.getTeamSize()) {
+			List<UUID> team1 = new ArrayList<>(entry.getParticipants().subList(i, Math.min(i + entry.getTeamSize(), entry.getParticipants().size())));
+			List<UUID> team2 = new ArrayList<>(entry.getParticipants().subList(Math.min(i + entry.getTeamSize(), entry.getParticipants().size()), Math.min(i + 2 * entry.getTeamSize(), entry.getParticipants().size())));
+
+			if (team1.isEmpty() || team2.isEmpty()) continue;
+
+			Duel duel = new Duel(Practice.API, new HashSet<>(team1), new HashSet<>(team2), false, entry.getKit(), Duel.DuelType.SPLIT, null);
+			tournamentManager.getActiveDuels().add(duel);
+		}
+		entry.getParticipants().addAll(entry.getByePlayer());
+		entry.getByePlayer().clear();
 	}
 
 }

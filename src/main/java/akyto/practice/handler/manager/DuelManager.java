@@ -107,25 +107,8 @@ public class DuelManager {
 					Bukkit.getPlayer(winner).getInventory().clear();
 				}
 			}
-			Player player = Bukkit.getPlayer(uuid);
-			if (player != null) {
-				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-				player.sendMessage(ChatColor.YELLOW + "Match Information");
-				player.spigot().sendMessage(MessageUtils.endMessage(winner, looser));
-				if (duel.isRanked()) {
-					player.sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()] - Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
-				}
-				if (!duel.getSpectators().isEmpty()) {
-					player.sendMessage("");
-					String specMsg = ChatColor.GRAY + "Spectators (" + duel.getSpectators().size() + ChatColor.GRAY + "): " +
-							duel.getSpectators().stream()
-									.map(spec -> ChatColor.WHITE + Bukkit.getPlayer(spec).getName())
-									.collect(Collectors.joining(", "));
-					player.sendMessage(specMsg);
-				}
-				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-			}
 		});
+		MessageUtils.sendSingleEndMessage(duel, players, winner, looser);
 		if (duel.isRanked()) {
 			EloUtils.eloChanges(winner, looser, duel.getKit(), main);
 		}

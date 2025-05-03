@@ -18,7 +18,7 @@ public class TournamentCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player playerSender)) {
             sender.sendMessage(ChatColor.RED + "Unvailable for CMD");
             return false;
         }
@@ -32,8 +32,7 @@ public class TournamentCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
             return false;
         }
-        final Player playerSender = (Player) sender;
-        playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getTournamentInventory());
+        playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[5]);
 
         return false;
     }

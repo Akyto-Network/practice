@@ -34,6 +34,11 @@ public class ItemManager {
 
 		player.getInventory().clear();
 		player.getInventory().setArmorContents(null);
+		final TournamentEntry entry = Utils.getTournamentByPlayerUUID(player.getUniqueId());
+		if (entry != null && !profile.isInState(ProfileState.FIGHT)) {
+			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Tournament."));
+			player.updateInventory();
+		}
 		if (profile.isInState(ProfileState.FREE)) {
 			if (Utils.getPartyByUUID(uuid) != null && !destruct) {
 				player.getInventory().setItem(0, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + (Utils.getPartyByUUID(uuid).getCreator().equals(uuid) ? "Disband" : "Leave") + " Party."));
@@ -52,19 +57,11 @@ public class ItemManager {
 			player.getInventory().setItem(7, ItemUtils.createItems(Material.BOOK, ChatColor.GRAY + "Editor"));
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Settings"));
 			player.updateInventory();
+			return;
 		}
 		if (profile.isInState(ProfileState.QUEUE) || (profile.isInState(ProfileState.EVENT) && this.main.getManagerHandler().getEventManager().getEventState().equals(EventState.WAITING))) {
 			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave " + (profile.isInState(ProfileState.QUEUE) ? "Queue" : "Event") + "."));
 			player.updateInventory();
-		}
-		if (profile.isInState(ProfileState.TOURNAMENT)) {
-			final TournamentEntry entry = Utils.getTournamentByPlayerUUID(player.getUniqueId());
-			if (entry != null) {
-				if (entry.getTournamentState().equals(TournamentState.WAITING)) {
-					player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Tournament."));
-					player.updateInventory();
-				}
-			}
 		}
 		if (profile.isInState(ProfileState.EVENT)) {
 			final EventManager eventManager = this.main.getManagerHandler().getEventManager();
@@ -91,7 +88,7 @@ public class ItemManager {
 			player.getInventory().setContents(kit.content());
 			player.updateInventory();
 		}
-		if (profile.isInState(ProfileState.FIGHT) || (profile.isInState(ProfileState.TOURNAMENT) && Utils.getTournamentByPlayerUUID(player.getUniqueId()).getTournamentState().equals(TournamentState.FIGHT))) {
+		if (profile.isInState(ProfileState.FIGHT) || (entry != null && entry.getTournamentState().equals(TournamentState.STARTED))) {
 			final Kit kit = Utils.getDuelByUUID(uuid).getKit();
 			final KitInterface kitI = (KitInterface) Utils.getDuelByUUID(uuid).getKit();
 			if (this.main.getManagerHandler().getProfileManager().getEditor().containsKey(uuid)) {

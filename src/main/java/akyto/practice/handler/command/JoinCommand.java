@@ -4,6 +4,7 @@ import akyto.core.Core;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.handler.manager.TournamentManager;
+import akyto.practice.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,12 +24,17 @@ public class JoinCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender instanceof Player)) return false;
-		if (!Core.API.getManagerHandler().getProfileManager().getProfiles().get(Bukkit.getPlayer(sender.getName()).getUniqueId()).getProfileState().equals(ProfileState.FREE)) {
+		final Player player = Bukkit.getPlayer(sender.getName());
+		if (!Core.API.getManagerHandler().getProfileManager().getProfiles().get(player.getUniqueId()).getProfileState().equals(ProfileState.FREE)) {
+			sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
+			return false;
+		}
+		if (Utils.getTournamentByPlayerUUID(player.getUniqueId()) != null) {
 			sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
 			return false;
 		}
 		if (args.length == 0) {
-			this.main.getManagerHandler().getEventManager().joinEvent(Bukkit.getPlayer(sender.getName()).getUniqueId());
+			this.main.getManagerHandler().getEventManager().joinEvent(player.getUniqueId());
 		}
 		if (args.length == 1) {
 			TournamentManager tournamentManager = this.main.getManagerHandler().getTournamentManager();

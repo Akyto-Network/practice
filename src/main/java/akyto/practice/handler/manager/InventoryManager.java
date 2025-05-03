@@ -50,7 +50,6 @@ public class InventoryManager {
 	private final Inventory[] arenaInventory = new Inventory[2];
 	private final Inventory[] editorInventory = new Inventory[3];
 	private final Inventory hostInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Events:");
-	private final Inventory tournamentInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Tournament Size:");
 	private final Inventory utilsInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Utils");
 	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
 	private final Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
@@ -94,15 +93,6 @@ public class InventoryManager {
 		this.setEditorInventory();
 		this.setUtilsInventory();
 		this.setHostInventory();
-		this.setTournamentInventory();
-	}
-
-	private void setTournamentInventory() {
-		this.tournamentInventory.setItem(0, ItemUtils.createItems(Material.IRON_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "1v1"));
-		this.tournamentInventory.setItem(1, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
-		this.tournamentInventory.setItem(2, ItemUtils.createItems(Material.DIAMOND_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "2v2"));
-		this.tournamentInventory.setItem(3, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
-		this.tournamentInventory.setItem(4, ItemUtils.createItems(Material.EMERALD_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "3v3"));
 	}
 
 	private void setUtilsInventory() {

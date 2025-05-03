@@ -1,6 +1,7 @@
 package akyto.practice.utils.chat;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -134,6 +135,28 @@ public class MessageUtils {
 		}
 	}
 
+	public static void sendSingleEndMessage(final Duel duel, final List<UUID> players, final UUID winner, final UUID looser) {
+		players.forEach(uuid -> {
+			Player player = Bukkit.getPlayer(uuid);
+			if (player != null) {
+				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+				player.sendMessage(ChatColor.YELLOW + "Match Information");
+				player.spigot().sendMessage(endMessage(winner, looser));
+				if (duel.isRanked()) {
+					player.sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()] - Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
+				}
+				if (!duel.getSpectators().isEmpty()) {
+					player.sendMessage("");
+					String specMsg = ChatColor.GRAY + "Spectators (" + duel.getSpectators().size() + ChatColor.GRAY + "): " +
+							duel.getSpectators().stream()
+									.map(spec -> ChatColor.WHITE + Bukkit.getPlayer(spec).getName())
+									.collect(Collectors.joining(", "));
+					player.sendMessage(specMsg);
+				}
+				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+			}
+		});
+	}
 
 	public static void sendTournamentRequestMessage(Player player, String tournamentId, String kitName, int teamSize) {
 		TextComponent header = new TextComponent(org.bukkit.ChatColor.GRAY + " (*) " + org.bukkit.ChatColor.DARK_RED + org.bukkit.ChatColor.BOLD + "Tournament" + org.bukkit.ChatColor.GRAY + ": ");

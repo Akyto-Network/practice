@@ -14,7 +14,6 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
@@ -37,12 +36,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import akyto.core.Core;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
-import akyto.core.utils.format.FormatUtils;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
 import akyto.practice.duel.cache.DuelState;
-import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.kit.Kit;
 import akyto.practice.kit.KitInterface;
 import akyto.practice.utils.Utils;
@@ -100,7 +97,7 @@ public class PlayerListener implements Listener {
 					}
 				}
 			}
-			if (profile.isInState(ProfileState.TOURNAMENT)) {
+			if (Utils.getTournamentByPlayerUUID(leaver.getUniqueId()) != null) {
 				this.main.getManagerHandler().getTournamentManager().leaveTournament(leaver.getUniqueId());
 			}
 		}
@@ -138,7 +135,7 @@ public class PlayerListener implements Listener {
 		final Player player = event.getPlayer();
 		if (player.getGameMode().equals(GameMode.CREATIVE)) return;
 		if (event.getItem() == null || event.getItem().getType().equals(Material.AIR)) return;
-
+		final boolean inTournament = Utils.getTournamentByPlayerUUID(player.getUniqueId()) != null;
 		final Profile profile = Utils.getProfiles(player.getUniqueId());
 		Block clickedBlock = event.getClickedBlock();
         if (clickedBlock != null) {
@@ -186,11 +183,11 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
 				return;
 			}
-			if (profile.isInState(ProfileState.QUEUE) || profile.isInState(ProfileState.EVENT) || profile.isInState(ProfileState.TOURNAMENT)) {
+			if (profile.isInState(ProfileState.QUEUE) || profile.isInState(ProfileState.EVENT) || inTournament) {
 				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) {
 					if (profile.isInState(ProfileState.QUEUE)) this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(player.getUniqueId());
 					if (profile.isInState(ProfileState.EVENT)) this.main.getManagerHandler().getEventManager().leaveEvent(player.getUniqueId(), false);
-					if (profile.isInState(ProfileState.TOURNAMENT)) this.main.getManagerHandler().getTournamentManager().leaveTournament(player.getUniqueId());
+					if (inTournament) this.main.getManagerHandler().getTournamentManager().leaveTournament(player.getUniqueId());
 				}
 				return;
 			}	
@@ -256,11 +253,11 @@ public class PlayerListener implements Listener {
 	public void onFightInteract(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		final Profile profile = Utils.getProfiles(player.getUniqueId());
-
+		final boolean inTournament = Utils.getTournamentByPlayerUUID(player.getUniqueId()) != null;
 		if (event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			if (player.getItemInHand() == null || event.getItem() == null) return;
 			TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(player.getUniqueId());
-			if (profile.isInState(ProfileState.FIGHT) || (profile.isInState(ProfileState.TOURNAMENT) && tournamentEntry != null && tournamentEntry.getTournamentState().equals(TournamentState.FIGHT))) {
+			if (profile.isInState(ProfileState.FIGHT) || (inTournament && tournamentEntry != null && tournamentEntry.getTournamentState().equals(TournamentState.STARTED))) {
 				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 				if (player.getItemInHand().getType() == Material.ENDER_PEARL) {
 					if (duel.getState().equals(DuelState.STARTING)) {
@@ -324,7 +321,8 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority=EventPriority.LOW)
 	public void PlayerFoodChange(final FoodLevelChangeEvent event) {
 		final Profile profile = Utils.getProfiles(event.getEntity().getUniqueId());
-		if (profile.isInState(ProfileState.FIGHT) || (profile.isInState(ProfileState.TOURNAMENT) && Objects.requireNonNull(Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId())).getTournamentState().equals(TournamentState.FIGHT))) {
+		final boolean inTournament = Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId()) != null;
+		if (profile.isInState(ProfileState.FIGHT) || (inTournament && Objects.requireNonNull(Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId())).getTournamentState().equals(TournamentState.STARTED))) {
 			final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup")) {
 				event.setCancelled(true);
@@ -461,7 +459,7 @@ public class PlayerListener implements Listener {
 				}
 				TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(killed.getUniqueId());
 				if (tournamentEntry != null) {
-					this.main.getManagerHandler().getTournamentManager().handleTournamentDeath(killed, killer, tournamentEntry);
+					MatchUtils.handleTournamentDeath(killed, killer, tournamentEntry);
 					return;
 				}
 				MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);

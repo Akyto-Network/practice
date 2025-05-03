@@ -69,20 +69,12 @@ public class Utils {
 			Bukkit.getPlayer(uuid).showPlayer(player);
 		});
 		resetPlayer(uuid);
-		if (Utils.getTournamentByPlayerUUID(uuid) == null) {
-			System.out.println("FREE TOURNEY == NULL");
-			getProfiles(uuid).setProfileState(ProfileState.FREE);
-		}
-		if (Utils.getTournamentByPlayerUUID(uuid) != null) {
-			System.out.println("IN TOURNEY");
-			getProfiles(uuid).setProfileState(ProfileState.TOURNAMENT);
-		}
 		if (!Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).isInState(ProfileState.MOD)) {
 			Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setProfileState(ProfileState.FREE);	
 		}
 		Practice.API.getManagerHandler().getItemManager().giveItems(uuid, false);
 		if (teleport) {
-			if (getProfiles(uuid).getProfileState().equals(ProfileState.FREE) || (getProfiles(uuid).getProfileState().equals(ProfileState.TOURNAMENT) && !Practice.API.getManagerHandler().getTournamentManager().getActiveDuels().isEmpty())) {
+			if (getProfiles(uuid).getProfileState().equals(ProfileState.FREE) || (getTournamentByPlayerUUID(uuid) != null && !Practice.API.getManagerHandler().getTournamentManager().getActiveDuels().isEmpty())) {
 				Bukkit.getPlayer(uuid).teleport(Practice.API.getSpawn().getLocation());
 			}
 		}
