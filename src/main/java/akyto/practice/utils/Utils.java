@@ -72,13 +72,11 @@ public class Utils {
 		if (!Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).isInState(ProfileState.MOD)) {
 			Core.API.getManagerHandler().getProfileManager().getProfiles().get(uuid).setProfileState(ProfileState.FREE);	
 		}
-		Practice.API.getManagerHandler().getItemManager().giveItems(uuid, false);
 		if (teleport) {
-			if (getProfiles(uuid).getProfileState().equals(ProfileState.FREE) || (getTournamentByPlayerUUID(uuid) != null && !Practice.API.getManagerHandler().getTournamentManager().getActiveDuels().isEmpty())) {
-				Bukkit.getPlayer(uuid).teleport(Practice.API.getSpawn().getLocation());
-			}
+			Bukkit.getPlayer(uuid).teleport(Practice.API.getSpawn().getLocation());
 		}
 		Practice.API.getManagerHandler().getTimerManager().getTimer(EnderpearlTimer.class).clearCooldown(Bukkit.getPlayer(uuid));
+		Practice.API.getManagerHandler().getItemManager().giveItems(uuid, false);
 	}
 	
 	public static void sendToEditor(final UUID uuid, final Kit kit) {

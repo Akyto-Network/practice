@@ -38,6 +38,7 @@ public class ItemManager {
 		if (entry != null && !profile.isInState(ProfileState.FIGHT)) {
 			player.getInventory().setItem(4, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Tournament."));
 			player.updateInventory();
+			return;
 		}
 		if (profile.isInState(ProfileState.FREE)) {
 			if (Utils.getPartyByUUID(uuid) != null && !destruct) {

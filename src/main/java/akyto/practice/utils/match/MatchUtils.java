@@ -248,16 +248,16 @@ public class MatchUtils {
 					MatchUtils.clearDrops(uuid);
 				});
 				Practice.API.getDuels().remove(duel);
-			}, 10L);
+			}, 20L);
 		}
 
 		if (tournamentManager.getActiveDuels().isEmpty()) {
 			if (tournamentEntry.getParticipants().size() <= teamSize) {
 				UUID winnerId = tournamentEntry.getParticipants().getFirst();
-				Bukkit.broadcastMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
+				Bukkit.broadcastMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
 				final String winnerName = CoreUtils.getName(winnerId);
-				Bukkit.broadcastMessage(TournamentManager.prefix + ChatColor.RED + winnerName + ChatColor.WHITE + " won the tournament!");
-				Bukkit.broadcastMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "--------------------------------");
+				Bukkit.broadcastMessage(TournamentManager.prefix + ChatColor.RED + winnerName + ChatColor.WHITE + " won!");
+				Bukkit.broadcastMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
 				tournamentManager.getTournaments().remove(tournamentEntry.getId());
 				return;
 			}
@@ -270,7 +270,7 @@ public class MatchUtils {
 			});
 			Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
 				runTournamentRound(tournamentEntry);
-			}, 60L);
+			}, 120L);
 		}
 	}
 
@@ -306,7 +306,7 @@ public class MatchUtils {
 
 			if (team1.isEmpty() || team2.isEmpty()) continue;
 
-			Duel duel = new Duel(Practice.API, new HashSet<>(team1), new HashSet<>(team2), false, entry.getKit(), Duel.DuelType.SPLIT, null);
+			Duel duel = new Duel(Practice.API, new HashSet<>(team1), new HashSet<>(team2), false, entry.getKit(), DuelType.SINGLE, null);
 			tournamentManager.getActiveDuels().add(duel);
 		}
 		entry.getParticipants().addAll(entry.getByePlayer());

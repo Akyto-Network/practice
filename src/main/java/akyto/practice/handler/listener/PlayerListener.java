@@ -453,11 +453,11 @@ public class PlayerListener implements Listener {
 							killer.hidePlayer(killed);
 					}
 				}.runTaskLater(main, 10L);
-				if (duel.getDuelType().equals(DuelType.SINGLE)) {
+				TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(killed.getUniqueId());
+				if (duel.getDuelType().equals(DuelType.SINGLE) && tournamentEntry == null) {
 					this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).getFirst()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
 					return;
 				}
-				TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(killed.getUniqueId());
 				if (tournamentEntry != null) {
 					MatchUtils.handleTournamentDeath(killed, killer, tournamentEntry);
 					return;
