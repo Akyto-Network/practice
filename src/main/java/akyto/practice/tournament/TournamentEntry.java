@@ -18,6 +18,7 @@ public class TournamentEntry {
     @Setter
     public TournamentState tournamentState;
     private final List<UUID> participants;
+    private final List<UUID> byePlayer;
 
     public TournamentEntry(UUID creator, UUID id, Kit kit, int teamSize) {
         this.creator = creator;
@@ -26,5 +27,6 @@ public class TournamentEntry {
         this.teamSize = teamSize;
         this.tournamentState = TournamentState.WAITING;
         this.participants = Lists.newArrayList();
+        this.byePlayer = Lists.newArrayList();
     }
 }

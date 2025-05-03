@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import akyto.core.profile.ProfileState;
+import akyto.practice.tournament.TournamentEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 

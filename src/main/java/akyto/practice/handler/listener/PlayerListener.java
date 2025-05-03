@@ -459,13 +459,13 @@ public class PlayerListener implements Listener {
 					this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).getFirst()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
 					return;
 				}
+				TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(killed.getUniqueId());
+				if (tournamentEntry != null) {
+					this.main.getManagerHandler().getTournamentManager().handleTournamentDeath(killed, killer, tournamentEntry);
+					return;
+				}
 				MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);
 			}
-		}
-		// Check if the killed player is part of a tournament
-		TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(killed.getUniqueId());
-		if (tournamentEntry != null) {
-			this.main.getManagerHandler().getTournamentManager().handleTournamentDeath(killed, killer, tournamentEntry);
 		}
 	}
 
