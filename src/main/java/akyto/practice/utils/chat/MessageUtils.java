@@ -3,6 +3,8 @@ package akyto.practice.utils.chat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import akyto.practice.handler.manager.TournamentManager;
+import akyto.practice.tournament.TournamentEntry;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -178,5 +180,27 @@ public class MessageUtils {
 		player.spigot().sendMessage(kitLine);
 		player.spigot().sendMessage(teamSizeLine);
 		player.sendMessage(org.bukkit.ChatColor.GRAY.toString() + org.bukkit.ChatColor.STRIKETHROUGH + "----------------------------");
+	}
+
+	public static void determineAndDisplayTournamentStage(TournamentEntry entry) {
+		int participantsCount = entry.getParticipants().size();
+		String stage = "";
+
+		switch (participantsCount) {
+			case 2:
+				stage = "Final";
+				break;
+			case 4:
+				stage = "Semi";
+				break;
+			case 8:
+				stage = "Quarter";
+				break;
+			default:
+				stage = "Qualification";
+				break;
+		}
+		MessageHelper.notifyUUID(entry.getParticipants(), TournamentManager.prefix + " &fCurrent stage&7: &c" + stage);
+
 	}
 }

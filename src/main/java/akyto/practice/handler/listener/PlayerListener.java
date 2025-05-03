@@ -69,6 +69,7 @@ public class PlayerListener implements Listener {
 	public void onPlayerLeft(final PlayerQuitEvent event) {
 		final Player leaver = event.getPlayer();
 		final Profile profile = Utils.getProfiles(event.getPlayer().getUniqueId());
+		final boolean inTournament = Utils.getTournamentByPlayerUUID(leaver.getUniqueId()) != null;
 		if (event.getPlayer().isOnline() && profile != null) {
 			if (Utils.getPartyByUUID(event.getPlayer().getUniqueId()) != null) {
 				this.main.getManagerHandler().getPartyManager().leaveParty(event.getPlayer().getUniqueId());
@@ -88,12 +89,25 @@ public class PlayerListener implements Listener {
 			if (profile.isInState(ProfileState.FIGHT)) {
 				final Duel duel = Utils.getDuelByUUID(leaver.getUniqueId());
 				if (duel != null) {
-					if (!duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
+					if (!duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE) && !inTournament) {
 						duel.getDisconnected().add(leaver.getUniqueId());
 						this.main.getManagerHandler().getDuelManager().endSingle(duel.getFirst().contains(leaver.getUniqueId()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
 					}
 					if (!duel.getState().equals(DuelState.FINISHING) && (duel.getDuelType().equals(DuelType.FFA) || duel.getDuelType().equals(DuelType.SPLIT))) {
 						MatchUtils.addKill(leaver.getUniqueId(), null, true);
+					}
+				}
+			}
+			if (inTournament) {
+				TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(leaver.getUniqueId());
+				if (tournamentEntry != null) {
+					if (tournamentEntry.getTournamentState().equals(TournamentState.STARTED) && profile.isInState(ProfileState.FIGHT)) {
+						final Duel duel = Utils.getDuelByUUID(leaver.getUniqueId());
+						if (duel != null && !duel.getState().equals(DuelState.FINISHING)) {
+							final UUID oppsUUID = duel.getFirst().contains(leaver.getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
+							final Player opps = Bukkit.getPlayer(oppsUUID);
+							MatchUtils.handleTournamentDeath(leaver, opps, tournamentEntry);
+						}
 					}
 				}
 			}

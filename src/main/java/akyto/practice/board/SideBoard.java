@@ -131,7 +131,7 @@ public class SideBoard implements BoardAdapter {
         }
 
         if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
-        	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(duel.getWinner().get(0)));
+        	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(duel.getWinner().getFirst()));
         }
 
         board.add(" ");

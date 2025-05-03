@@ -241,7 +241,7 @@ public class MatchUtils {
 					Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, Practice.API.getKits().size(), Practice.API.getKitNames());
 				}
 			}));
-
+			duel.setWinner(Lists.newArrayList(tournamentEntry.getParticipants().getFirst()));
 			Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
 				players.forEach(uuid -> {
 					Utils.sendToSpawn(uuid, true);
@@ -311,6 +311,7 @@ public class MatchUtils {
 		}
 		entry.getParticipants().addAll(entry.getByePlayer());
 		entry.getByePlayer().clear();
+		MessageUtils.determineAndDisplayTournamentStage(entry);
 	}
 
 }
