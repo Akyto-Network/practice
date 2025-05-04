@@ -2,6 +2,7 @@ package akyto.practice.utils.match;
 
 import java.util.UUID;
 
+import akyto.core.profile.Profile;
 import akyto.practice.Practice;
 import akyto.practice.kit.Kit;
 import akyto.practice.utils.Utils;
@@ -21,4 +22,8 @@ public class EloUtils {
 		return Math.min(Math.max(value, min), max);
 	}
 
+    public static int getElo(final UUID player, final int kitId) {
+        final Profile profile = Utils.getProfiles(player);
+        return profile.getStats().get(2)[kitId];
+    }
 }
