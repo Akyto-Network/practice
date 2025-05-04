@@ -29,12 +29,12 @@ public class QueueManager {
     public QueueManager(final Practice main) { this.main = main; }
     
     public void addPlayerToQueue(final UUID uuid, final Kit kit, final boolean ranked) {
+        if (!ranked) this.researchMatch(uuid, kit, ranked);
         this.main.getQueue().put(uuid, new QueueEntry(uuid, kit, ranked));
         Utils.getProfiles(uuid).setProfileState(ProfileState.QUEUE);
         this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
         this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
         Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "You have successfully joined the " + (ranked ? "" : "un") + "ranked " + ChatColor.stripColor(kit.displayName()) + " queue");
-        this.researchMatch(uuid, kit, ranked);
         if (ranked) {
             this.main.getQueue().get(uuid).getEloRangeRunnable().runTaskTimer(main, 20L, 20L);
         }
@@ -59,7 +59,9 @@ public class QueueManager {
             QueueEntry queueEntry = entry.getValue();
             if (queueEntry.getKit().equals(kit) && queueEntry.isRanked() == ranked && !entry.getKey().equals(uuid)) {
                 if (queueEntry.isRanked()) {
-                    if (!this.checkCompatibilityElo(entry.getKey(), uuid)) return;
+                    if (!this.checkCompatibilityElo(entry.getKey(), uuid)) {
+                        return;
+                    }
                     queueEntry.getEloRangeRunnable().cancel();
                 }
                 new Duel(this.main, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE, null);
@@ -70,11 +72,14 @@ public class QueueManager {
         }
     }
 
+
     private boolean checkCompatibilityElo(final UUID playerA, final UUID playerB) {
         final QueueEntry queueEntryA = this.main.getQueue().get(playerA);
         final QueueEntry queueEntryB = this.main.getQueue().get(playerB);
         final int kitId = queueEntryA.getKit().id();
-        return EloUtils.getElo(playerB, kitId) <= queueEntryA.getEloRange().getMaxRange() && EloUtils.getElo(playerB, kitId) >= queueEntryA.getEloRange().getMinRange() && EloUtils.getElo(playerA, kitId) <= queueEntryB.getEloRange().getMaxRange() && EloUtils.getElo(playerA, kitId) >= queueEntryB.getEloRange().getMinRange();
+        final int maxRangeB = queueEntryB == null ? EloUtils.getElo(playerB, kitId)+100 : queueEntryB.getEloRange().getMaxRange();
+        final int minRangeB = queueEntryB == null ? EloUtils.getElo(playerB, kitId)-100 : queueEntryB.getEloRange().getMinRange();
+        return EloUtils.getElo(playerB, kitId) <= queueEntryA.getEloRange().getMaxRange() && EloUtils.getElo(playerB, kitId) >= queueEntryA.getEloRange().getMinRange() && EloUtils.getElo(playerA, kitId) <= maxRangeB && EloUtils.getElo(playerA, kitId) >= minRangeB;
     }
 
     @Getter

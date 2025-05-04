@@ -1,7 +1,10 @@
 package akyto.practice.runnable;
 
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.handler.manager.QueueManager;
+import akyto.practice.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -18,14 +21,19 @@ public class EloRangeRunnable extends BukkitRunnable {
     public EloRangeRunnable(final UUID uuid, final QueueManager.QueueEntry queueEntry) {
         this.uuid = uuid;
         this.timer = 0;
-        this.updateTime = 15; // Every 15seconds (1second per tick)
+        this.updateTime = 10; // Every 10seconds (1second per tick)
         this.queueEntry = queueEntry;
     }
 
     @Override
     public void run() {
+        final Profile profile = Utils.getProfiles(uuid);
+        if (!profile.isInState(ProfileState.QUEUE)) {
+            this.cancel();
+            return;
+        }
         this.timer++;
-        if (this.queueEntry.getEloRange().getMinRange() == 0) {
+        if (this.queueEntry.getEloRange().getMinRange() < 0) {
             Practice.API.getManagerHandler().getQueueManager().researchMatch(uuid, this.queueEntry.getKit(), true);
             return;
         }
