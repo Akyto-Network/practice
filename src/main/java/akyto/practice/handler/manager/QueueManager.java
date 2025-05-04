@@ -29,12 +29,12 @@ public class QueueManager {
     public QueueManager(final Practice main) { this.main = main; }
     
     public void addPlayerToQueue(final UUID uuid, final Kit kit, final boolean ranked) {
-        this.researchMatch(uuid, kit, ranked);
         this.main.getQueue().put(uuid, new QueueEntry(uuid, kit, ranked));
         Utils.getProfiles(uuid).setProfileState(ProfileState.QUEUE);
         this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
         this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
         Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "You have successfully joined the " + (ranked ? "" : "un") + "ranked " + ChatColor.stripColor(kit.displayName()) + " queue");
+        this.researchMatch(uuid, kit, ranked);
         if (ranked) {
             this.main.getQueue().get(uuid).getEloRangeRunnable().runTaskTimer(main, 20L, 20L);
         }
