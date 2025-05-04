@@ -66,6 +66,7 @@ public class QueueManager {
                 }
                 new Duel(this.main, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE, null);
                 main.getQueue().remove(entry.getKey());
+                if (ranked) main.getQueue().remove(uuid);
                 this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
                 return;
             }
