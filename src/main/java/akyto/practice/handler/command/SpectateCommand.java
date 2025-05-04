@@ -38,9 +38,11 @@ public class SpectateCommand implements CommandExecutor {
 
         final Player playerSender = (Player) sender;
         final Profile profileSender = Utils.getProfiles(playerSender.getUniqueId());
+        final boolean inTournament = Utils.getTournamentByPlayerUUID(playerSender.getUniqueId()) != null;
+
         
 		if (args.length == 0) {
-			if (profileSender.isInState(ProfileState.QUEUE, ProfileState.EDITOR, ProfileState.FIGHT)) {
+			if (profileSender.isInState(ProfileState.QUEUE, ProfileState.EDITOR, ProfileState.FIGHT) || inTournament) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
 				return false;
 			}

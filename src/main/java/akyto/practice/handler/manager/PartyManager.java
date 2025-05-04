@@ -32,7 +32,8 @@ public class PartyManager {
 	}
 
 	public void createParty(final UUID creator) {
-		if (!Utils.getProfiles(creator).isInState(ProfileState.FREE)) {
+		final boolean inTournament = Utils.getTournamentByPlayerUUID(creator) != null;
+		if (!Utils.getProfiles(creator).isInState(ProfileState.FREE) || inTournament) {
 			Bukkit.getPlayer(creator).sendMessage(ChatColor.RED + "You cannot do this right now!");
 			return;
 		}

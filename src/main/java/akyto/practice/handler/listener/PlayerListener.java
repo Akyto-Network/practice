@@ -187,7 +187,13 @@ public class PlayerListener implements Listener {
 					}
 				}
 				if (event.getItem().getType().equals(Material.IRON_SWORD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[0]); }
-				if (event.getItem().getType().equals(Material.DIAMOND_SWORD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[1]); }
+				if (event.getItem().getType().equals(Material.DIAMOND_SWORD)) {
+					if (!profile.isLinked()) {
+						player.sendMessage(org.bukkit.ChatColor.RED + "You can't queue into ranked if your discord account was not linked!");
+						return;
+					}
+					player.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[1]);
+				}
 				if (event.getItem().getType().equals(Material.NAME_TAG)) { this.main.getManagerHandler().getPartyManager().createParty(player.getUniqueId()); }
 				if (event.getItem().getType().equals(Material.REDSTONE_COMPARATOR)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getUtilsInventory()); }
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }

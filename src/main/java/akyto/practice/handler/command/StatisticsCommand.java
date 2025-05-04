@@ -29,9 +29,10 @@ public class StatisticsCommand implements CommandExecutor {
 		final Player playerSender = (Player) sender;
 		final Profile profile = Utils.getProfiles(playerSender.getUniqueId());
 		boolean is_busy = profile.isInState(ProfileState.FIGHT, ProfileState.EDITOR);
+		final boolean inTournament = Utils.getTournamentByPlayerUUID(playerSender.getUniqueId()) != null;
 
 		if (args.length == 0) {
-			if (is_busy) {
+			if (is_busy || inTournament) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}

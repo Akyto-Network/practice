@@ -5,6 +5,7 @@ description: Practice api maded by Akyto developers teams.
 main: akyto.practice.Practice
 depend:
   - Universal
+  - WorldEdit
 commands:
   duel:
     aliases: [d, duels]

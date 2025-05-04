@@ -20,12 +20,12 @@ public class LeaderboardCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) {
+		if (!(sender instanceof Player playerSender)) {
 			sender.sendMessage(ChatColor.RED + "You must be a player to do that");
 			return false;
 		}
-		final Player playerSender = (Player) sender;
-		if (Utils.getProfiles(playerSender.getUniqueId()).isInState(ProfileState.FIGHT)) {
+        final boolean inTournament = Utils.getTournamentByPlayerUUID(playerSender.getUniqueId()) != null;
+		if (Utils.getProfiles(playerSender.getUniqueId()).isInState(ProfileState.FIGHT) || inTournament) {
 			sender.sendMessage(ChatColor.RED + "You cannot do that right now!");
 			return false;
 		}

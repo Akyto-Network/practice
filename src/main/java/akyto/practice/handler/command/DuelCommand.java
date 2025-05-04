@@ -28,14 +28,13 @@ public class DuelCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (!(sender instanceof Player)) {
+		if (!(sender instanceof Player playerSender)) {
 			sender.sendMessage(ChatColor.RED + "You must be a player to do that");
 			return false;
 		}
 
-		final Player playerSender = (Player) sender;
-		final Profile senderProfile = Utils.getProfiles(playerSender.getUniqueId());
-
+        final Profile senderProfile = Utils.getProfiles(playerSender.getUniqueId());
+		final boolean inSenderTournament = Utils.getTournamentByPlayerUUID(playerSender.getUniqueId()) != null;
 		if (args.length == 0) {
 			sender.sendMessage(ChatColor.RED + "/" + cmd.getName() + " <player>");
 			return false;
@@ -71,7 +70,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 
-			if (!senderProfile.isInState(ProfileState.FREE)) {
+			if (!senderProfile.isInState(ProfileState.FREE) || inSenderTournament) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
 			}
@@ -82,8 +81,8 @@ public class DuelCommand implements CommandExecutor {
 			}
 
 			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
-
-			if (!targetProfile.isInState(ProfileState.FREE)) {
+			final boolean inTargetTournament = Utils.getTournamentByPlayerUUID(target.getUniqueId()) != null;
+			if (!targetProfile.isInState(ProfileState.FREE) || inTargetTournament) {
 				sender.sendMessage(ChatColor.RED + target.getName() + " is not available at the moment");
 				return false;
 			}
@@ -95,12 +94,13 @@ public class DuelCommand implements CommandExecutor {
 		}
 
 		if (args.length == 2 && args[0].equalsIgnoreCase("accept")) {
-			if (!senderProfile.isInState(ProfileState.FREE)) {
+			if (!senderProfile.isInState(ProfileState.FREE) || inSenderTournament) {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now.");
 				return false;
 			}
 
 			Player target = Bukkit.getPlayer(args[1]);
+			final boolean inTargetTournament = Utils.getTournamentByPlayerUUID(target.getUniqueId()) != null;
 			if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(args[1])) {
 				target = Bukkit.getPlayer(Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(args[1]));
 			}
@@ -121,7 +121,7 @@ public class DuelCommand implements CommandExecutor {
 				return false;
 			}
 			final Profile targetProfile = Utils.getProfiles(target.getUniqueId());
-			if (!targetProfile.isInState(ProfileState.FREE)) {
+			if (!targetProfile.isInState(ProfileState.FREE) || inTargetTournament) {
 				sender.sendMessage(ChatColor.RED + args[1] + " is not free now.");
 				return false;
 			}

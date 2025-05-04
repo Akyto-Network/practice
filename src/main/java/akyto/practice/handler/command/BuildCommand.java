@@ -36,8 +36,8 @@ public class BuildCommand implements CommandExecutor {
                 this.main.getManagerHandler().getItemManager().giveItems(player.getPlayer().getUniqueId(), false);
                 return false;
             }
-
-        if (pm.getProfileState() != ProfileState.FREE) {
+        final boolean inTournament = Utils.getTournamentByPlayerUUID(player.getUniqueId()) != null;
+        if (pm.getProfileState() != ProfileState.FREE || inTournament) {
             sender.sendMessage(ChatColor.RED + "You cannot do that right now!");
         }
 

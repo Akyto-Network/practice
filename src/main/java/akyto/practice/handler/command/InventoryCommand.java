@@ -38,7 +38,9 @@ public class InventoryCommand implements CommandExecutor {
 
         final Profile senderProfile = Utils.getProfiles(playerSender.getUniqueId());
 
-        if ((senderProfile.isInState(ProfileState.FIGHT, ProfileState.EDITOR) && !Utils.getDuelByUUID(playerSender.getUniqueId()).getState().equals(DuelState.FINISHING))) {
+        final boolean inTournament = Utils.getTournamentByPlayerUUID(playerSender.getUniqueId()) != null;
+
+        if ((senderProfile.isInState(ProfileState.FIGHT, ProfileState.EDITOR) && !Utils.getDuelByUUID(playerSender.getUniqueId()).getState().equals(DuelState.FINISHING)) || inTournament) {
             sender.sendMessage(ChatColor.RED + "You cannot do this right now!");
             return false;
         }

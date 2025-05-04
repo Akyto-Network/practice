@@ -40,7 +40,8 @@ public class ArenaManager {
 					LocationSerializer.stringToLocation(arenaSection.getString(name + ".first")),
 					LocationSerializer.stringToLocation(arenaSection.getString(name + ".second")),
 					ArenaType.valueOf(arenaSection.getString(name + ".type")),
-					Material.valueOf(arenaSection.getString(name + ".icon"))
+					Material.valueOf(arenaSection.getString(name + ".icon")),
+					arenaSection.getBoolean(name + ".build")
 			);
 
 			this.main.getArenas().putIfAbsent(name, arena);
@@ -57,6 +58,11 @@ public class ArenaManager {
 			fileConfig.set("arenas." + arenaName + ".second", LocationSerializer.locationToString(arena.getPosition().get(1)));
 			fileConfig.set("arenas." + arenaName + ".type", arena.getArenaType().toString());
 			fileConfig.set("arenas." + arenaName + ".icon", arena.getIcon().toString());
+			if (arena.getCorner1() != null)
+				fileConfig.set("arenas." + arenaName + ".corner1", LocationSerializer.locationToString(arena.getCorner1()));
+			if (arena.getCorner2() != null)
+				fileConfig.set("arenas." + arenaName + ".corner2", LocationSerializer.locationToString(arena.getCorner2()));
+			fileConfig.set("arenas." + arenaName + ".build", arena.isBuild());
 		});
 		this.config.save();
 	}

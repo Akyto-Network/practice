@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.Pair;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,6 +17,11 @@ import org.bukkit.entity.Player;
 import akyto.practice.Practice;
 import akyto.practice.arena.Arena;
 import akyto.practice.arena.ArenaType;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +37,8 @@ public class ArenaCommand implements CommandExecutor {
 			ChatColor.DARK_GRAY + "Arena Command Help" + ChatColor.GRAY + ":",
 			ChatColor.WHITE + "/arena create <name> <NORMAL/SUMO>",
 			ChatColor.WHITE + "/arena setpos<1/2> <name>",
+			ChatColor.WHITE + "/arena setcorner<1/2> <name>",
+			ChatColor.WHITE + "/arena build <name>",
 			ChatColor.WHITE + "/arena delete <name>",
 			ChatColor.WHITE + "/arena tp <name>",
 			ChatColor.WHITE + "/arena save <name>",
@@ -40,6 +48,48 @@ public class ArenaCommand implements CommandExecutor {
 
 	public ArenaCommand(final Practice practice) {
 		this.main = practice;
+		practice.getServer().getPluginManager().registerEvents(new Listener() {
+			@EventHandler
+			public void onCorner(PlayerInteractEvent event) {
+				Player player = event.getPlayer();
+				Block clicked = event.getClickedBlock();
+
+				if (clicked == null || !corners.containsKey(player.getUniqueId()))
+					return;
+
+				event.setCancelled(true);
+
+				Pair<Arena, Integer> editing = corners.remove(player.getUniqueId());
+				Arena target = editing.first();
+				int corner = editing.second();
+
+				LocationSerializer clickedLoc = LocationSerializer.fromBukkitLocation(clicked.getLocation());
+
+				if (corner == 1)
+					target.setCorner1(clickedLoc);
+				else
+					target.setCorner2(clickedLoc);
+
+				player.sendMessage(ChatColor.GREEN + "Successfully set corner " + corner + " for arena " + target.getName() + " to " + clickedLoc);
+
+				if (corner == 2)
+					player.sendMessage(ChatColor.GREEN + "All corners have been set for arena " + target.getName() + "!");
+				else {
+					player.sendMessage(ChatColor.GREEN + "Left click on the second corner of " + target.getName());
+					corners.put(player.getUniqueId(), Pair.of(target, 2));
+				}
+			}
+
+			@EventHandler
+			public void onQuit(PlayerQuitEvent event) {
+				corners.remove(event.getPlayer().getUniqueId());
+			}
+
+			@EventHandler
+			public void onKick(PlayerKickEvent event) {
+				corners.remove(event.getPlayer().getUniqueId());
+			}
+		}, practice);
 	}
 
 	@Override
@@ -69,7 +119,7 @@ public class ArenaCommand implements CommandExecutor {
 				return false;
 			}
             ArenaType.valueOf(args[2].toUpperCase());
-            this.main.getArenas().putIfAbsent(name, new Arena(main, name, LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), ArenaType.valueOf(args[2].toUpperCase()), Material.PAPER));
+            this.main.getArenas().putIfAbsent(name, new Arena(main, name, LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), ArenaType.valueOf(args[2].toUpperCase()), Material.PAPER, false));
 			sender.sendMessage(ChatColor.GREEN + "You have succesfully create the " + args[1] + " arena into the " + args[2] + " type!");
 			return false;
 		}
@@ -160,6 +210,21 @@ public class ArenaCommand implements CommandExecutor {
 			}
 			this.main.getManagerHandler().getArenaManager().getArena(args[1]).setIcon(playerSender.getItemInHand().getType());
 			sender.sendMessage(ChatColor.GREEN + "The " + playerSender.getItemInHand().getType().toString() +" has been setted at icon of " + args[1] + " arena!");
+			return false;
+		}
+
+		if (args[0].equalsIgnoreCase("build")) {
+			if (args.length != 2) {
+				sender.sendMessage(helpMessage);
+				return false;
+			}
+			if (this.main.getManagerHandler().getArenaManager().getArena(args[1]) == null) {
+				sender.sendMessage(ChatColor.RED + "Sorry but this arena doesn't exist!");
+				return false;
+			}
+			final boolean buildable = this.main.getManagerHandler().getArenaManager().getArena(args[1]).isBuild() ? false : true;
+			this.main.getManagerHandler().getArenaManager().getArena(args[1]).setBuild(buildable);
+			sender.sendMessage(ChatColor.GREEN + "The build has been " + (buildable ? "disable" : "enabled") + " for " + args[1] + " arena!");
 			return false;
 		}
 

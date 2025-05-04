@@ -15,14 +15,18 @@ public class Arena {
 
     private final String name;
     private final List<LocationSerializer> position;
+    private LocationSerializer corner1;
+    private LocationSerializer corner2;
     private ArenaType arenaType;
     private Material icon;
     private boolean save;
+    private boolean build;
 
-    public Arena(final Practice main, final String name, final LocationSerializer loc1, final LocationSerializer loc2, final ArenaType arenaType, final Material icon) {
+    public Arena(final Practice main, final String name, final LocationSerializer loc1, final LocationSerializer loc2, final ArenaType arenaType, final Material icon, final boolean build) {
         this.name = name;
         position = Arrays.asList(loc1, loc2);
         this.arenaType = arenaType;
         this.icon = icon;
+        this.build = build;
     }
 }

@@ -27,6 +27,11 @@
             <id>papermc-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
+
+        <repository>
+            <id>enginehub</id>
+            <url>https://maven.enginehub.org/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -76,6 +81,13 @@
             <groupId>akyto.core</groupId>
             <artifactId>core</artifactId>
             <version>1.0-dev</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sk89q.worldedit</groupId>
+            <artifactId>worldedit-bukkit</artifactId>
+            <version>6.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

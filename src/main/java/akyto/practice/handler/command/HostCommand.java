@@ -24,7 +24,8 @@ public class HostCommand implements CommandExecutor {
         }
         final Player player = Bukkit.getPlayer(sender.getName());
         final Profile pm = Utils.getProfiles(player.getUniqueId());
-        if (pm.getProfileState() != ProfileState.FREE) {
+        final boolean inTournament = Utils.getTournamentByPlayerUUID(player.getUniqueId()) != null;
+        if (pm.getProfileState() != ProfileState.FREE || inTournament) {
             sender.sendMessage(ChatColor.RED + "You cannot do this right now");
             return false;
         }
