@@ -1,5 +1,6 @@
 package akyto.practice.handler.manager;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 
@@ -29,7 +30,21 @@ public class QueueManager {
     public QueueManager(final Practice main) { this.main = main; }
     
     public void addPlayerToQueue(final UUID uuid, final Kit kit, final boolean ranked) {
-        if (!ranked) this.researchMatch(uuid, kit, ranked);
+        for (Map.Entry<UUID, QueueManager.QueueEntry> entry : Practice.API.getQueue().entrySet()) {
+            QueueManager.QueueEntry queueEntry = entry.getValue();
+            if (queueEntry.getKit().equals(kit) && queueEntry.isRanked() == ranked && !entry.getKey().equals(uuid)) {
+                if (queueEntry.isRanked()) {
+                    if (!Practice.API.getManagerHandler().getQueueManager().checkCompatibilityElo(entry.getKey(), uuid)) {
+                        return;
+                    }
+                    queueEntry.getEloRangeRunnable().cancel();
+                }
+                new Duel(Practice.API, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE, null);
+                Practice.API.getQueue().remove(entry.getKey());
+                Practice.API.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
+                return;
+            }
+        }
         this.main.getQueue().put(uuid, new QueueEntry(uuid, kit, ranked));
         Utils.getProfiles(uuid).setProfileState(ProfileState.QUEUE);
         this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
@@ -54,27 +69,8 @@ public class QueueManager {
         }
     }
 
-    public void researchMatch(final UUID uuid, final Kit kit, final boolean ranked) {
-        for (Entry<UUID, QueueEntry> entry : main.getQueue().entrySet()) {
-            QueueEntry queueEntry = entry.getValue();
-            if (queueEntry.getKit().equals(kit) && queueEntry.isRanked() == ranked && !entry.getKey().equals(uuid)) {
-                if (queueEntry.isRanked()) {
-                    if (!this.checkCompatibilityElo(entry.getKey(), uuid)) {
-                        return;
-                    }
-                    queueEntry.getEloRangeRunnable().cancel();
-                }
-                new Duel(this.main, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE, null);
-                main.getQueue().remove(entry.getKey());
-                if (ranked) main.getQueue().remove(uuid);
-                this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
-                return;
-            }
-        }
-    }
 
-
-    private boolean checkCompatibilityElo(final UUID playerA, final UUID playerB) {
+    public boolean checkCompatibilityElo(final UUID playerA, final UUID playerB) {
         final QueueEntry queueEntryA = this.main.getQueue().get(playerA);
         final QueueEntry queueEntryB = this.main.getQueue().get(playerB);
         final int kitId = queueEntryA.getKit().id();

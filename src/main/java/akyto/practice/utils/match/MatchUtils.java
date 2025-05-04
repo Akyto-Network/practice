@@ -7,11 +7,14 @@ import java.util.stream.Stream;
 import akyto.core.Core;
 import akyto.practice.duel.cache.DuelState;
 import akyto.practice.handler.manager.PartyManager;
+import akyto.practice.handler.manager.QueueManager;
 import akyto.practice.handler.manager.TournamentManager;
+import akyto.practice.kit.Kit;
 import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.chat.MessageHelper;
 import akyto.practice.utils.chat.MessageUtils;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -314,4 +317,24 @@ public class MatchUtils {
 		MessageUtils.determineAndDisplayTournamentStage(entry);
 	}
 
+	// QUEUE
+
+	public static void researchMatch(final UUID uuid, final Kit kit, final boolean ranked) {
+		for (Map.Entry<UUID, QueueManager.QueueEntry> entry : Practice.API.getQueue().entrySet()) {
+			QueueManager.QueueEntry queueEntry = entry.getValue();
+			if (queueEntry.getKit().equals(kit) && queueEntry.isRanked() == ranked && !entry.getKey().equals(uuid)) {
+				if (queueEntry.isRanked()) {
+					if (!Practice.API.getManagerHandler().getQueueManager().checkCompatibilityElo(entry.getKey(), uuid)) {
+						return;
+					}
+					queueEntry.getEloRangeRunnable().cancel();
+				}
+				new Duel(Practice.API, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE, null);
+				Practice.API.getQueue().remove(entry.getKey());
+				if (ranked) Practice.API.getQueue().remove(uuid);
+				Practice.API.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
+				return;
+			}
+		}
+	}
 }

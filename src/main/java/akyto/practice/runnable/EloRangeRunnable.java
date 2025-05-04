@@ -5,6 +5,7 @@ import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.handler.manager.QueueManager;
 import akyto.practice.utils.Utils;
+import akyto.practice.utils.match.MatchUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -34,14 +35,14 @@ public class EloRangeRunnable extends BukkitRunnable {
         }
         this.timer++;
         if (this.queueEntry.getEloRange().getMinRange() < 0) {
-            Practice.API.getManagerHandler().getQueueManager().researchMatch(uuid, this.queueEntry.getKit(), true);
+            MatchUtils.researchMatch(uuid, this.queueEntry.getKit(), true);
             return;
         }
         if (timer == updateTime) {
             Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + " » " + ChatColor.WHITE + "Elo range as been updated from " + ChatColor.GRAY + "[" + ChatColor.RED + this.queueEntry.getEloRange().getMinRange() + ChatColor.GRAY + "->" + ChatColor.GREEN + this.queueEntry.getEloRange().getMaxRange() + ChatColor.GRAY + "] " + ChatColor.WHITE + " to " + ChatColor.GRAY + "[" + ChatColor.RED + (this.queueEntry.getEloRange().getMinRange()-100) + ChatColor.GRAY + "->" + ChatColor.GREEN + (this.queueEntry.getEloRange().getMaxRange()+100) + ChatColor.GRAY + "]");
             this.queueEntry.getEloRange().setNewRange(100);
             timer = 0;
-            Practice.API.getManagerHandler().getQueueManager().researchMatch(uuid, this.queueEntry.getKit(), true);
+            MatchUtils.researchMatch(uuid, this.queueEntry.getKit(), true);
         }
     }
 }
