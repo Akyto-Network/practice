@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 
 import akyto.practice.Practice;
 import akyto.practice.utils.Utils;
+import org.bukkit.inventory.Inventory;
 
 public class StatisticsCommand implements CommandExecutor {
 
@@ -36,8 +37,9 @@ public class StatisticsCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + "You cannot do this right now");
 				return false;
 			}
-
-			playerSender.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(playerSender.getUniqueId()));
+			final Inventory inv = Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(playerSender.getUniqueId());
+			if (inv == null) Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(playerSender.getUniqueId(), main.getKits().size(), main.getKitNames());
+			playerSender.openInventory(inv);
 			return false;
 		}
 

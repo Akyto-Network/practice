@@ -30,6 +30,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -198,7 +199,9 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.REDSTONE_COMPARATOR)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getUtilsInventory()); }
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }
 				if (event.getItem().getType().equals(Material.SKULL_ITEM)) {
-					player.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId()));
+					final Inventory inv = Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId());
+					if (inv == null) Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(player.getUniqueId(), main.getKits().size(), main.getKitNames());
+					player.openInventory(inv);
 				}
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
 				return;
@@ -260,7 +263,7 @@ public class PlayerListener implements Listener {
 					return;
 				}
 				if (event.getClickedBlock().getType().equals(Material.ANVIL)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[2]); }
-				if (event.getClickedBlock().getType().equals(Material.TRAP_DOOR)) { 
+				if (event.getClickedBlock().getType().equals(Material.WOODEN_DOOR)) {
 					player.sendMessage(ChatColor.GREEN + "You've returned to the spawn");
 					Utils.sendToSpawn(player.getUniqueId(), true);
 					return;
