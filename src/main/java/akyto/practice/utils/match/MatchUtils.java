@@ -238,6 +238,7 @@ public class MatchUtils {
 			final List<UUID> players = Lists.newArrayList();
 			players.add(loser.stream().toList().getFirst());
 			players.add(winner.stream().toList().getFirst());
+			if (!duel.getSpectators().isEmpty()) players.addAll(duel.getSpectators());
 			MessageUtils.sendSingleEndMessage(duel, players, winner.stream().toList().getFirst(), killed.getUniqueId());
 			Arrays.asList(winner, loser).forEach(uuids -> uuids.forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) != null) {

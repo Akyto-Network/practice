@@ -4,6 +4,7 @@ import akyto.core.Core;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.handler.manager.TournamentManager;
+import akyto.practice.tournament.TournamentState;
 import akyto.practice.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -41,6 +42,10 @@ public class JoinCommand implements CommandExecutor {
 			final UUID id = UUID.fromString(args[0]);
 			if (tournamentManager.getTournamentEntry(id) == null) {
 				sender.sendMessage(ChatColor.RED + "No tournament available with this ID.");
+				return false;
+			}
+			if (tournamentManager.getTournamentEntry(id).getTournamentState().equals(TournamentState.STARTED)) {
+				sender.sendMessage(ChatColor.RED + "Tournament already started.");
 				return false;
 			}
 			tournamentManager.joinTournament(Bukkit.getPlayer(sender.getName()), UUID.fromString(args[0]));

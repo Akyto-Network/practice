@@ -70,7 +70,7 @@ public class EntityListener implements Listener {
 		final Profile profile = Utils.getProfiles(event.getEntity().getUniqueId());
 
 		if (profile != null) {
-			if (profile.isInState(ProfileState.FREE) && event.getCause().equals(DamageCause.VOID)) {
+			if (profile.isInState(ProfileState.FREE, ProfileState.QUEUE) && event.getCause().equals(DamageCause.VOID)) {
 				event.getEntity().teleport(this.main.getSpawn().getLocation() == null ? event.getEntity().getWorld().getSpawnLocation() : this.main.getSpawn().getLocation());
 			}
 
