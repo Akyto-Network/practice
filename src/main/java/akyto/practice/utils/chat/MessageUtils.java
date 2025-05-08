@@ -182,7 +182,11 @@ public class MessageUtils {
 		player.sendMessage(org.bukkit.ChatColor.GRAY.toString() + org.bukkit.ChatColor.STRIKETHROUGH + "----------------------------");
 	}
 
-	public static void determineAndDisplayTournamentStage(TournamentEntry entry) {
+	public static void displayTournamentStage(TournamentEntry entry) {
+		MessageHelper.notifyUUID(entry.getParticipants(), TournamentManager.prefix + " &fCurrent stage&7: &c" + determineTournamentStage(entry));
+	}
+
+	public static String determineTournamentStage(TournamentEntry entry) {
 		int participantsCount = entry.getParticipants().size();
 		String stage = "";
 
@@ -200,7 +204,6 @@ public class MessageUtils {
 				stage = "Qualification";
 				break;
 		}
-		MessageHelper.notifyUUID(entry.getParticipants(), TournamentManager.prefix + " &fCurrent stage&7: &c" + stage);
-
+		return stage;
 	}
 }

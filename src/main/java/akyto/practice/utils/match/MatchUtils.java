@@ -315,7 +315,7 @@ public class MatchUtils {
 		}
 		entry.getParticipants().addAll(entry.getByePlayer());
 		entry.getByePlayer().clear();
-		MessageUtils.determineAndDisplayTournamentStage(entry);
+		MessageUtils.determineTournamentStage(entry);
 	}
 
 	// QUEUE

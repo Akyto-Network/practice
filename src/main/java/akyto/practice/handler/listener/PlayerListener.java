@@ -204,13 +204,15 @@ public class PlayerListener implements Listener {
 					player.openInventory(inv);
 				}
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
+				if (inTournament) {
+					if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) this.main.getManagerHandler().getTournamentManager().leaveTournament(player.getUniqueId());
+				}
 				return;
 			}
-			if (profile.isInState(ProfileState.QUEUE) || profile.isInState(ProfileState.EVENT) || inTournament) {
+			if (profile.isInState(ProfileState.QUEUE, ProfileState.EVENT)) {
 				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) {
 					if (profile.isInState(ProfileState.QUEUE)) this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(player.getUniqueId());
 					if (profile.isInState(ProfileState.EVENT)) this.main.getManagerHandler().getEventManager().leaveEvent(player.getUniqueId(), false);
-					if (inTournament) this.main.getManagerHandler().getTournamentManager().leaveTournament(player.getUniqueId());
 				}
 				return;
 			}	

@@ -9,7 +9,10 @@ import java.util.stream.Collectors;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
+import akyto.practice.tournament.TournamentEntry;
+import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.match.DurationUtils;
+import akyto.practice.utils.match.MatchUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -84,6 +87,17 @@ public class SideBoard implements BoardAdapter {
         	board.add(ChatColor.DARK_GRAY + "Members" + ChatColor.GRAY + ": " + ChatColor.WHITE + (playerParty.getMembers().size() - 1));
         }
 
+        final TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(player.getUniqueId());
+
+        if (tournamentEntry != null) {
+            board.add(" ");
+            board.add(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Tournament:");
+            board.add(ChatColor.DARK_GRAY + " Kit" + ChatColor.GRAY + ": " + ChatColor.WHITE + ChatColor.stripColor(tournamentEntry.getKit().displayName()));
+            board.add(ChatColor.DARK_GRAY + " Creator" + ChatColor.GRAY + ": " + ChatColor.WHITE + CoreUtils.getName(tournamentEntry.getCreator()));
+            board.add(ChatColor.DARK_GRAY + " Size" + ChatColor.GRAY + ": " + ChatColor.WHITE + tournamentEntry.getTeamSize() + "v" + tournamentEntry.getTeamSize());
+            board.add(ChatColor.DARK_GRAY + " In" + ChatColor.GRAY + ": " + ChatColor.WHITE + tournamentEntry.getParticipants().size());
+        }
+
         board.add(" ");
         board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.net");
         board.add(spacer);
@@ -134,7 +148,9 @@ public class SideBoard implements BoardAdapter {
         if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
         	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(duel.getWinner().getFirst()));
         }
+        final TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(player.getUniqueId());
 
+        if (tournamentEntry != null) board.add(ChatColor.DARK_GRAY + "Stage" + ChatColor.GRAY + ": " + ChatColor.WHITE + MessageUtils.determineTournamentStage(tournamentEntry));
         board.add(" ");
         board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.net");
         board.add(spacer);
