@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
+import akyto.practice.utils.match.DurationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -116,7 +117,7 @@ public class SideBoard implements BoardAdapter {
         		board.add(" ");
         	}
 
-            board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(duel));
+            board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + DurationUtils.getFormattedDuration(duel));
             board.add(" ");
             board.add(ChatColor.DARK_GRAY + "Ping" + ChatColor.GRAY + ": " + ChatColor.WHITE + player.getPing() + "ms");
             DuelStatistics statistics = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
@@ -161,7 +162,7 @@ public class SideBoard implements BoardAdapter {
         		board.add(ChatColor.RED + "▊ " + ChatColor.DARK_GRAY + "alives" + ChatColor.GRAY + ": " + ChatColor.RESET + duel.getSecondAlives().size() + "/" + duel.getSecond().size());
         	}
             board.add(" ");
-            board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + this.getFormattedDuration(duel));
+            board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + DurationUtils.getFormattedDuration(duel));
         }
         if (duel.getState().equals(DuelState.FINISHING) && duel.getDuelType().equals(DuelType.SINGLE)) {
         	board.add(ChatColor.DARK_GRAY + "Winner" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(duel.getWinner().get(0)));
@@ -221,11 +222,5 @@ public class SideBoard implements BoardAdapter {
         board.add(ChatColor.WHITE.toString() + ChatColor.ITALIC + "akyto.net");
         board.add(spacer);
         return board;
-    }
-
-    public String getFormattedDuration(final Duel duel) {
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(duel.getDuration());
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(duel.getDuration()) - TimeUnit.MINUTES.toSeconds(minutes);
-        return String.format("%02d:%02d", minutes, seconds);
     }
 }

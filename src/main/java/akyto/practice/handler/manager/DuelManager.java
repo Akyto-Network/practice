@@ -5,6 +5,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import akyto.core.utils.CoreUtils;
+import akyto.practice.utils.match.DurationUtils;
 import com.google.common.collect.Sets;
 import gg.potted.idb.DB;
 import org.bukkit.Bukkit;
@@ -43,6 +44,7 @@ public class DuelManager {
 	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
 		Arena arena = duel.getArena() != null ? duel.getArena() : this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
+		if (duel.getArena() == null) duel.setArena(arena);
 		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
 		if (!duel.getDuelType().equals(DuelType.FFA)){
 			TagUtils.setupTeams(first, second);
@@ -89,10 +91,6 @@ public class DuelManager {
 	public void endSingle(final UUID winner) {
 		final Duel duel = Utils.getDuelByUUID(winner);
 		duel.setWinner(Lists.newArrayList(winner));
-		if (duel.getTimer() != null) {
-			duel.getTimer().cancel();	
-		}
-		duel.setState(DuelState.FINISHING);
 		final UUID looser = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst();
 		List<UUID> players = new ArrayList<>();
 		players.add(winner);
@@ -120,6 +118,11 @@ public class DuelManager {
 			}
 			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames());
 			});
+		CoreUtils.matchHistory(CoreUtils.getName(winner), CoreUtils.getName(looser), ChatColor.stripColor(duel.getKit().displayName()), duel.getArena().getName(), DurationUtils.getFormattedDuration(duel), duel.isRanked(), Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()], Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]);
+		if (duel.getTimer() != null) {
+			duel.getTimer().cancel();
+		}
+		duel.setState(DuelState.FINISHING);
 		TagUtils.clearEntries(Arrays.asList(Sets.newHashSet(winner), Sets.newHashSet(looser)));
 		if (!duel.getSpectators().isEmpty()) players.removeAll(duel.getSpectators());
 		new RespawnRunnable(Collections.singletonList(Sets.newHashSet(players)), duel.getSpectators().stream().toList(), this.main).runTaskLater(this.main, 70L);
