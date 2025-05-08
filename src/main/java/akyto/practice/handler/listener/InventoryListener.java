@@ -125,6 +125,7 @@ public class InventoryListener implements Listener {
 				if (itemMaterial.equals(Material.EMERALD)) {
 					event.getWhoClicked().openInventory(inventoryManager.getLeaderboardInventory());
 				}
+				return;
 			}
 			if (inventory.equals(inventoryManager.getPartyEventInventory())) {
 				if (itemMaterial.equals(Material.IRON_AXE)) {
@@ -169,6 +170,15 @@ public class InventoryListener implements Listener {
 			event.setCancelled(true);
 		}
 		boolean is_glass = itemMaterial.equals(Material.STAINED_GLASS) || itemMaterial.equals(Material.STAINED_GLASS_PANE) || itemMaterial.equals(Material.GLASS) || itemMaterial.equals(Material.COMPASS) || itemMaterial.equals(Material.AIR);
+		if (profile.isInState(ProfileState.QUEUE)) {
+			if (event.getClick().equals(ClickType.NUMBER_KEY)) {
+				event.setResult(Result.DENY);
+				event.setCancelled(true);
+				return;
+			}
+			event.setCancelled(true);
+			return;
+		}
 		if (profile.isInState(ProfileState.EDITOR)) {
 			if (is_glass) return;
 			if (inventory.equals(event.getWhoClicked().getInventory())) {

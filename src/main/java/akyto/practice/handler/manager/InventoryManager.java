@@ -96,6 +96,9 @@ public class InventoryManager {
 	}
 
 	private void setUtilsInventory() {
+		for (int i = 0; i < 5; i++) {
+			this.utilsInventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE));
+		}
 		this.utilsInventory.setItem(1, ItemUtils.createItems(Material.PAPER, ChatColor.GRAY + "Tags"));
 		this.utilsInventory.setItem(3, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Leaderboard"));
 	}
