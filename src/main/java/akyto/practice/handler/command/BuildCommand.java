@@ -32,7 +32,7 @@ public class BuildCommand implements CommandExecutor {
                 player.setAllowFlight(false);
                 player.setFlying(false);
                 pm.setProfileState(ProfileState.FREE);
-                player.getPlayer().teleport(new Location(player.getWorld(),135.558d, 124.00000d, 6.626d, 91.5f, -1.1f ));
+                player.getPlayer().teleport(main.getSpawn().getLocation());
                 this.main.getManagerHandler().getItemManager().giveItems(player.getPlayer().getUniqueId(), false);
                 return false;
             }

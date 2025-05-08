@@ -36,6 +36,7 @@ public class JoinCommand implements CommandExecutor {
 		}
 		if (args.length == 0) {
 			this.main.getManagerHandler().getEventManager().joinEvent(player.getUniqueId());
+			return false;
 		}
 		if (args.length == 1) {
 			TournamentManager tournamentManager = this.main.getManagerHandler().getTournamentManager();

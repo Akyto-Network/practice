@@ -75,7 +75,10 @@ public class EntityListener implements Listener {
 			}
 
 			if (profile.isInState(ProfileState.FIGHT)) {
-
+				if (Core.API.getManagerHandler().getProfileManager().getFrozen().contains(event.getEntity().getUniqueId())) {
+					event.setCancelled(true);
+					return;
+				}
 				final Duel playerDuel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 
 				if (playerDuel != null && playerDuel.getState().equals(DuelState.PLAYING)) {
@@ -126,6 +129,11 @@ public class EntityListener implements Listener {
 				}
 			}
 			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
+				if (Core.API.getManagerHandler().getProfileManager().getFrozen().contains(event.getEntity().getUniqueId())) {
+					event.getDamager().sendMessage(ChatColor.RED + event.getEntity().getName() + " is currently frozen.");
+					event.setCancelled(true);
+					return;
+				}
 				if (!profileDamager.isAllowClick()) {
 					event.setCancelled(true);
 					((Player) event.getDamager()).getPlayer().sendMessage(CoreUtils.translate(Core.API.getLoaderHandler().getMessage().getClickCancel()));
