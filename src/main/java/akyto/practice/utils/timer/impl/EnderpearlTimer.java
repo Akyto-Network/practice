@@ -3,12 +3,16 @@ package akyto.practice.utils.timer.impl;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
+import akyto.practice.utils.Utils;
 import akyto.practice.utils.timer.PlayerTimer;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -35,17 +39,26 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) && event.hasItem()) {
             Player player = event.getPlayer();
-            if (event.getItem().getType() == Material.ENDER_PEARL) {
-                long cooldown = this.getRemaining(player);
-                if (cooldown > 0L) {
+            final Profile profile = Utils.getProfiles(player.getUniqueId());
+            if (profile.isInState(ProfileState.FIGHT, ProfileState.EDITOR)) {
+                if (profile.isInState(ProfileState.EDITOR)) {
+                    event.setUseInteractedBlock(Event.Result.DENY);
+                    event.setUseItemInHand(Event.Result.DENY);
                     event.setCancelled(true);
-                    player.sendMessage(
-                        ChatColor.RED
-                            + "You cannot use your enderpearl for another "
-                            + DurationFormatUtils.formatDurationWords(cooldown, true, true).replace(" ", ChatColor.RESET.toString() + ChatColor.RED + " ")
-                            + " !"
-                    );
-                    player.updateInventory();
+                    return;
+                }
+                if (event.getItem().getType() == Material.ENDER_PEARL) {
+                    long cooldown = this.getRemaining(player);
+                    if (cooldown > 0L) {
+                        event.setCancelled(true);
+                        player.sendMessage(
+                                ChatColor.RED
+                                        + "You cannot use your enderpearl for another "
+                                        + DurationFormatUtils.formatDurationWords(cooldown, true, true).replace(" ", ChatColor.RESET.toString() + ChatColor.RED + " ")
+                                        + " !"
+                        );
+                        player.updateInventory();
+                    }
                 }
             }
         }

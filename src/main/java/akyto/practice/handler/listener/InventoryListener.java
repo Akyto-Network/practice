@@ -2,14 +2,17 @@ package akyto.practice.handler.listener;
 
 import akyto.core.Core;
 import akyto.core.handler.manager.ProfileManager;
+import akyto.core.handler.manager.TagManager;
 import akyto.core.particle.ParticleEntry;
 import akyto.core.settings.NormalSettings;
 import akyto.core.settings.SpectateSettings;
+import akyto.core.tag.TagEntry;
 import akyto.practice.handler.manager.InventoryManager;
 import akyto.practice.request.Request;
 import akyto.practice.request.Request.RequestType;
 import akyto.practice.utils.Utils;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -71,12 +74,7 @@ public class InventoryListener implements Listener {
 			event.setCancelled(true);
 		}
 		if (profile.isInState(ProfileState.FREE)) {
-			if (event.getClick().equals(ClickType.NUMBER_KEY)) {
-				event.setResult(Result.DENY);
-				event.setCancelled(true);
-				return;
-			}
-			if (event.getCurrentItem().getType().equals(Material.NETHER_STAR) || event.getCurrentItem().getType().equals(Material.AIR) || event.getClickedInventory().getName().equalsIgnoreCase(event.getWhoClicked().getInventory().getName())) {
+			if (event.getCurrentItem().getType().equals(Material.NETHER_STAR) || event.getCurrentItem().getType().equals(Material.AIR) || event.getClickedInventory().equals(event.getWhoClicked().getInventory())) {
 				event.setCancelled(true);
 				event.setResult(Result.DENY);
 				return;
@@ -118,14 +116,8 @@ public class InventoryListener implements Listener {
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventory.equals(inventoryManager.getUtilsInventory())) {
-				if (itemMaterial.equals(Material.PAPER)) {
-					Core.API.getManagerHandler().getInventoryManager().generateCommonTagInventory(event.getWhoClicked().getUniqueId());
-					event.getWhoClicked().openInventory(Core.API.getManagerHandler().getInventoryManager().getCommonTags().get(event.getWhoClicked().getUniqueId()));
-				}
-				if (itemMaterial.equals(Material.EMERALD)) {
-					event.getWhoClicked().openInventory(inventoryManager.getLeaderboardInventory());
-				}
-				return;
+				if (itemMaterial.equals(Material.PAPER)) Core.API.getManagerHandler().getInventoryManager().generateCommonTagInventory(event.getWhoClicked().getUniqueId());
+				event.getWhoClicked().openInventory(itemMaterial.equals(Material.EMERALD) ? inventoryManager.getLeaderboardInventory() : Core.API.getManagerHandler().getInventoryManager().getCommonTags().get(event.getWhoClicked().getUniqueId()));
 			}
 			if (inventory.equals(inventoryManager.getPartyEventInventory())) {
 				if (itemMaterial.equals(Material.IRON_AXE)) {
