@@ -44,18 +44,22 @@ public class DuelManager {
 	
 	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
-		Arena arena = duel.getArena() != null ? duel.getArena() : this.main.getManagerHandler().getArenaManager().getRandomArena(kit);
-		if (duel.getArena() == null) duel.setArena(arena);
+		Arena arena = duel.getArena() == null ? this.main.getManagerHandler().getArenaManager().getRandomArena(kit) : duel.getArena();
+		duel.setArena(arena); // Et si c'est une copie ???
+		UUID idCopy = null;
+		if (kit.buildable()) {
+			idCopy = this.main.getManagerHandler().getArenaManager().createCopy(arena, duel);
+			if (idCopy == null) {
+				System.err.println("Failed to create arena copy for " + arena.getName());
+				return;
+			}
+		}
 		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
 		if (!duel.getDuelType().equals(DuelType.FFA)){
 			TagUtils.setupTeams(first, second);
 		}
 		if (duel.getDuelType().equals(DuelType.SPLIT)) {
 			MessageUtils.sendSplitMessage(first, second, kit);
-		}
-		UUID idCopy = null;
-		if (kit.buildable()) {
-			idCopy = this.main.getManagerHandler().getArenaManager().createCopy(arena, 1000, duel);
 		}
 		final Location locationFirst = kit.buildable() ? Utils.getArenaCopyID(idCopy).getPosition().getFirst().toBukkitLocation() : arena.getPosition().getFirst().toBukkitLocation();
 		final Location locationSecond = kit.buildable() ? Utils.getArenaCopyID(idCopy).getPosition().getLast().toBukkitLocation() : arena.getPosition().getLast().toBukkitLocation();

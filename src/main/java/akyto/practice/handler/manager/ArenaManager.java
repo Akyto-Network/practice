@@ -1,9 +1,7 @@
 package akyto.practice.handler.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import akyto.practice.arena.ArenaCopy;
 import akyto.practice.duel.Duel;
@@ -106,16 +104,16 @@ public class ArenaManager {
 		for (int y = mny ; y <= mxy; y++) {
 			for (int x = mnx ; x <= mxx; x++) {
 				for (int z = mnz ; z <= mxz; z++) {
-					Location newBlock = new Location(world, x, y, z);
-					newBlock.getBlock().setType(Material.AIR);
+					world.getBlockAt(x, y, z).setType(Material.AIR);
 				}
 			}
 		}
 		this.main.getArenaCopies().remove(arena);
 	}
 
-	public UUID createCopy(Arena arena, double addToLoc, final Duel duel) {
+	public UUID createCopy(Arena arena, final Duel duel) {
 		UUID id = UUID.randomUUID();
+
 		World world = arena.getPosition().getFirst().toBukkitWorld();
 
 		int minY = Math.min(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
@@ -125,86 +123,53 @@ public class ArenaManager {
 		int minZ = Math.min(arena.getCorner1().toBukkitLocation().getBlockZ(), arena.getCorner2().toBukkitLocation().getBlockZ());
 		int maxZ = Math.max(arena.getCorner1().toBukkitLocation().getBlockZ(), arena.getCorner2().toBukkitLocation().getBlockZ());
 
-		Bukkit.getScheduler().runTask(Practice.API, () -> {
-			Block[][][] blocks = new Block[maxX - minX + 1][maxY - minY + 1][maxZ - minZ + 1];
+		Block[] blocks = new Block[(maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1)];
 
-			for (int y = minY; y <= maxY; y++) {
-				for (int x = minX; x <= maxX; x++) {
-					for (int z = minZ; z <= maxZ; z++) {
-						Location blockLocation = new Location(world, x, y, z);
-						blocks[x - minX][y - minY][z - minZ] = blockLocation.getBlock();
-					}
+		int i = 0;
+		for (int y = minY; y <= maxY; y++) {
+			for (int x = minX; x <= maxX; x++) {
+				for (int z = minZ; z <= maxZ; z++) {
+					blocks[i] = world.getBlockAt(x, y, z);
+					i++;
 				}
 			}
+		}
 
-			Bukkit.getScheduler().runTask(Practice.API, () -> {
-				double centerX = (arena.getPosition().getFirst().toBukkitLocation().getX() + arena.getPosition().getLast().toBukkitLocation().getX()) / 2;
-				double centerZ = (arena.getPosition().getFirst().toBukkitLocation().getZ() + arena.getPosition().getLast().toBukkitLocation().getZ()) / 2;
-				double xAdd = centerX + addToLoc;
-				double zAdd = centerZ + addToLoc;
-				Location pasteLocation = new Location(world, xAdd, 50.0d, zAdd);
-				int radiusAdded = 1000;
-				while (!isAreaClear(pasteLocation, 1000)) {
-					xAdd += 1000;
-					zAdd += 1000;
-					radiusAdded += 1000;
-					pasteLocation = new Location(world, xAdd, 80.0d, zAdd);
-				}
+		int addZ = 1000;
+		int threshold = 500; // Si il trouve rien au bout de 500 Area, on stop
+		while (!isAreaClear(blocks, addZ) && threshold > 0) {
+			addZ += 1000;
+			threshold--;
+		}
+		if (threshold == 0) {
+			return null;
+		}
 
-				int pasteX = pasteLocation.getBlockX();
-				int pasteY = pasteLocation.getBlockY();
-				int pasteZ = pasteLocation.getBlockZ();
+		for (Block block : blocks) {
+			world.getBlockAt(block.getLocation().add(0, 0, addZ)).setType(block.getType());
+		}
 
-				for (int y = 0; y < blocks[0].length; y++) {
-					for (int x = 0; x < blocks.length; x++) {
-						for (int z = 0; z < blocks[0][0].length; z++) {
-							Block block = blocks[x][y][z];
-							Location newLocation = new Location(world, pasteX + x, pasteY + y, pasteZ + z);
-							newLocation.getBlock().setType(block.getType());
-						}
-					}
-				}
+		double tempAddZ = addZ;
+		final List<LocationSerializer> serializers = arena.getPosition().stream().map(locationSerializer ->
+			locationSerializer.add(0, 0, tempAddZ)
+		).toList();
 
-				final double firstXRadiusAdded = arena.getPosition().getFirst().getX() + radiusAdded;
-				final double firstZRadiusAdded = arena.getPosition().getFirst().getZ() + radiusAdded;
-				final LocationSerializer firstCopies = new LocationSerializer(firstXRadiusAdded, arena.getPosition().getFirst().getY(), firstZRadiusAdded);
+		final List<UUID> players = Lists.newArrayList();
+		players.addAll(duel.getFirst());
+		players.addAll(duel.getSecond());
 
-				final double secondXRadiusAdded = arena.getPosition().getLast().getX() + radiusAdded;
-				final double secondZRadiusAdded = arena.getPosition().getLast().getZ() + radiusAdded;
-				final LocationSerializer secondCopies = new LocationSerializer(secondXRadiusAdded, arena.getPosition().getLast().getY(), secondZRadiusAdded);
+		LocationSerializer newCorner1 = arena.getCorner1().add(0, 0, tempAddZ);
+		LocationSerializer newCorner2 = arena.getCorner2().add(0, 0, tempAddZ);
+		ArenaCopy copy = new ArenaCopy(id, serializers, players, newCorner1, newCorner2);
+		this.main.getArenaCopies().add(copy);
 
-				final List<LocationSerializer> serializers = Lists.newArrayList();
-				serializers.add(firstCopies);
-				serializers.add(secondCopies);
-
-				final List<UUID> players = Lists.newArrayList();
-				players.addAll(duel.getFirst());
-				players.addAll(duel.getSecond());
-
-				LocationSerializer newCorner1 = new LocationSerializer(pasteX + (minX - arena.getCorner1().toBukkitLocation().getBlockX()), pasteY, pasteZ + (minZ - arena.getCorner1().toBukkitLocation().getBlockZ()));
-				LocationSerializer newCorner2 = new LocationSerializer(pasteX + (maxX - arena.getCorner1().toBukkitLocation().getBlockX()), pasteY + (maxY - minY), pasteZ + (maxZ - arena.getCorner1().toBukkitLocation().getBlockZ()));
-				ArenaCopy copy = new ArenaCopy(id, serializers, players, newCorner1, newCorner2);
-				this.main.getArenaCopies().add(copy);
-			});
-		});
 		return id;
 	}
 
-	private boolean isAreaClear(Location center, int radius) {
-		World world = center.getWorld();
-		int centerX = center.getBlockX();
-		int centerY = center.getBlockY();
-		int centerZ = center.getBlockZ();
-
-		for (int x = centerX - radius; x <= centerX + radius; x++) {
-			for (int y = centerY - radius; y <= centerY + radius; y++) {
-				for (int z = centerZ - radius; z <= centerZ + radius; z++) {
-					Block block = world.getBlockAt(x, y, z);
-					if (block.getType() != Material.AIR) {
-						return false;
-					}
-				}
-			}
+	private boolean isAreaClear(Block[] originalBlocks, int addZ) {
+		for (Block block : originalBlocks) {
+			if (block.getLocation().add(0, 0, addZ).getBlock().getType() != Material.AIR)
+				return false;
 		}
 		return true;
 	}
