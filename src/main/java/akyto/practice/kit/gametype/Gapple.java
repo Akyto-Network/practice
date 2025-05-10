@@ -5,6 +5,7 @@ import java.util.List;
 
 import akyto.practice.kit.Kit;
 import akyto.practice.kit.KitInterface;
+import com.google.common.collect.Lists;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -92,7 +93,7 @@ public class Gapple extends Kit implements KitInterface {
         ItemStack[] contents = {
         		attackItem,
         		new ItemStack(Material.GOLDEN_APPLE, 64, (byte)1),
-        		air,
+        		new ItemStack(Material.POTION, 1, (byte)8265),
         		air,
                 helmet,
                 chestplate,
@@ -102,7 +103,7 @@ public class Gapple extends Kit implements KitInterface {
 
                 air,
                 air,
-                air,
+                new ItemStack(Material.POTION, 1, (byte)8265),
                 air,
                 air,
                 air,
@@ -141,6 +142,6 @@ public class Gapple extends Kit implements KitInterface {
 
 	@Override
 	public List<PotionEffect> potionEffect() {
-		return Arrays.asList(new PotionEffect(PotionEffectType.SPEED, 99999999, 1), new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 99999999, 1));
+		return Lists.newArrayList(new PotionEffect(PotionEffectType.SPEED, 99999999, 1));
 	}
 }

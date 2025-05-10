@@ -211,6 +211,8 @@ public class PlayerListener implements Listener {
 			}
 			if (profile.isInState(ProfileState.QUEUE, ProfileState.EVENT)) {
 				if (event.getItem().getType().equals(Material.REDSTONE_TORCH_ON)) {
+					event.setUseInteractedBlock(Result.DENY);
+					event.setUseItemInHand(Result.DENY);
 					if (profile.isInState(ProfileState.QUEUE)) this.main.getManagerHandler().getQueueManager().removePlayerFromQueue(player.getUniqueId());
 					if (profile.isInState(ProfileState.EVENT)) this.main.getManagerHandler().getEventManager().leaveEvent(player.getUniqueId(), false);
 				}
