@@ -99,7 +99,6 @@ public class DuelManager {
 		DataUtils.addWinToData(winner, duel.getKit());
 		players.forEach(uuid -> {
 			if (!duel.getSpectators().contains(uuid)) {
-				this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid).removeEnderPearlCooldown();
 				this.main.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, Utils.getOpponents(uuid).getFirst());
 				if (Utils.getProfiles(winner).getSettings()[6] != 1){
 					Bukkit.getPlayer(winner).getInventory().clear();

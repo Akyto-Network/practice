@@ -13,6 +13,7 @@ import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.match.DurationUtils;
 import akyto.practice.utils.match.MatchUtils;
+import com.bizarrealex.aether.scoreboard.cooldown.BoardFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -58,7 +59,7 @@ public class SideBoard implements BoardAdapter {
                 return this.getLobbyBoard(player);
             }
             if (pm.isInState(ProfileState.FIGHT)) {
-            	return this.getGameBoard(player);
+            	return this.getGameBoard(player, cooldowns);
             }
             if (pm.isInState(ProfileState.SPECTATE)) {
             	return this.getSpecBoard(player);
@@ -104,7 +105,7 @@ public class SideBoard implements BoardAdapter {
         return board;
     }
 
-    private List<String> getGameBoard(final Player player) {
+    private List<String> getGameBoard(final Player player, final Set<BoardCooldown> cooldowns) {
         final List<String> board = new LinkedList<>();
         final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
         final UUID opps = duel.getFirst().contains(player.getUniqueId()) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0);
@@ -134,14 +135,10 @@ public class SideBoard implements BoardAdapter {
             board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + DurationUtils.getFormattedDuration(duel));
             board.add(" ");
             board.add(ChatColor.DARK_GRAY + "Ping" + ChatColor.GRAY + ": " + ChatColor.WHITE + player.getPing() + "ms");
-            DuelStatistics statistics = this.plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
-            if (statistics != null && statistics.getEnderPearlCooldown() != 0L) {
-                final double time = statistics.getEnderPearlCooldown() / 1000.0D;
-                final DecimalFormat df = new DecimalFormat("#.#");
-                board.add(ChatColor.RED + "Enderpearl" + ChatColor.GRAY + ": " + ChatColor.RESET + df.format(time) + "s");
-        		final float timeInf = Practice.API.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId()).getEnderPearlCooldown() / 16000.0f;
-        		player.setExp(timeInf);
-        		player.setLevel((int) time);
+            for (final BoardCooldown cooldown : cooldowns) {
+                if (cooldown.getId().equals("enderpearl")) {
+                    board.add(ChatColor.DARK_GRAY + "Enderpearl" + ChatColor.GRAY + ": " + ChatColor.WHITE + cooldown.getFormattedString(BoardFormat.SECONDS));
+                }
             }
         }
 

@@ -1,12 +1,16 @@
 package akyto.practice.utils.timer.impl;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
+import akyto.practice.Practice;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.timer.PlayerTimer;
+import com.bizarrealex.aether.scoreboard.Board;
+import com.bizarrealex.aether.scoreboard.cooldown.BoardCooldown;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,7 +35,7 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
     protected void handleExpiry(Player player, UUID playerUUID) {
         super.handleExpiry(player, playerUUID);
         if (player != null) {
-            ;
+            player.sendMessage(ChatColor.GREEN + "You can reuse your enderpearl now!");
         }
     }
 
@@ -59,6 +63,7 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
                         );
                         player.updateInventory();
                     }
+                    new BoardCooldown(Objects.requireNonNull(Board.getByPlayer(player)), "enderpearl", 16.0);
                 }
             }
         }

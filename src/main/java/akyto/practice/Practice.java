@@ -87,7 +87,7 @@ public class Practice extends JavaPlugin {
 		this.miscHandler = new MiscHandler(this);
 		this.fileSetup = new FileSetup(this);
 		this.getServer().getScheduler().runTaskTimerAsynchronously(this, new ExpBarRunnable(), 2L, 2L);
-		new Aether(this, new SideBoard(this));
+		new Aether(this,  new SideBoard(this));
 	}
 
 	public void onDisable() {
