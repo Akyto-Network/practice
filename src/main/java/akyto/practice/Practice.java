@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import akyto.core.Core;
+import akyto.practice.arena.ArenaCopy;
 import akyto.practice.runnable.ExpBarRunnable;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ import com.bizarrealex.aether.Aether;
 
 import akyto.practice.arena.Arena;
 import akyto.practice.board.SideBoard;
-import akyto.practice.database.FileSetup;
+import akyto.practice.duel.database.FileSetup;
 import akyto.practice.duel.Duel;
 import akyto.practice.handler.ManagerHandler;
 import akyto.practice.handler.MiscHandler;
@@ -55,6 +56,8 @@ public class Practice extends JavaPlugin {
 	public LocationUtil sumoSecond = new LocationUtil("sumoSecond");
 	public LocationUtil oitcEvent = new LocationUtil("oitcEvent");
 	public List<LocationUtil> oitcLoc = Lists.newArrayList();
+	@Getter
+	private final ArrayList<ArenaCopy> arenaCopies = Lists.newArrayList();
 
 	// TODO: Fork ladder from GYM -> Kezuk
 	private final List<Kit> kits = Arrays.asList(
@@ -100,6 +103,7 @@ public class Practice extends JavaPlugin {
 		this.getFileSetup().saveEditor();
 		LocationUtil.getAll().values().forEach(locationHelper -> locationHelper.save(this));
 		try {
+			this.getArenaCopies().forEach(arenaCopy -> this.managerHandler.getArenaManager().removeCopy(arenaCopy));
 			this.managerHandler.getArenaManager().saveArenas();
 			this.locationConfig.save(locationFile);
 		} catch (IOException e) { e.printStackTrace(); }

@@ -1,4 +1,4 @@
-package akyto.practice.database;
+package akyto.practice.duel.database;
 
 import java.io.File;
 import java.io.IOException;

@@ -47,6 +47,11 @@ public class Soup extends Kit implements KitInterface {
     }
 
     @Override
+    public boolean buildable() {
+        return false;
+    }
+
+    @Override
     public int id() {
         return 5;
     }

@@ -48,6 +48,11 @@ public class Gapple extends Kit implements KitInterface {
     }
 
     @Override
+    public boolean buildable() {
+        return false;
+    }
+
+    @Override
     public int id() {
         return 3;
     }

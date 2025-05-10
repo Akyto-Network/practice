@@ -9,6 +9,7 @@ import akyto.practice.utils.match.DurationUtils;
 import com.google.common.collect.Sets;
 import gg.potted.idb.DB;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.Lists;
@@ -43,7 +44,7 @@ public class DuelManager {
 	
 	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
-		Arena arena = duel.getArena() != null ? duel.getArena() : this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType());
+		Arena arena = duel.getArena() != null ? duel.getArena() : this.main.getManagerHandler().getArenaManager().getRandomArena(kit);
 		if (duel.getArena() == null) duel.setArena(arena);
 		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
 		if (!duel.getDuelType().equals(DuelType.FFA)){
@@ -52,6 +53,12 @@ public class DuelManager {
 		if (duel.getDuelType().equals(DuelType.SPLIT)) {
 			MessageUtils.sendSplitMessage(first, second, kit);
 		}
+		UUID idCopy = null;
+		if (kit.buildable()) {
+			idCopy = this.main.getManagerHandler().getArenaManager().createCopy(arena, 1000, duel);
+		}
+		final Location locationFirst = kit.buildable() ? Utils.getArenaCopyID(idCopy).getPosition().getFirst().toBukkitLocation() : arena.getPosition().getFirst().toBukkitLocation();
+		final Location locationSecond = kit.buildable() ? Utils.getArenaCopyID(idCopy).getPosition().getLast().toBukkitLocation() : arena.getPosition().getLast().toBukkitLocation();
 		Arrays.asList(first, second).forEach(uuids -> {
 			uuids.forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) == null) {
@@ -77,7 +84,7 @@ public class DuelManager {
 				if (duel.getDuelType().equals(DuelType.FFA)) {
 					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
 				}
-				player.teleport(first.contains(uuid) ? arena.getPosition().get(0).toBukkitLocation() : arena.getPosition().get(1).toBukkitLocation());
+				player.teleport(first.contains(uuid) ? locationFirst : locationSecond);
 				DataUtils.addPlayedToData(uuid, kit);
 				Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
 				this.main.getManagerHandler().getItemManager().giveItems(uuid, false);

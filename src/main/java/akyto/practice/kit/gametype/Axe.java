@@ -43,7 +43,12 @@ public class Axe extends Kit implements KitInterface {
     public boolean additionalInventory() {
         return true;
     }
-    
+
+    @Override
+    public boolean buildable() {
+        return false;
+    }
+
     @Override
     public int id() {
     	return 6;

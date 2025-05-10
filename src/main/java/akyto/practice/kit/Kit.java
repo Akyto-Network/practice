@@ -22,6 +22,7 @@ public abstract class Kit {
     public abstract List<PotionEffect> potionEffect();
     public abstract boolean isAlterable();
     public abstract boolean additionalInventory();
+    public abstract boolean buildable();
 
     public static Kit getLadder(String name, final Practice main) {
         return main.getKits().stream().filter(ladder -> ladder.name().equals(name)).findFirst().orElse(null);

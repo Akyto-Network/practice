@@ -6,6 +6,7 @@ import akyto.core.Core;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.practice.arena.Arena;
+import akyto.practice.arena.ArenaCopy;
 import akyto.practice.arena.ArenaType;
 
 import akyto.practice.tournament.TournamentEntry;
@@ -44,6 +45,14 @@ public class Utils {
 
 	public static Arena getArenaByIcon(Material icon, ArenaType arenaType) {
 		return Practice.API.getArenas().values().stream().filter(arena -> arena.getIcon().equals(icon) && arena.getArenaType().equals(arenaType)).findFirst().orElse(null);
+	}
+
+	public static ArenaCopy getArenaCopyByPlayer(final UUID uuid) {
+		return Practice.API.getArenaCopies().stream().filter(arena -> arena.getPlayers().contains(uuid)).findFirst().orElse(null);
+	}
+
+	public static ArenaCopy getArenaCopyID(final UUID id) {
+		return Practice.API.getArenaCopies().stream().filter(arena -> arena.getId().equals(id)).findFirst().orElse(null);
 	}
 	
 	public static Request getRequestByUUID(UUID uuid) {

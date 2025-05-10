@@ -44,6 +44,11 @@ public class Sumo extends Kit implements KitInterface {
     }
 
     @Override
+    public boolean buildable() {
+        return false;
+    }
+
+    @Override
     public int id() {
         return 4;
     }

@@ -55,6 +55,9 @@ public class RespawnRunnable extends BukkitRunnable {
             final Kit kit = duel.getKit();
             UUID firstPlayerUUID = duel.getFirst().iterator().next();
             MatchUtils.clearDrops(firstPlayerUUID);
+            if (kit.buildable()) {
+                Practice.API.getManagerHandler().getArenaManager().removeCopy(Utils.getArenaCopyByPlayer(firstPlayerUUID));
+            }
             main.getDuels().remove(duel);
             main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
             main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
