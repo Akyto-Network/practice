@@ -46,7 +46,7 @@ public class NoEnchant extends Kit implements KitInterface {
 
     @Override
     public boolean buildable() {
-        return true;
+        return false;
     }
 
     @Override

@@ -80,8 +80,8 @@ public class ArenaManager {
 		loadArenas();
 	}
 
-    public Arena getRandomArena(Kit kit) {
-        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == kit.arenaType() && arenaManager.isBuild() == kit.buildable()).toList();
+    public Arena getRandomArena(ArenaType arenaType) {
+        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == arenaType).toList();
         return availableArena.isEmpty() ? null : availableArena.get(rng.nextInt(availableArena.size()));
     }
 
