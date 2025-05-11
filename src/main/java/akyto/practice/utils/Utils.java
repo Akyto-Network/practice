@@ -118,6 +118,7 @@ public class Utils {
 		player.setSaturation(20.0f);
 		player.resetPlayerWeather();
 		player.closeInventory();
+		player.setArrowsStuck(0);
 		player.setGameMode(GameMode.SURVIVAL);
 		player.getActivePotionEffects().forEach(potionEffect -> player.removePotionEffect(potionEffect.getType()));
 	}

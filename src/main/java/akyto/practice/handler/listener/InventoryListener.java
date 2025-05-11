@@ -183,13 +183,16 @@ public class InventoryListener implements Listener {
 			}
 			if (inventory.equals(inventoryManager.getEditorInventory()[1])) {
 				for (ItemStack items : event.getWhoClicked().getInventory().getContents()) {
-					if (items == null) return;
 					if (items.getType().equals(Material.COOKED_BEEF) || items.getType().equals(Material.GRILLED_PORK) || items.getType().equals(Material.GOLDEN_CARROT)) {
 						if (event.getCurrentItem().getType().equals(Material.COOKED_BEEF)) items.setType(Material.COOKED_BEEF);
 						if (event.getCurrentItem().getType().equals(Material.GRILLED_PORK)) items.setType(Material.GRILLED_PORK);
 						if (event.getCurrentItem().getType().equals(Material.GOLDEN_CARROT)) items.setType(Material.GOLDEN_CARROT);
+						event.setResult(Result.DENY);
+						event.setCancelled(true);
+						return;
 					}
 				}
+				player.closeInventory();
 			}
 			if (inventory.equals(inventoryManager.getEditorInventory()[2])) {
 				if (itemMaterial.equals(Material.BOOKSHELF)) {

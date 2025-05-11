@@ -32,6 +32,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import akyto.core.Core;
@@ -531,6 +533,23 @@ public class PlayerListener implements Listener {
 		if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.ENDER_PEARL) && !profile.isInState(ProfileState.FIGHT)) {
 			event.setCancelled(true);
 			return;
+		}
+	}
+
+	@EventHandler
+	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
+		if (event.getItem().getType() == Material.GOLDEN_APPLE) {
+			if (!event.getItem().hasItemMeta() || !event.getItem().getItemMeta().getDisplayName().contains("Golden Head")) {
+				return;
+			}
+
+			Profile profile = Utils.getProfiles(event.getPlayer().getUniqueId());
+			if (profile.isInState(ProfileState.FIGHT)) {
+				Player player = event.getPlayer();
+				event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 200, 1));
+				event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 2400, 0));
+				player.setFoodLevel(Math.min(player.getFoodLevel() + 6, 20));
+			}
 		}
 	}
 
