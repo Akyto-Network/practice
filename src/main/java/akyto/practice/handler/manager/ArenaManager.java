@@ -1,16 +1,12 @@
 package akyto.practice.handler.manager;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import akyto.practice.arena.ArenaCopy;
 import akyto.practice.duel.Duel;
 import akyto.practice.kit.Kit;
 import com.google.common.collect.Lists;
-import lombok.Getter;
 import org.bukkit.block.Block;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -85,7 +81,7 @@ public class ArenaManager {
 	}
 
     public Arena getRandomArena(Kit kit) {
-        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == kit.arenaType() || arenaManager.isBuild() == kit.buildable()).toList();
+        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == kit.arenaType() && arenaManager.isBuild() == kit.buildable()).toList();
         return availableArena.isEmpty() ? null : availableArena.get(rng.nextInt(availableArena.size()));
     }
 
