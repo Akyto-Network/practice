@@ -45,7 +45,7 @@ public class DuelManager {
 	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
 		Arena arena = duel.getArena() == null ? this.main.getManagerHandler().getArenaManager().getRandomArena(kit) : duel.getArena();
-		duel.setArena(arena); // Et si c'est une copie ???
+		duel.setArena(arena);
 		UUID idCopy = null;
 		if (kit.buildable()) {
 			idCopy = this.main.getManagerHandler().getArenaManager().createCopy(arena, duel);
@@ -88,11 +88,21 @@ public class DuelManager {
 				if (duel.getDuelType().equals(DuelType.FFA)) {
 					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
 				}
-				player.teleport(first.contains(uuid) ? locationFirst : locationSecond);
 				DataUtils.addPlayedToData(uuid, kit);
-				Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
-				this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
-				if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
+				if (!kit.buildable()) {
+					player.teleport(first.contains(uuid) ? locationFirst : locationSecond);
+					Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
+					this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
+					if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
+				}
+				else {
+					Bukkit.getScheduler().runTaskLater(Practice.API, ()-> {
+						player.teleport(first.contains(uuid) ? locationFirst : locationSecond);
+						Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
+						this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
+						if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
+					}, 10L);
+				}
 			});
 		});
 		if (kit.name().equalsIgnoreCase("sumo")) new SumoRunnable(this.main, duel).runTaskTimer(this.main, 5L, 5L);
