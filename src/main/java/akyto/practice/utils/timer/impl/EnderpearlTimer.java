@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
+import akyto.practice.duel.Duel;
+import akyto.practice.duel.cache.DuelState;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.timer.PlayerTimer;
 import com.bizarrealex.aether.scoreboard.Board;
@@ -51,19 +53,22 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
                     event.setCancelled(true);
                     return;
                 }
-                if (event.getItem().getType() == Material.ENDER_PEARL) {
-                    long cooldown = this.getRemaining(player);
-                    if (cooldown > 0L) {
-                        event.setCancelled(true);
-                        player.sendMessage(
-                                ChatColor.RED
-                                        + "You cannot use your enderpearl for another "
-                                        + DurationFormatUtils.formatDurationWords(cooldown, true, true).replace(" ", ChatColor.RESET.toString() + ChatColor.RED + " ")
-                                        + " !"
-                        );
-                        player.updateInventory();
+                final Duel duel = Utils.getDuelByUUID(event.getPlayer().getUniqueId());
+                if (duel.getState().equals(DuelState.PLAYING)) {
+                    if (event.getItem().getType() == Material.ENDER_PEARL) {
+                        long cooldown = this.getRemaining(player);
+                        if (cooldown > 0L) {
+                            event.setCancelled(true);
+                            player.sendMessage(
+                                    ChatColor.RED
+                                            + "You cannot use your enderpearl for another "
+                                            + DurationFormatUtils.formatDurationWords(cooldown, true, true).replace(" ", ChatColor.RESET.toString() + ChatColor.RED + " ")
+                                            + " !"
+                            );
+                            player.updateInventory();
+                        }
+                        new BoardCooldown(Objects.requireNonNull(Board.getByPlayer(player)), "enderpearl", 16.0);
                     }
-                    new BoardCooldown(Objects.requireNonNull(Board.getByPlayer(player)), "enderpearl", 16.0);
                 }
             }
         }
@@ -86,12 +91,6 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
             Player player = event.getPlayer();
             if (this.getRemaining(player) != 0L && event.isCancelled()) {
                 this.clearCooldown(player);
-            }
-
-            event.getTo().setX((double)event.getTo().getBlockX() + 0.5);
-            event.getTo().setZ((double)event.getTo().getBlockZ() + 0.5);
-            if (event.getTo().getBlock().getType() != Material.AIR) {
-                event.getTo().setY(event.getTo().getY() - (event.getTo().getY() - (double)event.getTo().getBlockY()));
             }
         }
     }
