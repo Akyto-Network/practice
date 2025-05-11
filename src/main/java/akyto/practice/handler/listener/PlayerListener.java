@@ -413,8 +413,8 @@ public class PlayerListener implements Listener {
 		event.setDeathMessage(null);
 
 		final Profile victimProfile = Utils.getProfiles(killed.getUniqueId());
-		final Profile profileDamager = Utils.getProfiles(killer.getUniqueId()); // null if dead by lava or 
 		if (victimProfile.isInState(ProfileState.EVENT)) {
+			final Profile profileDamager = Utils.getProfiles(killer.getUniqueId());
 			event.getDrops().clear();
 			final EventManager eventManager = this.main.getManagerHandler().getEventManager();
 			if (eventManager.getType().equals("oitc") && eventManager.getEventState().equals(EventState.FIGHT)) {
