@@ -202,7 +202,7 @@ public class PlayerListener implements Listener {
 				if (event.getItem().getType().equals(Material.BOOK)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getEditorInventory()[0]); }
 				if (event.getItem().getType().equals(Material.SKULL_ITEM)) {
 					final Inventory inv = Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId());
-					if (inv == null) Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(player.getUniqueId(), main.getKits().size(), main.getKitNames());
+					if (inv == null) Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(player.getUniqueId(), main.getKitNames());
 					player.openInventory(inv);
 				}
 				if (event.getItem().getType().equals(Material.EMERALD)) { player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId())); }
@@ -413,8 +413,8 @@ public class PlayerListener implements Listener {
 		event.setDeathMessage(null);
 
 		final Profile victimProfile = Utils.getProfiles(killed.getUniqueId());
+		final Profile profileDamager = Utils.getProfiles(killer.getUniqueId()); // null if dead by lava or 
 		if (victimProfile.isInState(ProfileState.EVENT)) {
-			final Profile profileDamager = Utils.getProfiles(killer.getUniqueId());
 			event.getDrops().clear();
 			final EventManager eventManager = this.main.getManagerHandler().getEventManager();
 			if (eventManager.getType().equals("oitc") && eventManager.getEventState().equals(EventState.FIGHT)) {

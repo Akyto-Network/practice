@@ -53,7 +53,7 @@ public class ResetCommand implements CommandExecutor {
             profile.getStats().set(2, newArrayElo);
             profile.getStats().set(1, newArrayWin);
             profile.getStats().set(0, newArrayPlayed);
-            Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.API.getKits().size(), Practice.API.getKitNames());
+            Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.API.getKitNames());
         }
         sender.sendMessage(ChatColor.GRAY + "[" + ChatColor.RED + "Admin" + ChatColor.GRAY + "] " + ChatColor.YELLOW + args[0] + ChatColor.RED + " statistics has been clear!");
         return false;

@@ -136,7 +136,7 @@ public class DuelManager {
 				CompletableFuture<Void> update = CompletableFuture.runAsync(() -> DB.executeUpdateAsync("UPDATE playersdata SET elos=? WHERE name=?", elos, Bukkit.getServer().getPlayer(uuid).getName()));
 		        update.whenCompleteAsync((t, u) -> this.main.getManagerHandler().getInventoryManager().refreshLeaderboard());
 			}
-			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames());
+			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKitNames());
 			});
 		CoreUtils.matchHistory(CoreUtils.getName(winner), CoreUtils.getName(looser), ChatColor.stripColor(duel.getKit().displayName()), duel.getArena().getName(), DurationUtils.getFormattedDuration(duel), duel.isRanked(), Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()], Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]);
 		if (duel.getTimer() != null) {
@@ -161,7 +161,7 @@ public class DuelManager {
 		MessageUtils.sendPartyComponent(Arrays.asList(winners, loosers));
 		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> {
 			if (Bukkit.getPlayer(uuid) != null) {
-				Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKits().size(), this.main.getKitNames());
+				Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKitNames());
 			}
 		}));
 		Arrays.asList(winners, loosers).forEach(teams -> teams.forEach(players -> {

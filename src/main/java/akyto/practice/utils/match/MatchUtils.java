@@ -242,7 +242,7 @@ public class MatchUtils {
 			MessageUtils.sendSingleEndMessage(duel, players, winner.stream().toList().getFirst(), killed.getUniqueId());
 			Arrays.asList(winner, loser).forEach(uuids -> uuids.forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) != null) {
-					Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, Practice.API.getKits().size(), Practice.API.getKitNames());
+					Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, Practice.API.getKitNames());
 				}
 			}));
 			duel.setWinner(Lists.newArrayList(tournamentEntry.getParticipants().getFirst()));

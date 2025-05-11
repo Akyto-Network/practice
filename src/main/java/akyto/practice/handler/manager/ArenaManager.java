@@ -113,6 +113,7 @@ public class ArenaManager {
 				}
 			}
 		}
+		long start = System.currentTimeMillis();
 		TaskManager.IMP
 				.async(
 						() -> {
@@ -135,6 +136,8 @@ public class ArenaManager {
 							}
 
 							editSession.flushQueue();
+							long end = System.currentTimeMillis();
+							this.main.getLogger().info("Arena remove copy took " + (end - start) + "ms");
 						}
 				);
 		this.main.getArenaCopies().remove(arena);
@@ -173,6 +176,7 @@ public class ArenaManager {
 		}
 
 		int finalAddZ = addZ;
+		long start = System.currentTimeMillis();
 		TaskManager.IMP
 				.async(
 						() -> {
@@ -196,6 +200,8 @@ public class ArenaManager {
 							}
 
 							editSession.flushQueue();
+							long end = System.currentTimeMillis();
+							this.main.getLogger().info("Arena create copy took " + (end - start) + "ms");
 						}
 				);
 		double tempAddZ = addZ;

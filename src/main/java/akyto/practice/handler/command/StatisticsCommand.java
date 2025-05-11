@@ -38,7 +38,7 @@ public class StatisticsCommand implements CommandExecutor {
 				return false;
 			}
 			final Inventory inv = Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(playerSender.getUniqueId());
-			if (inv == null) Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(playerSender.getUniqueId(), main.getKits().size(), main.getKitNames());
+			if (inv == null) Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(playerSender.getUniqueId(), main.getKitNames());
 			playerSender.openInventory(inv);
 			return false;
 		}
@@ -58,7 +58,7 @@ public class StatisticsCommand implements CommandExecutor {
 				sender.sendMessage(ChatColor.RED + args[0] + " is not online.");
 				return false;
 			}
-			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.API.getKits().size(), Practice.API.getKitNames());
+			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(target.getUniqueId(), Practice.API.getKitNames());
 			playerSender.openInventory(Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(target.getUniqueId()));
 			return false;
 		}
