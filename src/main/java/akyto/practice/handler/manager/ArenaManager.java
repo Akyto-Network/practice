@@ -28,12 +28,12 @@ import static java.lang.Math.min;
 import static java.lang.Math.max;
 
 public class ArenaManager {
-	
+
 	private final Practice main;
 	private final Config config;
 	private final Random rng = new Random();
-	
-	public ArenaManager(final Practice main) { 
+
+	public ArenaManager(final Practice main) {
 		this.main = main;
 		this.config = new Config("arenas", this.main);
 		this.loadArenas();
@@ -85,10 +85,10 @@ public class ArenaManager {
 		loadArenas();
 	}
 
-    public Arena getRandomArena(Kit kit) {
-        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == kit.arenaType() && kit.buildable() == arenaManager.isBuild()).toList();
-        return availableArena.isEmpty() ? null : availableArena.get(rng.nextInt(availableArena.size()));
-    }
+	public Arena getRandomArena(Kit kit) {
+		List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == kit.arenaType() && kit.buildable() == arenaManager.isBuild()).toList();
+		return availableArena.isEmpty() ? null : availableArena.get(rng.nextInt(availableArena.size()));
+	}
 
 	public Arena getArena(String name) {
 		return this.main.getArenas().get(name.toLowerCase());
@@ -116,22 +116,22 @@ public class ArenaManager {
 		TaskManager.IMP
 				.async(
 						() -> {
-							EditSession editSession = new EditSessionBuilder("world")
+							EditSession editSession = new EditSessionBuilder(world.getName())
 									.fastmode(true)
 									.allowedRegionsEverywhere()
 									.autoQueue(false)
 									.limitUnlimited()
 									.build();
 
-							for (Block entry : blocks) {
-								try {
+							try {
+								for (Block entry : blocks) {
 									editSession.setBlock(
 											new Vector(entry.getX(), entry.getY(), entry.getZ()),
 											new BaseBlock(0)
 									);
-								} catch (MaxChangedBlocksException e) {
-									throw new RuntimeException(e);
 								}
+							} catch (MaxChangedBlocksException e) {
+								throw new RuntimeException(e);
 							}
 
 							editSession.flushQueue();
@@ -176,31 +176,31 @@ public class ArenaManager {
 		TaskManager.IMP
 				.async(
 						() -> {
-							EditSession editSession = new EditSessionBuilder("world")
+							EditSession editSession = new EditSessionBuilder(world.getName())
 									.fastmode(true)
 									.allowedRegionsEverywhere()
 									.autoQueue(false)
 									.limitUnlimited()
 									.build();
 
-							for (Block entry : blocks) {
-                                try {
+							try {
+								for (Block entry : blocks) {
 									int Z = entry.getZ() + finalAddZ;
-                                    editSession.setBlock(
-                                            new Vector(entry.getX(), entry.getY(), Z),
-                                            new BaseBlock(entry.getTypeId(), entry.getData())
-                                    );
-                                } catch (MaxChangedBlocksException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
+									editSession.setBlock(
+											new Vector(entry.getX(), entry.getY(), Z),
+											new BaseBlock(entry.getTypeId(), entry.getData())
+									);
+								}
+							} catch (MaxChangedBlocksException e) {
+								throw new RuntimeException(e);
+							}
 
 							editSession.flushQueue();
 						}
 				);
 		double tempAddZ = addZ;
 		final List<LocationSerializer> serializers = arena.getPosition().stream().map(locationSerializer ->
-			locationSerializer.add(0, 0, tempAddZ)
+				locationSerializer.add(0, 0, tempAddZ)
 		).toList();
 
 		final List<UUID> players = Lists.newArrayList();
