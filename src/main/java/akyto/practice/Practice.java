@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import akyto.core.Core;
 import akyto.practice.arena.ArenaCopy;
+import akyto.practice.kit.gametype.*;
 import akyto.practice.runnable.ExpBarRunnable;
 import com.google.common.collect.Lists;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -30,13 +31,6 @@ import akyto.practice.handler.ManagerHandler;
 import akyto.practice.handler.MiscHandler;
 import akyto.practice.handler.manager.QueueManager.QueueEntry;
 import akyto.practice.kit.Kit;
-import akyto.practice.kit.gametype.Axe;
-import akyto.practice.kit.gametype.Debuff;
-import akyto.practice.kit.gametype.Gapple;
-import akyto.practice.kit.gametype.NoDebuff;
-import akyto.practice.kit.gametype.NoEnchant;
-import akyto.practice.kit.gametype.Soup;
-import akyto.practice.kit.gametype.Sumo;
 import akyto.practice.utils.location.LocationUtil;
 import lombok.Getter;
 
@@ -59,7 +53,6 @@ public class Practice extends JavaPlugin {
 	public List<LocationUtil> oitcLoc = Lists.newArrayList();
 	@Getter
 	private final ArrayList<ArenaCopy> arenaCopies = Lists.newArrayList();
-	public static final File schematicsFolder = new File(JavaPlugin.getPlugin(WorldEditPlugin.class).getDataFolder(), "schematics");
 
 	// TODO: Fork ladder from GYM -> Kezuk
 	private final List<Kit> kits = Arrays.asList(
@@ -69,7 +62,8 @@ public class Practice extends JavaPlugin {
 			new Gapple(),
 			new Sumo(),
 			new Soup(),
-			new Axe()
+			new Axe(),
+			new BuildUHC()
 	);
 
 	private final List<Duel> duels = new ArrayList<>();

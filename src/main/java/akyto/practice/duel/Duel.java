@@ -7,8 +7,10 @@ import akyto.practice.Practice;
 import akyto.practice.arena.Arena;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.kit.Kit;
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.block.Block;
 
 @Getter @Setter
 public class Duel {
@@ -29,6 +31,7 @@ public class Duel {
     public Timer timer;
     private List<UUID> winner;
 	private List<UUID> disconnected;
+	private List<Block> blocks;
     public Arena arena;
 	
 	public Duel(final Practice main, final Set<UUID> first, final Set<UUID> second, final boolean ranked, final Kit kit, final Duel.DuelType type, final Arena arena) {
@@ -52,6 +55,7 @@ public class Duel {
         this.duration = 0;
         this.winner = new ArrayList<>();
         if (arena != null) this.arena = arena;
+		if (kit.buildable()) this.blocks = Lists.newArrayList();
 		main.getDuels().add(this);
 		Arrays.asList(first, second).forEach(uuids -> uuids.forEach(uuid -> main.getManagerHandler().getProfileManager().getDuelStatistics().put(uuid, new DuelStatistics())));
 		main.getManagerHandler().getDuelManager().start(new ArrayList<>(first), new ArrayList<>(second), kit);

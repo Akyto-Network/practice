@@ -336,12 +336,32 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority=EventPriority.LOW)
 	public void PlayerPlaceBlockEvent(final BlockPlaceEvent event) {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
+		final Player player = event.getPlayer();
+		final Profile profile = Utils.getProfiles(player.getUniqueId());
+		if (profile.isInState(ProfileState.FIGHT)) {
+			final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
+			if (duel.getKit().buildable()) {
+				duel.getBlocks().add(event.getBlockPlaced());
+				return;
+			}
+		}
 		event.setCancelled(true);
 	}
 	
 	@EventHandler(priority=EventPriority.LOW)
 	public void PlayerBreakBlockEvent(final BlockBreakEvent event) {
 		if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
+		final Player player = event.getPlayer();
+		final Profile profile = Utils.getProfiles(player.getUniqueId());
+		if (profile.isInState(ProfileState.FIGHT)) {
+			final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
+			if (duel.getKit().buildable()) {
+				if (duel.getBlocks().contains(event.getBlock())) {
+					duel.getBlocks().remove(event.getBlock());
+					return;
+				}
+			}
+		}
 		event.setCancelled(true);
 	}
 	

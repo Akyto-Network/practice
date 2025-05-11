@@ -2,6 +2,9 @@ package akyto.practice.duel.cache;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.block.Block;
+
+import java.util.List;
 
 @Getter @Setter
 public class DuelStatistics {
