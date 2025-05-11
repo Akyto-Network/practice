@@ -119,7 +119,7 @@ public class ArenaCommand implements CommandExecutor {
 				return false;
 			}
             ArenaType.valueOf(args[2].toUpperCase());
-            this.main.getArenas().putIfAbsent(name, new Arena(main, name, LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), null, null,ArenaType.valueOf(args[2].toUpperCase()), Material.PAPER, false));
+            this.main.getArenas().putIfAbsent(name, new Arena(name, LocationSerializer.fromBukkitLocation(playerSender.getLocation()), LocationSerializer.fromBukkitLocation(playerSender.getLocation()), null, null,ArenaType.valueOf(args[2].toUpperCase()), Material.PAPER, false));
 			sender.sendMessage(ChatColor.GREEN + "You have succesfully create the " + args[1] + " arena into the " + args[2] + " type!");
 			return false;
 		}

@@ -44,7 +44,7 @@ public class DuelManager {
 	
 	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
-		Arena arena = duel.getArena() == null ? this.main.getManagerHandler().getArenaManager().getRandomArena(kit.arenaType()) : duel.getArena();
+		Arena arena = duel.getArena() == null ? this.main.getManagerHandler().getArenaManager().getRandomArena(kit) : duel.getArena();
 		duel.setArena(arena); // Et si c'est une copie ???
 		UUID idCopy = null;
 		if (kit.buildable()) {

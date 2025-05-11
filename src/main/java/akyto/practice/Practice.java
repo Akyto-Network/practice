@@ -14,6 +14,7 @@ import akyto.core.Core;
 import akyto.practice.arena.ArenaCopy;
 import akyto.practice.runnable.ExpBarRunnable;
 import com.google.common.collect.Lists;
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -58,6 +59,7 @@ public class Practice extends JavaPlugin {
 	public List<LocationUtil> oitcLoc = Lists.newArrayList();
 	@Getter
 	private final ArrayList<ArenaCopy> arenaCopies = Lists.newArrayList();
+	public static final File schematicsFolder = new File(JavaPlugin.getPlugin(WorldEditPlugin.class).getDataFolder(), "schematics");
 
 	// TODO: Fork ladder from GYM -> Kezuk
 	private final List<Kit> kits = Arrays.asList(

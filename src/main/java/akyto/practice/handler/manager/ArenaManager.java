@@ -5,7 +5,13 @@ import java.util.*;
 import akyto.practice.arena.ArenaCopy;
 import akyto.practice.duel.Duel;
 import akyto.practice.kit.Kit;
+import com.boydti.fawe.util.EditSessionBuilder;
+import com.boydti.fawe.util.TaskManager;
 import com.google.common.collect.Lists;
+import com.sk89q.worldedit.EditSession;
+import com.sk89q.worldedit.MaxChangedBlocksException;
+import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.blocks.BaseBlock;
 import org.bukkit.block.Block;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -40,7 +46,6 @@ public class ArenaManager {
 		arenaSection.getKeys(false).forEach(name -> {
 			name = name.toLowerCase();
 			final Arena arena = new Arena(
-					main,
 					name,
 					LocationSerializer.stringToLocation(arenaSection.getString(name + ".first")),
 					LocationSerializer.stringToLocation(arenaSection.getString(name + ".second")),
@@ -80,8 +85,8 @@ public class ArenaManager {
 		loadArenas();
 	}
 
-    public Arena getRandomArena(ArenaType arenaType) {
-        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == arenaType).toList();
+    public Arena getRandomArena(Kit kit) {
+        List<Arena> availableArena = this.main.getArenas().values().stream().filter(arenaManager -> arenaManager.getArenaType() == kit.arenaType() && kit.buildable() == arenaManager.isBuild()).toList();
         return availableArena.isEmpty() ? null : availableArena.get(rng.nextInt(availableArena.size()));
     }
 
@@ -91,27 +96,53 @@ public class ArenaManager {
 
 	public void removeCopy(ArenaCopy arena) {
 		World world = arena.getPosition().getFirst().toBukkitWorld();
-		int mny = min(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
-		int mxy = max(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
-		int mnx = min(arena.getCorner1().toBukkitLocation().getBlockX(), arena.getCorner2().toBukkitLocation().getBlockX());
-		int mxx = max(arena.getCorner1().toBukkitLocation().getBlockX(), arena.getCorner2().toBukkitLocation().getBlockX());
-		int mnz = min(arena.getCorner1().toBukkitLocation().getBlockZ(), arena.getCorner2().toBukkitLocation().getBlockZ());
-		int mxz = max(arena.getCorner1().toBukkitLocation().getBlockZ(), arena.getCorner2().toBukkitLocation().getBlockZ());
-		for (int y = mny ; y <= mxy; y++) {
-			for (int x = mnx ; x <= mxx; x++) {
-				for (int z = mnz ; z <= mxz; z++) {
-					world.getBlockAt(x, y, z).setType(Material.AIR);
+		int minY = min(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
+		int maxY = max(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
+		int minX = min(arena.getCorner1().toBukkitLocation().getBlockX(), arena.getCorner2().toBukkitLocation().getBlockX());
+		int maxX = max(arena.getCorner1().toBukkitLocation().getBlockX(), arena.getCorner2().toBukkitLocation().getBlockX());
+		int minZ = min(arena.getCorner1().toBukkitLocation().getBlockZ(), arena.getCorner2().toBukkitLocation().getBlockZ());
+		int maxZ = max(arena.getCorner1().toBukkitLocation().getBlockZ(), arena.getCorner2().toBukkitLocation().getBlockZ());
+		Block[] blocks = new Block[(maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1)];
+
+		int i = 0;
+		for (int y = minY; y <= maxY; y++) {
+			for (int x = minX; x <= maxX; x++) {
+				for (int z = minZ; z <= maxZ; z++) {
+					blocks[i] = world.getBlockAt(x, y, z);
+					i++;
 				}
 			}
 		}
+		TaskManager.IMP
+				.async(
+						() -> {
+							EditSession editSession = new EditSessionBuilder("world")
+									.fastmode(true)
+									.allowedRegionsEverywhere()
+									.autoQueue(false)
+									.limitUnlimited()
+									.build();
+
+							for (Block entry : blocks) {
+								try {
+									editSession.setBlock(
+											new Vector(entry.getX(), entry.getY(), entry.getZ()),
+											new BaseBlock(0)
+									);
+								} catch (MaxChangedBlocksException e) {
+									throw new RuntimeException(e);
+								}
+							}
+
+							editSession.flushQueue();
+						}
+				);
 		this.main.getArenaCopies().remove(arena);
 	}
 
 	public UUID createCopy(Arena arena, final Duel duel) {
 		UUID id = UUID.randomUUID();
-
 		World world = arena.getPosition().getFirst().toBukkitWorld();
-
 		int minY = Math.min(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
 		int maxY = Math.max(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
 		int minX = Math.min(arena.getCorner1().toBukkitLocation().getBlockX(), arena.getCorner2().toBukkitLocation().getBlockX());
@@ -141,10 +172,32 @@ public class ArenaManager {
 			return null;
 		}
 
-		for (Block block : blocks) {
-			world.getBlockAt(block.getLocation().add(0, 0, addZ)).setType(block.getType());
-		}
+		int finalAddZ = addZ;
+		TaskManager.IMP
+				.async(
+						() -> {
+							EditSession editSession = new EditSessionBuilder("world")
+									.fastmode(true)
+									.allowedRegionsEverywhere()
+									.autoQueue(false)
+									.limitUnlimited()
+									.build();
 
+							for (Block entry : blocks) {
+                                try {
+									int Z = entry.getZ() + finalAddZ;
+                                    editSession.setBlock(
+                                            new Vector(entry.getX(), entry.getY(), Z),
+                                            new BaseBlock(entry.getTypeId(), entry.getData())
+                                    );
+                                } catch (MaxChangedBlocksException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+
+							editSession.flushQueue();
+						}
+				);
 		double tempAddZ = addZ;
 		final List<LocationSerializer> serializers = arena.getPosition().stream().map(locationSerializer ->
 			locationSerializer.add(0, 0, tempAddZ)
