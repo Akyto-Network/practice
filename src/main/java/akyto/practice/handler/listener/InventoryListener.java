@@ -96,7 +96,7 @@ public class InventoryListener implements Listener {
 					}
 				}
 			}
-			final int disallowedRN = 2;
+			final int disallowedRN = 3;
 			if (inventory.equals(inventoryManager.getQueueInventory()[0])) {
 				if (event.getSlot() == disallowedRN) {
 					event.getWhoClicked().sendMessage(ChatColor.RED + "Unvailable Right Now.");
