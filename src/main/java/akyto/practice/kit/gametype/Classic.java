@@ -61,10 +61,6 @@ public class Classic extends Kit implements KitInterface {
         ItemStack chestplate = new ItemStack(Material.DIAMOND_CHESTPLATE);
         ItemStack leggings = new ItemStack(Material.DIAMOND_LEGGINGS);
         ItemStack boots = new ItemStack(Material.DIAMOND_BOOTS);
-        helmet.addUnsafeEnchantment(Enchantment.PROTECTION_PROJECTILE, 2);
-        chestplate.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
-        leggings.addUnsafeEnchantment(Enchantment.PROTECTION_ENVIRONMENTAL, 2);
-        boots.addUnsafeEnchantment(Enchantment.PROTECTION_PROJECTILE, 2);
         ItemStack[] armor = {boots, leggings, chestplate, helmet};
         return armor;
     }
@@ -72,25 +68,13 @@ public class Classic extends Kit implements KitInterface {
     @Override
     public ItemStack[] content() {
         ItemStack attackItem = new ItemStack(Material.DIAMOND_SWORD);
-        attackItem.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 3);
         ItemStack bowItem = new ItemStack(Material.BOW);
-        bowItem.addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 3);
         ItemStack[] contents = {
                 attackItem,
                 new ItemStack(Material.FISHING_ROD),
                 bowItem,
                 new ItemStack(Material.COOKED_BEEF, 64),
-                new ItemStack(Material.GOLDEN_APPLE, 6),
-                ItemUtils.createItems(Material.GOLDEN_APPLE, ChatColor.GOLD + "Golden Head", 3),
-                new ItemStack(Material.DIAMOND_PICKAXE),
-                new ItemStack(Material.DIAMOND_AXE),
-                new ItemStack(Material.WOOD, 64),
-
-                air,
-                air,
-                air,
-                air,
-                air,
+                new ItemStack(Material.GOLDEN_APPLE, 8),
                 air,
                 air,
                 air,
@@ -106,12 +90,22 @@ public class Classic extends Kit implements KitInterface {
                 air,
                 air,
 
-                new ItemStack(Material.ARROW, 20),
-                new ItemStack(Material.COBBLESTONE, 64),
-                new ItemStack(Material.WATER_BUCKET),
-                new ItemStack(Material.WATER_BUCKET),
-                new ItemStack(Material.LAVA_BUCKET),
-                new ItemStack(Material.LAVA_BUCKET)
+                air,
+                air,
+                air,
+                air,
+                air,
+                air,
+                air,
+                air,
+                air,
+
+                new ItemStack(Material.ARROW, 12),
+                air,
+                air,
+                air,
+                air,
+                air
 
         };
         return contents;
