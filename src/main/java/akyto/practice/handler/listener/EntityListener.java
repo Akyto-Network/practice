@@ -171,6 +171,7 @@ public class EntityListener implements Listener {
 							final int hit = profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).getHits();
 							final float hitExp = hit / 100.0f;
 							Bukkit.getPlayer(event.getDamager().getUniqueId()).setExp(hitExp);
+							Bukkit.getPlayer(event.getDamager().getUniqueId()).setLevel(hit);
 							if (hit >= 100) {
 								if (duel.getDuelType().equals(Duel.DuelType.SINGLE)) {
 									main.getManagerHandler().getDuelManager().endSingle(event.getDamager().getUniqueId());

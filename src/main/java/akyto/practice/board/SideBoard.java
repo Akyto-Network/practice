@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
+import akyto.practice.handler.manager.ProfileManager;
 import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.match.DurationUtils;
@@ -115,6 +116,12 @@ public class SideBoard implements BoardAdapter {
         if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
         	if (duel.getDuelType().equals(DuelType.SINGLE)) {
                 board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(opps));
+                if (duel.getKit().name().equals("boxing")) {
+                    final ProfileManager profileManager = plugin.getManagerHandler().getProfileManager();
+                    board.add(" ");
+                    board.add(ChatColor.DARK_GRAY.toString() + ChatColor.BOLD + "Hits:");
+                    board.add(" " + ChatColor.GREEN + profileManager.getDuelStatistics().get(player.getUniqueId()).getHits() + ChatColor.GRAY + " vs " + ChatColor.RED + profileManager.getDuelStatistics().get(opps).getHits());
+                }
         	}
 
         	if (duel.getDuelType().equals(DuelType.FFA)) {
