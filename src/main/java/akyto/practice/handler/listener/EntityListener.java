@@ -1,6 +1,7 @@
 package akyto.practice.handler.listener;
 
 import akyto.core.Core;
+import akyto.core.utils.format.FormatUtils;
 import akyto.practice.event.EventState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.duel.Duel;
@@ -193,6 +194,9 @@ public class EntityListener implements Listener {
 			if (shooter != null) {
 				final Profile victimProfile = Utils.getProfiles(event.getEntity().getUniqueId());
 				final Profile profileDamager = Utils.getProfiles(shooter.getUniqueId());
+				if (profileDamager.isInState(ProfileState.FIGHT) && victimProfile.isInState(ProfileState.FIGHT)) {
+					shooter.sendMessage(ChatColor.GRAY + "[" + ChatColor.DARK_RED + "Bow" + ChatColor.GRAY + "] " + ChatColor.RED + event.getEntity().getName() + ChatColor.WHITE + " life is " + ChatColor.GRAY + ": " + ChatColor.RED + FormatUtils.formatTime((long) Bukkit.getPlayer(event.getEntity().getUniqueId()).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤");
+				}
 				if (victimProfile.isInState(ProfileState.EVENT) && profileDamager.isInState(ProfileState.EVENT)) {
 					final EventManager eventManager = main.getManagerHandler().getEventManager();
 					if (eventManager.getType().equalsIgnoreCase("oitc")) {
