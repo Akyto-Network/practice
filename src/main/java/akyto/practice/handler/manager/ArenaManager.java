@@ -1,6 +1,7 @@
 package akyto.practice.handler.manager;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import akyto.practice.arena.ArenaCopy;
 import akyto.practice.duel.Duel;
@@ -173,33 +174,44 @@ public class ArenaManager {
 
 		int finalAddZ = addZ;
 		long start = System.currentTimeMillis();
-		TaskManager.IMP
-				.async(
-						() -> {
-							EditSession editSession = new EditSessionBuilder(world.getName())
-									.fastmode(true)
-									.allowedRegionsEverywhere()
-									.autoQueue(false)
-									.limitUnlimited()
-									.build();
 
-							try {
-								for (Block entry : blocks) {
-									int Z = entry.getZ() + finalAddZ;
-									editSession.setBlock(
-											new Vector(entry.getX(), entry.getY(), Z),
-											new BaseBlock(entry.getTypeId(), entry.getData())
-									);
-								}
-							} catch (MaxChangedBlocksException e) {
-								throw new RuntimeException(e);
-							}
+		CompletableFuture<Void> future = new CompletableFuture<>();
 
-							editSession.flushQueue();
-							long end = System.currentTimeMillis();
-							this.main.getLogger().info("Arena create copy took " + (end - start) + "ms");
-						}
-				);
+		TaskManager.IMP.async(() -> {
+			try {
+				EditSession editSession = new EditSessionBuilder(world.getName())
+						.fastmode(true)
+						.allowedRegionsEverywhere()
+						.autoQueue(false)
+						.limitUnlimited()
+						.build();
+
+				for (Block entry : blocks) {
+					int Z = entry.getZ() + finalAddZ;
+					editSession.setBlock(
+							new Vector(entry.getX(), entry.getY(), Z),
+							new BaseBlock(entry.getTypeId(), entry.getData())
+					);
+				}
+
+				editSession.flushQueue();
+				long end = System.currentTimeMillis();
+				this.main.getLogger().info("Arena create copy took " + (end - start) + "ms");
+				future.complete(null);
+			} catch (MaxChangedBlocksException e) {
+				future.completeExceptionally(e);
+			}
+		});
+
+		future.whenComplete((result, throwable) -> {
+			if (throwable != null) {
+				this.main.getLogger().severe("Failed to create arena copy: " + throwable.getMessage());
+				return;
+			}
+
+			main.getManagerHandler().getDuelManager().teleport(duel, id);
+		});
+
 		double tempAddZ = addZ;
 		final List<LocationSerializer> serializers = arena.getPosition().stream().map(locationSerializer ->
 				locationSerializer.add(0, 0, tempAddZ)

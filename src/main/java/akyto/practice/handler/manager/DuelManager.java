@@ -46,23 +46,23 @@ public class DuelManager {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
 		Arena arena = duel.getArena() == null ? this.main.getManagerHandler().getArenaManager().getRandomArena(kit) : duel.getArena();
 		duel.setArena(arena);
-		UUID idCopy = null;
+		UUID idCopy;
 		if (kit.buildable()) {
 			idCopy = this.main.getManagerHandler().getArenaManager().createCopy(arena, duel);
 			if (idCopy == null) {
 				System.err.println("Failed to create arena copy for " + arena.getName());
 				return;
 			}
-		}
-		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
+		} else {
+            idCopy = null;
+        }
+        this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
 		if (!duel.getDuelType().equals(DuelType.FFA)){
 			TagUtils.setupTeams(first, second);
 		}
 		if (duel.getDuelType().equals(DuelType.SPLIT)) {
 			MessageUtils.sendSplitMessage(first, second, kit);
 		}
-		final Location locationFirst = kit.buildable() ? Utils.getArenaCopyID(idCopy).getPosition().getFirst().toBukkitLocation() : arena.getPosition().getFirst().toBukkitLocation();
-		final Location locationSecond = kit.buildable() ? Utils.getArenaCopyID(idCopy).getPosition().getLast().toBukkitLocation() : arena.getPosition().getLast().toBukkitLocation();
 		Arrays.asList(first, second).forEach(uuids -> {
 			uuids.forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) == null) {
@@ -89,26 +89,30 @@ public class DuelManager {
 					Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
 				}
 				DataUtils.addPlayedToData(uuid, kit);
-				if (!kit.buildable()) {
-					player.teleport(first.contains(uuid) ? locationFirst : locationSecond);
-					Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
-					this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
-					if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
-				}
-				else {
-					Bukkit.getScheduler().runTaskLater(Practice.API, ()-> {
-						player.teleport(first.contains(uuid) ? locationFirst : locationSecond);
-						Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
-						this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
-						if (kit.potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(kit.potionEffect()); }
-					}, 10L);
-				}
+				if (!kit.buildable()) this.teleport(duel, idCopy);
 			});
 		});
 		if (kit.name().equalsIgnoreCase("sumo")) new SumoRunnable(this.main, duel).runTaskTimer(this.main, 5L, 5L);
 		new CountdownRunnable(Arrays.asList(first, second), duel, this.main).runTaskTimer(this.main, 20L, 20L);
 	}
-	
+
+	public void teleport(final Duel duel, final UUID id) {
+		final List<UUID> players = Lists.newArrayList();
+		players.addAll(duel.getFirst());
+		players.addAll(duel.getSecond());
+		final Location locationFirst = duel.getKit().buildable() ? Utils.getArenaCopyID(id).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation();
+		final Location locationSecond = duel.getKit().buildable() ? Utils.getArenaCopyID(id).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation();
+		players.forEach(uuid -> {
+			final Player player = Bukkit.getPlayer(uuid);
+			if (player != null) {
+				player.teleport(duel.getFirst().contains(uuid) ? locationFirst : locationSecond);
+				Utils.getProfiles(uuid).setProfileState(ProfileState.FIGHT);
+				this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
+				if (duel.getKit().potionEffect() != null) { Bukkit.getPlayer(uuid).addPotionEffects(duel.getKit().potionEffect()); }
+			}
+		});
+	}
+
 	public void endSingle(final UUID winner) {
 		final Duel duel = Utils.getDuelByUUID(winner);
 		duel.setWinner(Lists.newArrayList(winner));
