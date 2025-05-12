@@ -51,7 +51,7 @@ public class InventoryManager {
 	private final Inventory[] editorInventory = new Inventory[3];
 	private final Inventory hostInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Events:");
 	private final Inventory utilsInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Utils");
-	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Leaderboard:");
+	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Leaderboard:");
 	private final Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
 	public MultipageSerializer spectateMultipage;
     public MultipageSerializer partyMultipage;
@@ -84,7 +84,7 @@ public class InventoryManager {
 		}
 		this.arenaInventory[0].setItem(35, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
 		this.arenaInventory[1].setItem(26, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
-		this.editorInventory[0] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select kit:");
+		this.editorInventory[0] = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Select kit:");
 		this.editorInventory[1] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "More:");
 		this.editorInventory[2] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Management:");
 		this.leaderboardInventory.setItem(8, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #10 " + ChatColor.WHITE + "Global"));
@@ -361,7 +361,7 @@ public class InventoryManager {
 					meta.setLore(lore);
 					current.setItemMeta(meta);
 				});
-				ItemStack current = leaderboardInventory.getItem(8);
+				ItemStack current = leaderboardInventory.getItem(17);
 				ItemMeta meta = current.getItemMeta();
 				meta.setLore(global_top.getLore());
 				current.setItemMeta(meta);
@@ -384,7 +384,7 @@ public class InventoryManager {
 				meta.setLore(lore);
 				current.setItemMeta(meta);
 			});
-			ItemStack current = leaderboardInventory.getItem(8);
+			ItemStack current = leaderboardInventory.getItem(17);
 			ItemMeta meta = current.getItemMeta();
 			List<String> list = Lists.newArrayList();
 			list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
