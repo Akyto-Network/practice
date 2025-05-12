@@ -87,7 +87,7 @@ public class InventoryManager {
 		this.editorInventory[0] = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Select kit:");
 		this.editorInventory[1] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "More:");
 		this.editorInventory[2] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Management:");
-		this.leaderboardInventory.setItem(8, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #10 " + ChatColor.WHITE + "Global"));
+		this.leaderboardInventory.setItem(17, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.RED + "Top #10 " + ChatColor.WHITE + "Global"));
 		this.setQueueInventory();
 		this.runnableLeaderboardInventory();
 		this.setEditorInventory();
