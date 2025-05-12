@@ -54,7 +54,7 @@ public class Gapple extends Kit implements KitInterface {
 
     @Override
     public int id() {
-        return 3;
+        return 10;
     }
 
     @Override

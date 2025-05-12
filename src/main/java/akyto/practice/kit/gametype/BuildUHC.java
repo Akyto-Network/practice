@@ -52,7 +52,7 @@ public class BuildUHC extends Kit implements KitInterface {
 
     @Override
     public int id() {
-        return 7;
+        return 1;
     }
 
     @Override

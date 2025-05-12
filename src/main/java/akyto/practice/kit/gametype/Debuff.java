@@ -51,7 +51,7 @@ public class Debuff extends Kit implements KitInterface {
 
     @Override
     public int id() {
-        return 2;
+        return 8;
     }
 
     @Override

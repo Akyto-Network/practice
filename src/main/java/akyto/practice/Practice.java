@@ -57,13 +57,16 @@ public class Practice extends JavaPlugin {
 	// TODO: Fork ladder from GYM -> Kezuk
 	private final List<Kit> kits = Arrays.asList(
 			new NoDebuff(),
-			new NoEnchant(),
-			new Debuff(),
-			new Gapple(),
+			new BuildUHC(),
+			new Boxing(),
+			new BedFight(),
 			new Sumo(),
+			new NoEnchant(),
 			new Soup(),
 			new Axe(),
-			new BuildUHC()
+			new Debuff(),
+			new Classic(),
+			new Gapple()
 	);
 
 	private final List<Duel> duels = new ArrayList<>();

@@ -51,7 +51,7 @@ public class Axe extends Kit implements KitInterface {
 
     @Override
     public int id() {
-    	return 6;
+    	return 7;
     }
 
     @Override

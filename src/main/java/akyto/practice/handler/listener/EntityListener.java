@@ -5,6 +5,7 @@ import akyto.practice.event.EventState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.duel.Duel;
 import akyto.practice.handler.manager.EventManager;
+import akyto.practice.handler.manager.ProfileManager;
 import akyto.spigot.aSpigot;
 import akyto.spigot.handler.MovementHandler;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
@@ -46,7 +47,7 @@ public class EntityListener implements Listener {
 					final EventManager eventManager = main.getManagerHandler().getEventManager();
 					if (eventManager.getType().equalsIgnoreCase("sumo")) {
 						if (eventManager.getPlayersSelected().contains(player.getUniqueId()) && eventManager.getEventState().equals(EventState.STARTING)) {
-							player.teleport(to);
+							player.teleport(eventManager.getPlayersSelected().getFirst().equals(player.getUniqueId()) ? main.getSumoFirst().getLocation() : main.getSumoSecond().getLocation());
 						}
 					}
 				}
@@ -55,7 +56,7 @@ public class EntityListener implements Listener {
 				if (duel != null) {
 					final String kitName = duel.getKit().name();
 					if (kitName.equalsIgnoreCase("sumo") && duel.getState().equals(DuelState.STARTING)) {
-						player.teleport(to);
+						player.teleport(duel.getFirst().contains(player.getUniqueId()) ? duel.getArena().getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation());
 					}
 				}
 			}
@@ -82,7 +83,7 @@ public class EntityListener implements Listener {
 				final Duel playerDuel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 
 				if (playerDuel != null && playerDuel.getState().equals(DuelState.PLAYING)) {
-					if (playerDuel.getKit().name().equals("sumo")) {
+					if (playerDuel.getKit().name().equals("sumo") || playerDuel.getKit().name().equals("boxing")) {
 						event.setDamage(0.0f);
 					}
 					return;
@@ -158,8 +159,27 @@ public class EntityListener implements Listener {
 							statisticsDamager.setLongestHit(statisticsDamager.getCombo());
 						}
 					}
-					if (duel.getKit().name().equals("sumo")) {
+					if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("boxing")) {
 						event.setDamage(0.0f);
+						if (duel.getKit().name().equals("boxing")) {
+							final ProfileManager profileManager = main.getManagerHandler().getProfileManager();
+							final Long nextHitTick = profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).getNextHitTick();
+							if (nextHitTick != 0L && nextHitTick  > System.currentTimeMillis()) {
+								return;
+							}
+							profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).updateNextHitTick();
+							final int hit = profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).getHits();
+							final float hitExp = hit / 100.0f;
+							Bukkit.getPlayer(event.getDamager().getUniqueId()).setExp(hitExp);
+							if (hit >= 100) {
+								if (duel.getDuelType().equals(Duel.DuelType.SINGLE)) {
+									main.getManagerHandler().getDuelManager().endSingle(event.getDamager().getUniqueId());
+								}
+								else {
+									main.getManagerHandler().getDuelManager().endMultiple(event.getDamager().getUniqueId());
+								}
+							}
+						}
 					}
 					return;
 				}

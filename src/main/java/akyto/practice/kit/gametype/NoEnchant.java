@@ -51,7 +51,7 @@ public class NoEnchant extends Kit implements KitInterface {
 
     @Override
     public int id() {
-        return 1;
+        return 5;
     }
 
     @Override

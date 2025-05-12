@@ -53,7 +53,7 @@ public class Soup extends Kit implements KitInterface {
 
     @Override
     public int id() {
-        return 5;
+        return 6;
     }
 
     @Override
