@@ -71,12 +71,12 @@ public class InventoryManager {
 		this.effectsInventory = new ConcurrentHashMap<>();
 		this.spectateMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
 		this.partyMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Partys", ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "));
-		this.queueInventory[0] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Unranked queue:");
-		this.queueInventory[1] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Ranked queue:");
-		this.queueInventory[2] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select duel kit:");
-		this.queueInventory[3] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select ffa kit:");
-		this.queueInventory[4] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select split kit:");
-		this.queueInventory[5] = Bukkit.createInventory(null, 9, ChatColor.GRAY + "Select tournament kit:");
+		this.queueInventory[0] = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Unranked queue:");
+		this.queueInventory[1] = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Ranked queue:");
+		this.queueInventory[2] = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Select duel kit:");
+		this.queueInventory[3] = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Select ffa kit:");
+		this.queueInventory[4] = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Select split kit:");
+		this.queueInventory[5] = Bukkit.createInventory(null, 18, ChatColor.GRAY + "Select tournament kit:");
 		this.arenaInventory[0] = Bukkit.createInventory(null, 9*4, ChatColor.GRAY + "Select Normal Arena:");
 		this.arenaInventory[1] = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Select Sumo Arena:");
 		for (Arena arena : this.main.getArenas().values()) {
