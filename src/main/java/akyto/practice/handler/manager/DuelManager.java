@@ -43,7 +43,7 @@ public class DuelManager {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
 		Arena arena = duel.getArena() == null ? this.main.getManagerHandler().getArenaManager().getRandomArena(kit) : duel.getArena();
 		duel.setArena(arena);
-		UUID idCopy;
+		final UUID idCopy;
 		if (kit.buildable()) {
 			idCopy = this.main.getManagerHandler().getArenaManager().createCopy(arena, duel);
 			if (idCopy == null) {
@@ -51,9 +51,9 @@ public class DuelManager {
 				return;
 			}
 		} else {
-            idCopy = null;
-        }
-        this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
+			idCopy = null;
+		}
+		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
 		if (!duel.getDuelType().equals(DuelType.FFA)){
 			TagUtils.setupTeams(first, second);
 		}
