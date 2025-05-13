@@ -134,7 +134,10 @@ public class DuelManager {
 			if (duel.isRanked() && !duel.getSpectators().contains(uuid)) {
 		        final String elos = FormatUtils.getStringValue(Utils.getProfiles(uuid).getStats().get(2), ":");
 				CompletableFuture<Void> update = CompletableFuture.runAsync(() -> DB.executeUpdateAsync("UPDATE playersdata SET elos=? WHERE name=?", elos, Bukkit.getServer().getPlayer(uuid).getName()));
-		        update.whenCompleteAsync((t, u) -> this.main.getManagerHandler().getInventoryManager().refreshLeaderboard());
+		        update.whenCompleteAsync((t, u) -> {
+					this.main.getManagerHandler().getInventoryManager().refreshLeaderboard();
+					CoreUtils.changeNicknameDiscord(Bukkit.getPlayer(uuid), main.getKits().size() ,success -> System.out.println("Discord Username successfuly updated"));
+				});
 			}
 			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKitNames());
 			});
