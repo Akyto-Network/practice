@@ -540,28 +540,29 @@ public class PlayerListener implements Listener {
 					if (inBedfight) {
 						final DuelStatistics statistics = main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getEntity().getUniqueId());
 						if (!statistics.isBedBroke()) {
-							final Location locationFirst = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation();
-							final Location locationSecond = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation();
-							Location spawnLocation = duel.getFirst().contains(event.getEntity().getUniqueId()) ? locationFirst : locationSecond;
+							final Location locationFirst = Utils.getArenaCopyByPlayer(killed.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation();
+							final Location locationSecond = Utils.getArenaCopyByPlayer(killed.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation();
+							Location spawnLocation = duel.getFirst().contains(killed.getUniqueId()) ? locationFirst : locationSecond;
 							spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
-							event.getEntity().setGameMode(GameMode.ADVENTURE);
-							event.getEntity().setAllowFlight(true);
-							event.getEntity().setFlying(true);
+							killed.setGameMode(GameMode.ADVENTURE);
+							killed.setAllowFlight(true);
+							killed.setFlying(true);
 							Location finalSpawnLocation = spawnLocation;
 							Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
-								event.getEntity().setAllowFlight(false);
-								event.getEntity().setFlying(false);
-								event.getEntity().setGameMode(GameMode.SURVIVAL);
-								event.getEntity().teleport(finalSpawnLocation);
-								main.getManagerHandler().getItemManager().giveItems(event.getEntity().getUniqueId(), false);
+								killed.setAllowFlight(false);
+								killed.setFlying(false);
+								killed.setHealth(killed.getMaxHealth());
+								killed.setGameMode(GameMode.SURVIVAL);
+								killed.teleport(finalSpawnLocation);
+								main.getManagerHandler().getItemManager().giveItems(killed.getUniqueId(), false);
 								if (killer != null) {
 									killer.showPlayer(killed);
 								}
 							}, 100L);
-							final UUID oppsID = duel.getFirst().contains(event.getEntity().getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
-							final ChatColor colorKilled = duel.getFirst().contains(event.getEntity().getUniqueId()) ? ChatColor.BLUE : ChatColor.RED;
+							final UUID oppsID = duel.getFirst().contains(killed.getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
+							final ChatColor colorKilled = duel.getFirst().contains(killed.getUniqueId()) ? ChatColor.BLUE : ChatColor.RED;
 							final ChatColor colorKiller = duel.getFirst().contains(oppsID) ? ChatColor.BLUE : ChatColor.RED;
-							MessageHelper.notifyUUID(duelPlayers.stream().toList(), ChatColor.GRAY + "[" + ChatColor.DARK_RED + "Match" + ChatColor.GRAY + "] " + colorKilled + event.getEntity().getName() + " killed by " + colorKiller + CoreUtils.getName(oppsID));
+							MessageHelper.notifyUUID(duelPlayers.stream().toList(), ChatColor.GRAY + "[" + ChatColor.DARK_RED + "Match" + ChatColor.GRAY + "] " + colorKilled + killed.getName() + ChatColor.WHITE + " killed by " + colorKiller + CoreUtils.getName(oppsID));
 							duelPlayers.clear();
 							return;
 						}

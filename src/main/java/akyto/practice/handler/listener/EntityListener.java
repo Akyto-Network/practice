@@ -84,6 +84,7 @@ public class EntityListener implements Listener {
 									main.getManagerHandler().getItemManager().giveItems(player.getUniqueId(), false);
 									player.setAllowFlight(false);
 									player.setFlying(false);
+									player.setHealth(player.getMaxHealth());
 									player.setGameMode(GameMode.SURVIVAL);
 									player.teleport(finalSpawnLocation);
 									Bukkit.getPlayer(oppsID).showPlayer(player);
@@ -94,7 +95,7 @@ public class EntityListener implements Listener {
 							duelPlayers.addAll(duel.getFirst());
 							duelPlayers.addAll(duel.getSecond());
 							duelPlayers.addAll(duel.getSpectators());
-							MessageHelper.notifyUUID(duelPlayers.stream().toList(), net.md_5.bungee.api.ChatColor.GRAY + "[" + net.md_5.bungee.api.ChatColor.DARK_RED + "Match" + net.md_5.bungee.api.ChatColor.GRAY + "] " + colorKilled + player.getName() + " fall into the void.");
+							MessageHelper.notifyUUID(duelPlayers.stream().toList(), net.md_5.bungee.api.ChatColor.GRAY + "[" + net.md_5.bungee.api.ChatColor.DARK_RED + "Match" + net.md_5.bungee.api.ChatColor.GRAY + "] " + colorKilled + player.getName() + ChatColor.WHITE + " fall into the void.");
 							if (statistics.isBedBroke()) {
 								if (duel.getDuelType().equals(Duel.DuelType.SINGLE)) {
 									main.getManagerHandler().getDuelManager().endSingle(oppsID);
