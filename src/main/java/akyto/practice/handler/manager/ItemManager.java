@@ -98,13 +98,33 @@ public class ItemManager {
 				}
 				else {
 					player.getInventory().setArmorContents(kitI.armor());
-					player.getInventory().setContents(kitI.content());
+					final ItemStack[] content = kitI.content();
+					for (int i = 0; i < content.length; i++) {
+						ItemStack mat = content[i];
+						if (mat != null && mat.getType().equals(Material.WOOL)) {
+							if (Utils.getDuelByUUID(player.getUniqueId()).getSecond().contains(player.getUniqueId())) {
+								mat.setDurability((short) 14);
+								content[i] = mat;
+							}
+						}
+					}
+					player.getInventory().setContents(content);
 					player.updateInventory();
 				}
 			}
 			else {
 				player.getInventory().setArmorContents(kitI.armor());
-				player.getInventory().setContents(kitI.content());
+				final ItemStack[] content = kitI.content();
+				for (int i = 0; i < content.length; i++) {
+					ItemStack mat = content[i];
+					if (mat != null && mat.getType().equals(Material.WOOL)) {
+						if (Utils.getDuelByUUID(player.getUniqueId()).getSecond().contains(player.getUniqueId())) {
+							mat.setDurability((short) 14);
+							content[i] = mat;
+						}
+					}
+				}
+				player.getInventory().setContents(content);
 				player.updateInventory();
 			}
 		}

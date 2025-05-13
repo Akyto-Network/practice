@@ -1,33 +1,37 @@
 package akyto.practice.utils.match;
 
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import akyto.core.Core;
+import akyto.practice.duel.cache.DuelState;
+import akyto.practice.handler.manager.PartyManager;
+import akyto.practice.handler.manager.QueueManager;
+import akyto.practice.handler.manager.TournamentManager;
+import akyto.practice.kit.Kit;
+import akyto.practice.tournament.TournamentEntry;
+import akyto.practice.utils.chat.MessageHelper;
+import akyto.practice.utils.chat.MessageUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
-import akyto.practice.duel.cache.DuelState;
 import akyto.practice.handler.ManagerHandler;
-import akyto.practice.handler.manager.QueueManager;
-import akyto.practice.handler.manager.TournamentManager;
-import akyto.practice.kit.Kit;
-import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.Utils;
-import akyto.practice.utils.chat.MessageHelper;
-import akyto.practice.utils.chat.MessageUtils;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MatchUtils {
 	
@@ -218,7 +222,7 @@ public class MatchUtils {
 		final TournamentManager tournamentManager = Practice.API.getManagerHandler().getTournamentManager();
 		Duel duel = Utils.getDuelByUUID(killed.getUniqueId());
 
-		MessageHelper.notifyUUID(tournamentEntry.getParticipants(), TournamentManager.prefix + (killer != null ? "&a" + killer.getName() : "&aEnvironment") + "&r has eliminated &c" + killed.getName() + " &r!");
+		MessageHelper.notifyUUID(tournamentEntry.getParticipants(), TournamentManager.prefix + (killer != null ? "&a" + killer.getName() : "&aEnvironment") + " &rhas eliminated &c" + killed.getName() + " &r!");
 		tournamentManager.getActiveDuels().remove(duel);
 
 		if (duel != null) {
@@ -335,5 +339,37 @@ public class MatchUtils {
 				return;
 			}
 		}
+	}
+
+	public static boolean isLocationInZone(Location location, Location corner1, Location corner2) {
+		double minX = Math.min(corner1.getX(), corner2.getX());
+		double maxX = Math.max(corner1.getX(), corner2.getX());
+		double minY = Math.min(corner1.getY(), corner2.getY());
+		double maxY = Math.max(corner1.getY(), corner2.getY());
+		double minZ = Math.min(corner1.getZ(), corner2.getZ());
+		double maxZ = Math.max(corner1.getZ(), corner2.getZ());
+
+		return location.getX() >= minX && location.getX() <= maxX &&
+				location.getY() >= minY && location.getY() <= maxY &&
+				location.getZ() >= minZ && location.getZ() <= maxZ;
+	}
+
+	public static boolean isNearSpawnLocation(Location blockLocation, Location spawnLocation, int radius) {
+		double distance = blockLocation.distance(spawnLocation);
+		return distance <= radius;
+	}
+
+	public static Location findSafeLocationAbove(Location location) {
+		Block block = location.getBlock();
+		if (!block.getType().isSolid()) {
+			return location;
+		}
+		for (int y = 1; y <= 25; y++) {
+			Block blockAbove = location.getBlock().getRelative(0, y, 0);
+			if (!blockAbove.getType().isSolid()) {
+				return new Location(location.getWorld(), location.getX(), blockAbove.getY(), location.getZ(), location.getYaw(), location.getPitch());
+			}
+		}
+		return location;
 	}
 }

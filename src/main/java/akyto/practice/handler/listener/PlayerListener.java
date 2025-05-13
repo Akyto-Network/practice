@@ -1,24 +1,19 @@
 package akyto.practice.handler.listener;
 
-import akyto.core.Core;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import akyto.core.particle.ParticleEntry;
-import akyto.core.profile.Profile;
-import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
-import akyto.practice.Practice;
-import akyto.practice.duel.Duel;
-import akyto.practice.duel.Duel.DuelType;
-import akyto.practice.duel.cache.DuelState;
+import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
-import akyto.practice.kit.Kit;
-import akyto.practice.kit.KitInterface;
 import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.tournament.TournamentState;
-import akyto.practice.utils.Utils;
-import akyto.practice.utils.match.MatchUtils;
+import akyto.practice.utils.chat.MessageHelper;
+import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.match.TagUtils;
-import net.md_5.bungee.api.ChatColor;
+import com.google.common.collect.Lists;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -27,10 +22,10 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -45,8 +40,18 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import akyto.core.Core;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
+import akyto.practice.Practice;
+import akyto.practice.duel.Duel;
+import akyto.practice.duel.Duel.DuelType;
+import akyto.practice.duel.cache.DuelState;
+import akyto.practice.kit.Kit;
+import akyto.practice.kit.KitInterface;
+import akyto.practice.utils.Utils;
+import akyto.practice.utils.match.MatchUtils;
+import net.md_5.bungee.api.ChatColor;
 
 public class PlayerListener implements Listener {
 	
@@ -342,6 +347,14 @@ public class PlayerListener implements Listener {
 		if (profile.isInState(ProfileState.FIGHT)) {
 			final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 			if (duel.getKit().buildable()) {
+				Location corner1 = Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getCorner1().toBukkitLocation() : duel.getArena().getCorner1().toBukkitLocation();
+				Location corner2 = Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getCorner2().toBukkitLocation() : duel.getArena().getCorner2().toBukkitLocation();
+				Location blockLocation = event.getBlockPlaced().getLocation();
+				if (!MatchUtils.isLocationInZone(blockLocation, corner1, corner2)) {
+					event.setCancelled(true);
+					player.sendMessage(ChatColor.RED + "You cannot go out of map :)");
+					return;
+				}
 				duel.getBlocks().add(event.getBlockPlaced());
 				return;
 			}
@@ -357,6 +370,27 @@ public class PlayerListener implements Listener {
 		if (profile.isInState(ProfileState.FIGHT)) {
 			final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 			if (duel.getKit().buildable()) {
+				if (duel.getKit().name().equals("bedfight")) {
+					if (event.getBlock().getType().equals(Material.WOOD) || event.getBlock().getType().equals(Material.WOOL)) return;
+					if (event.getBlock().getType().equals(Material.BED_BLOCK)) {
+						final Location isLocation = duel.getFirst().contains(event.getPlayer().getUniqueId()) ? (Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation()) :  (Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation());
+						if (MatchUtils.isNearSpawnLocation(event.getBlock().getLocation(), isLocation, 10)) {
+							event.getPlayer().sendMessage(ChatColor.RED + "You cannot break your bed!");
+							event.setCancelled(true);
+							return;
+						}
+						else {
+							final DuelStatistics statistics = main.getManagerHandler().getProfileManager().getDuelStatistics().get(duel.getFirst().contains(event.getPlayer().getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst());
+							statistics.setBedBroke(true);
+							final List<UUID> players = Lists.newArrayList();
+							players.addAll(duel.getFirst());
+							players.addAll(duel.getSecond());
+							players.addAll(duel.getSpectators());
+							MessageHelper.notifyUUID(players, ChatColor.GRAY + "[" + ChatColor.DARK_RED + "Match" + ChatColor.GRAY + "] " + MessageUtils.getColorTeam(duel, duel.getFirst().contains(event.getPlayer().getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst()) + ChatColor.WHITE + " bed has destroyed, no respawn available!");
+						}
+						return;
+					}
+				}
 				if (duel.getBlocks().contains(event.getBlock())) {
 					duel.getBlocks().remove(event.getBlock());
 					return;
@@ -372,7 +406,7 @@ public class PlayerListener implements Listener {
 		final boolean inTournament = Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId()) != null;
 		if (profile.isInState(ProfileState.FIGHT) || (inTournament && Objects.requireNonNull(Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId())).getTournamentState().equals(TournamentState.STARTED))) {
 			final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
-			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup")) {
+			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup") || duel.getKit().name().equals("bedfight") || duel.getKit().name().equals("classic")) {
 				event.setCancelled(true);
 				event.setFoodLevel(20);
 				return;	
@@ -402,7 +436,7 @@ public class PlayerListener implements Listener {
 		}
 		event.setCancelled(true);
 	}
-	
+
 	@EventHandler
 	public void onDeath(final PlayerDeathEvent event) {
 		final Player killed = event.getEntity();
@@ -444,10 +478,6 @@ public class PlayerListener implements Listener {
 			return;
 		}
 
-		LightningStrike lightning = deathLoc.getWorld().strikeLightningEffect(deathLoc);
-		lightning.setFireTicks(0);
-		lightning.setSilent(true);
-
 		final Duel duel = Utils.getDuelByUUID(killed.getUniqueId());
 		if (duel != null) {
 			Set<UUID> duelPlayers = new HashSet<>();
@@ -481,6 +511,7 @@ public class PlayerListener implements Listener {
 			if (killer != null) Utils.drops(killer.getUniqueId(), event.getDrops(), deathLoc);
 			event.getDrops().clear();
 			final Profile profile = Utils.getProfiles(killed.getUniqueId());
+			final boolean inBedfight = duel.getKit().name().equals("bedfight");
 			if ((profile.isInState(ProfileState.FIGHT))) {
 				new BukkitRunnable() {
 					public void run() {
@@ -494,15 +525,47 @@ public class PlayerListener implements Listener {
 						}
 						killed.teleport(deathLoc);
 					}
-				}.runTaskLater(this.main, 10L);
+				}.runTaskLater(this.main, inBedfight ? 2L : 10L);
 				new BukkitRunnable() {
 					public void run() {
 						if (killer != null)
 							killer.hidePlayer(killed);
 					}
-				}.runTaskLater(main, 10L);
+				}.runTaskLater(main, inBedfight ? 2L : 10L);
 				TournamentEntry tournamentEntry = Utils.getTournamentByPlayerUUID(killed.getUniqueId());
 				if (duel.getDuelType().equals(DuelType.SINGLE) && tournamentEntry == null) {
+					LightningStrike lightning = deathLoc.getWorld().strikeLightningEffect(deathLoc);
+					lightning.setFireTicks(0);
+					lightning.setSilent(true);
+					if (inBedfight) {
+						final DuelStatistics statistics = main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getEntity().getUniqueId());
+						if (!statistics.isBedBroke()) {
+							final Location locationFirst = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation();
+							final Location locationSecond = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation();
+							Location spawnLocation = duel.getFirst().contains(event.getEntity().getUniqueId()) ? locationFirst : locationSecond;
+							spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
+							event.getEntity().setGameMode(GameMode.ADVENTURE);
+							event.getEntity().setAllowFlight(true);
+							event.getEntity().setFlying(true);
+							Location finalSpawnLocation = spawnLocation;
+							Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
+								event.getEntity().setAllowFlight(false);
+								event.getEntity().setFlying(false);
+								event.getEntity().setGameMode(GameMode.SURVIVAL);
+								event.getEntity().teleport(finalSpawnLocation);
+								main.getManagerHandler().getItemManager().giveItems(event.getEntity().getUniqueId(), false);
+								if (killer != null) {
+									killer.showPlayer(killed);
+								}
+							}, 100L);
+							final UUID oppsID = duel.getFirst().contains(event.getEntity().getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
+							final ChatColor colorKilled = duel.getFirst().contains(event.getEntity().getUniqueId()) ? ChatColor.BLUE : ChatColor.RED;
+							final ChatColor colorKiller = duel.getFirst().contains(oppsID) ? ChatColor.BLUE : ChatColor.RED;
+							MessageHelper.notifyUUID(duelPlayers.stream().toList(), ChatColor.GRAY + "[" + ChatColor.DARK_RED + "Match" + ChatColor.GRAY + "] " + colorKilled + event.getEntity().getName() + " killed by " + colorKiller + CoreUtils.getName(oppsID));
+							duelPlayers.clear();
+							return;
+						}
+					}
 					this.main.getManagerHandler().getDuelManager().endSingle(killed.getUniqueId().equals(new ArrayList<>(duel.getFirst()).getFirst()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst());
 					return;
 				}

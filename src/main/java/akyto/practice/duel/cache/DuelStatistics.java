@@ -10,6 +10,7 @@ public class DuelStatistics {
 	private int combo = 0;
 	private int longestHit = 0;
 	private Long nextHitTick = 0L;
+	private boolean bedBroke = false;
 
 	public void updateNextHitTick() {
 		this.nextHitTick = System.currentTimeMillis() + 500L;

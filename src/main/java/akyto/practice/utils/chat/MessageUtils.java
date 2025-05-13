@@ -205,4 +205,8 @@ public class MessageUtils {
 		}
 		return stage;
 	}
+
+	public static String getColorTeam(final Duel duel, final UUID player) {
+		return duel.getFirst().contains(player) ? org.bukkit.ChatColor.BLUE + "Blue" : org.bukkit.ChatColor.RED + "Red";
+	}
 }

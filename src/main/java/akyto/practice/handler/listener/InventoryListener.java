@@ -85,31 +85,15 @@ public class InventoryListener implements Listener {
 					}
 				}
 			}
-			final int disallowedRN = 3;
 			if (inventory.equals(inventoryManager.getQueueInventory()[0])) {
-				if (event.getSlot() == disallowedRN) {
-					event.getWhoClicked().sendMessage(ChatColor.RED + "Unavailable right now.");
-					event.getWhoClicked().closeInventory();
-					return;
-				}
 				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(player.getUniqueId(), Kit.getLadderByID(event.getSlot(), main), false);
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[1])) {
-				if (event.getSlot() == disallowedRN) {
-					event.getWhoClicked().sendMessage(ChatColor.RED + "Unavailable right now.");
-					event.getWhoClicked().closeInventory();
-					return;
-				}
 				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(player.getUniqueId(), Kit.getLadderByID(event.getSlot(), main), true);
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[2])) {
-				if (event.getSlot() == disallowedRN) {
-					event.getWhoClicked().sendMessage(ChatColor.RED + "Unavailable right now.");
-					event.getWhoClicked().closeInventory();
-					return;
-				}
 				final Request request = Utils.getRequestByUUID(player.getUniqueId());
 				request.setKit(Kit.getLadderByID(event.getSlot(), main));
 				event.getWhoClicked().openInventory(Kit.getLadderByID(event.getSlot(), main).name().equalsIgnoreCase("sumo") ? this.main.getManagerHandler().getInventoryManager().getArenaInventory()[1] : this.main.getManagerHandler().getInventoryManager().getArenaInventory()[0]);

@@ -20,7 +20,7 @@ public class Arena {
     private boolean save;
     private boolean build;
 
-    public Arena(final String name, final LocationSerializer loc1, final LocationSerializer loc2,final LocationSerializer corner1, final LocationSerializer corner2, final ArenaType arenaType, final Material icon, final boolean build) {
+    public Arena(final String name, final LocationSerializer loc1, final LocationSerializer loc2, final LocationSerializer corner1, final LocationSerializer corner2, final ArenaType arenaType, final Material icon, final boolean build) {
         this.name = name;
         this.position = Arrays.asList(loc1, loc2);
         this.arenaType = arenaType;

@@ -38,8 +38,8 @@ public class CoreListener implements Listener {
 					playersInMatch.addAll(duel.getSecond());
 				});
 				Collections.shuffle(playersInMatch);
-				player.teleport(Bukkit.getPlayer(playersInMatch.get(0)));
-				final Duel duel = Utils.getDuelByUUID(playersInMatch.get(0));
+				player.teleport(Bukkit.getPlayer(playersInMatch.getFirst()));
+				final Duel duel = Utils.getDuelByUUID(playersInMatch.getFirst());
 				List<UUID> duelPlayers = new ArrayList<>();
 				duelPlayers.addAll(duel.getFirst());
 				duelPlayers.addAll(duel.getSecond());
@@ -48,7 +48,7 @@ public class CoreListener implements Listener {
 					Bukkit.getPlayer(uuid).hidePlayer(player);
 				});
 				Core.API.getLoaderHandler().getMessage().getRandomTeleport().forEach(msg -> {
-					player.sendMessage(msg.replace("%target%", Bukkit.getPlayer(playersInMatch.get(0)).getName()).replace("%playerOne%", Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).get(0)).getName()).replace("%playerTwo%", Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).get(0)).getName()).replace("%matchLadder%", ChatColor.stripColor(duel.getKit().displayName())).replace("%matchDuration%", this.getFormattedDuration(duel)));
+					player.sendMessage(msg.replace("%target%", Bukkit.getPlayer(playersInMatch.getFirst()).getName()).replace("%playerOne%", Bukkit.getPlayer(new ArrayList<>(duel.getFirst()).getFirst()).getName()).replace("%playerTwo%", Bukkit.getPlayer(new ArrayList<>(duel.getSecond()).getFirst()).getName()).replace("%matchLadder%", ChatColor.stripColor(duel.getKit().displayName())).replace("%matchDuration%", this.getFormattedDuration(duel)));
 				});
         		return;
         	}

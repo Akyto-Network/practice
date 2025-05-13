@@ -37,7 +37,7 @@ public class BedFight extends Kit implements KitInterface {
 
     @Override
     public boolean isAlterable() {
-        return true;
+        return false;
     }
 
     @Override
@@ -79,11 +79,11 @@ public class BedFight extends Kit implements KitInterface {
 
     @Override
     public ArenaType arenaType() {
-        return ArenaType.NORMAL;
+        return ArenaType.BEDFIGHT;
     }
 
     @Override
     public List<PotionEffect> potionEffect() {
-        return Lists.newArrayList(new PotionEffect(PotionEffectType.SPEED, 99999999, 1));
+        return null;
     }
 }

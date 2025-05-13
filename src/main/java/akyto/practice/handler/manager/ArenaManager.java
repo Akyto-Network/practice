@@ -15,15 +15,20 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
+import com.sk89q.worldedit.function.operation.Operation;
+import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,6 +40,7 @@ public class ArenaManager {
 	private final Practice main;
 	private final Config config;
 	private final Random rng = new Random();
+	private static final int COPY_THRESHOLD = 200;
 
 	public ArenaManager(final Practice main) {
 		this.main = main;
@@ -136,44 +142,20 @@ public class ArenaManager {
 
 	public UUID createCopy(Arena arena, final Duel duel) {
 		UUID id = UUID.randomUUID();
-		World world = arena.getPosition().getFirst().toBukkitWorld();
-		int minY = Math.min(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
-		int maxY = Math.max(arena.getCorner1().toBukkitLocation().getBlockY(), arena.getCorner2().toBukkitLocation().getBlockY());
-		int minX = Math.min(arena.getCorner1().toBukkitLocation().getBlockX(), arena.getCorner2().toBukkitLocation().getBlockX());
-		int maxX = Math.max(arena.getCorner1().toBukkitLocation().getBlockX(), arena.getCorner2().toBukkitLocation().getBlockX());
-		int minZ = Math.min(arena.getCorner1().toBukkitLocation().getBlockZ(), arena.getCorner2().toBukkitLocation().getBlockZ());
-		int maxZ = Math.max(arena.getCorner1().toBukkitLocation().getBlockZ(), arena.getCorner2().toBukkitLocation().getBlockZ());
 
-		Block[] blocks = new Block[(maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1)];
-
-		int i = 0;
-		for (int y = minY; y <= maxY; y++) {
-			for (int x = minX; x <= maxX; x++) {
-				for (int z = minZ; z <= maxZ; z++) {
-					blocks[i] = world.getBlockAt(x, y, z);
-					i++;
-				}
-			}
-		}
-
-		int addZ = 1000;
-		int threshold = 500; // Si il trouve rien au bout de 500 Area check, on stop
-		while (!isAreaClear(blocks, addZ) && threshold > 0) {
-			addZ += 1000;
-			threshold--;
-		}
-
-		if (threshold == 0) {
-			return null;
-		}
-
-		int finalAddZ = addZ;
 		long start = System.currentTimeMillis();
-
 		CompletableFuture<Void> future = new CompletableFuture<>();
 
 		TaskManager.IMP.async(() -> {
 			try {
+				World world = arena.getPosition().getFirst().toBukkitWorld();
+				double minY = min(arena.getCorner1().getY(), arena.getCorner2().getY());
+				double maxY = max(arena.getCorner1().getY(), arena.getCorner2().getY());
+				double minX = min(arena.getCorner1().getX(), arena.getCorner2().getX());
+				double maxX = max(arena.getCorner1().getX(), arena.getCorner2().getX());
+				double minZ = min(arena.getCorner1().getZ(), arena.getCorner2().getZ());
+				double maxZ = max(arena.getCorner1().getZ(), arena.getCorner2().getZ());
+
 				EditSession editSession = new EditSessionBuilder(world.getName())
 						.fastmode(true)
 						.allowedRegionsEverywhere()
@@ -181,24 +163,59 @@ public class ArenaManager {
 						.limitUnlimited()
 						.build();
 
-				for (Block entry : blocks) {
-					int Z = entry.getZ() + finalAddZ;
-					editSession.setBlock(
-							new Vector(entry.getX(), entry.getY(), Z),
-							new BaseBlock(entry.getTypeId(), entry.getData())
-					);
+				int addZ = 1000;
+
+				CuboidRegion copyRegion = new CuboidRegion(editSession.getWorld(), new Vector(minX, minY, minZ), new Vector(maxX, maxY, maxZ));
+				CuboidRegion pasteRegion = new CuboidRegion(editSession.getWorld(), new Vector(minX, minY, minZ + addZ), new Vector(maxX, maxY, maxZ + addZ));
+
+				int area = pasteRegion.getArea();
+				int i = 0;
+				while (i < COPY_THRESHOLD && editSession.countBlock(pasteRegion, Set.of(0)) < area) {
+					pasteRegion.setPos1(pasteRegion.getPos1().add(0, 0, addZ));
+					pasteRegion.setPos2(pasteRegion.getPos2().add(0, 0, addZ));
+					i++;
 				}
+
+				if (i == COPY_THRESHOLD) {
+					throw new Exception("Failed to find an empty area in " + COPY_THRESHOLD + " tries");
+				}
+
+				BlockArrayClipboard clipboard = new BlockArrayClipboard(copyRegion);
+
+				ForwardExtentCopy copyOp = new ForwardExtentCopy(editSession, copyRegion, clipboard, copyRegion.getMinimumPoint());
+				Operations.complete(copyOp);
+
+				ClipboardHolder holder = new ClipboardHolder(clipboard, editSession.getWorld().getWorldData());
+				Operation pasteOp = holder.createPaste(editSession, editSession.getWorld().getWorldData())
+						.to(pasteRegion.getMinimumPoint())
+						.ignoreAirBlocks(false)
+						.build();
+				Operations.complete(pasteOp);
 
 				editSession.flushQueue();
 				long end = System.currentTimeMillis();
 				this.main.getLogger().info("Arena create copy took " + (end - start) + "ms");
+
+				final List<LocationSerializer> serializers = arena.getPosition().stream().map(locationSerializer ->
+						locationSerializer.add(0, 0, addZ)
+				).toList();
+
+				final List<UUID> players = Lists.newArrayList();
+				players.addAll(duel.getFirst());
+				players.addAll(duel.getSecond());
+
+				LocationSerializer newCorner1 = arena.getCorner1().add(0, 0, addZ);
+				LocationSerializer newCorner2 = arena.getCorner2().add(0, 0, addZ);
+				ArenaCopy copy = new ArenaCopy(id, serializers, players, newCorner1, newCorner2);
+				this.main.getArenaCopies().add(copy);
+
 				future.complete(null);
-			} catch (MaxChangedBlocksException e) {
+			} catch (Exception e) {
 				future.completeExceptionally(e);
 			}
 		});
 
-		future.whenComplete((result, throwable) -> {
+		future.whenComplete((_, throwable) -> {
 			if (throwable != null) {
 				this.main.getLogger().severe("Failed to create arena copy: " + throwable.getMessage());
 				return;
@@ -207,28 +224,6 @@ public class ArenaManager {
 			main.getManagerHandler().getDuelManager().teleport(duel, id);
 		});
 
-		double tempAddZ = addZ;
-		final List<LocationSerializer> serializers = arena.getPosition().stream().map(locationSerializer ->
-				locationSerializer.add(0, 0, tempAddZ)
-		).toList();
-
-		final List<UUID> players = Lists.newArrayList();
-		players.addAll(duel.getFirst());
-		players.addAll(duel.getSecond());
-
-		LocationSerializer newCorner1 = arena.getCorner1().add(0, 0, addZ);
-		LocationSerializer newCorner2 = arena.getCorner2().add(0, 0, addZ);
-		ArenaCopy copy = new ArenaCopy(id, serializers, players, newCorner1, newCorner2);
-		this.main.getArenaCopies().add(copy);
-
 		return id;
-	}
-
-	private boolean isAreaClear(Block[] originalBlocks, int addZ) {
-		for (Block block : originalBlocks) {
-			if (block.getLocation().add(0, 0, addZ).getBlock().getType() != Material.AIR)
-				return false;
-		}
-		return true;
 	}
 }

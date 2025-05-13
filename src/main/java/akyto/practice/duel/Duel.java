@@ -38,6 +38,8 @@ public class Duel {
 		this.duelType = type;
 		this.first = first;
 		this.second = second;
+		System.out.println(first);
+		System.out.println(second);
 		this.spectators = new HashSet<>();
 		this.dropped = new HashSet<>();
 		this.ranked = ranked;
@@ -56,8 +58,8 @@ public class Duel {
         this.winner = new ArrayList<>();
         if (arena != null) this.arena = arena;
 		if (kit.buildable()) this.blocks = Lists.newArrayList();
-		main.getDuels().add(this);
 		Arrays.asList(first, second).forEach(uuids -> uuids.forEach(uuid -> main.getManagerHandler().getProfileManager().getDuelStatistics().put(uuid, new DuelStatistics())));
+		main.getDuels().add(this);
 		main.getManagerHandler().getDuelManager().start(new ArrayList<>(first), new ArrayList<>(second), kit);
 	}
 	

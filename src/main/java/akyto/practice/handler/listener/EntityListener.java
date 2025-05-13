@@ -13,8 +13,11 @@ import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
 import akyto.practice.handler.manager.ProfileManager;
 import akyto.practice.utils.Utils;
+import akyto.practice.utils.chat.MessageHelper;
+import akyto.practice.utils.match.MatchUtils;
 import akyto.spigot.aSpigot;
 import akyto.spigot.handler.MovementHandler;
+import com.google.common.collect.Lists;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
 import org.bukkit.*;
 import org.bukkit.entity.Arrow;
@@ -26,6 +29,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.UUID;
 
 public class EntityListener implements Listener {
 
@@ -51,12 +57,54 @@ public class EntityListener implements Listener {
 						}
 					}
 				}
-				// Sumo Duel
+				// Duel
 				final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
 				if (duel != null) {
 					final String kitName = duel.getKit().name();
-					if (kitName.equalsIgnoreCase("sumo") && duel.getState().equals(DuelState.STARTING)) {
+					if ((kitName.equalsIgnoreCase("sumo")) && duel.getState().equals(DuelState.STARTING)) {
 						player.teleport(duel.getFirst().contains(player.getUniqueId()) ? duel.getArena().getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation());
+					}
+					if (kitName.equalsIgnoreCase("bedfight") && duel.getState().equals(DuelState.PLAYING)) {
+						Location corner1 = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getCorner1().toBukkitLocation() : duel.getArena().getCorner1().toBukkitLocation();
+						Location corner2 = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getCorner2().toBukkitLocation() : duel.getArena().getCorner2().toBukkitLocation();
+						if (!MatchUtils.isLocationInZone(from, corner1, corner2) && !player.getGameMode().equals(GameMode.ADVENTURE)) {
+							final UUID oppsID = duel.getFirst().contains(player.getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
+							final Location locationFirst = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation();
+							final Location locationSecond = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation();
+							final DuelStatistics statistics = main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
+							if (!statistics.isBedBroke()) {
+								Location spawnLocation = duel.getFirst().contains(player.getUniqueId()) ? locationFirst : locationSecond;
+								spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
+								player.setGameMode(GameMode.ADVENTURE);
+								player.setAllowFlight(true);
+								player.setFlying(true);
+								Bukkit.getPlayer(oppsID).hidePlayer(player);
+								Location finalSpawnLocation = spawnLocation;
+								Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
+									main.getManagerHandler().getItemManager().giveItems(player.getUniqueId(), false);
+									player.setAllowFlight(false);
+									player.setFlying(false);
+									player.setGameMode(GameMode.SURVIVAL);
+									player.teleport(finalSpawnLocation);
+									Bukkit.getPlayer(oppsID).showPlayer(player);
+								}, 100L);
+							}
+							final net.md_5.bungee.api.ChatColor colorKilled = duel.getFirst().contains(player.getUniqueId()) ? net.md_5.bungee.api.ChatColor.BLUE : net.md_5.bungee.api.ChatColor.RED;
+							final List<UUID> duelPlayers = Lists.newArrayList();
+							duelPlayers.addAll(duel.getFirst());
+							duelPlayers.addAll(duel.getSecond());
+							duelPlayers.addAll(duel.getSpectators());
+							MessageHelper.notifyUUID(duelPlayers.stream().toList(), net.md_5.bungee.api.ChatColor.GRAY + "[" + net.md_5.bungee.api.ChatColor.DARK_RED + "Match" + net.md_5.bungee.api.ChatColor.GRAY + "] " + colorKilled + player.getName() + " fall into the void.");
+							if (statistics.isBedBroke()) {
+								if (duel.getDuelType().equals(Duel.DuelType.SINGLE)) {
+									main.getManagerHandler().getDuelManager().endSingle(oppsID);
+								}
+								else {
+									main.getManagerHandler().getDuelManager().endMultiple(oppsID);
+								}
+							}
+							duelPlayers.clear();
+						}
 					}
 				}
 			}
@@ -83,6 +131,15 @@ public class EntityListener implements Listener {
 				final Duel playerDuel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 
 				if (playerDuel != null && playerDuel.getState().equals(DuelState.PLAYING)) {
+					if (playerDuel.getKit().name().equals("bedfight") && event.getCause().equals(DamageCause.VOID)) {
+						final Location locationFirst = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getFirst().toBukkitLocation() : playerDuel.getArena().getPosition().getFirst().toBukkitLocation();
+						final Location locationSecond = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getLast().toBukkitLocation() : playerDuel.getArena().getPosition().getLast().toBukkitLocation();
+						Location spawnLocation = playerDuel.getFirst().contains(event.getEntity().getUniqueId()) ? locationFirst : locationSecond;
+						spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
+						event.getEntity().teleport(spawnLocation);
+						event.setCancelled(true);
+						return;
+					}
 					if (playerDuel.getKit().name().equals("sumo") || playerDuel.getKit().name().equals("boxing")) {
 						event.setDamage(0.0f);
 					}
