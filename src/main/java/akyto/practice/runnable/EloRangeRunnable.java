@@ -13,10 +13,10 @@ import java.util.UUID;
 
 public class EloRangeRunnable extends BukkitRunnable {
 
-    private UUID uuid;
-    private int updateTime;
+    private final UUID uuid;
+    private final int updateTime;
     private int timer;
-    private QueueManager.QueueEntry queueEntry;
+    private final QueueManager.QueueEntry queueEntry;
 
     public EloRangeRunnable(final UUID uuid, final QueueManager.QueueEntry queueEntry) {
         this.uuid = uuid;

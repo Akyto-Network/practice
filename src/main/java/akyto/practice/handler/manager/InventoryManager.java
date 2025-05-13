@@ -220,8 +220,8 @@ public class InventoryManager {
         for (int i = 45; i < 54; ++i) {
             preview.setItem(i, glass);
         }
-        preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", Arrays.asList(ChatColor.RESET + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤")));
-		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ", Arrays.asList(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d)))); // TODO Organiser a la rimk
+        preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", List.of(ChatColor.RESET + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤")));
+		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ", List.of(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d)))); // TODO Organiser a la rimk
         List<String> effectsInfo = new ArrayList<>();
 		for (PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects())
 			effectsInfo.add(ChatColor.GRAY + potionEffect.formatted() + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
@@ -249,14 +249,14 @@ public class InventoryManager {
             profile.setItem(i, glass);
         }
 		final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
-        profile.setItem(0, ItemUtils.createItems(Material.PAINTING, ChatColor.DARK_GRAY + "Scoreboard" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-        profile.setItem(1, ItemUtils.createItems(Material.BLAZE_POWDER, ChatColor.DARK_GRAY + "Duel Request" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-        profile.setItem(2, ItemUtils.createItems(Material.WATCH, ChatColor.DARK_GRAY + "Time" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(3, ItemUtils.createItems(Material.REDSTONE, ChatColor.DARK_GRAY + "Spectator" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.DARK_GRAY + "Private Message" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.DARK_GRAY + "Drops" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(6, ItemUtils.createItems(Material.BONE, ChatColor.DARK_GRAY + "Clear Inventory" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(8, ItemUtils.createItems(Material.FIREWORK, ChatColor.DARK_GRAY + "Death Effects" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Click here to select a death effect")));
+        profile.setItem(0, ItemUtils.createItems(Material.PAINTING, ChatColor.DARK_GRAY + "Scoreboard" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(1, ItemUtils.createItems(Material.BLAZE_POWDER, ChatColor.DARK_GRAY + "Duel Request" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(2, ItemUtils.createItems(Material.WATCH, ChatColor.DARK_GRAY + "Time" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(3, ItemUtils.createItems(Material.REDSTONE, ChatColor.DARK_GRAY + "Spectator" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.DARK_GRAY + "Private Message" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.DARK_GRAY + "Drops" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(6, ItemUtils.createItems(Material.BONE, ChatColor.DARK_GRAY + "Clear Inventory" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(8, ItemUtils.createItems(Material.FIREWORK, ChatColor.DARK_GRAY + "Death Effects" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Click here to select a death effect")));
         this.settingsInventory.remove(uuid);
 		this.settingsInventory.put(uuid, profile);
 		profileManager.refreshSettingsLoreInv(profile, uuid, true);
@@ -300,9 +300,9 @@ public class InventoryManager {
         for (int i = 0; i < 5; ++i) {
             profile.setItem(i, glass);
         }
-        profile.setItem(0, ItemUtils.createItems(Material.DIAMOND, ChatColor.DARK_GRAY + "Display Other Spectators" + ChatColor.GRAY + ":", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-        profile.setItem(1, ItemUtils.createItems(Material.FEATHER, ChatColor.DARK_GRAY + "Fly Speed", Arrays.asList(ChatColor.YELLOW + "Loading...")));
-        profile.setItem(4, ItemUtils.createItems(Material.EMERALD, ChatColor.DARK_GRAY + "Global Settings", Arrays.asList(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(0, ItemUtils.createItems(Material.DIAMOND, ChatColor.DARK_GRAY + "Display Other Spectators" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(1, ItemUtils.createItems(Material.FEATHER, ChatColor.DARK_GRAY + "Fly Speed", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(4, ItemUtils.createItems(Material.EMERALD, ChatColor.DARK_GRAY + "Global Settings", List.of(ChatColor.YELLOW + "Loading...")));
         this.settingsSpectateInventory.remove(uuid);
 		this.settingsSpectateInventory.put(uuid, profile);
 		final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();

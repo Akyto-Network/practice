@@ -218,9 +218,8 @@ public class SideBoard implements BoardAdapter {
         if (eventManager.getType().equalsIgnoreCase("oitc")) {
             if (eventManager.getEventState().equals(EventState.FIGHT)) {
                 List<Profile> memberProfiles = eventManager.getMembers().stream()
-                        .map(memberUUID -> Utils.getProfiles(memberUUID))
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
+                        .map(Utils::getProfiles)
+                        .filter(Objects::nonNull).toList();
                 memberProfiles.sort((p1, p2) -> Integer.compare(p2.getKill(), p1.getKill()));
                 int limit = eventManager.getMembers().size();
                 if (eventManager.getMembers().size() >= 5) limit = 5;

@@ -5,6 +5,5 @@ public enum EventState {
     STARTING,
     FIGHT,
     ENDING,
-    FREE;
-
+    FREE
 }

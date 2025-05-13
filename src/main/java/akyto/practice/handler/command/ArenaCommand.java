@@ -218,13 +218,14 @@ public class ArenaCommand implements CommandExecutor {
 				sender.sendMessage(helpMessage);
 				return false;
 			}
-			if (this.main.getManagerHandler().getArenaManager().getArena(args[1]) == null) {
+			Arena targetArena = this.main.getManagerHandler().getArenaManager().getArena(args[1]);
+			if (targetArena == null) {
 				sender.sendMessage(ChatColor.RED + "Sorry but this arena doesn't exist!");
 				return false;
 			}
-			final boolean buildable = this.main.getManagerHandler().getArenaManager().getArena(args[1]).isBuild() ? false : true;
-			this.main.getManagerHandler().getArenaManager().getArena(args[1]).setBuild(buildable);
-			sender.sendMessage(ChatColor.GREEN + "The build has been " + (buildable ? "disable" : "enabled") + " for " + args[1] + " arena!");
+			final boolean buildable = !targetArena.isBuild();
+			targetArena.setBuild(buildable);
+			sender.sendMessage(ChatColor.GREEN + "The build has been " + (buildable ? "enabled" : "disabled") + " for " + args[1] + " arena!");
 			return false;
 		}
 

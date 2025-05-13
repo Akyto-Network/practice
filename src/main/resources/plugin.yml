@@ -27,12 +27,16 @@ commands:
     aliases: [p, group, parties]
   reset:
     aliases: [statsreset, tweak]
-    description: 'Reset global data of targeted player!'
+    description: "Reset global data of targeted player!"
   showcase:
     aliases: [pack, resourcepack]
     description: "Send the player to the resource pack showcase room."
   build:
+    description: "Enter in build mode"
   host:
+    description: "Host an event"
   join:
+    description: "Join an event"
   tournament:
+    description: "Create a tournament"
   

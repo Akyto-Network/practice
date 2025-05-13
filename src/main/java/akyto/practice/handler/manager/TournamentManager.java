@@ -25,9 +25,9 @@ public class TournamentManager implements Listener {
 
     private final Practice main;
     private final Map<UUID, TournamentEntry> tournaments;
-    private List<Duel> activeDuels;
+    private final List<Duel> activeDuels;
     private final int countdownDuration = 60;
-    public static String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_RED + "TOURNAMENT" + ChatColor.GRAY + "] ";
+    public static final String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_RED + "TOURNAMENT" + ChatColor.GRAY + "] ";
 
     public TournamentManager(Practice main) {
         this.main = main;
@@ -112,9 +112,7 @@ public class TournamentManager implements Listener {
         int minToStart = teamSize * 2;
         int inTourney = entry.getParticipants().size() + 1;
         if (inTourney == minToStart) {
-            Bukkit.getScheduler().runTaskLater(main, () -> {
-                startCountdown(entry);
-            }, 120L);
+            Bukkit.getScheduler().runTaskLater(main, () -> startCountdown(entry), 120L);
         }
         entry.getParticipants().add(player.getUniqueId());
         MessageHelper.notifyUUID(entry.getParticipants(), prefix + player.getName() + "&a join!");

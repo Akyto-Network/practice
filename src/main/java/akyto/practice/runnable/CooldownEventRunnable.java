@@ -11,10 +11,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class CooldownEventRunnable extends BukkitRunnable {
 
-    private Practice main;
+    private final Practice main;
     private Integer counter;
-    private String nameOne;
-    private String nameTwo;
+    private final String nameOne;
+    private final String nameTwo;
 
     public CooldownEventRunnable(final Practice main, final String name1, final String name2) {
         this.main = main;
@@ -30,7 +30,7 @@ public class CooldownEventRunnable extends BukkitRunnable {
             this.cancel();
             return;
         }
-        counter -= 1;
+        counter--;
         if (counter <= 0) {
             this.main.getManagerHandler().getEventManager().getMembers().forEach(uuid -> {
                 Player player = Bukkit.getPlayer(uuid);
@@ -42,16 +42,15 @@ public class CooldownEventRunnable extends BukkitRunnable {
             this.main.getManagerHandler().getEventManager().setEventState(EventState.FIGHT);
             new SumoEventRunnable(main).runTaskTimer(this.main, 5L, 5L);
             this.cancel();
+            return;
         }
-        if (counter > 0) {
-            this.main.getManagerHandler().getEventManager().getMembers().forEach(uuid -> {
-                Player player = Bukkit.getPlayer(uuid);
-                if (player != null) {
-                    player.playSound(player.getLocation(), Sound.NOTE_PIANO, 1.5f, 1.5f);
-                    player.sendMessage(ChatColor.RED.toString() + counter + "s" + ChatColor.GRAY + "...");
-                }
-            });
-        }
+        this.main.getManagerHandler().getEventManager().getMembers().forEach(uuid -> {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.playSound(player.getLocation(), Sound.NOTE_PIANO, 1.5f, 1.5f);
+                player.sendMessage(ChatColor.RED.toString() + counter + "s" + ChatColor.GRAY + "...");
+            }
+        });
     }
 
 }

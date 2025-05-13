@@ -68,9 +68,7 @@ public class MatchUtils {
                 }
             });
             if (Bukkit.getPlayer(uuid) != null) {
-				Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
-					addSpectateParty(uuid);
-				}, 2L);
+				Bukkit.getScheduler().runTaskLater(Practice.API, () -> addSpectateParty(uuid), 2L);
             }
         }
 
@@ -104,9 +102,7 @@ public class MatchUtils {
 				}
 			});
 			if (Bukkit.getPlayer(uuid) != null)
-				Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
-					addSpectateParty(uuid);
-				}, 2L);
+				Bukkit.getScheduler().runTaskLater(Practice.API, () -> addSpectateParty(uuid), 2L);
         }
     }
     
@@ -274,9 +270,7 @@ public class MatchUtils {
 					player.sendMessage(ChatColor.GREEN + "Next round gonna start!");
 				}
 			});
-			Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
-				runTournamentRound(tournamentEntry);
-			}, 120L);
+			Bukkit.getScheduler().runTaskLater(Practice.API, () -> runTournamentRound(tournamentEntry), 120L);
 		}
 	}
 

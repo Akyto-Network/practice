@@ -16,7 +16,9 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,7 +35,7 @@ public class NPCUtils {
 
         // Skin changer
         try {
-            String jsonResponse = IOUtils.toString(new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + npcSkin + "?unsigned=false"));
+            String jsonResponse = IOUtils.toString(new URI("https://sessionserver.mojang.com/session/minecraft/profile/" + npcSkin + "?unsigned=false"), StandardCharsets.UTF_8);
             if (jsonResponse.isEmpty()) return npc;
 
             JSONObject jsonObject = (JSONObject) JSONValue.parseWithException(jsonResponse);
@@ -47,11 +49,11 @@ public class NPCUtils {
             String signature = (String) skinJSON.get("signature");
 
             npcProfile.getProperties().put("textures", new Property("textures", skin, signature));
-        } catch (IOException | ParseException e) {
+        } catch (IOException | ParseException | URISyntaxException e) {
             Practice.API.getLogger().warning("Cannot get " + name + "'s skin");
         }
 
-        return npc;
+		return npc;
     }
 
     public static void spawnNPCs(Player player, List<EntityPlayer> npcs, boolean follow) {

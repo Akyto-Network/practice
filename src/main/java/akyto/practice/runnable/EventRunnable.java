@@ -13,9 +13,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class EventRunnable extends BukkitRunnable {
 
-    private Practice main;
+    private final Practice main;
     private Integer counter;
-    private String type;
+    private final String type;
 
     public EventRunnable(final Practice main, final String type) {
         this.main = main;

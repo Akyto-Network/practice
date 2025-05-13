@@ -51,8 +51,12 @@ public class FileSetup {
 				File file = new File(this.main.getDataFolder() + "/players/" + uuid.toString() + ".yml");
 				if (!file.exists()) {
 					try {
-		                file.getParentFile().mkdirs();
-						file.createNewFile();
+						if (!file.getParentFile().mkdirs()) {
+							throw new IOException("Failed to create parent directory");
+						}
+						if (!file.createNewFile()) {
+							throw new IOException("Failed to create file (maybe it already existed)");
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
