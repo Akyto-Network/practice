@@ -1,14 +1,13 @@
 package akyto.practice.handler.command;
 
+import akyto.core.profile.ProfileState;
+import akyto.practice.Practice;
+import akyto.practice.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import akyto.core.profile.ProfileState;
-import akyto.practice.Practice;
-import akyto.practice.utils.Utils;
 
 public class LeaderboardCommand implements CommandExecutor {
 	

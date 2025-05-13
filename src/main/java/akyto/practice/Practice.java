@@ -1,38 +1,31 @@
 package akyto.practice;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import akyto.core.Core;
+import akyto.practice.arena.Arena;
 import akyto.practice.arena.ArenaCopy;
+import akyto.practice.board.SideBoard;
+import akyto.practice.duel.Duel;
+import akyto.practice.duel.database.FileSetup;
+import akyto.practice.handler.ManagerHandler;
+import akyto.practice.handler.MiscHandler;
+import akyto.practice.handler.manager.QueueManager.QueueEntry;
+import akyto.practice.kit.Kit;
 import akyto.practice.kit.gametype.*;
 import akyto.practice.runnable.ExpBarRunnable;
+import akyto.practice.utils.location.LocationUtil;
+import com.bizarrealex.aether.Aether;
 import com.google.common.collect.Lists;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.bizarrealex.aether.Aether;
-
-import akyto.practice.arena.Arena;
-import akyto.practice.board.SideBoard;
-import akyto.practice.duel.database.FileSetup;
-import akyto.practice.duel.Duel;
-import akyto.practice.handler.ManagerHandler;
-import akyto.practice.handler.MiscHandler;
-import akyto.practice.handler.manager.QueueManager.QueueEntry;
-import akyto.practice.kit.Kit;
-import akyto.practice.utils.location.LocationUtil;
-import lombok.Getter;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Getter
 public class Practice extends JavaPlugin {

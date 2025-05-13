@@ -1,11 +1,5 @@
 package akyto.practice.utils.timer;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Predicate;
-
 import akyto.practice.Practice;
 import akyto.practice.utils.timer.event.TimerClearEvent;
 import akyto.practice.utils.timer.event.TimerExtendEvent;
@@ -13,6 +7,12 @@ import akyto.practice.utils.timer.event.TimerPauseEvent;
 import akyto.practice.utils.timer.event.TimerStartEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public abstract class PlayerTimer extends Timer {
     protected final Map<UUID, TimerCooldown> cooldowns = new ConcurrentHashMap<>();

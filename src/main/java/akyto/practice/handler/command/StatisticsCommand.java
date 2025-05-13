@@ -3,15 +3,14 @@ package akyto.practice.handler.command;
 import akyto.core.Core;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
+import akyto.practice.Practice;
+import akyto.practice.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import akyto.practice.Practice;
-import akyto.practice.utils.Utils;
 import org.bukkit.inventory.Inventory;
 
 public class StatisticsCommand implements CommandExecutor {

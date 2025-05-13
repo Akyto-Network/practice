@@ -1,11 +1,12 @@
 package akyto.practice.utils.timer.event;
 
-import java.util.Optional;
-import java.util.UUID;
+import akyto.practice.utils.timer.Timer;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import akyto.practice.utils.timer.Timer;
+
+import java.util.Optional;
+import java.util.UUID;
 
 public class TimerPauseEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();

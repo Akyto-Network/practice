@@ -1,13 +1,13 @@
 package akyto.practice.utils.timer;
 
-import java.util.UUID;
-
 import akyto.practice.Practice;
 import akyto.practice.utils.timer.event.TimerExpireEvent;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
+
+import java.util.UUID;
 
 @Getter
 public class TimerCooldown {

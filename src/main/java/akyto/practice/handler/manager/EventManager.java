@@ -2,10 +2,10 @@ package akyto.practice.handler.manager;
 
 
 import akyto.core.Core;
-import akyto.practice.event.EventState;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
+import akyto.practice.event.EventState;
 import akyto.practice.runnable.CooldownEventRunnable;
 import akyto.practice.runnable.EventRunnable;
 import akyto.practice.utils.Utils;
@@ -19,9 +19,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 
 import java.text.DecimalFormat;
 import java.util.Collections;

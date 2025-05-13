@@ -1,14 +1,14 @@
 package akyto.practice.utils.timer.event;
 
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-
 import akyto.practice.Practice;
+import akyto.practice.utils.timer.Timer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import akyto.practice.utils.timer.Timer;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 public class TimerClearEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();

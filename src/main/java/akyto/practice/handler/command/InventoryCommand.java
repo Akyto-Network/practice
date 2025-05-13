@@ -1,20 +1,19 @@
 package akyto.practice.handler.command;
 
-import java.util.UUID;
-
-import akyto.practice.utils.Utils;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import akyto.core.Core;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.Practice;
 import akyto.practice.duel.cache.DuelState;
+import akyto.practice.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class InventoryCommand implements CommandExecutor {
 	

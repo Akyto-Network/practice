@@ -1,14 +1,12 @@
 package akyto.practice.arena;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.bukkit.*;
-
 import akyto.core.utils.location.LocationSerializer;
-import akyto.practice.Practice;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Material;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Getter @Setter
 public class Arena {

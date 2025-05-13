@@ -1,11 +1,11 @@
 package akyto.practice.utils.match;
 
-import java.util.UUID;
-
 import akyto.core.profile.Profile;
 import akyto.practice.Practice;
 import akyto.practice.kit.Kit;
 import akyto.practice.utils.Utils;
+
+import java.util.UUID;
 
 public class EloUtils {
 	

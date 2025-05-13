@@ -1,24 +1,23 @@
 package akyto.practice.utils.chat;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import akyto.practice.handler.manager.TournamentManager;
-import akyto.practice.tournament.TournamentEntry;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import akyto.core.utils.CoreUtils;
 import akyto.core.utils.components.ComponentJoiner;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
+import akyto.practice.handler.manager.TournamentManager;
 import akyto.practice.kit.Kit;
+import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.Utils;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MessageUtils {
 	

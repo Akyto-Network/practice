@@ -1,14 +1,13 @@
 package akyto.practice.handler.command;
 
 import akyto.practice.Practice;
+import akyto.practice.utils.location.LocationUtil;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import akyto.practice.utils.location.LocationUtil;
-import net.md_5.bungee.api.ChatColor;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

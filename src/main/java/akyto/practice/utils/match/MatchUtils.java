@@ -1,35 +1,33 @@
 package akyto.practice.utils.match;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import akyto.core.Core;
-import akyto.practice.duel.cache.DuelState;
-import akyto.practice.handler.manager.PartyManager;
-import akyto.practice.handler.manager.QueueManager;
-import akyto.practice.handler.manager.TournamentManager;
-import akyto.practice.kit.Kit;
-import akyto.practice.tournament.TournamentEntry;
-import akyto.practice.utils.chat.MessageHelper;
-import akyto.practice.utils.chat.MessageUtils;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
+import akyto.practice.duel.cache.DuelState;
 import akyto.practice.handler.ManagerHandler;
+import akyto.practice.handler.manager.QueueManager;
+import akyto.practice.handler.manager.TournamentManager;
+import akyto.practice.kit.Kit;
+import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.Utils;
+import akyto.practice.utils.chat.MessageHelper;
+import akyto.practice.utils.chat.MessageUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MatchUtils {
 	

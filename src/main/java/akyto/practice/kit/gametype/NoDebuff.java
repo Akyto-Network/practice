@@ -1,16 +1,15 @@
 package akyto.practice.kit.gametype;
 
-import java.util.List;
-
+import akyto.practice.arena.ArenaType;
 import akyto.practice.kit.Kit;
 import akyto.practice.kit.KitInterface;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import akyto.practice.arena.ArenaType;
-import net.md_5.bungee.api.ChatColor;
+import java.util.List;
 
 public class NoDebuff extends Kit implements KitInterface {
 

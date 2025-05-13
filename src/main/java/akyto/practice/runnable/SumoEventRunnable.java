@@ -1,7 +1,7 @@
 package akyto.practice.runnable;
 
-import akyto.practice.event.EventState;
 import akyto.practice.Practice;
+import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

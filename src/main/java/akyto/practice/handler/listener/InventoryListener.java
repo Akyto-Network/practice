@@ -2,49 +2,38 @@ package akyto.practice.handler.listener;
 
 import akyto.core.Core;
 import akyto.core.handler.manager.ProfileManager;
-import akyto.core.handler.manager.TagManager;
 import akyto.core.particle.ParticleEntry;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import akyto.core.settings.NormalSettings;
 import akyto.core.settings.SpectateSettings;
-import akyto.core.tag.TagEntry;
+import akyto.core.utils.CoreUtils;
+import akyto.practice.Practice;
+import akyto.practice.duel.Duel;
+import akyto.practice.duel.Duel.DuelType;
+import akyto.practice.editor.Edited;
 import akyto.practice.handler.manager.InventoryManager;
+import akyto.practice.kit.Kit;
 import akyto.practice.request.Request;
 import akyto.practice.request.Request.RequestType;
 import akyto.practice.utils.Utils;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import akyto.core.profile.Profile;
-import akyto.core.profile.ProfileState;
-import akyto.core.utils.CoreUtils;
-import akyto.practice.Practice;
-import akyto.practice.duel.Duel;
-import akyto.practice.duel.Duel.DuelType;
-import akyto.practice.editor.Edited;
-import akyto.practice.kit.Kit;
-import net.md_5.bungee.api.ChatColor;
+import java.util.*;
 
 public class InventoryListener implements Listener {
 	

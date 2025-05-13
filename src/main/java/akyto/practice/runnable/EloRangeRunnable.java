@@ -2,7 +2,6 @@ package akyto.practice.runnable;
 
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
-import akyto.practice.Practice;
 import akyto.practice.handler.manager.QueueManager;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.match.MatchUtils;

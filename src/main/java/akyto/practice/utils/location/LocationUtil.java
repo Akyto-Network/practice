@@ -1,13 +1,12 @@
 package akyto.practice.utils.location;
 
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-
 import akyto.practice.Practice;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
+import java.util.HashMap;
 
 public @Getter @Setter class LocationUtil {
 

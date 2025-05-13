@@ -1,31 +1,30 @@
 package akyto.practice.utils;
 
-import java.util.*;
-
 import akyto.core.Core;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
+import akyto.practice.Practice;
 import akyto.practice.arena.Arena;
 import akyto.practice.arena.ArenaCopy;
 import akyto.practice.arena.ArenaType;
-
-import akyto.practice.tournament.TournamentEntry;
-import akyto.practice.utils.match.MatchUtils;
-import akyto.practice.utils.timer.impl.EnderpearlTimer;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.*;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-
-import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.handler.manager.PartyManager.PartyEntry;
 import akyto.practice.kit.Kit;
 import akyto.practice.request.Request;
+import akyto.practice.tournament.TournamentEntry;
+import akyto.practice.utils.match.MatchUtils;
+import akyto.practice.utils.timer.impl.EnderpearlTimer;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class Utils {
 

@@ -1,9 +1,11 @@
 package akyto.practice.handler.manager;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-
+import akyto.core.utils.config.Config;
+import akyto.core.utils.location.LocationSerializer;
+import akyto.practice.Practice;
+import akyto.practice.arena.Arena;
 import akyto.practice.arena.ArenaCopy;
+import akyto.practice.arena.ArenaType;
 import akyto.practice.duel.Duel;
 import akyto.practice.kit.Kit;
 import com.boydti.fawe.util.EditSessionBuilder;
@@ -12,28 +14,21 @@ import com.google.common.collect.Lists;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
-import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
-import com.sk89q.worldedit.function.operation.Operation;
-import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.regions.CuboidRegion;
-import com.sk89q.worldedit.session.ClipboardHolder;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import akyto.core.utils.config.Config;
-import akyto.core.utils.location.LocationSerializer;
-import akyto.practice.Practice;
-import akyto.practice.arena.Arena;
-import akyto.practice.arena.ArenaType;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
-import static java.lang.Math.min;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class ArenaManager {
 

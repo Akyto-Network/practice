@@ -1,16 +1,16 @@
 package akyto.practice.duel;
 
-import java.util.*;
-
-import akyto.practice.duel.cache.DuelState;
 import akyto.practice.Practice;
 import akyto.practice.arena.Arena;
+import akyto.practice.duel.cache.DuelState;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.kit.Kit;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.block.Block;
+
+import java.util.*;
 
 @Getter @Setter
 public class Duel {

@@ -1,19 +1,16 @@
 package akyto.practice.runnable;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import akyto.core.profile.ProfileState;
-import akyto.practice.tournament.TournamentEntry;
-import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.kit.Kit;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.match.MatchUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class RespawnRunnable extends BukkitRunnable {
 

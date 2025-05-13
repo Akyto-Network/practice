@@ -1,27 +1,25 @@
 package akyto.practice.handler.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
 import akyto.core.Core;
-import akyto.practice.utils.Utils;
-import akyto.practice.utils.match.MatchUtils;
-
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.cache.DuelState;
+import akyto.practice.utils.Utils;
+import akyto.practice.utils.match.MatchUtils;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class SpectateCommand implements CommandExecutor {
 

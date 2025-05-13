@@ -1,15 +1,23 @@
 package akyto.practice.handler.manager;
 
-import java.text.DateFormat;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import akyto.core.Core;
 import akyto.core.handler.manager.ProfileManager;
 import akyto.core.profile.Profile;
+import akyto.core.utils.CoreUtils;
+import akyto.core.utils.format.FormatUtils;
+import akyto.core.utils.inventory.MultipageSerializer;
+import akyto.core.utils.item.ItemUtils;
+import akyto.core.utils.leaderboard.Top;
+import akyto.practice.Practice;
+import akyto.practice.arena.Arena;
+import akyto.practice.arena.ArenaType;
+import akyto.practice.duel.Duel;
+import akyto.practice.duel.cache.DuelStatistics;
+import akyto.practice.handler.manager.QueueManager.QueueEntry;
+import akyto.practice.kit.Kit;
 import akyto.practice.utils.Utils;
+import com.google.common.collect.Lists;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,21 +30,11 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import com.google.common.collect.Lists;
-
-import akyto.core.utils.CoreUtils;
-import akyto.core.utils.format.FormatUtils;
-import akyto.core.utils.inventory.MultipageSerializer;
-import akyto.core.utils.item.ItemUtils;
-import akyto.practice.Practice;
-import akyto.practice.arena.Arena;
-import akyto.practice.arena.ArenaType;
-import akyto.practice.duel.Duel;
-import akyto.practice.duel.cache.DuelStatistics;
-import akyto.practice.handler.manager.QueueManager.QueueEntry;
-import akyto.practice.kit.Kit;
-import akyto.core.utils.leaderboard.Top;
-import lombok.Getter;
+import java.text.DateFormat;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 @Getter
 public class InventoryManager {

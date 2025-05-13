@@ -1,14 +1,14 @@
 package akyto.practice.handler.manager;
 
+import akyto.practice.duel.cache.DuelStatistics;
+import akyto.practice.editor.Edited;
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import akyto.practice.duel.cache.DuelStatistics;
-import akyto.practice.editor.Edited;
-import lombok.Getter;
 
 @Getter
 public class ProfileManager {

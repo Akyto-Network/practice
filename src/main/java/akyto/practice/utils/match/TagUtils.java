@@ -1,9 +1,6 @@
 package akyto.practice.utils.match;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
+import akyto.core.utils.CoreUtils;
 import akyto.practice.duel.Duel;
 import akyto.practice.utils.Utils;
 import org.bukkit.Bukkit;
@@ -12,7 +9,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import akyto.core.utils.CoreUtils;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class TagUtils {
 	

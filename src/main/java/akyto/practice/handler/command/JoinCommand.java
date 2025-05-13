@@ -6,13 +6,12 @@ import akyto.practice.Practice;
 import akyto.practice.handler.manager.TournamentManager;
 import akyto.practice.tournament.TournamentState;
 import akyto.practice.utils.Utils;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import net.md_5.bungee.api.ChatColor;
 
 import java.util.UUID;
 

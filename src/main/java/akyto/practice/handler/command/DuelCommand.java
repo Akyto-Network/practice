@@ -1,24 +1,22 @@
 package akyto.practice.handler.command;
 
 import akyto.core.Core;
-import akyto.practice.handler.manager.RequestManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import com.google.common.collect.Sets;
-
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
+import akyto.practice.handler.manager.RequestManager;
 import akyto.practice.request.Request;
 import akyto.practice.utils.Utils;
+import com.google.common.collect.Sets;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class DuelCommand implements CommandExecutor {
 	

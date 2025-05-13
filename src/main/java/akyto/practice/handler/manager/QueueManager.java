@@ -1,26 +1,22 @@
 package akyto.practice.handler.manager;
 
-import java.util.Map;
-import java.util.UUID;
-import java.util.Map.Entry;
-
 import akyto.core.Core;
-import akyto.core.profile.Profile;
-import akyto.practice.runnable.EloRangeRunnable;
-import akyto.practice.utils.match.EloUtils;
-import lombok.Setter;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
-import com.google.common.collect.Sets;
-
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
 import akyto.practice.kit.Kit;
+import akyto.practice.runnable.EloRangeRunnable;
 import akyto.practice.utils.Utils;
+import akyto.practice.utils.match.EloUtils;
+import com.google.common.collect.Sets;
 import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
+import java.util.Map;
+import java.util.UUID;
 
 @Getter
 public class QueueManager {

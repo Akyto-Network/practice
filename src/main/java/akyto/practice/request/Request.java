@@ -1,11 +1,11 @@
 package akyto.practice.request;
 
-import java.util.UUID;
-
 import akyto.practice.arena.Arena;
 import akyto.practice.kit.Kit;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter @Setter
 public class Request {

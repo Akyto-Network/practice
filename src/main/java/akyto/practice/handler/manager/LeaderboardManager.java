@@ -1,17 +1,17 @@
 package akyto.practice.handler.manager;
 
+import akyto.core.Core;
+import akyto.core.utils.format.FormatUtils;
+import akyto.core.utils.leaderboard.Top;
+import akyto.practice.Practice;
+import gg.potted.idb.DB;
+import lombok.Getter;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-
-import gg.potted.idb.DB;
-import akyto.core.Core;
-import akyto.core.utils.format.FormatUtils;
-import akyto.practice.Practice;
-import akyto.core.utils.leaderboard.Top;
-import lombok.Getter;
 
 // CREDITS TO TETELIE FOR THIS CLASS //
 

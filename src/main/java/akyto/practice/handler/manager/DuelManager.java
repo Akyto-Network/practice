@@ -1,21 +1,8 @@
 package akyto.practice.handler.manager;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-
-import akyto.core.utils.CoreUtils;
-import akyto.practice.utils.match.DurationUtils;
-import com.google.common.collect.Sets;
-import gg.potted.idb.DB;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
-import com.google.common.collect.Lists;
-
 import akyto.core.Core;
 import akyto.core.profile.ProfileState;
+import akyto.core.utils.CoreUtils;
 import akyto.core.utils.format.FormatUtils;
 import akyto.practice.Practice;
 import akyto.practice.arena.Arena;
@@ -29,11 +16,21 @@ import akyto.practice.runnable.SumoRunnable;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.data.DataUtils;
+import akyto.practice.utils.match.DurationUtils;
 import akyto.practice.utils.match.EloUtils;
 import akyto.practice.utils.match.MatchUtils;
 import akyto.practice.utils.match.TagUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import gg.potted.idb.DB;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
 public class DuelManager {

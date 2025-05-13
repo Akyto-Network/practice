@@ -1,10 +1,10 @@
 package akyto.practice.runnable;
 
-import java.util.UUID;
-
 import akyto.practice.Practice;
 import akyto.practice.utils.timer.impl.EnderpearlTimer;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public class ExpBarRunnable implements Runnable {
 	private final Practice plugin = Practice.API;

@@ -1,19 +1,17 @@
 package akyto.practice.handler.command;
 
 import akyto.core.Core;
+import akyto.practice.Practice;
 import akyto.practice.handler.manager.PartyManager;
 import akyto.practice.request.Request;
 import akyto.practice.request.Request.RequestType;
 import akyto.practice.utils.Utils;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import akyto.practice.Practice;
 
 public class PartyCommand implements CommandExecutor {
 	

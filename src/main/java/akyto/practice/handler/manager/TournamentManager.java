@@ -1,6 +1,6 @@
 package akyto.practice.handler.manager;
 
-import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
@@ -8,7 +8,6 @@ import akyto.practice.kit.Kit;
 import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.tournament.TournamentState;
 import akyto.practice.utils.Utils;
-import akyto.core.profile.ProfileState;
 import akyto.practice.utils.chat.MessageHelper;
 import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.match.MatchUtils;

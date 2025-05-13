@@ -1,11 +1,11 @@
 package akyto.practice.handler.manager;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import akyto.practice.utils.timer.Timer;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class TimerManager implements Listener {
     private final Set<Timer> timers = new LinkedHashSet<>();

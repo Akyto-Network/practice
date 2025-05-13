@@ -1,5 +1,7 @@
 package akyto.practice.runnable;
 
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import akyto.practice.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,9 +11,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.scheduler.BukkitTask;
-
-import akyto.core.profile.Profile;
-import akyto.core.profile.ProfileState;
 
 import java.util.Arrays;
 import java.util.HashSet;

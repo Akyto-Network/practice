@@ -1,17 +1,16 @@
 package akyto.practice.duel.database;
 
+import akyto.core.utils.inventory.BukkitSerialization;
+import akyto.practice.Practice;
+import akyto.practice.editor.Edited;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import akyto.core.utils.inventory.BukkitSerialization;
-import akyto.practice.Practice;
-import akyto.practice.editor.Edited;
+import java.util.UUID;
 
 public class FileSetup {
 	

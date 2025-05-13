@@ -1,27 +1,5 @@
 package akyto.practice.board;
 
-import java.text.DecimalFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-
-import akyto.practice.duel.cache.DuelStatistics;
-import akyto.practice.event.EventState;
-import akyto.practice.handler.manager.EventManager;
-import akyto.practice.handler.manager.ProfileManager;
-import akyto.practice.tournament.TournamentEntry;
-import akyto.practice.utils.chat.MessageUtils;
-import akyto.practice.utils.match.DurationUtils;
-import akyto.practice.utils.match.MatchUtils;
-import com.bizarrealex.aether.scoreboard.cooldown.BoardFormat;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import com.bizarrealex.aether.scoreboard.Board;
-import com.bizarrealex.aether.scoreboard.BoardAdapter;
-import com.bizarrealex.aether.scoreboard.cooldown.BoardCooldown;
-
 import akyto.core.Core;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
@@ -30,8 +8,25 @@ import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
 import akyto.practice.duel.cache.DuelState;
+import akyto.practice.event.EventState;
+import akyto.practice.handler.manager.EventManager;
 import akyto.practice.handler.manager.PartyManager;
+import akyto.practice.handler.manager.ProfileManager;
+import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.Utils;
+import akyto.practice.utils.chat.MessageUtils;
+import akyto.practice.utils.match.DurationUtils;
+import com.bizarrealex.aether.scoreboard.Board;
+import com.bizarrealex.aether.scoreboard.BoardAdapter;
+import com.bizarrealex.aether.scoreboard.cooldown.BoardCooldown;
+import com.bizarrealex.aether.scoreboard.cooldown.BoardFormat;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class SideBoard implements BoardAdapter {
     private final Practice plugin;

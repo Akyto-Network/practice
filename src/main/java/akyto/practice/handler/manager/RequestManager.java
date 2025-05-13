@@ -1,11 +1,6 @@
 package akyto.practice.handler.manager;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import akyto.core.utils.CoreUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import akyto.practice.Practice;
 import akyto.practice.request.Request;
 import akyto.practice.request.Request.RequestType;
@@ -17,6 +12,11 @@ import net.md_5.bungee.api.chat.ClickEvent.Action;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 @Getter
 public class RequestManager {

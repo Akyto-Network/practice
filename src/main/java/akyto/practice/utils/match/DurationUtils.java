@@ -1,9 +1,9 @@
 package akyto.practice.utils.match;
 
+import akyto.practice.duel.Duel;
+
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-
-import akyto.practice.duel.Duel;
 
 public class DurationUtils {
 	

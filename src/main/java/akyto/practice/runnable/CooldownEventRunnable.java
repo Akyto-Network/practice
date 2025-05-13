@@ -1,7 +1,7 @@
 package akyto.practice.runnable;
 
-import akyto.practice.event.EventState;
 import akyto.practice.Practice;
+import akyto.practice.event.EventState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;

@@ -6,13 +6,10 @@ import akyto.practice.Practice;
 import akyto.practice.utils.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Objects;
 
 public class BuildCommand implements CommandExecutor {
 

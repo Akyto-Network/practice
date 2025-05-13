@@ -1,10 +1,11 @@
 package akyto.practice.runnable;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.UUID;
-
+import akyto.practice.Practice;
+import akyto.practice.duel.Duel;
+import akyto.practice.duel.cache.DuelState;
+import akyto.practice.kit.KitInterface;
 import akyto.practice.utils.Utils;
+import akyto.practice.utils.match.DurationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,11 +13,9 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import akyto.practice.Practice;
-import akyto.practice.duel.Duel;
-import akyto.practice.duel.cache.DuelState;
-import akyto.practice.kit.KitInterface;
-import akyto.practice.utils.match.DurationUtils;
+import java.util.List;
+import java.util.Timer;
+import java.util.UUID;
 
 public class CountdownRunnable extends BukkitRunnable {
 	

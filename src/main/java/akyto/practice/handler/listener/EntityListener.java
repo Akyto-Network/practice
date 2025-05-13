@@ -1,12 +1,18 @@
 package akyto.practice.handler.listener;
 
 import akyto.core.Core;
-import akyto.core.utils.format.FormatUtils;
-import akyto.practice.event.EventState;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
+import akyto.core.utils.format.FormatUtils;
+import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
+import akyto.practice.duel.cache.DuelState;
+import akyto.practice.duel.cache.DuelStatistics;
+import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
 import akyto.practice.handler.manager.ProfileManager;
+import akyto.practice.utils.Utils;
 import akyto.spigot.aSpigot;
 import akyto.spigot.handler.MovementHandler;
 import net.minecraft.server.v1_8_R3.PacketPlayInFlying;
@@ -19,13 +25,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerPickupItemEvent;
-
-import akyto.core.profile.Profile;
-import akyto.core.profile.ProfileState;
-import akyto.practice.Practice;
-import akyto.practice.duel.cache.DuelState;
-import akyto.practice.duel.cache.DuelStatistics;
-import akyto.practice.utils.Utils;
 import org.bukkit.inventory.ItemStack;
 
 public class EntityListener implements Listener {

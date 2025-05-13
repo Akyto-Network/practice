@@ -1,23 +1,22 @@
 package akyto.practice.handler.manager;
 
-import java.util.UUID;
-
-import akyto.practice.event.EventState;
-import akyto.practice.tournament.TournamentEntry;
-import akyto.practice.tournament.TournamentState;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.core.utils.item.ItemUtils;
 import akyto.practice.Practice;
+import akyto.practice.event.EventState;
 import akyto.practice.kit.Kit;
 import akyto.practice.kit.KitInterface;
+import akyto.practice.tournament.TournamentEntry;
+import akyto.practice.tournament.TournamentState;
 import akyto.practice.utils.Utils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
 
 public class ItemManager {
 	

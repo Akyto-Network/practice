@@ -1,9 +1,9 @@
 package akyto.practice.utils.data;
 
-import java.util.UUID;
-
 import akyto.practice.kit.Kit;
 import akyto.practice.utils.Utils;
+
+import java.util.UUID;
 
 public class DataUtils {
 	

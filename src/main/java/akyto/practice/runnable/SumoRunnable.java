@@ -1,15 +1,14 @@
 package akyto.practice.runnable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
+import akyto.practice.Practice;
+import akyto.practice.duel.Duel;
 import akyto.practice.duel.cache.DuelState;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import akyto.practice.Practice;
-import akyto.practice.duel.Duel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class SumoRunnable extends BukkitRunnable {
 	

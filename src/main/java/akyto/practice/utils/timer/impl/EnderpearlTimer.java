@@ -1,12 +1,7 @@
 package akyto.practice.utils.timer.impl;
 
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
-import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.cache.DuelState;
 import akyto.practice.utils.Utils;
@@ -27,6 +22,10 @@ import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public class EnderpearlTimer extends PlayerTimer implements Listener {
     public EnderpearlTimer() {

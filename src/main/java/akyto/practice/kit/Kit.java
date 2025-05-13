@@ -1,12 +1,11 @@
 package akyto.practice.kit;
 
-import java.util.List;
-
+import akyto.practice.Practice;
+import akyto.practice.arena.ArenaType;
 import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 
-import akyto.practice.Practice;
-import akyto.practice.arena.ArenaType;
+import java.util.List;
 
 public abstract class Kit {
 

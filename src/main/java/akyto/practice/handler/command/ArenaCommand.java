@@ -1,8 +1,10 @@
 package akyto.practice.handler.command;
 
-import com.google.common.collect.ImmutableList;
-
 import akyto.core.utils.location.LocationSerializer;
+import akyto.practice.Practice;
+import akyto.practice.arena.Arena;
+import akyto.practice.arena.ArenaType;
+import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.Pair;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.ChatColor;
@@ -13,18 +15,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
-import akyto.practice.Practice;
-import akyto.practice.arena.Arena;
-import akyto.practice.arena.ArenaType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public class ArenaCommand implements CommandExecutor {
