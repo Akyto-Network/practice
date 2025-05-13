@@ -117,7 +117,7 @@ public class TournamentManager implements Listener {
             }, 120L);
         }
         entry.getParticipants().add(player.getUniqueId());
-        MessageHelper.notifyUUID(entry.getParticipants(), prefix + player.getName() + " &ajoin!");
+        MessageHelper.notifyUUID(entry.getParticipants(), prefix + player.getName() + "&a join!");
         this.main.getManagerHandler().getItemManager().giveItems(player.getUniqueId(), false);
     }
 

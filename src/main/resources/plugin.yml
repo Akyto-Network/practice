@@ -1,7 +1,7 @@
 name: Addon
 authors: [kezukdev, Greentor]
 version: 1.0
-description: Practice api maded by Akyto developers teams.
+description: Practice api made by Akyto developers teams.
 main: akyto.practice.Practice
 depend:
   - Universal

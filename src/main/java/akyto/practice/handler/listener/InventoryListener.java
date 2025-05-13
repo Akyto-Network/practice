@@ -88,7 +88,7 @@ public class InventoryListener implements Listener {
 			final int disallowedRN = 3;
 			if (inventory.equals(inventoryManager.getQueueInventory()[0])) {
 				if (event.getSlot() == disallowedRN) {
-					event.getWhoClicked().sendMessage(ChatColor.RED + "Unvailable Right Now.");
+					event.getWhoClicked().sendMessage(ChatColor.RED + "Unavailable right now.");
 					event.getWhoClicked().closeInventory();
 					return;
 				}
@@ -97,7 +97,7 @@ public class InventoryListener implements Listener {
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[1])) {
 				if (event.getSlot() == disallowedRN) {
-					event.getWhoClicked().sendMessage(ChatColor.RED + "Unvailable Right Now.");
+					event.getWhoClicked().sendMessage(ChatColor.RED + "Unavailable right now.");
 					event.getWhoClicked().closeInventory();
 					return;
 				}
@@ -106,7 +106,7 @@ public class InventoryListener implements Listener {
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[2])) {
 				if (event.getSlot() == disallowedRN) {
-					event.getWhoClicked().sendMessage(ChatColor.RED + "Unvailable Right Now.");
+					event.getWhoClicked().sendMessage(ChatColor.RED + "Unavailable right now.");
 					event.getWhoClicked().closeInventory();
 					return;
 				}

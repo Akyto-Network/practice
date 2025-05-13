@@ -19,7 +19,7 @@ public class TournamentCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player playerSender)) {
-            sender.sendMessage(ChatColor.RED + "Unvailable for CMD");
+            sender.sendMessage(ChatColor.RED + "Unavailable for CMD");
             return false;
         }
         final Player player = Bukkit.getPlayer(sender.getName());

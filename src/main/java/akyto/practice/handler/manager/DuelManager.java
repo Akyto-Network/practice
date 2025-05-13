@@ -152,28 +152,28 @@ public class DuelManager {
 	public void endMultiple(final UUID winner) {
 		final Duel duel = Utils.getDuelByUUID(winner);
 		final Set<UUID> winners = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getFirst()) : Sets.newHashSet(duel.getSecond());
-		final Set<UUID> loosers = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getSecond()) : Sets.newHashSet(duel.getFirst());
+		final Set<UUID> losers = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getSecond()) : Sets.newHashSet(duel.getFirst());
 		duel.getWinner().addAll(winners);
 		if (duel.getTimer() != null){
 			duel.getTimer().cancel();
 		}
-		winners.forEach(uuid -> Practice.API.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, loosers.stream().toList().getFirst()));
+		winners.forEach(uuid -> Practice.API.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, losers.stream().toList().getFirst()));
 		duel.setState(DuelState.FINISHING);
-		MessageUtils.sendPartyComponent(Arrays.asList(winners, loosers));
-		Arrays.asList(winners, loosers).forEach(uuids -> uuids.forEach(uuid -> {
+		MessageUtils.sendPartyComponent(Arrays.asList(winners, losers));
+		Arrays.asList(winners, losers).forEach(uuids -> uuids.forEach(uuid -> {
 			if (Bukkit.getPlayer(uuid) != null) {
 				Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKitNames());
 			}
 		}));
-		Arrays.asList(winners, loosers).forEach(teams -> teams.forEach(players -> {
+		Arrays.asList(winners, losers).forEach(teams -> teams.forEach(players -> {
 			if(Bukkit.getPlayer(players) == null) {
 				if (winners.contains(players)) winners.remove(players);
-				if (loosers.contains(players)) loosers.remove(players);
+				if (losers.contains(players)) losers.remove(players);
 			}
 		}));
 		if (!duel.getDuelType().equals(DuelType.FFA)) {
-			TagUtils.clearEntries(Arrays.asList(winners, loosers));
+			TagUtils.clearEntries(Arrays.asList(winners, losers));
 		}
-		new RespawnRunnable(Arrays.asList(winners, loosers), duel.getSpectators().stream().toList(), this.main).runTaskLater(this.main, 70L);
+		new RespawnRunnable(Arrays.asList(winners, losers), duel.getSpectators().stream().toList(), this.main).runTaskLater(this.main, 70L);
 	}
 }

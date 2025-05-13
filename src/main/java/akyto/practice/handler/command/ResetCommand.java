@@ -19,7 +19,7 @@ public class ResetCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!sender.hasPermission("akyto.stats.management")) {
-            sender.sendMessage(ChatColor.RED + "Insuffiscient permissions!");
+            sender.sendMessage(ChatColor.RED + "Insufficient permissions!");
             return false;
         }
         if (args.length != 1) {

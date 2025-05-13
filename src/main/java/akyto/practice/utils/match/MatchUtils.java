@@ -218,7 +218,7 @@ public class MatchUtils {
 		final TournamentManager tournamentManager = Practice.API.getManagerHandler().getTournamentManager();
 		Duel duel = Utils.getDuelByUUID(killed.getUniqueId());
 
-		MessageHelper.notifyUUID(tournamentEntry.getParticipants(), TournamentManager.prefix + (killer != null ? "&a" + killer.getName() : "&aEnvironment") + " &rhas eliminated &c" + killed.getName() + " &r!");
+		MessageHelper.notifyUUID(tournamentEntry.getParticipants(), TournamentManager.prefix + (killer != null ? "&a" + killer.getName() : "&aEnvironment") + "&r has eliminated &c" + killed.getName() + " &r!");
 		tournamentManager.getActiveDuels().remove(duel);
 
 		if (duel != null) {
