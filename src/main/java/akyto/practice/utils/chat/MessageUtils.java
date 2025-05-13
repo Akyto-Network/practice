@@ -187,7 +187,7 @@ public class MessageUtils {
 
 	public static String determineTournamentStage(TournamentEntry entry) {
 		int participantsCount = entry.getParticipants().size();
-		String stage = "";
+		String stage;
 
 		switch (participantsCount) {
 			case 2:

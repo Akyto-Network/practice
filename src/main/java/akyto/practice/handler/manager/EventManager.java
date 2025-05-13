@@ -91,7 +91,7 @@ public class EventManager {
         if (this.getEventState().equals(EventState.WAITING)) {
             if (this.type.equals("sumo")) this.alives.add(joiner);
             if (this.members.size() == this.minimumToStart) {
-                new EventRunnable(main, this.type).runTaskTimerAsynchronously(main, 20L, 20L);;
+                new EventRunnable(main, this.type).runTaskTimerAsynchronously(main, 20L, 20L);
             }
         }
         profile.setProfileState(ProfileState.EVENT);
@@ -195,7 +195,7 @@ public class EventManager {
     }
 
     public void applyCooldown() {
-        this.cooldown = Long.valueOf(System.currentTimeMillis() + 1800 * 1000);
+        this.cooldown = System.currentTimeMillis() + 1800 * 1000;
     }
 
 }
