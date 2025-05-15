@@ -12,9 +12,11 @@ import akyto.practice.tournament.TournamentState;
 import akyto.practice.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 import java.util.UUID;
 
@@ -97,7 +99,17 @@ public class ItemManager {
 					player.getInventory().setItem(8, ItemUtils.createItems(Material.BOOK, ChatColor.DARK_GRAY + "Default Kit."));
 				}
 				else {
-					player.getInventory().setArmorContents(kitI.armor());
+					final ItemStack[] armor = kitI.armor();
+					if (Utils.getDuelByUUID(player.getUniqueId()).getSecond().contains(player.getUniqueId())) {
+						for (ItemStack it : armor) {
+							if (it == null || !(it.getItemMeta() instanceof LeatherArmorMeta))
+								continue;
+							LeatherArmorMeta lam = (LeatherArmorMeta) it.getItemMeta();
+							lam.setColor(Color.RED);
+							it.setItemMeta(lam);
+						}
+					}
+					player.getInventory().setArmorContents(armor);
 					final ItemStack[] content = kitI.content();
 					for (int i = 0; i < content.length; i++) {
 						ItemStack mat = content[i];
@@ -113,7 +125,17 @@ public class ItemManager {
 				}
 			}
 			else {
-				player.getInventory().setArmorContents(kitI.armor());
+				final ItemStack[] armor = kitI.armor();
+				if (Utils.getDuelByUUID(player.getUniqueId()).getSecond().contains(player.getUniqueId())) {
+					for (ItemStack it : armor) {
+						if (it == null || !(it.getItemMeta() instanceof LeatherArmorMeta))
+							continue;
+						LeatherArmorMeta lam = (LeatherArmorMeta) it.getItemMeta();
+						lam.setColor(Color.RED);
+						it.setItemMeta(lam);
+					}
+				}
+				player.getInventory().setArmorContents(armor);
 				final ItemStack[] content = kitI.content();
 				for (int i = 0; i < content.length; i++) {
 					ItemStack mat = content[i];

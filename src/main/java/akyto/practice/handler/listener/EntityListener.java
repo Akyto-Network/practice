@@ -69,27 +69,8 @@ public class EntityListener implements Listener {
 						Location corner2 = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getCorner2().toBukkitLocation() : duel.getArena().getCorner2().toBukkitLocation();
 						if (!MatchUtils.isLocationInZone(from, corner1, corner2) && !player.getGameMode().equals(GameMode.ADVENTURE)) {
 							final UUID oppsID = duel.getFirst().contains(player.getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
-							final Location locationFirst = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation();
-							final Location locationSecond = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation();
+							MatchUtils.deathBedfight(player, duel);
 							final DuelStatistics statistics = main.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
-							if (!statistics.isBedBroke()) {
-								Location spawnLocation = duel.getFirst().contains(player.getUniqueId()) ? locationFirst : locationSecond;
-								spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
-								player.setGameMode(GameMode.ADVENTURE);
-								player.setAllowFlight(true);
-								player.setFlying(true);
-								Bukkit.getPlayer(oppsID).hidePlayer(player);
-								Location finalSpawnLocation = spawnLocation;
-								Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
-									main.getManagerHandler().getItemManager().giveItems(player.getUniqueId(), false);
-									player.setAllowFlight(false);
-									player.setFlying(false);
-									player.setHealth(player.getMaxHealth());
-									player.setGameMode(GameMode.SURVIVAL);
-									player.teleport(finalSpawnLocation);
-									Bukkit.getPlayer(oppsID).showPlayer(player);
-								}, 100L);
-							}
 							final net.md_5.bungee.api.ChatColor colorKilled = duel.getFirst().contains(player.getUniqueId()) ? net.md_5.bungee.api.ChatColor.BLUE : net.md_5.bungee.api.ChatColor.RED;
 							final List<UUID> duelPlayers = Lists.newArrayList();
 							duelPlayers.addAll(duel.getFirst());
@@ -187,7 +168,7 @@ public class EntityListener implements Listener {
 					return;
 				}
 			}
-			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT)) {
+			if (victimProfile.isInState(ProfileState.FIGHT) && profileDamager.isInState(ProfileState.FIGHT) && !((Player) event.getDamager()).getGameMode().equals(GameMode.ADVENTURE)) {
 				if (Core.API.getManagerHandler().getProfileManager().getFrozen().contains(event.getEntity().getUniqueId())) {
 					event.getDamager().sendMessage(ChatColor.RED + event.getEntity().getName() + " is currently frozen.");
 					event.setCancelled(true);
@@ -210,34 +191,34 @@ public class EntityListener implements Listener {
 						}
 					}
 					if (event.getCause().equals(DamageCause.ENTITY_ATTACK)) {
+						if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("boxing")) {
+							event.setDamage(0.0f);
+							if (duel.getKit().name().equals("boxing")) {
+								final ProfileManager profileManager = main.getManagerHandler().getProfileManager();
+								final Long nextHitTick = profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).getNextHitTick();
+								if (nextHitTick != 0L && nextHitTick  > System.currentTimeMillis()) {
+									return;
+								}
+								profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).updateNextHitTick();
+								final int hit = profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).getHits();
+								final float hitExp = hit / 100.0f;
+								Bukkit.getPlayer(event.getDamager().getUniqueId()).setExp(hitExp);
+								Bukkit.getPlayer(event.getDamager().getUniqueId()).setLevel(hit);
+								if (hit >= 100) {
+									if (duel.getDuelType().equals(Duel.DuelType.SINGLE)) {
+										main.getManagerHandler().getDuelManager().endSingle(event.getDamager().getUniqueId());
+									}
+									else {
+										main.getManagerHandler().getDuelManager().endMultiple(event.getDamager().getUniqueId());
+									}
+								}
+							}
+						}
 						statisticsDamager.setHits(statisticsDamager.getHits()+1);
 						statisticsDamager.setCombo(statisticsDamager.getCombo()+1);
 						statisticsVictim.setCombo(0);
 						if (statisticsDamager.getCombo() > statisticsDamager.getLongestHit()) {
 							statisticsDamager.setLongestHit(statisticsDamager.getCombo());
-						}
-					}
-					if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("boxing")) {
-						event.setDamage(0.0f);
-						if (duel.getKit().name().equals("boxing")) {
-							final ProfileManager profileManager = main.getManagerHandler().getProfileManager();
-							final Long nextHitTick = profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).getNextHitTick();
-							if (nextHitTick != 0L && nextHitTick  > System.currentTimeMillis()) {
-								return;
-							}
-							profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).updateNextHitTick();
-							final int hit = profileManager.getDuelStatistics().get(event.getDamager().getUniqueId()).getHits();
-							final float hitExp = hit / 100.0f;
-							Bukkit.getPlayer(event.getDamager().getUniqueId()).setExp(hitExp);
-							Bukkit.getPlayer(event.getDamager().getUniqueId()).setLevel(hit);
-							if (hit >= 100) {
-								if (duel.getDuelType().equals(Duel.DuelType.SINGLE)) {
-									main.getManagerHandler().getDuelManager().endSingle(event.getDamager().getUniqueId());
-								}
-								else {
-									main.getManagerHandler().getDuelManager().endMultiple(event.getDamager().getUniqueId());
-								}
-							}
 						}
 					}
 					return;
@@ -272,7 +253,7 @@ public class EntityListener implements Listener {
 								player.getInventory().addItem(new ItemStack(Material.ARROW));
 								player.updateInventory();
 							}
-							if (profileDamager.getKill() >= 5) {
+							if (profileDamager.getKill() >= 25) {
 								eventManager.endMatch(shooter.getUniqueId(), event.getEntity().getUniqueId());
 							}
 							return;

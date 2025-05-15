@@ -454,7 +454,7 @@ public class PlayerListener implements Listener {
 				if (!killed.getLastDamageCause().getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)) {
 					victimProfile.setDeath(victimProfile.getDeath()+1);
 					profileDamager.setKill(profileDamager.getKill()+1);
-					if (profileDamager.getKill() >= 5) {
+					if (profileDamager.getKill() >= 25) {
 						eventManager.endMatch(killer.getUniqueId(), killed.getUniqueId());
 						return;
 					}
@@ -469,7 +469,7 @@ public class PlayerListener implements Listener {
 				}
 				killed.spigot().respawn();
 				Random random = new Random();
-				int randomNumber = random.nextInt(16);
+				int randomNumber = random.nextInt(15);
 				Bukkit.getScheduler().runTaskLater(main, () -> {
 					killed.teleport(this.main.getOitcLoc().get(randomNumber).getLocation());
 					this.main.getManagerHandler().getItemManager().giveItems(killed.getUniqueId(), false);
@@ -540,25 +540,7 @@ public class PlayerListener implements Listener {
 					if (inBedfight) {
 						final DuelStatistics statistics = main.getManagerHandler().getProfileManager().getDuelStatistics().get(event.getEntity().getUniqueId());
 						if (!statistics.isBedBroke()) {
-							final Location locationFirst = Utils.getArenaCopyByPlayer(killed.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation();
-							final Location locationSecond = Utils.getArenaCopyByPlayer(killed.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation();
-							Location spawnLocation = duel.getFirst().contains(killed.getUniqueId()) ? locationFirst : locationSecond;
-							spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
-							killed.setGameMode(GameMode.ADVENTURE);
-							killed.setAllowFlight(true);
-							killed.setFlying(true);
-							Location finalSpawnLocation = spawnLocation;
-							Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
-								killed.setAllowFlight(false);
-								killed.setFlying(false);
-								killed.setHealth(killed.getMaxHealth());
-								killed.setGameMode(GameMode.SURVIVAL);
-								killed.teleport(finalSpawnLocation);
-								main.getManagerHandler().getItemManager().giveItems(killed.getUniqueId(), false);
-								if (killer != null) {
-									killer.showPlayer(killed);
-								}
-							}, 100L);
+							MatchUtils.deathBedfight(killed, duel);
 							final UUID oppsID = duel.getFirst().contains(killed.getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
 							final ChatColor colorKilled = duel.getFirst().contains(killed.getUniqueId()) ? ChatColor.BLUE : ChatColor.RED;
 							final ChatColor colorKiller = duel.getFirst().contains(oppsID) ? ChatColor.BLUE : ChatColor.RED;

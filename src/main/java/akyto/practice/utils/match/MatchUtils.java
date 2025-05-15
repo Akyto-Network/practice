@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import akyto.core.Core;
 import akyto.practice.duel.cache.DuelState;
+import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.handler.manager.PartyManager;
 import akyto.practice.handler.manager.QueueManager;
 import akyto.practice.handler.manager.TournamentManager;
@@ -16,6 +17,7 @@ import akyto.practice.utils.chat.MessageUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -365,5 +367,33 @@ public class MatchUtils {
 			}
 		}
 		return location;
+	}
+
+	// BEDFIGHT
+
+	public static void deathBedfight(final Player player, final Duel duel) {
+		final UUID oppsID = duel.getFirst().contains(player.getUniqueId()) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
+		final Location locationFirst = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation();
+		final Location locationSecond = Utils.getArenaCopyByPlayer(player.getUniqueId()) != null ? Utils.getArenaCopyByPlayer(player.getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation();
+		final DuelStatistics statistics = Practice.API.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
+		if (!statistics.isBedBroke()) {
+			Location spawnLocation = duel.getFirst().contains(player.getUniqueId()) ? locationFirst : locationSecond;
+			spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
+			player.setGameMode(GameMode.ADVENTURE);
+			player.setAllowFlight(true);
+			player.setFlying(true);
+			Bukkit.getPlayer(oppsID).hidePlayer(player);
+			player.getInventory().clear();
+			Location finalSpawnLocation = spawnLocation;
+			Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
+				Practice.API.getManagerHandler().getItemManager().giveItems(player.getUniqueId(), false);
+				player.setAllowFlight(false);
+				player.setFlying(false);
+				player.setHealth(player.getMaxHealth());
+				player.setGameMode(GameMode.SURVIVAL);
+				player.teleport(finalSpawnLocation);
+				Bukkit.getPlayer(oppsID).showPlayer(player);
+			}, 100L);
+		}
 	}
 }

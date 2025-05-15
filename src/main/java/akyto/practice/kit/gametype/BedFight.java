@@ -5,9 +5,12 @@ import akyto.practice.kit.Kit;
 import akyto.practice.kit.KitInterface;
 import com.google.common.collect.Lists;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -57,7 +60,19 @@ public class BedFight extends Kit implements KitInterface {
 
     @Override
     public ItemStack[] armor() {
-        return new ItemStack[0];
+        ItemStack helmet = new ItemStack(Material.LEATHER_HELMET);
+        ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
+        ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS);
+        ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
+        ItemStack[] armor = {boots, leggings, chestplate, helmet};
+        for (ItemStack it : armor) {
+            if (it == null || !(it.getItemMeta() instanceof LeatherArmorMeta))
+                continue;
+            LeatherArmorMeta lam = (LeatherArmorMeta) it.getItemMeta();
+            lam.setColor(Color.BLUE);
+            it.setItemMeta(lam);
+        }
+        return armor;
     }
 
     @Override

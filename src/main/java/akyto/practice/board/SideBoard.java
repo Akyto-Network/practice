@@ -8,6 +8,7 @@ import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
 import akyto.practice.duel.cache.DuelState;
+import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
 import akyto.practice.handler.manager.PartyManager;
@@ -16,6 +17,7 @@ import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.match.DurationUtils;
+import akyto.practice.utils.match.MatchUtils;
 import com.bizarrealex.aether.scoreboard.Board;
 import com.bizarrealex.aether.scoreboard.BoardAdapter;
 import com.bizarrealex.aether.scoreboard.cooldown.BoardCooldown;
@@ -110,11 +112,23 @@ public class SideBoard implements BoardAdapter {
 
         if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
         	if (duel.getDuelType().equals(DuelType.SINGLE)) {
-                board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(opps));
+                if (!duel.getKit().name().equals("bedfight") || !duel.getKit().name().equals("boxing")) {
+                    board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(opps));
+                }
+                if (!duel.getKit().name().equals("bedfight")) {
+                    final DuelStatistics statisticsPlayer = plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
+                    board.add(MessageUtils.getColorTeam(duel, player.getUniqueId()) + ChatColor.GRAY + ": " + (statisticsPlayer.isBedBroke() ? ChatColor.RED + "✖" : ChatColor.GREEN + "✔"));
+                    final String oppsColor = MessageUtils.getColorTeam(duel, player.getUniqueId()).equals(ChatColor.BLUE + "Blue") ? ChatColor.RED + "Red" : ChatColor.BLUE + "Blue";
+                    final DuelStatistics statisticsOpps = plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(opps);
+                    board.add(oppsColor + ChatColor.GRAY + ": " + (statisticsOpps.isBedBroke() ? ChatColor.RED + "✖" : ChatColor.GREEN + "✔"));
+                    board.add(" ");
+                    board.add(ChatColor.DARK_GRAY + "Team" + ChatColor.GRAY + ": " + MessageUtils.getColorTeam(duel, player.getUniqueId()));
+                }
                 if (duel.getKit().name().equals("boxing")) {
                     final ProfileManager profileManager = plugin.getManagerHandler().getProfileManager();
                     board.add(" ");
                     board.add(ChatColor.DARK_GRAY.toString() + ChatColor.BOLD + "Hits:");
+                    board.add(ChatColor.GRAY + " * " + ChatColor.GRAY + "Their: " + profileManager.getDuelStatistics().get(opps).getHits());
                     board.add(" " + ChatColor.GREEN + profileManager.getDuelStatistics().get(player.getUniqueId()).getHits() + ChatColor.GRAY + " vs " + ChatColor.RED + profileManager.getDuelStatistics().get(opps).getHits());
                 }
         	}
