@@ -97,7 +97,6 @@ public class TournamentManager implements Listener {
             }
         }
 
-        // FIX INFINITY FUCKED UP SLEEPY KEZUK
         while (!remainingPlayers.isEmpty()) {
             List<UUID> team = new ArrayList<>();
             int spotsLeft = teamSize;
@@ -115,6 +114,7 @@ public class TournamentManager implements Listener {
             }
         }
 
+        // BRAIN ROT KEZUK BRAIN GOT FUCK IM SLEEPY
         List<List<UUID>> mergedTeams = new ArrayList<>();
         for (List<UUID> team : originalTeams) {
             if (team.size() == teamSize) {
@@ -122,9 +122,23 @@ public class TournamentManager implements Listener {
             } else {
                 for (List<UUID> otherTeam : originalTeams) {
                     if (otherTeam != team && otherTeam.size() + team.size() <= teamSize) {
-                        otherTeam.addAll(team);
-                        mergedTeams.add(otherTeam);
-                        break;
+                        boolean canMerge = true;
+                        for (UUID playerId : team) {
+                            for (List<UUID> mergedTeam : mergedTeams) {
+                                if (mergedTeam.contains(playerId) && mergedTeam.size() == teamSize) {
+                                    canMerge = false;
+                                    break;
+                                }
+                            }
+                            if (!canMerge) {
+                                break;
+                            }
+                        }
+                        if (canMerge) {
+                            otherTeam.addAll(team);
+                            mergedTeams.add(otherTeam);
+                            break;
+                        }
                     }
                 }
                 if (!mergedTeams.contains(team)) {
@@ -153,7 +167,7 @@ public class TournamentManager implements Listener {
         }
 
         if (!remainingTeams.isEmpty()) {
-            List<UUID> teamWithBye = remainingTeams.get(0);
+            List<UUID> teamWithBye = remainingTeams.getFirst();
             MessageHelper.notifyUUID(teamWithBye, prefix + "&aYour team gets a bye in this round!");
         }
     }
