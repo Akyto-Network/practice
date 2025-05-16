@@ -230,6 +230,11 @@ public class MatchUtils {
 			final Set<UUID> winner = duel.getFirst().contains(killed.getUniqueId()) ? duel.getSecond() : duel.getFirst();
 			final Set<UUID> loser = duel.getFirst().contains(killed.getUniqueId()) ? duel.getFirst() : duel.getSecond();
 			tournamentEntry.getParticipants().removeAll(loser);
+			loser.forEach(id -> {
+				if (Bukkit.getPlayer(id) != null) {
+					Bukkit.getPlayer(id).sendMessage(ChatColor.RED + "Your team was eliminated from the tournament!");
+				}
+			});
 			tournamentEntry.getOriginalTeams().removeIf(team -> team.containsAll(loser));
 			TagUtils.clearEntries(Arrays.asList(winner, loser));
 
@@ -279,7 +284,7 @@ public class MatchUtils {
 					player.sendMessage(ChatColor.GREEN + "Next round gonna start!");
 				}
 			});
-			Bukkit.getScheduler().runTaskLaterAsynchronously(Practice.API, () -> runTournamentRound(tournamentEntry), 120L);
+			Bukkit.getScheduler().runTaskLater(Practice.API, () -> runTournamentRound(tournamentEntry), 120L);
 		}
 	}
 

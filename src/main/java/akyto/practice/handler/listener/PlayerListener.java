@@ -374,7 +374,7 @@ public class PlayerListener implements Listener {
 					if (event.getBlock().getType().equals(Material.WOOD) || event.getBlock().getType().equals(Material.WOOL)) return;
 					if (event.getBlock().getType().equals(Material.BED_BLOCK)) {
 						final Location isLocation = duel.getFirst().contains(event.getPlayer().getUniqueId()) ? (Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation()) :  (Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation());
-						if (MatchUtils.isNearSpawnLocation(event.getBlock().getLocation(), isLocation, 10)) {
+						if (MatchUtils.isNearSpawnLocation(event.getBlock().getLocation(), isLocation, 15)) {
 							event.getPlayer().sendMessage(ChatColor.RED + "You cannot break your bed!");
 							event.setCancelled(true);
 							return;

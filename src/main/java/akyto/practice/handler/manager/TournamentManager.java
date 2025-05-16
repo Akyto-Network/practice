@@ -176,17 +176,6 @@ public class TournamentManager implements Listener {
         }
     }
 
-    public void advanceTeamToNextRound(TournamentEntry entry, List<UUID> winningTeam) {
-        List<List<UUID>> remainingTeams = entry.getOriginalTeams().stream()
-                .filter(team -> !isTeamEliminated(entry, team))
-                .collect(Collectors.toList());
-        createTournamentMatches(entry);
-    }
-
-    private boolean isTeamEliminated(TournamentEntry entry, List<UUID> team) {
-        return false;
-    }
-
     public Collection<TournamentEntry> getAllTournaments() {
         return tournaments.values();
     }
