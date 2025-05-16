@@ -114,35 +114,39 @@ public class TournamentManager implements Listener {
             }
         }
 
-        // BRAIN ROT KEZUK BRAIN GOT FUCK IM SLEEPY
         List<List<UUID>> mergedTeams = new ArrayList<>();
-        for (List<UUID> team : originalTeams) {
-            if (team.size() == teamSize) {
-                mergedTeams.add(team);
+        Set<UUID> usedPlayers = new HashSet<>();
+
+        List<List<UUID>> teamsToProcess = new ArrayList<>(originalTeams);
+
+        for (int i = 0; i < teamsToProcess.size(); i++) {
+            List<UUID> teamA = teamsToProcess.get(i);
+
+            if (teamA.stream().anyMatch(usedPlayers::contains)) continue;
+
+            if (teamA.size() == teamSize) {
+                mergedTeams.add(teamA);
+                usedPlayers.addAll(teamA);
             } else {
-                for (List<UUID> otherTeam : originalTeams) {
-                    if (otherTeam != team && otherTeam.size() + team.size() <= teamSize) {
-                        boolean canMerge = true;
-                        for (UUID playerId : team) {
-                            for (List<UUID> mergedTeam : mergedTeams) {
-                                if (mergedTeam.contains(playerId) && mergedTeam.size() == teamSize) {
-                                    canMerge = false;
-                                    break;
-                                }
-                            }
-                            if (!canMerge) {
-                                break;
-                            }
-                        }
-                        if (canMerge) {
-                            otherTeam.addAll(team);
-                            mergedTeams.add(otherTeam);
-                            break;
-                        }
+                boolean merged = false;
+                for (int j = i + 1; j < teamsToProcess.size(); j++) {
+                    List<UUID> teamB = teamsToProcess.get(j);
+
+                    if (teamB.stream().anyMatch(usedPlayers::contains)) continue;
+
+                    if (teamA.size() + teamB.size() == teamSize) {
+                        List<UUID> mergedTeam = new ArrayList<>();
+                        mergedTeam.addAll(teamA);
+                        mergedTeam.addAll(teamB);
+                        mergedTeams.add(mergedTeam);
+                        usedPlayers.addAll(mergedTeam);
+                        merged = true;
+                        break;
                     }
                 }
-                if (!mergedTeams.contains(team)) {
-                    mergedTeams.add(team);
+                if (!merged && !usedPlayers.containsAll(teamA)) {
+                    mergedTeams.add(teamA);
+                    usedPlayers.addAll(teamA);
                 }
             }
         }
