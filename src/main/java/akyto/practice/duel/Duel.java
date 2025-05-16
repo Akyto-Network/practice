@@ -38,8 +38,6 @@ public class Duel {
 		this.duelType = type;
 		this.first = first;
 		this.second = second;
-		System.out.println(first);
-		System.out.println(second);
 		this.spectators = new HashSet<>();
 		this.dropped = new HashSet<>();
 		this.ranked = ranked;

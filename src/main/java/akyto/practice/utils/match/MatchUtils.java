@@ -227,6 +227,7 @@ public class MatchUtils {
 			final Set<UUID> winner = duel.getFirst().contains(killed.getUniqueId()) ? duel.getSecond() : duel.getFirst();
 			final Set<UUID> loser = duel.getFirst().contains(killed.getUniqueId()) ? duel.getFirst() : duel.getSecond();
 			tournamentEntry.getParticipants().removeAll(loser);
+			tournamentEntry.getOriginalTeams().removeIf(team -> team.containsAll(loser));
 			TagUtils.clearEntries(Arrays.asList(winner, loser));
 
 			if (duel.getTimer() != null) {
@@ -255,7 +256,7 @@ public class MatchUtils {
 			}, 20L);
 		}
 
-		if (tournamentManager.getActiveDuels().isEmpty()) {
+		if (tournamentManager.getActiveDuels().isEmpty() && !tournamentEntry.isCountdownStarted()) {
 			if (tournamentEntry.getParticipants().size() <= teamSize) {
 				UUID winnerId = tournamentEntry.getParticipants().getFirst();
 				Bukkit.broadcastMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
@@ -272,7 +273,7 @@ public class MatchUtils {
 					player.sendMessage(ChatColor.GREEN + "Next round gonna start!");
 				}
 			});
-			Bukkit.getScheduler().runTaskLater(Practice.API, () -> runTournamentRound(tournamentEntry), 120L);
+			Bukkit.getScheduler().runTaskLaterAsynchronously(Practice.API, () -> runTournamentRound(tournamentEntry), 120L);
 		}
 	}
 
@@ -300,20 +301,31 @@ public class MatchUtils {
 			entry.getParticipants().remove(byePlayer);
 		}
 
-		Collections.shuffle(entry.getParticipants());
+		List<List<UUID>> originalTeams = entry.getOriginalTeams();
+		Collections.shuffle(originalTeams);
 
-		for (int i = 0; i < entry.getParticipants().size(); i += 2 * entry.getTeamSize()) {
-			List<UUID> team1 = new ArrayList<>(entry.getParticipants().subList(i, Math.min(i + entry.getTeamSize(), entry.getParticipants().size())));
-			List<UUID> team2 = new ArrayList<>(entry.getParticipants().subList(Math.min(i + entry.getTeamSize(), entry.getParticipants().size()), Math.min(i + 2 * entry.getTeamSize(), entry.getParticipants().size())));
+		for (int i = 0; i < originalTeams.size(); i += 2) {
+			List<UUID> team1 = originalTeams.get(i);
+			List<UUID> team2 = (i + 1 < originalTeams.size()) ? originalTeams.get(i + 1) : null;
 
-			if (team1.isEmpty() || team2.isEmpty()) continue;
+			if (team2 == null) {
+				entry.getByePlayer().addAll(team1);
+				continue;
+			}
 
-			Duel duel = new Duel(Practice.API, new HashSet<>(team1), new HashSet<>(team2), false, entry.getKit(), DuelType.SINGLE, null);
-			tournamentManager.getActiveDuels().add(duel);
+			createTournamentMatch(entry, team1, team2);
 		}
+
 		entry.getParticipants().addAll(entry.getByePlayer());
 		entry.getByePlayer().clear();
 		MessageUtils.determineTournamentStage(entry);
+	}
+
+	public static void createTournamentMatch(TournamentEntry entry, List<UUID> team1, List<UUID> team2) {
+		int teamSize = entry.getTeamSize();
+		final TournamentManager tournamentManager = Practice.API.getManagerHandler().getTournamentManager();
+		Duel duel = new Duel(Practice.API, new HashSet<>(team1), new HashSet<>(team2), false, entry.getKit(), teamSize > 1 ? DuelType.SPLIT : DuelType.SINGLE, null);
+		tournamentManager.getActiveDuels().add(duel);
 	}
 
 	// QUEUE

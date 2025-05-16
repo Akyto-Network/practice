@@ -112,10 +112,9 @@ public class SideBoard implements BoardAdapter {
 
         if (duel.getState().equals(DuelState.PLAYING) || duel.getState().equals(DuelState.STARTING)) {
         	if (duel.getDuelType().equals(DuelType.SINGLE)) {
-                if (!duel.getKit().name().equals("bedfight") || !duel.getKit().name().equals("boxing")) {
-                    board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(opps));
-                }
-                if (!duel.getKit().name().equals("bedfight")) {
+                board.add(ChatColor.DARK_GRAY + "Opponent" + ChatColor.GRAY + ": " + ChatColor.RESET + CoreUtils.getName(opps));
+                if (duel.getKit().name().equals("bedfight")) {
+                    board.add(" ");
                     final DuelStatistics statisticsPlayer = plugin.getManagerHandler().getProfileManager().getDuelStatistics().get(player.getUniqueId());
                     board.add(MessageUtils.getColorTeam(duel, player.getUniqueId()) + ChatColor.GRAY + ": " + (statisticsPlayer.isBedBroke() ? ChatColor.RED + "✖" : ChatColor.GREEN + "✔"));
                     final String oppsColor = MessageUtils.getColorTeam(duel, player.getUniqueId()).equals(ChatColor.BLUE + "Blue") ? ChatColor.RED + "Red" : ChatColor.BLUE + "Blue";
@@ -128,7 +127,8 @@ public class SideBoard implements BoardAdapter {
                     final ProfileManager profileManager = plugin.getManagerHandler().getProfileManager();
                     board.add(" ");
                     board.add(ChatColor.DARK_GRAY.toString() + ChatColor.BOLD + "Hits:");
-                    board.add(ChatColor.GRAY + " * " + ChatColor.GRAY + "Their: " + profileManager.getDuelStatistics().get(opps).getHits());
+                    board.add(ChatColor.GRAY + " " + ChatColor.GRAY + "Their: " + profileManager.getDuelStatistics().get(opps).getHits());
+                    board.add(ChatColor.GRAY + " * " + ChatColor.GRAY + "Your: " + profileManager.getDuelStatistics().get(player.getUniqueId()).getHits());
                     board.add(" " + ChatColor.GREEN + profileManager.getDuelStatistics().get(player.getUniqueId()).getHits() + ChatColor.GRAY + " vs " + ChatColor.RED + profileManager.getDuelStatistics().get(opps).getHits());
                 }
         	}
@@ -139,16 +139,59 @@ public class SideBoard implements BoardAdapter {
         	}
 
         	if (duel.getDuelType().equals(DuelType.SPLIT)) {
-        		final int green = duel.getFirst().contains(player.getUniqueId()) ? duel.getFirst().size() : duel.getSecond().size();
-        		final int red = duel.getSecond().contains(player.getUniqueId()) ? duel.getFirst().size() : duel.getSecond().size();
-        		final int greenAlive = duel.getFirst().contains(player.getUniqueId()) ? duel.getFirstAlives().size() : duel.getSecondAlives().size();
-        		final int redAlive = duel.getSecond().contains(player.getUniqueId()) ? duel.getFirstAlives().size() : duel.getSecondAlives().size();
-        		board.add(ChatColor.GREEN + "▊ " + ChatColor.DARK_GRAY + "alives" + ChatColor.GRAY + ": " + ChatColor.RESET + greenAlive + "/" + green);
-        		board.add(ChatColor.RED + "▊ " + ChatColor.DARK_GRAY + "alives" + ChatColor.GRAY + ": " + ChatColor.RESET + redAlive + "/" + red);
+                board.add(ChatColor.DARK_GRAY + "Your Team" + ChatColor.GRAY + ":");
+                if (duel.getFirst().contains(player.getUniqueId())) {
+                    for (UUID playerId : duel.getFirst()) {
+                        Player players = Bukkit.getPlayer(playerId);
+                        if (players != null) {
+                            String playerName = players.getName();
+                            if (!duel.getFirstAlives().contains(playerId)) {
+                                playerName = ChatColor.STRIKETHROUGH + playerName;
+                            }
+                            board.add(ChatColor.GREEN + " " + playerName);
+                        }
+                    }
+                    board.add(ChatColor.DARK_GRAY + "Opponents" + ChatColor.GRAY + ":");
+                    for (UUID playerId : duel.getSecond()) {
+                        Player players = Bukkit.getPlayer(playerId);
+                        if (players != null) {
+                            String playerName = players.getName();
+                            if (!duel.getSecondAlives().contains(playerId)) {
+                                playerName = ChatColor.STRIKETHROUGH + playerName;
+                            }
+                            board.add(ChatColor.RED + " " + playerName);
+                        }
+                    }
+                }
+                else {
+                    for (UUID playerId : duel.getSecond()) {
+                        Player players = Bukkit.getPlayer(playerId);
+                        if (players != null) {
+                            String playerName = players.getName();
+                            if (!duel.getSecondAlives().contains(playerId)) {
+                                playerName = ChatColor.STRIKETHROUGH + playerName;
+                            }
+                            board.add(ChatColor.GREEN + " " + playerName);
+                        }
+                    }
+                    board.add(ChatColor.DARK_GRAY + "Opponents" + ChatColor.GRAY + ":");
+                    for (UUID playerId : duel.getFirst()) {
+                        Player players = Bukkit.getPlayer(playerId);
+                        if (players != null) {
+                            String playerName = players.getName();
+                            if (!duel.getFirstAlives().contains(playerId)) {
+                                playerName = ChatColor.STRIKETHROUGH + playerName;
+                            }
+                            board.add(ChatColor.RED + " " + playerName);
+                        }
+                    }
+                }
+
         		board.add(" ");
         	}
-
-            board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + DurationUtils.getFormattedDuration(duel));
+            if (!duel.getDuelType().equals(DuelType.SPLIT)) {
+                board.add(ChatColor.DARK_GRAY + "Duration" + ChatColor.GRAY + ": " + ChatColor.RESET + DurationUtils.getFormattedDuration(duel));
+            }
             board.add(" ");
             board.add(ChatColor.DARK_GRAY + "Ping" + ChatColor.GRAY + ": " + ChatColor.WHITE + player.getPing() + "ms");
             for (final BoardCooldown cooldown : cooldowns) {

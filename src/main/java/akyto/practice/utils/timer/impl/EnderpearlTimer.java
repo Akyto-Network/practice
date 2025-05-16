@@ -65,6 +65,7 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
                                             + " !"
                             );
                             player.updateInventory();
+                            return;
                         }
                         new BoardCooldown(Objects.requireNonNull(Board.getByPlayer(player)), "enderpearl", 16.0);
                     }

@@ -49,11 +49,13 @@ public class InventoryManager {
 	private final Inventory[] arenaInventory = new Inventory[2];
 	private final Inventory[] editorInventory = new Inventory[3];
 	private final Inventory hostInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Events:");
+	private final Inventory tournamentSizeInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Tournament Size:");
 	private final Inventory utilsInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Utils");
 	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Leaderboard:");
 	private final Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
 	public MultipageSerializer spectateMultipage;
     public MultipageSerializer partyMultipage;
+	public MultipageSerializer tournamentMultipage;
 	private final ConcurrentMap<UUID, Inventory> previewInventory;
 	private final ConcurrentMap<UUID, Inventory> spectateInventory;
 	private final ConcurrentMap<UUID, Inventory> settingsInventory;
@@ -70,6 +72,7 @@ public class InventoryManager {
 		this.effectsInventory = new ConcurrentHashMap<>();
 		this.spectateMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
 		this.partyMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Partys", ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "));
+		this.tournamentMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Tournaments Available", ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Tournaments" + ChatColor.GRAY + " * "));
 		this.queueInventory[0] = Bukkit.createInventory(null,  queueSize, ChatColor.GRAY + "Unranked queue:");
 		this.queueInventory[1] = Bukkit.createInventory(null, queueSize, ChatColor.GRAY + "Ranked queue:");
 		this.queueInventory[2] = Bukkit.createInventory(null, queueSize, ChatColor.GRAY + "Select duel kit:");
@@ -91,7 +94,16 @@ public class InventoryManager {
 		this.runnableLeaderboardInventory();
 		this.setEditorInventory();
 		this.setUtilsInventory();
-		this.setHostInventory();
+
+		this.setTournamentInventory();
+	}
+
+	private void setTournamentInventory() {
+		this.tournamentSizeInventory.setItem(0, ItemUtils.createItems(Material.IRON_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "1v1"));
+		this.tournamentSizeInventory.setItem(1, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
+		this.tournamentSizeInventory.setItem(2, ItemUtils.createItems(Material.DIAMOND_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "2v2"));
+		this.tournamentSizeInventory.setItem(3, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
+		this.tournamentSizeInventory.setItem(4, ItemUtils.createItems(Material.EMERALD_ORE, ChatColor.RED + " » " + ChatColor.GOLD + "3v3"));
 	}
 
 	private void setUtilsInventory() {
@@ -109,6 +121,26 @@ public class InventoryManager {
 	   this.hostInventory.setItem(4, ItemUtils.createItems(Material.STAINED_GLASS_PANE, null));
 
    }
+
+   public void refreshTournamentInventory() {
+		List<ItemStack> tourney = new ArrayList<>();
+		this.main.getManagerHandler().getTournamentManager().getAllTournaments().forEach(entry -> {
+			final ItemStack item = new ItemStack(entry.getKit().material(), 1, (byte)entry.getKit().data());
+			final ItemMeta meta = item.getItemMeta();
+			meta.setDisplayName(ChatColor.RED + ChatColor.stripColor(entry.getKit().displayName()) + " tournament");
+			final List<String> lore = new ArrayList<>();
+			lore.add(" ");
+			lore.add(ChatColor.GRAY + "Participant(s) [" + entry.getParticipants().size() + "]");
+			lore.add(ChatColor.GRAY + "Creator: " + ChatColor.RESET + CoreUtils.getName(entry.getCreator()));
+			lore.add(ChatColor.GRAY + "Team Size: " + ChatColor.WHITE + entry.getTeamSize() + "v" + entry.getTeamSize());
+			lore.add(ChatColor.GRAY + "State: " + ChatColor.WHITE + entry.getTournamentState().toString());
+			meta.setLore(lore);
+			item.setItemMeta(meta);
+			tourney.add(item);
+		});
+		this.tournamentMultipage.refresh(tourney);
+	}
+
 	public void refreshPartyInventory() {
         List<ItemStack> partys = new ArrayList<>();
         this.main.getManagerHandler().getPartyManager().getParties().forEach(party -> {

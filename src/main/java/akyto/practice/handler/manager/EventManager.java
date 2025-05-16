@@ -6,8 +6,8 @@ import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
 import akyto.practice.event.EventState;
-import akyto.practice.runnable.CooldownEventRunnable;
 import akyto.practice.runnable.EventRunnable;
+import akyto.practice.runnable.countdown.CountdownEvent;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.location.LocationUtil;
 import com.google.common.collect.Lists;
@@ -149,7 +149,7 @@ public class EventManager {
         });
         final String name1 = Bukkit.getPlayer(this.playersSelected.get(0)).getDisplayName();
         final String name2 = Bukkit.getPlayer(this.playersSelected.get(1)).getDisplayName();
-        new CooldownEventRunnable(this.main, name1, name2).runTaskTimer(main, 20L, 20L);
+        new CountdownEvent(this.main, name1, name2).runTaskTimer(main, 20L, 20L);
     }
 
     public void endMatch(final UUID winner, final UUID killed) {

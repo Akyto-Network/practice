@@ -10,9 +10,9 @@ import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
 import akyto.practice.duel.cache.DuelState;
 import akyto.practice.kit.Kit;
-import akyto.practice.runnable.CountdownRunnable;
+import akyto.practice.runnable.countdown.CountdownDuel;
 import akyto.practice.runnable.RespawnRunnable;
-import akyto.practice.runnable.SumoRunnable;
+import akyto.practice.runnable.sumo.SumoRunnable;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.data.DataUtils;
@@ -31,7 +31,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 public class DuelManager {
@@ -89,7 +88,7 @@ public class DuelManager {
 			if (!kit.buildable()) this.teleport(duel, idCopy);
 		}));
 		if (kit.name().equalsIgnoreCase("sumo")) new SumoRunnable(this.main, duel).runTaskTimer(this.main, 5L, 5L);
-		new CountdownRunnable(Arrays.asList(first, second), duel, this.main).runTaskTimer(this.main, 20L, 20L);
+		new CountdownDuel(Arrays.asList(first, second), duel, this.main).runTaskTimer(this.main, 20L, 20L);
 	}
 
 	public void teleport(final Duel duel, final UUID id) {

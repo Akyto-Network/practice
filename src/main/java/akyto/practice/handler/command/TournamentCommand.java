@@ -3,6 +3,7 @@ package akyto.practice.handler.command;
 import akyto.core.profile.Profile;
 import akyto.core.profile.ProfileState;
 import akyto.practice.Practice;
+import akyto.practice.handler.manager.InventoryManager;
 import akyto.practice.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -30,12 +31,20 @@ public class TournamentCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "You cannot do this right now");
             return false;
         }
-        if (!sender.hasPermission("akyto.tournament")) {
-            sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
-            return false;
+        final InventoryManager inventoryManager = main.getManagerHandler().getInventoryManager();
+        if (args.length != 0) {
+            if (args[0].equalsIgnoreCase("start") && sender.hasPermission("akyto.tournament")) {
+                if (!sender.hasPermission("akyto.tournament")) {
+                    sender.sendMessage(ChatColor.RED + "Insufficient Permissions !.");
+                    return false;
+                }
+                playerSender.openInventory(inventoryManager.getTournamentSizeInventory());
+            }
         }
-        playerSender.openInventory(this.main.getManagerHandler().getInventoryManager().getQueueInventory()[5]);
-
+        else {
+            inventoryManager.refreshTournamentInventory();
+            inventoryManager.getTournamentMultipage().open(playerSender, 1);
+        }
         return false;
     }
 }

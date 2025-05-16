@@ -1,7 +1,8 @@
-package akyto.practice.runnable;
+package akyto.practice.runnable.countdown;
 
 import akyto.practice.Practice;
 import akyto.practice.event.EventState;
+import akyto.practice.runnable.sumo.SumoEventRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -9,14 +10,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 
-public class CooldownEventRunnable extends BukkitRunnable {
+public class CountdownEvent extends BukkitRunnable {
 
     private final Practice main;
     private Integer counter;
     private final String nameOne;
     private final String nameTwo;
 
-    public CooldownEventRunnable(final Practice main, final String name1, final String name2) {
+    public CountdownEvent(final Practice main, final String name1, final String name2) {
         this.main = main;
         this.counter = 6;
         this.nameOne = name1;

@@ -11,6 +11,7 @@ import akyto.practice.utils.Utils;
 import akyto.practice.utils.chat.MessageHelper;
 import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.match.MatchUtils;
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 public class TournamentManager implements Listener {
@@ -26,7 +28,6 @@ public class TournamentManager implements Listener {
     private final Practice main;
     private final Map<UUID, TournamentEntry> tournaments;
     private final List<Duel> activeDuels;
-    private final int countdownDuration = 60;
     public static final String prefix = ChatColor.GRAY + "[" + ChatColor.DARK_RED + "TOURNAMENT" + ChatColor.GRAY + "] ";
 
     public TournamentManager(Practice main) {
@@ -51,42 +52,121 @@ public class TournamentManager implements Listener {
         return tournamentId;
     }
 
-    private void startCountdown(TournamentEntry entry) {
-        BukkitRunnable countdown = new BukkitRunnable() {
-            int timeLeft = countdownDuration;
-
-            @Override
-            public void run() {
-                if (timeLeft == 0) {
-                    startTournament(entry);
-                    cancel();
-                    return;
-                }
-                if (timeLeft % 20 == 0) {
-                    Bukkit.getOnlinePlayers().forEach(player -> {
-                        MessageUtils.sendTournamentRequestMessage(player, String.valueOf(entry.getId()), entry.getKit().displayName(), entry.getTeamSize());
-                    });
-                }
-                if (timeLeft <= 10 || timeLeft % 10 == 0) {
-                    MessageHelper.notifyUUID(entry.getParticipants(), prefix + ChatColor.WHITE + "Starting in " + ChatColor.RED + timeLeft + ChatColor.WHITE + " seconds!");
-                }
-
-                timeLeft--;
-            }
-        };
-        countdown.runTaskTimer(main, 0L, 20L);
-    }
-
-    private void startTournament(TournamentEntry entry) {
+    public void startTournament(TournamentEntry entry) {
         List<UUID> participants = entry.getParticipants();
         int teamSize = entry.getTeamSize();
 
-        if (participants.size() < 2 * teamSize) {
+        if (participants.size() < 2) {
             MessageHelper.notifyUUID(entry.getParticipants(), prefix + "&cNot enough player to start!");
             return;
         }
+
+        Map<UUID, List<UUID>> parties = new HashMap<>();
+        for (UUID playerId : participants) {
+            if (Utils.getPartyByUUID(playerId) != null) {
+                UUID partyLeader = Utils.getPartyByUUID(playerId).getCreator();
+                parties.computeIfAbsent(partyLeader, k -> new ArrayList<>()).add(playerId);
+            } else {
+                parties.computeIfAbsent(playerId, k -> new ArrayList<>()).add(playerId);
+            }
+        }
+
+        List<UUID> validParticipants = Lists.newArrayList();
+        for (List<UUID> party : parties.values()) {
+            if (party.size() <= teamSize) {
+                validParticipants.addAll(party);
+            } else {
+                MessageHelper.notifyUUID(party, prefix + "&cYour party is too large for this tournament!");
+            }
+        }
+
+        if (validParticipants.size() < 2) {
+            MessageHelper.notifyUUID(entry.getParticipants(), prefix + "&cNot enough valid players to start!");
+            return;
+        }
+
         entry.setTournamentState(TournamentState.STARTED);
-        MatchUtils.runTournamentRound(entry);
+
+        List<List<UUID>> originalTeams = new ArrayList<>();
+        List<UUID> remainingPlayers = new ArrayList<>(validParticipants);
+
+        for (List<UUID> party : parties.values()) {
+            if (party.size() <= teamSize && new HashSet<>(validParticipants).containsAll(party)) {
+                originalTeams.add(new ArrayList<>(party));
+                remainingPlayers.removeAll(party);
+            }
+        }
+
+        // FIX INFINITY FUCKED UP SLEEPY KEZUK
+        while (!remainingPlayers.isEmpty()) {
+            List<UUID> team = new ArrayList<>();
+            int spotsLeft = teamSize;
+
+            Iterator<UUID> iterator = remainingPlayers.iterator();
+            while (iterator.hasNext() && spotsLeft > 0) {
+                UUID playerId = iterator.next();
+                team.add(playerId);
+                iterator.remove();
+                spotsLeft--;
+            }
+
+            if (!team.isEmpty()) {
+                originalTeams.add(team);
+            }
+        }
+
+        List<List<UUID>> mergedTeams = new ArrayList<>();
+        for (List<UUID> team : originalTeams) {
+            if (team.size() == teamSize) {
+                mergedTeams.add(team);
+            } else {
+                for (List<UUID> otherTeam : originalTeams) {
+                    if (otherTeam != team && otherTeam.size() + team.size() <= teamSize) {
+                        otherTeam.addAll(team);
+                        mergedTeams.add(otherTeam);
+                        break;
+                    }
+                }
+                if (!mergedTeams.contains(team)) {
+                    mergedTeams.add(team);
+                }
+            }
+        }
+
+        entry.setOriginalTeams(mergedTeams);
+
+        createTournamentMatches(entry);
+    }
+
+    private void createTournamentMatches(TournamentEntry entry) {
+        List<List<UUID>> originalTeams = entry.getOriginalTeams();
+        List<List<UUID>> remainingTeams = new ArrayList<>(originalTeams);
+
+        Collections.shuffle(remainingTeams);
+
+        while (remainingTeams.size() >= 2) {
+            List<UUID> team1 = remainingTeams.removeFirst();
+            List<UUID> team2 = remainingTeams.removeFirst();
+            System.out.println("Team1: " + team1);
+            System.out.println("Team2: " + team2);
+            MatchUtils.createTournamentMatch(entry, team1, team2);
+        }
+
+        if (!remainingTeams.isEmpty()) {
+            List<UUID> teamWithBye = remainingTeams.get(0);
+            MessageHelper.notifyUUID(teamWithBye, prefix + "&aYour team gets a bye in this round!");
+        }
+    }
+
+    public void advanceTeamToNextRound(TournamentEntry entry, List<UUID> winningTeam) {
+        List<List<UUID>> remainingTeams = entry.getOriginalTeams().stream()
+                .filter(team -> !isTeamEliminated(entry, team))
+                .collect(Collectors.toList());
+        createTournamentMatches(entry);
+    }
+
+    private boolean isTeamEliminated(TournamentEntry entry, List<UUID> team) {
+        return false;
     }
 
     public Collection<TournamentEntry> getAllTournaments() {
@@ -98,6 +178,10 @@ public class TournamentManager implements Listener {
     }
 
     public void joinTournament(Player player, UUID tournamentId) {
+        joinTournament(player, tournamentId, null);
+    }
+
+    public void joinTournament(Player player, UUID tournamentId, UUID partyLeader) {
         if (!Utils.getProfiles(player.getUniqueId()).isInState(ProfileState.FREE)) {
             player.sendMessage(ChatColor.RED + "You must be in FREE state to join a tournament!");
             return;
@@ -108,14 +192,46 @@ public class TournamentManager implements Listener {
             player.sendMessage(ChatColor.RED + "No tournament found with this ID!");
             return;
         }
+
         int teamSize = entry.getTeamSize();
-        int minToStart = teamSize * 2;
-        int inTourney = entry.getParticipants().size() + 1;
-        if (inTourney == minToStart) {
-            Bukkit.getScheduler().runTaskLater(main, () -> startCountdown(entry), 120L);
+
+        if (partyLeader != null) {
+            if (teamSize == 1) {
+                player.sendMessage(ChatColor.RED + "You cannot join a 1v1 tournament with a party!");
+                return;
+            }
+
+            Set<UUID> partyMembers = Utils.getPartyByUUID(partyLeader).getMembers();
+            if (partyMembers.size() > teamSize) {
+                player.sendMessage(ChatColor.RED + "Your party is too large for this tournament!");
+                return;
+            }
         }
-        entry.getParticipants().add(player.getUniqueId());
-        MessageHelper.notifyUUID(entry.getParticipants(), prefix + player.getName() + "&a join!");
+
+        if (Utils.getPartyByUUID(player.getUniqueId()) != null) {
+            if (!Utils.getPartyByUUID(player.getUniqueId()).getCreator().equals(player.getUniqueId())) {
+                player.sendMessage(ChatColor.RED + "Only the creator of the party decide to join a tournament!");
+                return;
+            }
+            entry.getParticipants().addAll(Utils.getPartyByUUID(player.getUniqueId()).getMembers());
+        } else {
+            entry.getParticipants().add(player.getUniqueId());
+        }
+
+        int minToStart = teamSize > 1 ? (teamSize > 2 ? 4 : 3) : 2;
+        int inTourney = entry.getParticipants().size();
+
+        if (inTourney >= minToStart && !entry.isCountdownStarted()) {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(main, () -> {
+                entry.getCountdown().runTaskTimer(main, 20L, 20L);
+            }, 120L);
+        }
+        MessageHelper.notifyUUID(entry.getParticipants(), prefix + player.getName() + "&a joined!");
+
+        if (partyLeader != null) {
+            MessageHelper.notifyUUID(entry.getParticipants(), prefix + player.getName() + "&a joined with a party!");
+        }
+        main.getManagerHandler().getInventoryManager().refreshTournamentInventory();
         this.main.getManagerHandler().getItemManager().giveItems(player.getUniqueId(), false);
     }
 
@@ -125,6 +241,7 @@ public class TournamentManager implements Listener {
             if (entry.getParticipants().contains(playerId)) {
                 entry.getParticipants().remove(playerId);
                 MessageHelper.notifyUUID(entry.getParticipants(), prefix + leaverName + " &cleft!");
+
                 if (entry.getTournamentState().equals(TournamentState.WAITING)) {
                     Player player = Bukkit.getPlayer(playerId);
                     if (player != null) {
@@ -132,7 +249,12 @@ public class TournamentManager implements Listener {
                         player.sendMessage(ChatColor.RED + "You left the tournament.");
                     }
                 }
+
                 if (entry.getParticipants().isEmpty()) {
+                    main.getManagerHandler().getInventoryManager().refreshTournamentInventory();
+                    if (entry.isCountdownStarted()) {
+                        entry.getCountdown().cancel();
+                    }
                     tournaments.remove(entry.getId());
                 }
                 break;

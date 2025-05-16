@@ -1,6 +1,8 @@
 package akyto.practice.tournament;
 
+import akyto.practice.Practice;
 import akyto.practice.kit.Kit;
+import akyto.practice.runnable.countdown.CountdownTournament;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +19,10 @@ public class TournamentEntry {
     private final int teamSize;
     @Setter
     public TournamentState tournamentState;
+    public CountdownTournament countdown;
     private final List<UUID> participants;
+    @Setter
+    private List<List<UUID>> originalTeams;
     private final List<UUID> byePlayer;
 
     public TournamentEntry(UUID creator, UUID id, Kit kit, int teamSize) {
@@ -25,8 +30,14 @@ public class TournamentEntry {
         this.id = id;
         this.kit = kit;
         this.teamSize = teamSize;
+        this.originalTeams = Lists.newArrayList();
         this.tournamentState = TournamentState.WAITING;
         this.participants = Lists.newArrayList();
         this.byePlayer = Lists.newArrayList();
+        this.countdown = new CountdownTournament(Practice.API, this);
+    }
+
+    public boolean isCountdownStarted() {
+        return this.countdown.isRunning;
     }
 }

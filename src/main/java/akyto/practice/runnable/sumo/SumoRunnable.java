@@ -1,4 +1,4 @@
-package akyto.practice.runnable;
+package akyto.practice.runnable.sumo;
 
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;

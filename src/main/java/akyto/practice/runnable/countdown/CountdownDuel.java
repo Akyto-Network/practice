@@ -1,4 +1,4 @@
-package akyto.practice.runnable;
+package akyto.practice.runnable.countdown;
 
 import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Timer;
 import java.util.UUID;
 
-public class CountdownRunnable extends BukkitRunnable {
+public class CountdownDuel extends BukkitRunnable {
 	
 	private final Duel duel;
 	private final Practice main;
 	private final List<List<UUID>> players;
 	private Integer counter;
 	
-	public CountdownRunnable(final List<List<UUID>> players, final Duel duel, final Practice main) {
+	public CountdownDuel(final List<List<UUID>> players, final Duel duel, final Practice main) {
 		this.duel = duel;
 		this.main = main;
 		this.players = players;

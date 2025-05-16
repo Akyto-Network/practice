@@ -68,8 +68,15 @@ public class InventoryListener implements Listener {
 				event.setResult(Result.DENY);
 				return;
 			}
+			if (inventory.equals(inventoryManager.getTournamentSizeInventory())) {
+				if (event.getCurrentItem().getType().equals(Material.IRON_ORE)) profile.setTeamSize(1);
+				if (event.getCurrentItem().getType().equals(Material.DIAMOND_ORE)) profile.setTeamSize(2);
+				if (event.getCurrentItem().getType().equals(Material.EMERALD_ORE)) profile.setTeamSize(3);
+				System.out.println(profile.getTeamSize());
+				event.getWhoClicked().openInventory(inventoryManager.getQueueInventory()[5]);
+			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[5])) {
-				UUID uuid = this.main.getManagerHandler().getTournamentManager().createTournament(event.getActor(), Kit.getLadderByID(event.getSlot(), main), 1);
+				UUID uuid = this.main.getManagerHandler().getTournamentManager().createTournament(event.getActor(), Kit.getLadderByID(event.getSlot(), main), profile.getTeamSize());
 				this.main.getManagerHandler().getTournamentManager().joinTournament(player, uuid);
 				event.getWhoClicked().closeInventory();
 			}
@@ -246,6 +253,20 @@ public class InventoryListener implements Listener {
 			}
 		}
 		final String inventoryName = inventory.getName();
+		if (inventoryName.equals(inventoryManager.getTournamentMultipage().getInventoryName())) {
+			if (event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR)) return;
+			event.setResult(Result.DENY);
+			event.setCancelled(true);
+			if (is_glass) return;
+			String creatorName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getLore().get(2).replace(ChatColor.GRAY + "Creator: ", ""));
+			final UUID creatorUUID = Bukkit.getPlayer(creatorName) != null ? Bukkit.getPlayer(creatorName).getUniqueId() : Bukkit.getOfflinePlayer(creatorName).getUniqueId();
+			main.getManagerHandler().getTournamentManager().getAllTournaments().forEach(entry -> {
+				if (entry.getCreator().equals(creatorUUID)) {
+					main.getManagerHandler().getTournamentManager().joinTournament(player, entry.getId());
+				}
+			});
+			event.getWhoClicked().closeInventory();
+		}
 		if (inventoryName.contains("Spectate") && !inventoryName.contains("Settings") ) {
 			if (event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR)) return;
 			event.setResult(Result.DENY);
@@ -274,6 +295,9 @@ public class InventoryListener implements Listener {
 	
 	@EventHandler
 	public void onCloseInventory(final InventoryCloseEvent event) {
+		if (event.getInventory().equals(this.inventoryManager.getQueueInventory()[5])) {
+			Utils.getProfiles(event.getPlayer().getUniqueId()).setTeamSize(0);
+		}
 		if (event.getInventory().equals(this.inventoryManager.getQueueInventory()[2])) {
 			if (Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getKit() == null) {
 				this.main.getManagerHandler().getRequestManager().removeRequest(event.getPlayer().getUniqueId());
