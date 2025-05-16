@@ -106,7 +106,7 @@ public class SideBoard implements BoardAdapter {
     private List<String> getGameBoard(final Player player, final Set<BoardCooldown> cooldowns) {
         final List<String> board = new LinkedList<>();
         final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
-        final UUID opps = duel.getFirst().contains(player.getUniqueId()) ? new ArrayList<>(duel.getSecond()).get(0) : new ArrayList<>(duel.getFirst()).get(0);
+        final UUID opps = duel.getFirst().contains(player.getUniqueId()) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst();
 
         board.add(spacer);
 

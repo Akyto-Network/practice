@@ -111,7 +111,7 @@ public class MessageUtils {
                 joinerWin.add(wtxt);
             });
 
-            List<UUID> losers = duel.getFirst().containsAll(duel.getWinner()) ? new ArrayList<>(duel.getSecond()) : new ArrayList<>(duel.getFirst());
+            List<UUID> losers = players.get(1).stream().toList();
 
             losers.forEach(uuid -> {
                 final TextComponent ltxt = new TextComponent(CoreUtils.getName(uuid));
@@ -189,19 +189,17 @@ public class MessageUtils {
 		int participantsCount = entry.getParticipants().size();
 		String stage;
 
-		switch (participantsCount) {
-			case 2:
-				stage = "Final";
-				break;
-			case 4:
-				stage = "Semi";
-				break;
-			case 8:
-				stage = "Quarter";
-				break;
-			default:
-				stage = "Qualification";
-				break;
+		if (participantsCount <= entry.getTeamSize() * 2) {
+			stage = "Final";
+		}
+		else if (participantsCount <= entry.getTeamSize() * 4) {
+			stage = "Semi";
+		}
+		else if (participantsCount <= entry.getTeamSize() * 8) {
+			stage = "Quarter";
+		}
+		else {
+			stage = "Qualification";
 		}
 		return stage;
 	}

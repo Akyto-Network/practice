@@ -553,8 +553,10 @@ public class PlayerListener implements Listener {
 					return;
 				}
 				if (tournamentEntry != null) {
-					MatchUtils.handleTournamentDeath(killed, killer, tournamentEntry);
-					return;
+					if (tournamentEntry.getTeamSize() == 1) {
+						MatchUtils.handleTournamentDeath(killed, killer, tournamentEntry);
+						return;
+					}
 				}
 				MatchUtils.addKill(killed.getUniqueId(), killer != null ? killer.getUniqueId() : null, false);
 			}

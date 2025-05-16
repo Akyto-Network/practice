@@ -77,8 +77,11 @@ public class MatchUtils {
         if (match.getDuelType().equals(DuelType.SPLIT)) {
 			match.getFirstAlives().remove(uuid);
 			match.getSecondAlives().remove(uuid);
-            if (match.getFirstAlives().isEmpty() || match.getSecondAlives().isEmpty()) {
-                managerHandler.getDuelManager().endMultiple(killer == null ? (match.getFirst().contains(uuid) ? match.getSecondAlives().stream().toList().getFirst() : match.getFirstAlives().stream().toList().getFirst()) : killer);
+            if ((match.getFirstAlives().isEmpty() || match.getSecondAlives().isEmpty())) {
+				TournamentEntry entry = Utils.getTournamentByPlayerUUID(uuid);
+				final UUID killerSafe = killer == null ? (match.getFirst().contains(uuid) ? match.getSecondAlives().stream().toList().getFirst() : match.getFirstAlives().stream().toList().getFirst()) : killer;
+				if (entry == null) managerHandler.getDuelManager().endMultiple(killerSafe);
+				else handleTournamentDeath(Bukkit.getPlayer(uuid), Bukkit.getPlayer(killerSafe), entry);
                 return;
             }
 
@@ -236,11 +239,14 @@ public class MatchUtils {
 
 			winner.forEach(uuid -> Practice.API.getManagerHandler().getInventoryManager().generatePreviewInventory(uuid, loser.stream().findFirst().orElse(null)));
 			duel.setState(DuelState.FINISHING);
+			duel.getWinner().addAll(winner);
 			final List<UUID> players = Lists.newArrayList();
-			players.add(loser.stream().toList().getFirst());
-			players.add(winner.stream().toList().getFirst());
+			players.addAll(loser);
+			players.addAll(winner);
+			System.out.println(players);
 			if (!duel.getSpectators().isEmpty()) players.addAll(duel.getSpectators());
-			MessageUtils.sendSingleEndMessage(duel, players, winner.stream().toList().getFirst(), killed.getUniqueId());
+			if (tournamentEntry.getTeamSize() == 1) MessageUtils.sendSingleEndMessage(duel, players, winner.stream().toList().getFirst(), killed.getUniqueId());
+			if (tournamentEntry.getTeamSize() != 1) MessageUtils.sendPartyComponent(Arrays.asList(winner, loser));
 			Arrays.asList(winner, loser).forEach(uuids -> uuids.forEach(uuid -> {
 				if (Bukkit.getPlayer(uuid) != null) {
 					Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, Practice.API.getKitNames());
