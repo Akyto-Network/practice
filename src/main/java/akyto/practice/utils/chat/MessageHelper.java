@@ -13,11 +13,12 @@ public class MessageHelper {
         player.forEach(p -> p.sendMessage(ChatColor.translateAlternateColorCodes('&', message)));
     }
 
-    public static void notifyUUID(final List<UUID> listUUID, final String message) {
+    public static void notifyUUID(final List<UUID> listUUID, String message) {
+        String translatedMessage = ChatColor.translateAlternateColorCodes('&', message);
         listUUID.forEach( uuid -> {
             final Player p = Bukkit.getPlayer(uuid);
             if (p != null) {
-                p.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+                p.sendMessage(translatedMessage);
             }
         });
     }
