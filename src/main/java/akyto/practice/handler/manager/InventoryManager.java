@@ -83,12 +83,16 @@ public class InventoryManager {
 		this.arenaInventory[1] = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Select Sumo Arena:");
 		this.arenaInventory[2] = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Select Build Arena:");
 		for (Arena arena : this.main.getArenas().values()) {
-			this.arenaInventory[arena.getArenaType().equals(ArenaType.NORMAL) ? 0 : 1].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + StringUtils.capitalize(arena.getName())));
-		}
-		for (Arena arena : this.main.getArenas().values()) {
-			if (!arena.isBuild() || arena.getArenaType().equals(ArenaType.BEDFIGHT))
+			int inventoryIdx = 0;
+			if (arena.getArenaType().equals(ArenaType.SUMO)) {
+				inventoryIdx = 1;
+			} else if (arena.isBuild() && !arena.getArenaType().equals(ArenaType.BEDFIGHT)) {
+				inventoryIdx = 2;
+			} else {
+				// bedfight
 				continue;
-			this.arenaInventory[2].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + StringUtils.capitalize(arena.getName())));
+			}
+			this.arenaInventory[inventoryIdx].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + StringUtils.capitalize(arena.getName())));
 		}
 		this.arenaInventory[0].setItem(35, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
 		this.arenaInventory[1].setItem(26, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
