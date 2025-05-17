@@ -31,6 +31,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -102,10 +103,16 @@ public class InventoryListener implements Listener {
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[2])) {
 				final Request request = Utils.getRequestByUUID(player.getUniqueId());
-				request.setKit(Kit.getLadderByID(event.getSlot(), main));
-				event.getWhoClicked().openInventory(Kit.getLadderByID(event.getSlot(), main).name().equalsIgnoreCase("sumo") ? this.main.getManagerHandler().getInventoryManager().getArenaInventory()[1] : this.main.getManagerHandler().getInventoryManager().getArenaInventory()[0]);
+				final Kit chosen = Kit.getLadderByID(event.getSlot(), main);
+				request.setKit(chosen);
+				int inventoryIdx = 0;
+				if (chosen.name().equalsIgnoreCase("sumo"))
+					inventoryIdx = 1;
+				else if (chosen.buildable())
+					inventoryIdx = 2;
+				event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getArenaInventory()[inventoryIdx]);
 			}
-			if (inventory.equals(inventoryManager.getArenaInventory()[0]) || inventory.equals(inventoryManager.getArenaInventory()[1])) {
+			if (inventory.equals(inventoryManager.getArenaInventory()[0]) || inventory.equals(inventoryManager.getArenaInventory()[1]) || inventory.equals(inventoryManager.getArenaInventory()[2])) {
 				final Request request = Utils.getRequestByUUID(player.getUniqueId());
 				request.setArena(event.getCurrentItem().getType().equals(Material.TRAP_DOOR) ? this.main.getManagerHandler().getArenaManager().getRandomArena(request.getKit()) : Utils.getArenaByIcon(event.getCurrentItem().getType(), request.getKit().arenaType()));
 				this.main.getManagerHandler().getRequestManager().sendNotification(event.getWhoClicked().getUniqueId(), RequestType.DUEL);
@@ -305,7 +312,7 @@ public class InventoryListener implements Listener {
 				return;
 			}	
 		}
-		if (event.getInventory().equals(this.inventoryManager.getArenaInventory()[0]) || event.getInventory().equals(this.inventoryManager.getArenaInventory()[1])) {
+		if (event.getInventory().equals(this.inventoryManager.getArenaInventory()[0]) || event.getInventory().equals(this.inventoryManager.getArenaInventory()[1]) || event.getInventory().equals(this.inventoryManager.getArenaInventory()[2])) {
 			if (Utils.getRequestByUUID(event.getPlayer().getUniqueId()).getArena() == null) {
 				this.main.getManagerHandler().getRequestManager().removeRequest(event.getPlayer().getUniqueId());
 				Bukkit.getPlayer(event.getPlayer().getUniqueId()).sendMessage(ChatColor.RED + "You have cancelled your request duel.");

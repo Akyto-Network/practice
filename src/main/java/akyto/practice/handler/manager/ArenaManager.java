@@ -140,6 +140,7 @@ public class ArenaManager {
 		this.main.getArenaCopies().remove(arena);
 	}
 
+	// TODO Optimize even more
 	public UUID createCopy(Arena arena, final Duel duel) {
 		UUID id = UUID.randomUUID();
 

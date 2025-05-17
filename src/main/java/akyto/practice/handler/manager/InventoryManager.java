@@ -46,7 +46,7 @@ public class InventoryManager {
 	private final int queueSize = 9*2;
 	private final Practice main;
 	private final Inventory[] queueInventory = new Inventory[6];
-	private final Inventory[] arenaInventory = new Inventory[2];
+	private final Inventory[] arenaInventory = new Inventory[3];
 	private final Inventory[] editorInventory = new Inventory[3];
 	private final Inventory hostInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Events:");
 	private final Inventory tournamentSizeInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Tournament Size:");
@@ -81,11 +81,18 @@ public class InventoryManager {
 		this.queueInventory[5] = Bukkit.createInventory(null, queueSize, ChatColor.GRAY + "Select tournament kit:");
 		this.arenaInventory[0] = Bukkit.createInventory(null, 9*4, ChatColor.GRAY + "Select Normal Arena:");
 		this.arenaInventory[1] = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Select Sumo Arena:");
+		this.arenaInventory[2] = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Select Build Arena:");
 		for (Arena arena : this.main.getArenas().values()) {
 			this.arenaInventory[arena.getArenaType().equals(ArenaType.NORMAL) ? 0 : 1].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + StringUtils.capitalize(arena.getName())));
 		}
+		for (Arena arena : this.main.getArenas().values()) {
+			if (!arena.isBuild() || arena.getArenaType().equals(ArenaType.BEDFIGHT))
+				continue;
+			this.arenaInventory[2].addItem(ItemUtils.createItems(arena.getIcon(), ChatColor.GRAY + " » " + ChatColor.YELLOW + StringUtils.capitalize(arena.getName())));
+		}
 		this.arenaInventory[0].setItem(35, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
 		this.arenaInventory[1].setItem(26, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
+		this.arenaInventory[2].setItem(26, ItemUtils.createItems(Material.TRAP_DOOR, ChatColor.GRAY + " » " + ChatColor.GOLD + "Random Arena"));
 		this.editorInventory[0] = Bukkit.createInventory(null, queueSize, ChatColor.GRAY + "Select kit:");
 		this.editorInventory[1] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "More:");
 		this.editorInventory[2] = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Management:");
