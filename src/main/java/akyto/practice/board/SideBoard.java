@@ -127,9 +127,8 @@ public class SideBoard implements BoardAdapter {
                     final ProfileManager profileManager = plugin.getManagerHandler().getProfileManager();
                     board.add(" ");
                     board.add(ChatColor.DARK_GRAY.toString() + ChatColor.BOLD + "Hits:");
-                    board.add(ChatColor.GRAY + " " + ChatColor.GRAY + "Their: " + profileManager.getDuelStatistics().get(opps).getHits());
-                    board.add(ChatColor.GRAY + " * " + ChatColor.GRAY + "Your: " + profileManager.getDuelStatistics().get(player.getUniqueId()).getHits());
-                    board.add(" " + ChatColor.GREEN + profileManager.getDuelStatistics().get(player.getUniqueId()).getHits() + ChatColor.GRAY + " vs " + ChatColor.RED + profileManager.getDuelStatistics().get(opps).getHits());
+                    board.add(ChatColor.GRAY + " Their: " + ChatColor.RESET + profileManager.getDuelStatistics().get(opps).getHits());
+                    board.add(ChatColor.GRAY + " Your: " + ChatColor.RESET + profileManager.getDuelStatistics().get(player.getUniqueId()).getHits());
                 }
         	}
 

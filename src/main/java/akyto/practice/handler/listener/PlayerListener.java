@@ -346,7 +346,7 @@ public class PlayerListener implements Listener {
 		final Profile profile = Utils.getProfiles(player.getUniqueId());
 		if (profile.isInState(ProfileState.FIGHT)) {
 			final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
-			if (duel.getKit().buildable()) {
+			if (duel.getKit().buildable() && duel.getState().equals(DuelState.PLAYING)) {
 				Location corner1 = Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getCorner1().toBukkitLocation() : duel.getArena().getCorner1().toBukkitLocation();
 				Location corner2 = Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getCorner2().toBukkitLocation() : duel.getArena().getCorner2().toBukkitLocation();
 				Location blockLocation = event.getBlockPlaced().getLocation();
@@ -369,12 +369,12 @@ public class PlayerListener implements Listener {
 		final Profile profile = Utils.getProfiles(player.getUniqueId());
 		if (profile.isInState(ProfileState.FIGHT)) {
 			final Duel duel = Utils.getDuelByUUID(player.getUniqueId());
-			if (duel.getKit().buildable()) {
+			if (duel.getKit().buildable() && duel.getState().equals(DuelState.PLAYING)) {
 				if (duel.getKit().name().equals("bedfight")) {
 					if (event.getBlock().getType().equals(Material.WOOD) || event.getBlock().getType().equals(Material.WOOL)) return;
 					if (event.getBlock().getType().equals(Material.BED_BLOCK)) {
 						final Location isLocation = duel.getFirst().contains(event.getPlayer().getUniqueId()) ? (Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getPosition().getFirst().toBukkitLocation() : duel.getArena().getPosition().getFirst().toBukkitLocation()) :  (Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getPlayer().getUniqueId()).getPosition().getLast().toBukkitLocation() : duel.getArena().getPosition().getLast().toBukkitLocation());
-						if (MatchUtils.isNearSpawnLocation(event.getBlock().getLocation(), isLocation, 15)) {
+						if (MatchUtils.isNearSpawnLocation(event.getBlock().getLocation(), isLocation, 20)) {
 							event.getPlayer().sendMessage(ChatColor.RED + "You cannot break your bed!");
 							event.setCancelled(true);
 							return;
