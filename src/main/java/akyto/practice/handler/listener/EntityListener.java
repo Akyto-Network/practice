@@ -176,7 +176,7 @@ public class EntityListener implements Listener {
 					return;
 				}
 				if (!profileDamager.isAllowClick()) {
-					event.setCancelled(true);
+					event.setDamage(0.0f);
 					((Player) event.getDamager()).getPlayer().sendMessage(CoreUtils.translate(Core.API.getLoaderHandler().getMessage().getClickCancel()));
 					return;
 				}
