@@ -9,6 +9,7 @@ import akyto.core.settings.NormalSettings;
 import akyto.core.settings.SpectateSettings;
 import akyto.core.utils.CoreUtils;
 import akyto.practice.Practice;
+import akyto.practice.arena.ArenaType;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
 import akyto.practice.editor.Edited;
@@ -104,8 +105,10 @@ public class InventoryListener implements Listener {
 				int inventoryIdx = 0;
 				if (chosen.name().equalsIgnoreCase("sumo"))
 					inventoryIdx = 1;
-				else if (chosen.buildable())
+				else if (chosen.buildable() && !chosen.arenaType().equals(ArenaType.BEDFIGHT))
 					inventoryIdx = 2;
+				else if (chosen.arenaType().equals(ArenaType.BEDFIGHT))
+					inventoryIdx = 3;
 				event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getArenaInventory()[inventoryIdx]);
 			}
 			if (inventory.equals(inventoryManager.getArenaInventory()[0]) || inventory.equals(inventoryManager.getArenaInventory()[1]) || inventory.equals(inventoryManager.getArenaInventory()[2])) {
