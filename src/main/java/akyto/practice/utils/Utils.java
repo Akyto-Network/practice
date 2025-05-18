@@ -14,6 +14,8 @@ import akyto.practice.request.Request;
 import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.match.MatchUtils;
 import akyto.practice.utils.timer.impl.EnderpearlTimer;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -25,6 +27,8 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class Utils {
 
@@ -147,5 +151,50 @@ public class Utils {
 			}
 		}
 		return null;
+	}
+
+	public static void changeNicknameDiscord(final Player player, Consumer<Boolean> callback) {
+		final Profile profile = Core.API.getManagerHandler().getProfileManager().getProfile(player.getUniqueId());
+
+		if (profile == null || profile.getDiscordId() == null) {
+			callback.accept(false);
+			return;
+		}
+
+		JDA jda = Core.API.getJda();
+		AtomicBoolean found = new AtomicBoolean(false);
+
+		for (Guild guild : jda.getGuilds()) {
+			guild.retrieveMemberById(profile.getDiscordId()).queue(
+					member -> {
+						if (member != null) {
+							String newNickname = player.getName();
+							int globalElo = 0;
+							for (Kit kit : Practice.API.getKits()) {
+								globalElo = profile.getStats().get(2)[kit.id()];
+							}
+							globalElo = globalElo / Practice.API.getKits().size();
+							guild.modifyNickname(member, "[" + globalElo + "] " + newNickname).queue(
+									success -> {
+										callback.accept(true);
+									},
+									error -> {
+										callback.accept(false);
+									}
+							);
+							found.set(true);
+						}
+					},
+					error -> {
+						System.err.println("Error when targeting member : " + error.getMessage());
+					}
+			);
+
+			if (found.get()) break;
+		}
+
+		if (!found.get()) {
+			callback.accept(false);
+		}
 	}
 }
