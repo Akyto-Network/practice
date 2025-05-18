@@ -88,7 +88,7 @@ public class InventoryManager {
 				inventoryIdx = 1;
 			} else if (arena.isBuild() && !arena.getArenaType().equals(ArenaType.BEDFIGHT)) {
 				inventoryIdx = 2;
-			} else {
+			} else if (arena.getArenaType().equals(ArenaType.BEDFIGHT)) {
 				// bedfight
 				continue;
 			}
