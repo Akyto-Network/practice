@@ -3,16 +3,13 @@ package akyto.practice.kit.gametype;
 import akyto.practice.arena.ArenaType;
 import akyto.practice.kit.Kit;
 import akyto.practice.kit.KitInterface;
-import com.google.common.collect.Lists;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.List;
 

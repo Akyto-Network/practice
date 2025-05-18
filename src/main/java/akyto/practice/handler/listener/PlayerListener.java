@@ -1,19 +1,28 @@
 package akyto.practice.handler.listener;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import akyto.core.Core;
 import akyto.core.particle.ParticleEntry;
+import akyto.core.profile.Profile;
+import akyto.core.profile.ProfileState;
 import akyto.core.utils.CoreUtils;
+import akyto.practice.Practice;
+import akyto.practice.duel.Duel;
+import akyto.practice.duel.Duel.DuelType;
+import akyto.practice.duel.cache.DuelState;
 import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.EventManager;
+import akyto.practice.kit.Kit;
+import akyto.practice.kit.KitInterface;
 import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.tournament.TournamentState;
+import akyto.practice.utils.Utils;
 import akyto.practice.utils.chat.MessageHelper;
 import akyto.practice.utils.chat.MessageUtils;
+import akyto.practice.utils.match.MatchUtils;
 import akyto.practice.utils.match.TagUtils;
 import com.google.common.collect.Lists;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
@@ -22,10 +31,10 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -40,18 +49,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import akyto.core.Core;
-import akyto.core.profile.Profile;
-import akyto.core.profile.ProfileState;
-import akyto.practice.Practice;
-import akyto.practice.duel.Duel;
-import akyto.practice.duel.Duel.DuelType;
-import akyto.practice.duel.cache.DuelState;
-import akyto.practice.kit.Kit;
-import akyto.practice.kit.KitInterface;
-import akyto.practice.utils.Utils;
-import akyto.practice.utils.match.MatchUtils;
-import net.md_5.bungee.api.ChatColor;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerListener implements Listener {
 	

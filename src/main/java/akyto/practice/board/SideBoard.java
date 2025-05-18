@@ -17,7 +17,6 @@ import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.Utils;
 import akyto.practice.utils.chat.MessageUtils;
 import akyto.practice.utils.match.DurationUtils;
-import akyto.practice.utils.match.MatchUtils;
 import com.bizarrealex.aether.scoreboard.Board;
 import com.bizarrealex.aether.scoreboard.BoardAdapter;
 import com.bizarrealex.aether.scoreboard.cooldown.BoardCooldown;
@@ -28,7 +27,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 public class SideBoard implements BoardAdapter {
     private final Practice plugin;

@@ -1,16 +1,12 @@
 package akyto.practice.runnable.countdown;
 
 import akyto.practice.Practice;
-import akyto.practice.event.EventState;
 import akyto.practice.handler.manager.TournamentManager;
-import akyto.practice.runnable.sumo.SumoEventRunnable;
 import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.chat.MessageHelper;
 import akyto.practice.utils.chat.MessageUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 
