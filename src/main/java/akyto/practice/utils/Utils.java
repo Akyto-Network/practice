@@ -171,7 +171,7 @@ public class Utils {
 							String newNickname = player.getName();
 							int globalElo = 0;
 							for (Kit kit : Practice.API.getKits()) {
-								globalElo = profile.getStats().get(2)[kit.id()];
+								globalElo += profile.getStats().get(2)[kit.id()];
 							}
 							globalElo = globalElo / Practice.API.getKits().size();
 							guild.modifyNickname(member, "[" + globalElo + "] " + newNickname).queue(

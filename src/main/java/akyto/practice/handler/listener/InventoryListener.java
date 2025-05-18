@@ -93,12 +93,8 @@ public class InventoryListener implements Listener {
 					}
 				}
 			}
-			if (inventory.equals(inventoryManager.getQueueInventory()[0])) {
-				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(player.getUniqueId(), Kit.getLadderByID(event.getSlot(), main), false);
-				event.getWhoClicked().closeInventory();
-			}
-			if (inventory.equals(inventoryManager.getQueueInventory()[1])) {
-				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(player.getUniqueId(), Kit.getLadderByID(event.getSlot(), main), true);
+			if (inventory.equals(inventoryManager.getQueueInventory()[0]) || inventory.equals(inventoryManager.getQueueInventory()[1])) {
+				this.main.getManagerHandler().getQueueManager().addPlayerToQueue(player.getUniqueId(), Kit.getLadderByID(event.getSlot(), main), inventory.equals(inventoryManager.getQueueInventory()[1]));
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventory.equals(inventoryManager.getQueueInventory()[2])) {

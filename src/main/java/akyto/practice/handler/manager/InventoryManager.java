@@ -105,7 +105,7 @@ public class InventoryManager {
 		this.runnableLeaderboardInventory();
 		this.setEditorInventory();
 		this.setUtilsInventory();
-
+		this.setHostInventory();
 		this.setTournamentInventory();
 	}
 

@@ -31,7 +31,7 @@ public class QueueManager {
             if (queueEntry.getKit().equals(kit) && queueEntry.isRanked() == ranked && !entry.getKey().equals(uuid)) {
                 if (queueEntry.isRanked()) {
                     if (!Practice.API.getManagerHandler().getQueueManager().checkCompatibilityElo(entry.getKey(), uuid)) {
-                        return;
+                        break;
                     }
                     queueEntry.getEloRangeRunnable().cancel();
                 }
