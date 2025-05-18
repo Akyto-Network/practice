@@ -23,7 +23,7 @@ public class CountdownTournament extends BukkitRunnable {
 
     public CountdownTournament(final Practice main, final TournamentEntry entry) {
         this.main = main;
-        this.counter = 10;
+        this.counter = 240;
         this.entry = entry;
         this.isRunning = false;
     }
@@ -37,12 +37,12 @@ public class CountdownTournament extends BukkitRunnable {
             cancel();
             return;
         }
-        if (counter % 20 == 0) {
+        if (counter % 30 == 0 && counter >= 30) {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 MessageUtils.sendTournamentRequestMessage(player, String.valueOf(entry.getId()), entry.getKit().displayName(), entry.getTeamSize());
             });
         }
-        if (counter <= 10 || counter % 10 == 0) {
+        if ((counter <= 5 || counter % 10 == 0) && counter <= 30) {
             MessageHelper.notifyUUID(entry.getParticipants(), TournamentManager.prefix + ChatColor.WHITE + "Starting in " + ChatColor.RED + counter + ChatColor.WHITE + " seconds!");
         }
 
