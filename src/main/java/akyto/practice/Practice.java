@@ -95,7 +95,7 @@ public class Practice extends JavaPlugin {
 		this.getFileSetup().saveEditor();
 		LocationUtil.getAll().values().forEach(locationHelper -> locationHelper.save(this));
 		try {
-			this.arenaCopies.forEach(arenaCopy -> this.managerHandler.getArenaManager().removeCopy(arenaCopy));
+			this.arenaCopies.forEach(arenaCopy -> this.managerHandler.getArenaManager().removeCopy(arenaCopy)); // TODO ConcurrentModification and no guarantee that it is effectively removed
 			this.managerHandler.getArenaManager().saveArenas();
 			this.locationConfig.save(locationFile);
 		} catch (IOException e) { e.printStackTrace(); }

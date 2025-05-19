@@ -43,52 +43,61 @@ public class DuelManager {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
 		Arena arena = duel.getArena() == null ? this.main.getManagerHandler().getArenaManager().getRandomArena(kit) : duel.getArena();
 		duel.setArena(arena);
-		final UUID idCopy;
-		if (kit.buildable()) {
-			idCopy = this.main.getManagerHandler().getArenaManager().createCopy(arena, duel);
-			if (idCopy == null) {
-				System.err.println("Failed to create arena copy for " + arena.getName());
+		CompletableFuture<UUID> future = new CompletableFuture<>();
+		future.whenComplete((idCopy, throwable) -> {
+			if (throwable != null) {
+				this.main.getLogger().severe("Failed to create arena copy: " + throwable.getMessage());
 				return;
 			}
+			if (kit.buildable() && idCopy == null) {
+				this.main.getLogger().severe("Failed to create arena copy: Unknown error");
+				return;
+			}
+
+			Practice.API.getServer().getScheduler().runTask(Practice.API, () -> {
+				this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
+				if (!duel.getDuelType().equals(DuelType.FFA)){
+					TagUtils.setupTeams(first, second);
+				}
+				if (duel.getDuelType().equals(DuelType.SPLIT)) {
+					MessageUtils.sendSplitMessage(first, second, kit);
+				}
+				Arrays.asList(first, second).forEach(uuids -> uuids.forEach(uuid -> {
+					if (Bukkit.getPlayer(uuid) == null) {
+						if (duel.getDuelType().equals(DuelType.SINGLE)) {
+							this.endSingle(first.getFirst().equals(uuid) ? second.getFirst() : first.getFirst());
+							return;
+						}
+						else {
+							MatchUtils.addKill(uuid, null, false);
+						}
+					}
+					MatchUtils.multiArena(uuid, false, false);
+					Utils.getOpponents(uuid).forEach(ops -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(ops))); // Fix Tracker problem
+					Utils.getAllies(uuid).forEach(allies -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(allies))); // Fix Tracker problem
+					this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(Utils.getDuelByUUID(uuid).isRanked(), kit);
+					Utils.resetPlayer(uuid);
+					final Player player = Bukkit.getPlayer(uuid);
+					if (duel.getDuelType().equals(DuelType.SINGLE)) {
+						player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " +
+						ChatColor.WHITE + (first.getFirst().equals(uuid) ? CoreUtils.getName(second.getFirst()) : CoreUtils.getName(first.getFirst())) +
+						(duel.isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + Utils.getProfiles(Utils.getOpponents(uuid).getFirst()).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
+					}
+					if (duel.getDuelType().equals(DuelType.FFA)) {
+						Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
+					}
+					DataUtils.addPlayedToData(uuid, kit);
+					this.teleport(duel, idCopy);
+				}));
+				if (kit.name().equalsIgnoreCase("sumo")) new SumoRunnable(this.main, duel).runTaskTimer(this.main, 5L, 5L);
+				new CountdownDuel(Arrays.asList(first, second), duel, this.main).runTaskTimer(this.main, 20L, 20L);
+			});
+		});
+		if (kit.buildable()) {
+			this.main.getManagerHandler().getArenaManager().createCopy(arena, duel, future);
 		} else {
-			idCopy = null;
+			future.complete(null);
 		}
-		this.main.getManagerHandler().getInventoryManager().refreshSpectateInventory();
-		if (!duel.getDuelType().equals(DuelType.FFA)){
-			TagUtils.setupTeams(first, second);
-		}
-		if (duel.getDuelType().equals(DuelType.SPLIT)) {
-			MessageUtils.sendSplitMessage(first, second, kit);
-		}
-		Arrays.asList(first, second).forEach(uuids -> uuids.forEach(uuid -> {
-			if (Bukkit.getPlayer(uuid) == null) {
-				if (duel.getDuelType().equals(DuelType.SINGLE)) {
-					this.endSingle(first.getFirst().equals(uuid) ? second.getFirst() : first.getFirst());
-					return;
-				}
-				else {
-					MatchUtils.addKill(uuid, null, false);
-				}
-			}
-			MatchUtils.multiArena(uuid, false, false);
-			Utils.getOpponents(uuid).forEach(ops -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(ops))); // Fix Tracker problem
-			Utils.getAllies(uuid).forEach(allies -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(allies))); // Fix Tracker problem
-			this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(Utils.getDuelByUUID(uuid).isRanked(), kit);
-			Utils.resetPlayer(uuid);
-			final Player player = Bukkit.getPlayer(uuid);
-			if (duel.getDuelType().equals(DuelType.SINGLE)) {
-				player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " +
-				ChatColor.WHITE + (first.getFirst().equals(uuid) ? CoreUtils.getName(second.getFirst()) : CoreUtils.getName(first.getFirst())) +
-				(duel.isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + Utils.getProfiles(Utils.getOpponents(uuid).getFirst()).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
-			}
-			if (duel.getDuelType().equals(DuelType.FFA)) {
-				Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
-			}
-			DataUtils.addPlayedToData(uuid, kit);
-			if (!kit.buildable()) this.teleport(duel, idCopy);
-		}));
-		if (kit.name().equalsIgnoreCase("sumo")) new SumoRunnable(this.main, duel).runTaskTimer(this.main, 5L, 5L);
-		new CountdownDuel(Arrays.asList(first, second), duel, this.main).runTaskTimer(this.main, 20L, 20L);
 	}
 
 	public void teleport(final Duel duel, final UUID id) {

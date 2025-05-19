@@ -135,20 +135,18 @@ public class ArenaManager {
 							editSession.flushQueue();
 							long end = System.currentTimeMillis();
 							this.main.getLogger().info("Arena remove copy took " + (end - start) + "ms");
+							this.main.getArenaCopies().remove(arena);
 						}
 				);
-		this.main.getArenaCopies().remove(arena);
 	}
 
 	// TODO Optimize even more
-	public UUID createCopy(Arena arena, final Duel duel) {
-		UUID id = UUID.randomUUID();
-
-		long start = System.currentTimeMillis();
-		CompletableFuture<Void> future = new CompletableFuture<>();
-
+	public void createCopy(Arena arena, final Duel duel, CompletableFuture<UUID> future) {
 		TaskManager.IMP.async(() -> {
 			try {
+				UUID id = UUID.randomUUID();
+
+				long start = System.currentTimeMillis();
 				World world = arena.getPosition().getFirst().toBukkitWorld();
 				double minY = min(arena.getCorner1().getY(), arena.getCorner2().getY());
 				double maxY = max(arena.getCorner1().getY(), arena.getCorner2().getY());
@@ -209,22 +207,10 @@ public class ArenaManager {
 				LocationSerializer newCorner2 = arena.getCorner2().add(0, 0, addZ);
 				ArenaCopy copy = new ArenaCopy(id, serializers, players, newCorner1, newCorner2);
 				this.main.getArenaCopies().add(copy);
-
-				future.complete(null);
+				future.complete(id);
 			} catch (Exception e) {
 				future.completeExceptionally(e);
 			}
 		});
-
-		future.whenComplete((_, throwable) -> {
-			if (throwable != null) {
-				this.main.getLogger().severe("Failed to create arena copy: " + throwable.getMessage());
-				return;
-			}
-
-			main.getManagerHandler().getDuelManager().teleport(duel, id);
-		});
-
-		return id;
 	}
 }
