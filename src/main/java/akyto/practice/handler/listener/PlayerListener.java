@@ -405,7 +405,7 @@ public class PlayerListener implements Listener {
 		final boolean inTournament = Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId()) != null;
 		if (profile.isInState(ProfileState.FIGHT) || (inTournament && Objects.requireNonNull(Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId())).getTournamentState().equals(TournamentState.STARTED))) {
 			final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
-			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup") || duel.getKit().name().equals("bedfight") || duel.getKit().name().equals("classic")) {
+			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup") || duel.getKit().name().equals("boxing") || duel.getKit().name().equals("bedfight") || duel.getKit().name().equals("classic")) {
 				event.setCancelled(true);
 				event.setFoodLevel(20);
 				return;	

@@ -204,7 +204,7 @@ public class EntityListener implements Listener {
 								final float hitExp = hit / 100.0f;
 								Bukkit.getPlayer(event.getDamager().getUniqueId()).setExp(hitExp);
 								Bukkit.getPlayer(event.getDamager().getUniqueId()).setLevel(hit);
-								if (hit >= 100) {
+								if (hit >= 99) {
 									if (duel.getDuelType().equals(Duel.DuelType.SINGLE)) {
 										main.getManagerHandler().getDuelManager().endSingle(event.getDamager().getUniqueId());
 									}
