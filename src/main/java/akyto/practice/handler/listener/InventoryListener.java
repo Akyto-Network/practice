@@ -110,7 +110,7 @@ public class InventoryListener implements Listener {
 					inventoryIdx = 3;
 				event.getWhoClicked().openInventory(this.main.getManagerHandler().getInventoryManager().getArenaInventory()[inventoryIdx]);
 			}
-			if (inventory.equals(inventoryManager.getArenaInventory()[0]) || inventory.equals(inventoryManager.getArenaInventory()[1]) || inventory.equals(inventoryManager.getArenaInventory()[2])) {
+			if (inventory.equals(inventoryManager.getArenaInventory()[0]) || inventory.equals(inventoryManager.getArenaInventory()[1]) || inventory.equals(inventoryManager.getArenaInventory()[2]) || inventory.equals(inventoryManager.getArenaInventory()[3])) {
 				final Request request = Utils.getRequestByUUID(player.getUniqueId());
 				request.setArena(event.getCurrentItem().getType().equals(Material.TRAP_DOOR) ? this.main.getManagerHandler().getArenaManager().getRandomArena(request.getKit()) : Utils.getArenaByIcon(event.getCurrentItem().getType(), request.getKit().arenaType()));
 				this.main.getManagerHandler().getRequestManager().sendNotification(event.getWhoClicked().getUniqueId(), RequestType.DUEL);

@@ -81,6 +81,11 @@ public class SpectateCommand implements CommandExecutor {
             return false;
         }
 
+        if (Utils.getTournamentByPlayerUUID(targetUUID) != null) {
+            sender.sendMessage(ChatColor.RED + "This a tournament match you cannot spectate it!");
+            return false;
+        }
+
         Arrays.asList(targetDuel.getFirst(), targetDuel.getSecond()).forEach(players -> players.forEach(uuids -> {
             final Profile profile = Utils.getProfiles(uuids);
             if (profile.getSettings()[4] != 0) {

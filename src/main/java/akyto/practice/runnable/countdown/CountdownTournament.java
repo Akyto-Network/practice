@@ -19,7 +19,7 @@ public class CountdownTournament extends BukkitRunnable {
 
     public CountdownTournament(final Practice main, final TournamentEntry entry) {
         this.main = main;
-        this.counter = 240;
+        this.counter = 120;
         this.entry = entry;
         this.isRunning = false;
     }
