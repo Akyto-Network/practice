@@ -22,7 +22,7 @@ public class BedFight extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Bed-Fight";
+        return ChatColor.DARK_RED + "Bed-Fight";
     }
 
     @Override

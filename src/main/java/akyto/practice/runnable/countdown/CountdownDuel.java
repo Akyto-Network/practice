@@ -51,7 +51,7 @@ public class CountdownDuel extends BukkitRunnable {
 				final Player player = main.getServer().getPlayer(uuid);
                 if (player != null) {
                     player.playSound(player.getLocation(), Sound.NOTE_PIANO, 1.5f, 1.5f);
-                    player.sendMessage(ChatColor.RED.toString() + counter + "s" + ChatColor.GRAY + "...");
+                    player.sendMessage(ChatColor.WHITE.toString() + counter + "s" + ChatColor.RED + "...");
                 }
             }));
         } else {
@@ -65,7 +65,7 @@ public class CountdownDuel extends BukkitRunnable {
                         player.updateInventory();
                     }
                     player.playSound(player.getLocation(), Sound.FIREWORK_LARGE_BLAST, 1f, 1f);
-                    player.sendMessage(ChatColor.DARK_GRAY + "The match has begun" + ChatColor.GRAY + "," + ChatColor.WHITE + " good luck.");
+                    player.sendMessage(ChatColor.WHITE + "The match has begun" + ChatColor.GRAY + "," + ChatColor.RED + " good luck.");
                 }
             }));
 			this.duel.timer = new Timer();

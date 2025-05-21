@@ -8,6 +8,8 @@ import akyto.practice.duel.Duel.DuelType;
 import akyto.practice.kit.Kit;
 import akyto.practice.runnable.EloRangeRunnable;
 import akyto.practice.utils.Utils;
+import akyto.practice.utils.chat.MessageUtils;
+import akyto.practice.utils.match.DurationUtils;
 import akyto.practice.utils.match.EloUtils;
 import com.google.common.collect.Sets;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.Map;
+import java.util.Timer;
 import java.util.UUID;
 
 @Getter
@@ -35,6 +38,7 @@ public class QueueManager {
                     }
                     queueEntry.getEloRangeRunnable().cancel();
                 }
+                queueEntry.getTimer().cancel();
                 new Duel(Practice.API, Sets.newHashSet(entry.getKey()), Sets.newHashSet(uuid), queueEntry.isRanked(), queueEntry.getKit(), DuelType.SINGLE, null);
                 Practice.API.getQueue().remove(entry.getKey());
                 Practice.API.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
@@ -45,7 +49,9 @@ public class QueueManager {
         Utils.getProfiles(uuid).setProfileState(ProfileState.QUEUE);
         this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
         this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(ranked, kit);
-        Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + "You have successfully joined the " + (ranked ? "" : "un") + "ranked " + ChatColor.stripColor(kit.displayName()) + " queue");
+        this.main.getQueue().get(uuid).startTime = System.currentTimeMillis();
+        DurationUtils.startDuration(uuid);
+        MessageUtils.sendQueueMessage(Bukkit.getPlayer(uuid), this.main.getQueue().get(uuid));
         if (ranked) {
             this.main.getQueue().get(uuid).getEloRangeRunnable().runTaskTimer(main, 20L, 20L);
         }
@@ -57,6 +63,7 @@ public class QueueManager {
             if (queue.isRanked()) {
                 queue.getEloRangeRunnable().cancel();
             }
+            queue.getTimer().cancel();
         	this.main.getQueue().remove(uuid);
             Utils.getProfiles(uuid).setProfileState(ProfileState.FREE);
             this.main.getManagerHandler().getItemManager().giveItems(uuid, false);
@@ -100,11 +107,17 @@ public class QueueManager {
         private final boolean ranked;
         private EloRange eloRange;
         public EloRangeRunnable eloRangeRunnable;
+        @Getter
+        public long duration;
+        public long startTime;
+        private Timer timer;
         
         public QueueEntry(final UUID uuid, final Kit kit, final boolean ranked) {
             this.uuid = uuid;
             this.kit = kit;
             this.ranked = ranked;
+            this.duration = 0;
+            this.timer = new Timer();
             if (ranked) {
                 this.eloRange = new EloRange(Core.API.getManagerHandler().getProfileManager().getProfile(uuid).getStats().get(2)[kit.id()]);
                 this.eloRangeRunnable = new EloRangeRunnable(uuid, this);

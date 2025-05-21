@@ -20,7 +20,7 @@ public class NoDebuff extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "NoDebuff";
+        return ChatColor.DARK_RED + "NoDebuff";
     }
 
     @Override

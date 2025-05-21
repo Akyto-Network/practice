@@ -19,7 +19,7 @@ public class Sumo extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Sumo";
+        return ChatColor.DARK_RED + "Sumo";
     }
 
     @Override

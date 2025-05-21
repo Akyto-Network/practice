@@ -20,7 +20,7 @@ public class Debuff extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Debuff";
+        return ChatColor.DARK_RED + "Debuff";
     }
 
     @Override

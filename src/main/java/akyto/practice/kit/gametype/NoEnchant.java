@@ -20,7 +20,7 @@ public class NoEnchant extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "NoEnchant";
+        return ChatColor.DARK_RED + "NoEnchant";
     }
 
     @Override

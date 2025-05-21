@@ -22,12 +22,12 @@ public class Boxing extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Boxing";
+        return ChatColor.DARK_RED + "Boxing";
     }
 
     @Override
     public Material material() {
-        return Material.DIAMOND_SWORD;
+        return Material.DIAMOND_CHESTPLATE;
     }
 
     @Override

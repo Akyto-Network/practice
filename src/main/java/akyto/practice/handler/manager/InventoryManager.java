@@ -212,7 +212,7 @@ public class InventoryManager {
 			meta.setDisplayName(kit.displayName());
 			final List<Inventory> invs = Arrays.asList(this.queueInventory[0], this.queueInventory[1], this.queueInventory[2], this.queueInventory[3], this.queueInventory[4], this.queueInventory[5], this.leaderboardInventory);
 			invs.forEach(inv -> {
-				meta.setLore(Arrays.asList(ChatColor.GRAY + "Queueing: " + ChatColor.RESET + this.getQueuedFromLadder(kit, !inv.equals(this.queueInventory[0])), ChatColor.GRAY + "Fighting: " + ChatColor.RESET + this.getMatchedFromLadder(kit, !inv.equals(this.queueInventory[0]))));
+				meta.setLore(Arrays.asList(ChatColor.WHITE + "Queueing: " + ChatColor.RED + this.getQueuedFromLadder(kit, !inv.equals(this.queueInventory[0])), ChatColor.WHITE + "Fighting: " + ChatColor.RED + this.getMatchedFromLadder(kit, !inv.equals(this.queueInventory[0]))));
 				if (inv.equals(this.queueInventory[2]) || inv.equals(this.queueInventory[3]) || inv.equals(this.queueInventory[4]) ||  inv.equals(this.queueInventory[5]) || inv.equals(this.leaderboardInventory)) {
 					meta.setLore(null);
 				}
@@ -231,8 +231,8 @@ public class InventoryManager {
 				}
 			});
 		}
-		this.partyEventInventory.setItem(1, ItemUtils.createItems(Material.IRON_AXE, ChatColor.DARK_GRAY + "Free For All"));
-		this.partyEventInventory.setItem(3, ItemUtils.createItems(Material.DIAMOND_CHESTPLATE, ChatColor.DARK_GRAY + "Split"));
+		this.partyEventInventory.setItem(1, ItemUtils.createItems(Material.IRON_AXE, ChatColor.DARK_RED + "Free For All"));
+		this.partyEventInventory.setItem(3, ItemUtils.createItems(Material.DIAMOND_CHESTPLATE, ChatColor.DARK_RED + "Split"));
 	}
 	
 	public void refreshQueueInventory(boolean ranked, final Kit kit) {
@@ -241,8 +241,8 @@ public class InventoryManager {
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(kit.displayName());
         List<String> lore = new ArrayList<>();
-        lore.add(ChatColor.GRAY + "Queueing: " + ChatColor.RESET + this.getQueuedFromLadder(kit, ranked));
-        lore.add(ChatColor.GRAY + "Fighting: " + ChatColor.RESET + this.getMatchedFromLadder(kit, ranked));
+        lore.add(ChatColor.WHITE + "Queueing: " + ChatColor.RED + this.getQueuedFromLadder(kit, ranked));
+        lore.add(ChatColor.WHITE + "Fighting: " + ChatColor.RED + this.getMatchedFromLadder(kit, ranked));
         meta.setLore(lore);
 		item.setItemMeta(meta);
 		inv.removeItem(inv.getItem(kit.id()));
@@ -293,14 +293,14 @@ public class InventoryManager {
             profile.setItem(i, glass);
         }
 		final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
-        profile.setItem(0, ItemUtils.createItems(Material.PAINTING, ChatColor.DARK_GRAY + "Scoreboard" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
-        profile.setItem(1, ItemUtils.createItems(Material.BLAZE_POWDER, ChatColor.DARK_GRAY + "Duel Request" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
-        profile.setItem(2, ItemUtils.createItems(Material.WATCH, ChatColor.DARK_GRAY + "Time" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(3, ItemUtils.createItems(Material.REDSTONE, ChatColor.DARK_GRAY + "Spectator" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.DARK_GRAY + "Private Message" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.DARK_GRAY + "Drops" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(6, ItemUtils.createItems(Material.BONE, ChatColor.DARK_GRAY + "Clear Inventory" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
-		profile.setItem(8, ItemUtils.createItems(Material.FIREWORK, ChatColor.DARK_GRAY + "Death Effects" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Click here to select a death effect")));
+        profile.setItem(0, ItemUtils.createItems(Material.PAINTING, ChatColor.DARK_RED + "Scoreboard" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(1, ItemUtils.createItems(Material.BLAZE_POWDER, ChatColor.DARK_RED + "Duel Request" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(2, ItemUtils.createItems(Material.WATCH, ChatColor.DARK_RED + "Time" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(3, ItemUtils.createItems(Material.REDSTONE, ChatColor.DARK_RED + "Spectator" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.DARK_RED + "Private Message" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(5, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.DARK_RED + "Drops" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(6, ItemUtils.createItems(Material.BONE, ChatColor.DARK_RED + "Clear Inventory" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+		profile.setItem(8, ItemUtils.createItems(Material.FIREWORK, ChatColor.DARK_RED + "Death Effects" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Click here to select a death effect")));
         this.settingsInventory.remove(uuid);
 		this.settingsInventory.put(uuid, profile);
 		profileManager.refreshSettingsLoreInv(profile, uuid, true);

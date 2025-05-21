@@ -20,7 +20,7 @@ public class Axe extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Axe";
+        return ChatColor.DARK_RED + "Axe";
     }
 
     @Override

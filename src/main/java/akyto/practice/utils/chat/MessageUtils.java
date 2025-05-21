@@ -4,6 +4,7 @@ import akyto.core.utils.CoreUtils;
 import akyto.core.utils.components.ComponentJoiner;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
+import akyto.practice.handler.manager.QueueManager;
 import akyto.practice.handler.manager.TournamentManager;
 import akyto.practice.kit.Kit;
 import akyto.practice.tournament.TournamentEntry;
@@ -143,7 +144,7 @@ public class MessageUtils {
 		players.forEach(uuid -> {
 			Player player = Bukkit.getPlayer(uuid);
 			if (player != null) {
-				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
 				player.sendMessage(ChatColor.YELLOW + "Match Information");
 				player.spigot().sendMessage(endMessage(winner, looser));
 				if (duel.isRanked()) {
@@ -157,7 +158,7 @@ public class MessageUtils {
 									.collect(Collectors.joining(", "));
 					player.sendMessage(specMsg);
 				}
-				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
 			}
 		});
 	}
@@ -209,5 +210,52 @@ public class MessageUtils {
 
 	public static String getColorTeam(final Duel duel, final UUID player) {
 		return duel.getFirst().contains(player) ? org.bukkit.ChatColor.BLUE + "Blue" : org.bukkit.ChatColor.RED + "Red";
+	}
+
+	public static void sendQueueMessage(final Player player, QueueManager.QueueEntry entry) {
+		final String[] message = new String[] {
+			" ",
+			ChatColor.DARK_RED.toString() + ChatColor.BOLD + (entry.isRanked() ? "Ranked" : "Unranked") + " Queue" + ChatColor.GRAY + ":",
+			" ",
+			ChatColor.WHITE + " Kit: " + ChatColor.RED + ChatColor.stripColor(entry.getKit().displayName()),
+			ChatColor.GRAY.toString() + ChatColor.ITALIC + " Searching for a match...",
+			" "
+		};
+		player.sendMessage(message);
+	}
+
+	public static void sendMatchFound(final Duel duel, final UUID player) {
+		final UUID oppId = duel.getFirst().contains(player) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
+		final String oppName = CoreUtils.getName(oppId);
+		final int eloOpps = Utils.getProfiles(oppId).getStats().get(2)[duel.getKit().id()];
+		String[] message = null;
+		if (!duel.isRanked()) {
+			message = new String[] {
+					" ",
+					ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Match Founded" + ChatColor.GRAY + ":",
+					" ",
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Arena: " + ChatColor.RED + duel.getArena().getName(),
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Opponent: " + ChatColor.RED + oppName + ChatColor.GRAY + " (" + ChatColor.YELLOW + Bukkit.getPlayer(oppId).getPing() + "ms" + ChatColor.GRAY + ")",
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Their Ping: " + ChatColor.RED + Bukkit.getPlayer(oppId).getPing() + "ms",
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Your Ping: " + ChatColor.RED + Bukkit.getPlayer(player).getPing() + "ms",
+					" "
+			};
+		}
+		else {
+			message = new String[] {
+					" ",
+					ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Match Informations" + ChatColor.GRAY + ":",
+					" ",
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Arena: " + ChatColor.RED + duel.getArena().getName(),
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Opponent: " + ChatColor.RED + oppName + ChatColor.GRAY + " (" + ChatColor.YELLOW + Bukkit.getPlayer(oppId).getPing() + "ms" + ChatColor.GRAY + ")",
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Their Ping: " + ChatColor.RED + Bukkit.getPlayer(oppId).getPing() + "ms",
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Your Ping: " + ChatColor.RED + Bukkit.getPlayer(player).getPing() + "ms",
+					" ",
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Their Elo: " + ChatColor.RED + eloOpps,
+					ChatColor.GRAY + " • " + ChatColor.WHITE + " Your Elo: " + ChatColor.RED + Utils.getProfiles(player).getStats().get(2)[duel.getKit().id()],
+					" "
+			};
+		}
+		Bukkit.getPlayer(player).sendMessage(message);
 	}
 }

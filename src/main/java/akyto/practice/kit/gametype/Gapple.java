@@ -22,7 +22,7 @@ public class Gapple extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Gapple";
+        return ChatColor.DARK_RED + "Gapple";
     }
 
     @Override

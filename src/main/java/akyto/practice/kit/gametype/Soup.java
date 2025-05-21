@@ -22,7 +22,7 @@ public class Soup extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Soup";
+        return ChatColor.DARK_RED + "Soup";
     }
 
     @Override

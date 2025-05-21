@@ -248,9 +248,9 @@ public class InventoryListener implements Listener {
 			if (is_glass) return;
 			final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
 			if (!itemMaterial.equals(Material.EMERALD)) {
-				final int setting = SpectateSettings.getSettingsBySlot(event.getRawSlot());
+				final int setting = SpectateSettings.getSettingsBySlot(event.getSlot());
 				profileManager.changeSettings(setting, Bukkit.getPlayer(event.getWhoClicked().getUniqueId()), false);
-				profileManager.refreshSettingLore(inventory, event.getWhoClicked().getUniqueId(), event.getRawSlot(), setting,false);
+				profileManager.refreshSettingLore(inventory, event.getWhoClicked().getUniqueId(), event.getSlot(), setting,false);
 			}
 			if (itemMaterial.equals(Material.EMERALD)) {
 				event.getWhoClicked().openInventory(inventoryManager.getSettingsInventory().get(event.getWhoClicked().getUniqueId()));

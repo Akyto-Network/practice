@@ -21,7 +21,7 @@ public class BuildUHC extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Build-UHC";
+        return ChatColor.DARK_RED + "Build-UHC";
     }
 
     @Override

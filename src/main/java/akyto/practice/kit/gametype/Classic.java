@@ -19,7 +19,7 @@ public class Classic extends Kit implements KitInterface {
 
     @Override
     public String displayName() {
-        return ChatColor.DARK_GRAY + "Classic";
+        return ChatColor.DARK_RED + "Classic";
     }
 
     @Override

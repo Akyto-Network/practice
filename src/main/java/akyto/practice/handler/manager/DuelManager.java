@@ -79,9 +79,7 @@ public class DuelManager {
 					Utils.resetPlayer(uuid);
 					final Player player = Bukkit.getPlayer(uuid);
 					if (duel.getDuelType().equals(DuelType.SINGLE)) {
-						player.sendMessage(ChatColor.DARK_GRAY + "Your opponent is " +
-						ChatColor.WHITE + (first.getFirst().equals(uuid) ? CoreUtils.getName(second.getFirst()) : CoreUtils.getName(first.getFirst())) +
-						(duel.isRanked() ? ChatColor.GRAY + " (" + ChatColor.RED + Utils.getProfiles(Utils.getOpponents(uuid).getFirst()).getStats().get(2)[kit.id()] + "elo" + ChatColor.GRAY + ")" : ""));
+						MessageUtils.sendMatchFound(duel, uuid);
 					}
 					if (duel.getDuelType().equals(DuelType.FFA)) {
 						Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
@@ -149,7 +147,7 @@ public class DuelManager {
 			}
 			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKitNames());
 			});
-		CoreUtils.matchHistory(CoreUtils.getName(winner), CoreUtils.getName(looser), ChatColor.stripColor(duel.getKit().displayName()), duel.getArena().getName(), DurationUtils.getFormattedDuration(duel), duel.isRanked(), Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()], Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]);
+		CoreUtils.matchHistory(CoreUtils.getName(winner), CoreUtils.getName(looser), ChatColor.stripColor(duel.getKit().displayName()), duel.getArena().getName(), DurationUtils.getFormattedDuration(duel.getDuration()), duel.isRanked(), Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()], Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]);
 		if (duel.getTimer() != null) {
 			duel.getTimer().cancel();
 		}
