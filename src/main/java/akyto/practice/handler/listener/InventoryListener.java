@@ -117,8 +117,38 @@ public class InventoryListener implements Listener {
 				event.getWhoClicked().closeInventory();
 			}
 			if (inventory.equals(inventoryManager.getUtilsInventory())) {
-				if (itemMaterial.equals(Material.PAPER)) Core.API.getManagerHandler().getInventoryManager().generateCommonTagInventory(event.getWhoClicked().getUniqueId());
-				event.getWhoClicked().openInventory(itemMaterial.equals(Material.EMERALD) ? inventoryManager.getLeaderboardInventory() : Core.API.getManagerHandler().getInventoryManager().getCommonTags().get(event.getWhoClicked().getUniqueId()));
+				if (itemMaterial.equals(Material.PAPER)) {
+					Core.API.getManagerHandler().getInventoryManager().generateCommonTagInventory(event.getWhoClicked().getUniqueId());
+					player.openInventory(Core.API.getManagerHandler().getInventoryManager().getCommonTags().get(event.getWhoClicked().getUniqueId()));
+				}
+				if (itemMaterial.equals(Material.SKULL_ITEM)) {
+					final Inventory inv = Core.API.getManagerHandler().getInventoryManager().getProfileInventory().get(player.getUniqueId());
+					if (inv == null) Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(player.getUniqueId(), main.getKitNames());
+					player.openInventory(inv);
+				}
+				if (itemMaterial.equals(Material.REDSTONE_COMPARATOR)) {
+					player.openInventory(this.main.getManagerHandler().getInventoryManager().getSettingsInventory().get(player.getUniqueId()));
+				}
+				if (itemMaterial.equals(Material.EMERALD)) {
+					player.openInventory(inventoryManager.getLeaderboardInventory());
+				}
+				if (itemMaterial.equals(Material.TRIPWIRE_HOOK)) {
+					inventoryManager.refreshTournamentInventory();
+					inventoryManager.getTournamentMultipage().open(player, 1);
+				}
+				if (itemMaterial.equals(Material.HOPPER)) {
+					if (!player.hasPermission("akyto.host")) {
+						player.sendMessage(org.bukkit.ChatColor.RED + "Insufficient Permissions !.");
+						player.closeInventory();
+						return;
+					}
+					if (main.getSumoEvent().getLocation() == null || main.getOitcEvent().getLocation() == null) {
+						player.sendMessage(org.bukkit.ChatColor.RED + "Sorry but no maps was set!");
+						player.closeInventory();
+						return;
+					}
+					player.openInventory(inventoryManager.getHostInventory());
+				}
 			}
 			if (inventory.equals(inventoryManager.getPartyEventInventory())) {
 				if (itemMaterial.equals(Material.IRON_AXE)) {
@@ -263,6 +293,13 @@ public class InventoryListener implements Listener {
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
 			if (is_glass) return;
+			if (itemMaterial.equals(Material.NAME_TAG)) {
+				if (!player.hasPermission("akyto.tournament")) {
+					player.sendMessage(org.bukkit.ChatColor.RED + "Insufficient Permissions !.");
+					return;
+				}
+				player.openInventory(inventoryManager.getTournamentSizeInventory());
+			}
 			String creatorName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getLore().get(2).replace(ChatColor.GRAY + "Creator: ", ""));
 			final UUID creatorUUID = Bukkit.getPlayer(creatorName) != null ? Bukkit.getPlayer(creatorName).getUniqueId() : Bukkit.getOfflinePlayer(creatorName).getUniqueId();
 			main.getManagerHandler().getTournamentManager().getAllTournaments().forEach(entry -> {

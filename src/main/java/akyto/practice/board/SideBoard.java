@@ -51,7 +51,7 @@ public class SideBoard implements BoardAdapter {
         }
 
         // If player enabled scoreboard
-        if (pm.getSettings()[0] == 0 || pm.getSettings()[0] == 1) {
+        if (pm.getSettings()[0] != 2) {
             if (pm.isInState(ProfileState.FREE, ProfileState.QUEUE, ProfileState.MOD)) {
                 return this.getLobbyBoard(player);
             }
@@ -138,6 +138,7 @@ public class SideBoard implements BoardAdapter {
                     board.add(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Hits:");
                     board.add(ChatColor.WHITE + " Their: " + ChatColor.RED + profileManager.getDuelStatistics().get(opps).getHits());
                     board.add(ChatColor.WHITE + " Your: " + ChatColor.RED + profileManager.getDuelStatistics().get(player.getUniqueId()).getHits());
+                    board.add(" ");
                 }
         	}
 
@@ -202,8 +203,8 @@ public class SideBoard implements BoardAdapter {
             }
             if (Utils.getProfiles(player.getUniqueId()).getSettings()[0] == 1 && duel.getDuelType().equals(DuelType.SINGLE)) {
                 board.add(" ");
-                board.add(ChatColor.WHITE + "  Ping: " + ChatColor.RED + Bukkit.getPlayer(opps).getPing());
-                board.add(ChatColor.WHITE + " Your Ping: " + ChatColor.RED + player.getPing());
+                board.add(ChatColor.WHITE + " His Ping: " + ChatColor.RED + Bukkit.getPlayer(opps).getPing() + "ms");
+                board.add(ChatColor.WHITE + " Your Ping: " + ChatColor.RED + player.getPing() + "ms");
             }
             for (final BoardCooldown cooldown : cooldowns) {
                 if (cooldown.getId().equals("enderpearl")) {

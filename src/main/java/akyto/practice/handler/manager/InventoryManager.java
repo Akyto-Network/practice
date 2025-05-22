@@ -50,7 +50,7 @@ public class InventoryManager {
 	private final Inventory[] editorInventory = new Inventory[3];
 	private final Inventory hostInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Events:");
 	private final Inventory tournamentSizeInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Tournament Size:");
-	private final Inventory utilsInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Utils");
+	private final Inventory utilsInventory = Bukkit.createInventory(null, InventoryType.DISPENSER, ChatColor.GRAY + "Utils");
 	private final Inventory leaderboardInventory = Bukkit.createInventory(null, 9*3, ChatColor.GRAY + "Leaderboard:");
 	private final Inventory partyEventInventory = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Party Event:");
 	public MultipageSerializer spectateMultipage;
@@ -70,9 +70,9 @@ public class InventoryManager {
 		this.settingsInventory = new ConcurrentHashMap<>();
 		this.settingsSpectateInventory = new ConcurrentHashMap<>();
 		this.effectsInventory = new ConcurrentHashMap<>();
-		this.spectateMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "));
-		this.partyMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Partys", ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "));
-		this.tournamentMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Tournaments Available", ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Tournaments" + ChatColor.GRAY + " * "));
+		this.spectateMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Spectate", ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Spectate" + ChatColor.GRAY + " * "), false);
+		this.partyMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Partys", ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Other Party" + ChatColor.GRAY + " * "), false);
+		this.tournamentMultipage = new MultipageSerializer(new ArrayList<>(), ChatColor.GRAY + "Tournaments Available", ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " * " + ChatColor.DARK_GRAY + "Tournaments" + ChatColor.GRAY + " * "), true);
 		this.queueInventory[0] = Bukkit.createInventory(null,  queueSize, ChatColor.GRAY + "Unranked queue:");
 		this.queueInventory[1] = Bukkit.createInventory(null, queueSize, ChatColor.GRAY + "Ranked queue:");
 		this.queueInventory[2] = Bukkit.createInventory(null, queueSize, ChatColor.GRAY + "Select duel kit:");
@@ -119,11 +119,15 @@ public class InventoryManager {
 	}
 
 	private void setUtilsInventory() {
-		for (int i = 0; i < 5; i++) {
-			this.utilsInventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE));
+		for (int i = 0; i < 9; ++i) {
+			this.utilsInventory.setItem(i, new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte)14));
 		}
-		this.utilsInventory.setItem(1, ItemUtils.createItems(Material.PAPER, ChatColor.GRAY + "Tags"));
-		this.utilsInventory.setItem(3, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Leaderboard"));
+		this.utilsInventory.setItem(0, ItemUtils.createItems(Material.PAPER, ChatColor.RED + "Tags", Arrays.asList(ChatColor.GRAY.toString() + ChatColor.ITALIC + "Manage your tags as you wish")));
+		this.utilsInventory.setItem(1, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.RED + "Profile", Arrays.asList(ChatColor.GRAY.toString() + ChatColor.ITALIC + "View your statistics.")));
+		this.utilsInventory.setItem(2, ItemUtils.createItems(Material.REDSTONE_COMPARATOR, ChatColor.RED + "Settings", Arrays.asList(ChatColor.GRAY.toString() + ChatColor.ITALIC + "To be modified according to your tastes.")));
+		this.utilsInventory.setItem(4, ItemUtils.createItems(Material.EMERALD, ChatColor.RED + "Leaderboard", Arrays.asList(ChatColor.GRAY.toString() + ChatColor.ITALIC + "See the top #10 of the server...")));
+		this.utilsInventory.setItem(6, ItemUtils.createItems(Material.TRIPWIRE_HOOK, ChatColor.RED + "Tournaments", Arrays.asList(ChatColor.GRAY.toString() + ChatColor.ITALIC + "Join or create a tournament.")));
+		this.utilsInventory.setItem(8, ItemUtils.createItems(Material.HOPPER, ChatColor.RED + "Hosted Events", Arrays.asList(ChatColor.GRAY.toString() + ChatColor.ITALIC + "Create a hosted event.")));
 	}
    private void setHostInventory() {
   		this.hostInventory.setItem(1, ItemUtils.createItems(Material.ANVIL, ChatColor.RED + " » " + ChatColor.GOLD + "Sumo Event"));
@@ -375,12 +379,17 @@ public class InventoryManager {
             spectate.setItem(i, glass);
         }
 		spec.forEach(uuids -> uuids.forEach(uuid -> {
-	        ItemStack playerHead = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-	        SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
-	        meta.setOwner(Bukkit.getPlayer(uuid).getName());
-	        meta.setDisplayName(Bukkit.getPlayer(uuid).getName());
-	        playerHead.setItemMeta(meta);
-	        spectate.setItem(duel.getFirst().contains(uuid) ? 1 : 3, playerHead);
+			ItemStack playerHead = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+			SkullMeta meta = (SkullMeta) playerHead.getItemMeta();
+			meta.setOwner(CoreUtils.getName(uuid));
+			meta.setDisplayName((duel.getFirst().contains(uuid) ? ChatColor.GREEN : ChatColor.RED) + CoreUtils.getName(uuid));
+			playerHead.setItemMeta(meta);
+			if (duel.getDuelType().equals(Duel.DuelType.SINGLE)) {
+				spectate.setItem(duel.getFirst().contains(uuid) ? 1 : 3, playerHead);
+			}
+			else {
+				spectate.addItem(playerHead);
+			}
 		}));
         this.spectateInventory.remove(playerUUID);
 		this.spectateInventory.put(playerUUID, spectate);
@@ -398,18 +407,18 @@ public class InventoryManager {
 					ItemStack current = leaderboardInventory.getItem(ladder.id());
 					ItemMeta meta = current.getItemMeta();
 					List<String> lore = new ArrayList<>();
-					lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+					lore.add(" ");
 					lore.addAll(top[ladder.id()].getLore());
-					lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+					lore.add(" ");
 					meta.setLore(lore);
 					current.setItemMeta(meta);
 				});
 				ItemStack current = leaderboardInventory.getItem(26);
 				ItemMeta meta = current.getItemMeta();
 				List<String> list = Lists.newArrayList();
-				list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+				list.add(" ");
 				list.addAll(global_top.getLore());
-				list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+				list.add(" ");
 				meta.setLore(list);
 				current.setItemMeta(meta);
 			}
@@ -425,18 +434,18 @@ public class InventoryManager {
 				ItemStack current = this.leaderboardInventory.getItem(ladder.id());
 				ItemMeta meta = current.getItemMeta();
 				List<String> lore = new ArrayList<>();
-				lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+				lore.add(" ");
 				lore.addAll(top[ladder.id()].getLore());
-				lore.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+				lore.add(" ");
 				meta.setLore(lore);
 				current.setItemMeta(meta);
 			});
 			ItemStack current = leaderboardInventory.getItem(26);
 			ItemMeta meta = current.getItemMeta();
 			List<String> list = Lists.newArrayList();
-			list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+			list.add(" ");
 			list.addAll(global_top.getLore());
-			list.add(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------");
+			list.add(" ");
 			meta.setLore(list);
 			current.setItemMeta(meta);
     	});
