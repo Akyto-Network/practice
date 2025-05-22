@@ -31,12 +31,14 @@ public class MessageUtils {
 		TextComponent winnerNameComponent = new TextComponent(CoreUtils.getName(winner));
 		winnerNameComponent.setColor(ChatColor.GRAY);
 		winnerNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + CoreUtils.getName(winner)));
+		winnerNameComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.RED + "Click to see inventory").create()));
 		TextComponent loserComponent = new TextComponent("Loser: ");
 		loserComponent.setColor(ChatColor.RED);
 		TextComponent loserNameComponent = new TextComponent(CoreUtils.getName(looser));
 		loserNameComponent.setColor(ChatColor.GRAY);
 		loserNameComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/inventory " + CoreUtils.getName(looser)));
-		TextComponent separatorComponent = new TextComponent(ChatColor.GRAY + " - ");
+		loserNameComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.RED + "Click to see inventory").create()));
+		TextComponent separatorComponent = new TextComponent(ChatColor.GRAY + " ৷ ");
 		winnerComponent.addExtra(winnerNameComponent);
 		loserComponent.addExtra(loserNameComponent);
 		winnerComponent.addExtra(separatorComponent);
@@ -144,21 +146,21 @@ public class MessageUtils {
 		players.forEach(uuid -> {
 			Player player = Bukkit.getPlayer(uuid);
 			if (player != null) {
-				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
-				player.sendMessage(ChatColor.YELLOW + "Match Information");
+				player.sendMessage(" ");
+				player.sendMessage(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Match Results" + ChatColor.GRAY + ":");
 				player.spigot().sendMessage(endMessage(winner, looser));
 				if (duel.isRanked()) {
-					player.sendMessage(ChatColor.GRAY + "Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()] - Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
+					player.sendMessage(ChatColor.WHITE + " Elo Changes: " + (winner.equals(uuid) ? ChatColor.GREEN + "+" : ChatColor.RED + "-") + (int) Math.min(Math.max(1.0D / (1.0D + Math.pow(10.0D, (Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()] - Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]) / 400.0D)) * 32.0D, 4), 40));
 				}
 				if (!duel.getSpectators().isEmpty()) {
 					player.sendMessage("");
-					String specMsg = ChatColor.GRAY + "Spectators (" + duel.getSpectators().size() + ChatColor.GRAY + "): " +
+					String specMsg = ChatColor.WHITE + "Spectators " + ChatColor.GRAY + "(" + ChatColor.RED + duel.getSpectators().size() + ChatColor.GRAY + "): " +
 							duel.getSpectators().stream()
-									.map(spec -> ChatColor.WHITE + Bukkit.getPlayer(spec).getName())
-									.collect(Collectors.joining(", "));
+									.map(spec -> ChatColor.RED + Bukkit.getPlayer(spec).getName())
+									.collect(Collectors.joining(ChatColor.GRAY + ", "));
 					player.sendMessage(specMsg);
 				}
-				player.sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
+				player.sendMessage(" ");
 			}
 		});
 	}
@@ -236,7 +238,6 @@ public class MessageUtils {
 					" ",
 					ChatColor.GRAY + " • " + ChatColor.WHITE + " Arena: " + ChatColor.RED + duel.getArena().getName(),
 					ChatColor.GRAY + " • " + ChatColor.WHITE + " Opponent: " + ChatColor.RED + oppName + ChatColor.GRAY + " (" + ChatColor.YELLOW + Bukkit.getPlayer(oppId).getPing() + "ms" + ChatColor.GRAY + ")",
-					ChatColor.GRAY + " • " + ChatColor.WHITE + " Their Ping: " + ChatColor.RED + Bukkit.getPlayer(oppId).getPing() + "ms",
 					ChatColor.GRAY + " • " + ChatColor.WHITE + " Your Ping: " + ChatColor.RED + Bukkit.getPlayer(player).getPing() + "ms",
 					" "
 			};
@@ -248,7 +249,6 @@ public class MessageUtils {
 					" ",
 					ChatColor.GRAY + " • " + ChatColor.WHITE + " Arena: " + ChatColor.RED + duel.getArena().getName(),
 					ChatColor.GRAY + " • " + ChatColor.WHITE + " Opponent: " + ChatColor.RED + oppName + ChatColor.GRAY + " (" + ChatColor.YELLOW + Bukkit.getPlayer(oppId).getPing() + "ms" + ChatColor.GRAY + ")",
-					ChatColor.GRAY + " • " + ChatColor.WHITE + " Their Ping: " + ChatColor.RED + Bukkit.getPlayer(oppId).getPing() + "ms",
 					ChatColor.GRAY + " • " + ChatColor.WHITE + " Your Ping: " + ChatColor.RED + Bukkit.getPlayer(player).getPing() + "ms",
 					" ",
 					ChatColor.GRAY + " • " + ChatColor.WHITE + " Their Elo: " + ChatColor.RED + eloOpps,

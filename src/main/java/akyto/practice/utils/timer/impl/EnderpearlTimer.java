@@ -36,7 +36,7 @@ public class EnderpearlTimer extends PlayerTimer implements Listener {
     protected void handleExpiry(Player player, UUID playerUUID) {
         super.handleExpiry(player, playerUUID);
         if (player != null) {
-            player.sendMessage(ChatColor.GREEN + "You can reuse your enderpearl now!");
+            player.sendMessage(ChatColor.RED + "Your enderpearl cooldown has expired!");
         }
     }
 
