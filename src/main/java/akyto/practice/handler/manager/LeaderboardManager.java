@@ -4,8 +4,8 @@ import akyto.core.Core;
 import akyto.core.utils.format.FormatUtils;
 import akyto.core.utils.leaderboard.Top;
 import akyto.practice.Practice;
-import gg.potted.idb.DB;
 import lombok.Getter;
+import net.akyto.idb.DB;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

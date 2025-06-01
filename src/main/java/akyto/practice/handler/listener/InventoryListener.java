@@ -324,7 +324,7 @@ public class InventoryListener implements Listener {
 			event.setResult(Result.DENY);
 			event.setCancelled(true);
 			if (event.getCurrentItem().getType().equals(Material.LEVER)) {
-				String nextName = event.getCurrentItem().getItemMeta().getDisplayName().replace(ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": ", "");
+				String nextName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getDisplayName().replace(ChatColor.WHITE + "Go to: " + ChatColor.RED, ""));
 				event.getWhoClicked().closeInventory();
 				if (Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().containsKey(nextName)) {
 					nextName = Core.API.getManagerHandler().getProfileManager().getRealNameInDisguised().get(nextName);

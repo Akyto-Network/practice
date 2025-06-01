@@ -1,14 +1,21 @@
 package akyto.practice.utils.chat;
 
+import akyto.core.Core;
 import akyto.core.utils.CoreUtils;
 import akyto.core.utils.components.ComponentJoiner;
+import akyto.core.utils.format.FormatUtils;
+import akyto.practice.Practice;
 import akyto.practice.duel.Duel;
 import akyto.practice.duel.Duel.DuelType;
+import akyto.practice.duel.cache.DuelStatistics;
 import akyto.practice.handler.manager.QueueManager;
 import akyto.practice.handler.manager.TournamentManager;
 import akyto.practice.kit.Kit;
 import akyto.practice.tournament.TournamentEntry;
 import akyto.practice.utils.Utils;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -17,6 +24,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -257,5 +265,56 @@ public class MessageUtils {
 			};
 		}
 		Bukkit.getPlayer(player).sendMessage(message);
+	}
+
+	public static void matchHistory(final String nameOne, final String nameTwo, final String kit, final String arena, final String duration, final boolean ranked, final int eloA, final int eloB) {
+		String channelId = "1369877567770857502";
+
+		TextChannel channel = Core.API.getJda().getTextChannelById(channelId);
+		if (channel == null) {
+			System.err.println("The channel with '" + channelId + "' id not found.");
+			return;
+		}
+
+		EmbedBuilder embedBuilder = new EmbedBuilder();
+		String title = nameOne + (ranked ? " [" + eloA + "]" : "") + " against " + nameTwo + (ranked ? " [" + eloB + "]" : "");
+		embedBuilder.setTitle(title);
+		embedBuilder.setColor(Color.RED);
+		embedBuilder.addField("Type: ", ranked ? "Ranked" : "Unranked", true);
+		embedBuilder.addField("Kit: ", kit, true);
+		embedBuilder.addField("Arena: ", arena, true);
+		embedBuilder.addBlankField(false);
+		embedBuilder.addField("Statistics of " + nameOne, "", false);
+		final DuelStatistics duelStatisticsA = Practice.API.getManagerHandler().getProfileManager().getDuelStatistics().get(CoreUtils.getUUID(nameOne));
+		embedBuilder.addField("Hits: ", String.valueOf(duelStatisticsA.getHits()), true);
+		embedBuilder.addField("Longest Hits: ", String.valueOf(duelStatisticsA.getLongestHit()), true);
+		if (!kit.equalsIgnoreCase("Sumo")) {
+			embedBuilder.addField("Block-Hit: ", String.valueOf(duelStatisticsA.getBlockHit()), true);
+		}
+		final List<String> kitContainsPotion = Arrays.asList("NoDebuff", "Debuff", "NoEnchant", "Axe");
+		if (kitContainsPotion.contains(kit)) {
+			embedBuilder.addField("Pot Throw: ", String.valueOf(duelStatisticsA.getPotThrown()), true);
+			embedBuilder.addField("Pot Missed: ", String.valueOf(duelStatisticsA.getPotMissed()), true);
+			embedBuilder.addField("Pot Accuracy: ", String.format("%.2f", FormatUtils.potionAccuracy(duelStatisticsA.getPotThrown(), duelStatisticsA.getPotHeal())) + "%", true);
+		}
+		embedBuilder.addBlankField(true);
+		embedBuilder.addField("Statistics of " + nameTwo, "", false);
+		final DuelStatistics duelStatisticsB = Practice.API.getManagerHandler().getProfileManager().getDuelStatistics().get(CoreUtils.getUUID(nameTwo));
+		embedBuilder.addField("Hits: ", String.valueOf(duelStatisticsB.getHits()), true);
+		embedBuilder.addField("Longest Hits: ", String.valueOf(duelStatisticsB.getLongestHit()), true);
+		if (!kit.equalsIgnoreCase("Sumo")) {
+			embedBuilder.addField("Block-Hit: ", String.valueOf(duelStatisticsB.getBlockHit()), true);
+		}
+		if (kitContainsPotion.contains(kit)) {
+			embedBuilder.addField("Pot Throw: ", String.valueOf(duelStatisticsB.getPotThrown()), true);
+			embedBuilder.addField("Pot Missed: ", String.valueOf(duelStatisticsB.getPotMissed()), true);
+			embedBuilder.addField("Pot Accuracy: ", String.format("%.2f", FormatUtils.potionAccuracy(duelStatisticsB.getPotThrown(), duelStatisticsB.getPotHeal())) + "%", true);
+		}
+		embedBuilder.addField("Winner:", nameOne, true);
+		embedBuilder.addBlankField(false);
+		embedBuilder.setFooter("Match ended in " + duration);
+
+		MessageCreateData messageData = MessageCreateData.fromEmbeds(embedBuilder.build());
+		channel.sendMessage(messageData).queue();
 	}
 }

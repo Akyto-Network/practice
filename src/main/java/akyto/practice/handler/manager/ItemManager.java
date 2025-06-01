@@ -43,17 +43,17 @@ public class ItemManager {
 		}
 		if (profile.isInState(ProfileState.FREE)) {
 			if (Utils.getPartyByUUID(uuid) != null && !destruct) {
-				player.getInventory().setItem(0, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + (Utils.getPartyByUUID(uuid).getCreator().equals(uuid) ? "Disband" : "Leave") + " Party."));
-				player.getInventory().setItem(1, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + "Settings"));
-				player.getInventory().setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.GRAY + "Party Informations"));
-				player.getInventory().setItem(7, ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + "Other Parties"));
-				player.getInventory().setItem(8, ItemUtils.createItems(Material.DIAMOND_AXE, ChatColor.GRAY + "Party Events", true));
+				player.getInventory().setItem(8, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + (Utils.getPartyByUUID(uuid).getCreator().equals(uuid) ? "Disband" : "Leave") + " Party."));
+				player.getInventory().setItem(7, ItemUtils.createItems(Material.EMERALD, ChatColor.GRAY + " » " + ChatColor.WHITE + "Settings"));
+				player.getInventory().setItem(4, ItemUtils.createItems(Material.PAPER, ChatColor.GRAY + " » " + ChatColor.WHITE + "Party " + ChatColor.DARK_RED + "Informations"));
+				player.getInventory().setItem(1, ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " » " + ChatColor.WHITE + "Other " + ChatColor.DARK_RED + "Parties"));
+				player.getInventory().setItem(0, ItemUtils.createItems(Material.DIAMOND_AXE, ChatColor.GRAY + " » " + ChatColor.WHITE + "Party " + ChatColor.DARK_RED + "Events", true));
 				player.updateInventory();
 				return;
 			}
 			player.getInventory().setItem(0, ItemUtils.createItems(Material.IRON_SWORD, ChatColor.GRAY + " » " + ChatColor.WHITE + "Unranked", true));
 			player.getInventory().setItem(1, ItemUtils.createItems(Material.DIAMOND_SWORD, ChatColor.GRAY + " » " + ChatColor.RED + "Ranked", true));
-			player.getInventory().setItem(4, ItemUtils.createItems(Material.NAME_TAG, ChatColor.GRAY + " » " + ChatColor.WHITE + "Create " + ChatColor.RED + "party"));
+			player.getInventory().setItem(4, ItemUtils.createItems(Material.NAME_TAG, ChatColor.GRAY + " » " + ChatColor.WHITE + "Create " + ChatColor.DARK_RED + "party"));
 			player.getInventory().setItem(7, ItemUtils.createItems(Material.NETHER_STAR, ChatColor.GRAY + " » " + ChatColor.WHITE + "Shortcut"));
 			player.getInventory().setItem(8, ItemUtils.createItems(Material.BOOK, ChatColor.GRAY + " » " + ChatColor.WHITE + "Editor"));
 			player.updateInventory();
@@ -76,10 +76,10 @@ public class ItemManager {
 		if (profile.isInState(ProfileState.SPECTATE)) {
 			player.setAllowFlight(true);
 			player.setFlying(true);
-			if (Utils.getPartyByUUID(uuid) == null) player.getInventory().setItem(0, ItemUtils.createItems(Material.CHEST, ChatColor.DARK_GRAY + "Teleport to another " + ChatColor.WHITE + "player" + ChatColor.DARK_GRAY + "."));
-			player.getInventory().setItem(Utils.getPartyByUUID(uuid) == null ? 3 : 0, ItemUtils.createItems(Material.REDSTONE_COMPARATOR, ChatColor.DARK_GRAY + "Settings"));
-			if (Utils.getPartyByUUID(uuid) == null) player.getInventory().setItem(5, ItemUtils.createItems(Material.COMPASS, ChatColor.DARK_GRAY + "Spectate another " + ChatColor.WHITE + "match" + ChatColor.DARK_GRAY + "."));
-			player.getInventory().setItem(8, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.RED + "Leave Spectating."));
+			if (Utils.getPartyByUUID(uuid) == null) player.getInventory().setItem(0, ItemUtils.createItems(Material.CHEST, ChatColor.GRAY + " » " + ChatColor.WHITE + "Teleport to another " + ChatColor.DARK_RED + "player" + ChatColor.GRAY + "."));
+			player.getInventory().setItem(Utils.getPartyByUUID(uuid) == null ? 3 : 0, ItemUtils.createItems(Material.REDSTONE_COMPARATOR, ChatColor.GRAY + " » " + ChatColor.WHITE + "Settings"));
+			if (Utils.getPartyByUUID(uuid) == null) player.getInventory().setItem(5, ItemUtils.createItems(Material.COMPASS, ChatColor.GRAY + " » " + ChatColor.WHITE + "Spectate another " + ChatColor.DARK_RED + "match" + ChatColor.GRAY + "."));
+			player.getInventory().setItem(8, ItemUtils.createItems(Material.REDSTONE_TORCH_ON, ChatColor.GRAY + " » " + ChatColor.RED + "Leave Spectating."));
 			player.updateInventory();
 		}
 		if (profile.isInState(ProfileState.EDITOR)) {

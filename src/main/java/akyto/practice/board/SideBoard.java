@@ -81,10 +81,12 @@ public class SideBoard implements BoardAdapter {
         if (profile.isInState(ProfileState.QUEUE)) {
             board.add(" ");
             final QueueManager.QueueEntry entry = plugin.getQueue().get(player.getUniqueId());
-            board.add(ChatColor.WHITE + " Kit" + ChatColor.GRAY + ": " + ChatColor.RED + ChatColor.stripColor(entry.getKit().displayName()));
-            board.add(ChatColor.WHITE + " Elapsed" + ChatColor.GRAY + ": " + ChatColor.RED + DurationUtils.getFormattedDuration(entry.getDuration()));
-            if (entry.isRanked()) {
-                board.add(ChatColor.WHITE + " Elo" + ChatColor.GRAY + ": " + ChatColor.RED + profile.getStats().get(2)[entry.getKit().id()]);
+            if (entry != null) {
+                board.add(ChatColor.WHITE + " Kit" + ChatColor.GRAY + ": " + ChatColor.RED + ChatColor.stripColor(entry.getKit().displayName()));
+                board.add(ChatColor.WHITE + " Elapsed" + ChatColor.GRAY + ": " + ChatColor.RED + DurationUtils.getFormattedDuration(entry.getDuration()));
+                if (entry.isRanked()) {
+                    board.add(ChatColor.WHITE + " Elo" + ChatColor.GRAY + ": " + ChatColor.RED + profile.getStats().get(2)[entry.getKit().id()]);
+                }
             }
         }
         final PartyManager.PartyEntry playerParty = Utils.getPartyByUUID(player.getUniqueId());

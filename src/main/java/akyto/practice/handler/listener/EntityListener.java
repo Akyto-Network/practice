@@ -113,14 +113,20 @@ public class EntityListener implements Listener {
 				final Duel playerDuel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 
 				if (playerDuel != null && playerDuel.getState().equals(DuelState.PLAYING)) {
-					if (playerDuel.getKit().name().equals("bedfight") && event.getCause().equals(DamageCause.VOID)) {
-						final Location locationFirst = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getFirst().toBukkitLocation() : playerDuel.getArena().getPosition().getFirst().toBukkitLocation();
-						final Location locationSecond = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getLast().toBukkitLocation() : playerDuel.getArena().getPosition().getLast().toBukkitLocation();
-						Location spawnLocation = playerDuel.getFirst().contains(event.getEntity().getUniqueId()) ? locationFirst : locationSecond;
-						spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
-						event.getEntity().teleport(spawnLocation);
-						event.setCancelled(true);
-						return;
+					if (playerDuel.getKit().name().equals("bedfight")) {
+						if (event.getCause().equals(DamageCause.VOID)) {
+							final Location locationFirst = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getFirst().toBukkitLocation() : playerDuel.getArena().getPosition().getFirst().toBukkitLocation();
+							final Location locationSecond = Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()) != null ? Utils.getArenaCopyByPlayer(event.getEntity().getUniqueId()).getPosition().getLast().toBukkitLocation() : playerDuel.getArena().getPosition().getLast().toBukkitLocation();
+							Location spawnLocation = playerDuel.getFirst().contains(event.getEntity().getUniqueId()) ? locationFirst : locationSecond;
+							spawnLocation = MatchUtils.findSafeLocationAbove(spawnLocation);
+							event.getEntity().teleport(spawnLocation);
+							event.setCancelled(true);
+							return;
+						}
+						if (event.getCause().equals(DamageCause.FALL) || event.getCause().equals(DamageCause.FALLING_BLOCK)) {
+							event.setCancelled(true);
+							return;
+						}
 					}
 					if (playerDuel.getKit().name().equals("sumo") || playerDuel.getKit().name().equals("boxing")) {
 						event.setDamage(0.0f);
@@ -213,6 +219,9 @@ public class EntityListener implements Listener {
 									}
 								}
 							}
+						}
+						if (((Player) event.getEntity()).isBlocking()) {
+							statisticsVictim.setBlockHit(statisticsVictim.getBlockHit() + 1);
 						}
 						statisticsDamager.setHits(statisticsDamager.getHits()+1);
 						statisticsDamager.setCombo(statisticsDamager.getCombo()+1);

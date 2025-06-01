@@ -22,8 +22,8 @@ import akyto.practice.utils.match.MatchUtils;
 import akyto.practice.utils.match.TagUtils;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import gg.potted.idb.DB;
 import lombok.Getter;
+import net.akyto.idb.DB;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -147,7 +147,7 @@ public class DuelManager {
 			}
 			Core.API.getManagerHandler().getInventoryManager().generateProfileInventory(uuid, this.main.getKitNames());
 			});
-		CoreUtils.matchHistory(CoreUtils.getName(winner), CoreUtils.getName(looser), ChatColor.stripColor(duel.getKit().displayName()), duel.getArena().getName(), DurationUtils.getFormattedDuration(duel.getDuration()), duel.isRanked(), Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()], Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]);
+		MessageUtils.matchHistory(CoreUtils.getName(winner), CoreUtils.getName(looser), ChatColor.stripColor(duel.getKit().displayName()), duel.getArena().getName(), DurationUtils.getFormattedDuration(duel.getDuration()), duel.isRanked(), Utils.getProfiles(winner).getStats().get(2)[duel.getKit().id()], Utils.getProfiles(looser).getStats().get(2)[duel.getKit().id()]);
 		if (duel.getTimer() != null) {
 			duel.getTimer().cancel();
 		}

@@ -29,6 +29,7 @@ import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LightningStrike;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
@@ -41,12 +42,14 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -601,4 +604,40 @@ public class PlayerListener implements Listener {
 		}
 	}
 
+	@EventHandler
+	public void onPotionSplash(PotionSplashEvent event) {
+		boolean hasHealEffect = event.getPotion().getEffects().stream()
+				.anyMatch(effect -> effect.getType().equals(PotionEffectType.HEAL));
+
+		if (!hasHealEffect) return;
+
+		double healAmount = event.getPotion().getEffects().stream()
+				.filter(effect -> effect.getType().equals(PotionEffectType.HEAL))
+				.findFirst()
+				.map(effect -> (effect.getAmplifier() + 1) * 2)
+				.orElse(0);
+		Player thrower;
+		ProjectileSource shooter = event.getEntity().getShooter();
+		if (shooter instanceof Player) {
+			thrower = (Player) shooter;
+		} else {
+            thrower = null;
+        }
+
+        if (thrower == null) return;
+
+		final DuelStatistics statistics = main.getManagerHandler().getProfileManager()
+				.getDuelStatistics().get(thrower.getUniqueId());
+
+		boolean throwerAffected = event.getAffectedEntities().stream()
+				.anyMatch(entity -> entity.equals(thrower));
+
+		statistics.setPotThrown(statistics.getPotThrown() + 1);
+
+		if (throwerAffected) {
+			statistics.setPotHeal(statistics.getPotHeal() + healAmount);
+		} else {
+			statistics.setPotMissed(statistics.getPotMissed() + 1);
+		}
+	}
 }

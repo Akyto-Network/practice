@@ -12,6 +12,12 @@ public class DuelStatistics {
 	private Long nextHitTick = 0L;
 	private boolean bedBroke = false;
 
+	private int potMissed = 0;
+	private int potThrown = 0;
+	private double potHeal = 0;
+
+	private int blockHit = 0;
+
 	public void updateNextHitTick() {
 		this.nextHitTick = System.currentTimeMillis() + 500L;
 	}

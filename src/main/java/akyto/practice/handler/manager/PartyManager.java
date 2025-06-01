@@ -51,19 +51,19 @@ public class PartyManager {
 		}
 
 		final PartyEntry party = Utils.getPartyByUUID(sender);
-		TextComponent partyComponent = new TextComponent(ChatColor.YELLOW + "Member(s)" + ChatColor.GRAY + ": ");
+		TextComponent partyComponent = new TextComponent(ChatColor.WHITE + "Member(s): ");
 		final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
 		party.getMembers().forEach(member -> {
 			if (!member.equals(party.getCreator())) {
-				final TextComponent itxt = new TextComponent(CoreUtils.getName(member));
+				final TextComponent itxt = new TextComponent(ChatColor.RED + CoreUtils.getName(member));
 				joiner.add(itxt);	
 			}
 		});
 		partyComponent.addExtra(joiner.toTextComponent());
-		Bukkit.getPlayer(sender).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-		Bukkit.getPlayer(sender).sendMessage(ChatColor.DARK_GRAY + "Leader" + ChatColor.GRAY + ": " + ChatColor.WHITE + CoreUtils.getName(party.getCreator()));
+		Bukkit.getPlayer(sender).sendMessage(" ");
+		Bukkit.getPlayer(sender).sendMessage(ChatColor.WHITE + "Leader: " + ChatColor.DARK_RED + CoreUtils.getName(party.getCreator()));
 		Bukkit.getPlayer(sender).spigot().sendMessage(partyComponent);
-		Bukkit.getPlayer(sender).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+		Bukkit.getPlayer(sender).sendMessage(" ");
 	}
 	
 	public void kickParty(final UUID kicker, final UUID kicked) {
@@ -107,7 +107,7 @@ public class PartyManager {
 	    	final Duel duel = Utils.getDuelByUUID(inviter);
 	        Utils.getProfiles(invited).setProfileState(ProfileState.SPECTATE);
 	        duel.getSpectators().add(invited);
-	        Bukkit.getPlayer(invited).teleport(duel.getArena().getPosition().get(0).toBukkitLocation());
+	        Bukkit.getPlayer(invited).teleport(duel.getArena().getPosition().getFirst().toBukkitLocation());
 	        Bukkit.getOnlinePlayers().forEach(player -> {
 	            if (Utils.getProfiles(player.getUniqueId()).isInState(ProfileState.FIGHT, ProfileState.SPECTATE)) {
 	                player.hidePlayer(Bukkit.getPlayer(invited));

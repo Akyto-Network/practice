@@ -8,7 +8,7 @@ import java.util.UUID;
 public class DataUtils {
 	
 	public static void addPlayedToData(final UUID uuid, final Kit kit) {
-		Utils.getProfiles(uuid).getStats().get(0)[kit.id()]++;
+		Utils.getProfiles(uuid).getStats().getFirst()[kit.id()]++;
 	}
 	
 	public static void addWinToData(final UUID uuid, final Kit kit) { 

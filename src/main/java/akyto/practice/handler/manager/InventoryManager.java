@@ -254,7 +254,7 @@ public class InventoryManager {
 	}
 	
 	public void generatePreviewInventory(final UUID uuid, final UUID opponent) {
-		final Inventory preview = Bukkit.createInventory(null, 54, ChatColor.DARK_GRAY + CoreUtils.getName(uuid) + " preview's");
+		final Inventory preview = Bukkit.createInventory(null, 54, ChatColor.GRAY + CoreUtils.getName(uuid) + " preview's");
 		final DuelStatistics duelStatistics = this.main.getManagerHandler().getProfileManager().getDuelStatistics().get(uuid);
 		final Duel duel = Utils.getDuelByUUID(uuid);
 		final Kit kit = duel.getKit();
@@ -269,7 +269,7 @@ public class InventoryManager {
             preview.setItem(i, glass);
         }
         preview.setItem(47, ItemUtils.createItems(Material.SKULL_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Player Informations" + ChatColor.RESET + ": ", List.of(ChatColor.RESET + FormatUtils.formatTime((long) Bukkit.getPlayer(uuid).getHealth(), 2.0d) + ChatColor.DARK_RED + "❤")));
-		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ", List.of(ChatColor.DARK_GRAY + "Food Level" + ChatColor.RESET + ": " + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d)))); // TODO Organiser a la rimk
+		preview.setItem(48, ItemUtils.createItems(Material.COOKED_BEEF, ChatColor.GRAY + " * " + ChatColor.WHITE + "Food Informations" + ChatColor.RESET + ": ", List.of(ChatColor.WHITE + "Food Level: " + ChatColor.RED + FormatUtils.formatTime(Bukkit.getPlayer(uuid).getFoodLevel(), 2.0d)))); // TODO Organiser a la rimk
         List<String> effectsInfo = new ArrayList<>();
 		for (PotionEffect potionEffect : Bukkit.getPlayer(uuid).getActivePotionEffects())
 			effectsInfo.add(ChatColor.GRAY + potionEffect.formatted() + ChatColor.WHITE + " for " + ChatColor.RED + (FormatUtils.formatTime(potionEffect.getDuration() / 20)));
@@ -279,13 +279,28 @@ public class InventoryManager {
 		preview.setItem(49+addition, ItemUtils.createItems(Material.BREWING_STAND_ITEM, ChatColor.GRAY + " * " + ChatColor.WHITE + "Effects Informations" + ChatColor.RESET + ": ", effectsInfo));
 
         final List<String> loreStats = new ArrayList<>();
-        if (kit.name().equals("nodebuff") || kit.name().equals("debuff") || kit.name().equals("noenchant") || kit.name().equals("axe")) {
-            loreStats.add(ChatColor.DARK_GRAY + "Pots Left" + ChatColor.RESET + ": " + Bukkit.getPlayer(uuid).getInventory().all(new ItemStack(Material.POTION, 1, (short)16421)).size());
-        }	
-        loreStats.add(ChatColor.DARK_GRAY + "Hits" + ChatColor.RESET + ": " + duelStatistics.getHits());
-        loreStats.add(ChatColor.DARK_GRAY + "Best Combo" + ChatColor.RESET + ": " + duelStatistics.getLongestHit());
+        loreStats.add(ChatColor.WHITE + "Hits: " + ChatColor.RED + duelStatistics.getHits());
+        loreStats.add(ChatColor.WHITE + "Best Combo: " + ChatColor.RED + duelStatistics.getLongestHit());
+		loreStats.add(ChatColor.WHITE + "Block-Hit: " + ChatColor.RED + duelStatistics.getBlockHit());
 		preview.setItem(50+addition, ItemUtils.createItems(Material.DIAMOND_SWORD, ChatColor.GRAY + " * " + ChatColor.WHITE + "Statistics" + ChatColor.RESET + ": ", loreStats));
-		if (opponent != null) preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.DARK_GRAY + "Go to" + ChatColor.RESET + ": " + CoreUtils.getName(opponent)));
+		if (kit.name().equals("nodebuff") || kit.name().equals("debuff") ||
+				kit.name().equals("noenchant") || kit.name().equals("axe")) {
+
+			final List<String> lorePot = new ArrayList<>();
+			lorePot.add(ChatColor.WHITE + "Left: " + ChatColor.RED +
+					Bukkit.getPlayer(uuid).getInventory().all(new ItemStack(Material.POTION, 1, (short)16421)).size());
+			lorePot.add(ChatColor.WHITE + "Missed: " + ChatColor.RED + duelStatistics.getPotMissed());
+
+			lorePot.add(ChatColor.WHITE + "Accuracy: " + ChatColor.RED + String.format("%.2f", FormatUtils.potionAccuracy(duelStatistics.getPotThrown(), duelStatistics.getPotHeal())) + "%");
+
+			preview.setItem(51 + addition, ItemUtils.createItems(
+					Material.POTION,
+					ChatColor.GRAY + " * " + ChatColor.WHITE + "Potions" + ChatColor.RESET + ": ",
+					(byte)16421,
+					lorePot
+			));
+		}
+		if (opponent != null) preview.setItem(53, ItemUtils.createItems(Material.LEVER, ChatColor.WHITE + "Go to: " + ChatColor.RED + CoreUtils.getName(opponent)));
         this.previewInventory.remove(uuid);
 		this.previewInventory.put(uuid, preview);
 	}
@@ -343,14 +358,14 @@ public class InventoryManager {
 	}
 	
 	private void generateSpectateSettingsInventory(final UUID uuid) {
-		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.DARK_GRAY + "Spectate Settings");
+		final Inventory profile = Bukkit.createInventory(null, InventoryType.HOPPER, ChatColor.GRAY + "Spectate Settings");
         final ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short)8);
         for (int i = 0; i < 5; ++i) {
             profile.setItem(i, glass);
         }
-        profile.setItem(0, ItemUtils.createItems(Material.DIAMOND, ChatColor.DARK_GRAY + "Display Other Spectators" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
-        profile.setItem(1, ItemUtils.createItems(Material.FEATHER, ChatColor.DARK_GRAY + "Fly Speed", List.of(ChatColor.YELLOW + "Loading...")));
-        profile.setItem(4, ItemUtils.createItems(Material.EMERALD, ChatColor.DARK_GRAY + "Global Settings", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(0, ItemUtils.createItems(Material.DIAMOND, ChatColor.DARK_RED + "Display Other Spectators" + ChatColor.GRAY + ":", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(1, ItemUtils.createItems(Material.FEATHER, ChatColor.DARK_RED + "Fly Speed", List.of(ChatColor.YELLOW + "Loading...")));
+        profile.setItem(4, ItemUtils.createItems(Material.EMERALD, ChatColor.DARK_RED + "Global Settings", List.of(ChatColor.YELLOW + "Loading...")));
         this.settingsSpectateInventory.remove(uuid);
 		this.settingsSpectateInventory.put(uuid, profile);
 		final ProfileManager profileManager = Core.API.getManagerHandler().getProfileManager();
