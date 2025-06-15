@@ -159,8 +159,8 @@ public class DuelManager {
 
 	public void endMultiple(final UUID winner) {
 		final Duel duel = Utils.getDuelByUUID(winner);
-		final Set<UUID> winners = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getFirst()) : Sets.newHashSet(duel.getSecond());
-		final Set<UUID> losers = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getSecond()) : Sets.newHashSet(duel.getFirst());
+		final HashSet<UUID> winners = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getFirst()) : Sets.newHashSet(duel.getSecond());
+		final HashSet<UUID> losers = duel.getFirst().contains(winner) ? Sets.newHashSet(duel.getSecond()) : Sets.newHashSet(duel.getFirst());
 		duel.getWinner().addAll(winners);
 		if (duel.getTimer() != null){
 			duel.getTimer().cancel();
@@ -175,8 +175,8 @@ public class DuelManager {
 		}));
 		Arrays.asList(winners, losers).forEach(teams -> teams.forEach(players -> {
 			if(Bukkit.getPlayer(players) == null) {
-				if (winners.contains(players)) winners.remove(players);
-				if (losers.contains(players)) losers.remove(players);
+                winners.remove(players);
+                losers.remove(players);
 			}
 		}));
 		if (!duel.getDuelType().equals(DuelType.FFA)) {
