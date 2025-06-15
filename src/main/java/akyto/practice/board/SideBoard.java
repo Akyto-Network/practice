@@ -244,7 +244,7 @@ public class SideBoard implements BoardAdapter {
         		board.add(ChatColor.WHITE + " Alives: " + ChatColor.RED + duel.getAlives().size());
         	}
         	if (duel.getDuelType().equals(DuelType.SPLIT)) {
-                board.add(ChatColor.GREEN + " First Team");
+                board.add(ChatColor.DARK_RED + " First Team");
                 for (UUID playerId : duel.getFirst()) {
                     Player players = Bukkit.getPlayer(playerId);
                     if (players != null) {
@@ -255,7 +255,7 @@ public class SideBoard implements BoardAdapter {
                         board.add(ChatColor.GREEN + " " + playerName);
                     }
                 }
-                board.add(ChatColor.RED + " Second Team");
+                board.add(ChatColor.DARK_RED + " Second Team");
                 for (UUID playerId : duel.getSecond()) {
                     Player players = Bukkit.getPlayer(playerId);
                     if (players != null) {
@@ -283,10 +283,10 @@ public class SideBoard implements BoardAdapter {
         final List<String> board = new LinkedList<>();
         final EventManager eventManager = this.plugin.getManagerHandler().getEventManager();
         board.add(spacer);
-        board.add(ChatColor.DARK_GRAY + eventManager.getType().toLowerCase().toUpperCase() + " Event");
+        board.add(ChatColor.DARK_RED.toString() + ChatColor.BOLD + eventManager.getType().toLowerCase().toUpperCase() + ChatColor.DARK_RED + " Event");
         board.add(" ");
         if (eventManager.getEventState().equals(EventState.WAITING)) {
-            board.add(ChatColor.DARK_GRAY + "Players" + ChatColor.GRAY + " : " + ChatColor.WHITE + eventManager.getMembers().size());
+            board.add(ChatColor.WHITE + "Players" + ChatColor.GRAY + " : " + ChatColor.RED + eventManager.getMembers().size());
         }
         if (eventManager.getType().equalsIgnoreCase("sumo")) {
             if (eventManager.getEventState().equals(EventState.STARTING) || eventManager.getEventState().equals(EventState.FIGHT)) {

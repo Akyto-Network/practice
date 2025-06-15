@@ -198,6 +198,11 @@ public class TournamentManager implements Listener {
             return;
         }
 
+        if (!entry.getTournamentState().equals(TournamentState.WAITING)) {
+            player.sendMessage(ChatColor.RED + "You cannot join this because he is already started!");
+            return;
+        }
+
         int teamSize = entry.getTeamSize();
 
         if (partyLeader != null) {

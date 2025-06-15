@@ -57,18 +57,18 @@ public class MessageUtils {
 	public static void sendSplitMessage(final List<UUID> first, final List<UUID> second, final Kit ladder) {
 	    final ComponentJoiner joinerOne = new ComponentJoiner(ChatColor.GRAY + ", ");
 	    final ComponentJoiner joinerTwo = new ComponentJoiner(ChatColor.GRAY + ", ");
-        final TextComponent firsttxt = new TextComponent(ChatColor.DARK_GRAY + CoreUtils.getName(first.getFirst()) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
-        final TextComponent secondtxt = new TextComponent(ChatColor.DARK_GRAY + CoreUtils.getName(second.getFirst()) + "'s teams" + ChatColor.GRAY + ": " + ChatColor.RED);
+        final TextComponent firsttxt = new TextComponent(ChatColor.DARK_RED + CoreUtils.getName(first.getFirst()) + " team" + ChatColor.GRAY + " » " + ChatColor.WHITE);
+        final TextComponent secondtxt = new TextComponent(ChatColor.DARK_RED + CoreUtils.getName(second.getFirst()) + " team" + ChatColor.GRAY + " » " + ChatColor.WHITE);
 	    first.forEach(uuid -> {
 	    	final TextComponent itxt = new TextComponent(CoreUtils.getName(uuid));
 	        itxt.setColor(ChatColor.RED);
-	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + Utils.getProfiles(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
+	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.RED.toString() + Utils.getProfiles(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
 	        joinerOne.add(itxt);
 	    });
 	    second.forEach(uuid -> {
 	    	final TextComponent itxt = new TextComponent(CoreUtils.getName(uuid));
 	        itxt.setColor(ChatColor.RED);
-	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.GOLD.toString() + Utils.getProfiles(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
+	        itxt.setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.RED.toString() + Utils.getProfiles(uuid).getStats().get(2)[ladder.id()] + " elos").create()));
 	        joinerTwo.add(itxt);
 	    });
 	    firsttxt.addExtra(joinerOne.toTextComponent());
@@ -85,7 +85,7 @@ public class MessageUtils {
 	public static void sendPartyComponent(final List<Set<UUID>> players) {
 		final Duel duel = Utils.getDuelByUUID(players.getFirst().stream().toList().getFirst());
 		if (duel.getDuelType().equals(DuelType.FFA)) {
-			TextComponent invComponent = new TextComponent(ChatColor.YELLOW + "Inventorie(s)" + ChatColor.GRAY + ": ");
+			TextComponent invComponent = new TextComponent(ChatColor.DARK_RED + "Inventorie(s)" + ChatColor.GRAY + ": ");
             final ComponentJoiner joiner = new ComponentJoiner(ChatColor.GRAY + ", ");
             players.forEach(uuid -> {
                 for (UUID uuids : uuid) {
@@ -101,12 +101,12 @@ public class MessageUtils {
             players.forEach(uuid -> {
                 for (UUID uuids : uuid) {
                     if (Bukkit.getPlayer(uuids) != null) {
-                    	Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
-        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.YELLOW + "Match Information");
-        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY + "Winner: " + ChatColor.GOLD + CoreUtils.getName(Utils.getDuelByUUID(uuids).getWinner().getFirst()));
+                    	Bukkit.getPlayer(uuids).sendMessage(" ");
+        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.DARK_RED.toString() + ChatColor.BOLD + "Match Information");
+        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.WHITE + "Winner: " + ChatColor.RED + CoreUtils.getName(Utils.getDuelByUUID(uuids).getWinner().getFirst()));
         				Bukkit.getPlayer(uuids).sendMessage(" ");
         				Bukkit.getPlayer(uuids).spigot().sendMessage(invComponent);
-        				Bukkit.getPlayer(uuids).sendMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "---------------------------");
+        				Bukkit.getPlayer(uuids).sendMessage(" ");
                     }
                 }
             });

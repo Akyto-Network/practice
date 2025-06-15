@@ -34,11 +34,11 @@ import java.util.concurrent.CompletableFuture;
 
 @Getter
 public class DuelManager {
-	
+
 	private final Practice main;
-	
+
 	public DuelManager(final Practice main) { this.main = main; }
-	
+
 	public void start(final List<UUID> first, final List<UUID> second, final Kit kit) {
 		final Duel duel = Utils.getDuelByUUID(first.getFirst());
 		Arena arena = duel.getArena() == null ? this.main.getManagerHandler().getArenaManager().getRandomArena(kit) : duel.getArena();
@@ -77,12 +77,11 @@ public class DuelManager {
 					Utils.getAllies(uuid).forEach(allies -> Bukkit.getPlayer(uuid).hidePlayer(Bukkit.getPlayer(allies))); // Fix Tracker problem
 					this.main.getManagerHandler().getInventoryManager().refreshQueueInventory(Utils.getDuelByUUID(uuid).isRanked(), kit);
 					Utils.resetPlayer(uuid);
-					final Player player = Bukkit.getPlayer(uuid);
 					if (duel.getDuelType().equals(DuelType.SINGLE)) {
 						MessageUtils.sendMatchFound(duel, uuid);
 					}
 					if (duel.getDuelType().equals(DuelType.FFA)) {
-						Bukkit.getPlayer(uuid).sendMessage(ChatColor.GRAY + "A match was launched, this time in FFA!");
+						Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + "A match was launched, this time in " + ChatColor.DARK_RED + "FFA" + ChatColor.WHITE + "!");
 					}
 					DataUtils.addPlayedToData(uuid, kit);
 					this.teleport(duel, idCopy);

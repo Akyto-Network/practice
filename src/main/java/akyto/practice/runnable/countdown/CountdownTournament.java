@@ -27,13 +27,13 @@ public class CountdownTournament extends BukkitRunnable {
     @Override
     public void run() {
         this.isRunning = true;
-        if (counter == 0) {
+        if (counter <= 0) {
             this.isRunning = false;
             main.getManagerHandler().getTournamentManager().startTournament(entry);
-            cancel();
+            this.cancel();
             return;
         }
-        if (counter % 30 == 0 && counter >= 30) {
+        if (counter % 30 == 0) {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 MessageUtils.sendTournamentRequestMessage(player, String.valueOf(entry.getId()), entry.getKit().displayName(), entry.getTeamSize());
             });

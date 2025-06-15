@@ -182,8 +182,8 @@ public class EventManager {
                 Bukkit.getPlayer(uuid).sendMessage(ChatColor.GREEN + Bukkit.getPlayer(winner).getName() + ChatColor.GRAY + " is the the best of this oitc event, congratulations to him.");
                 Utils.sendToSpawn(uuid, true);
             });
+            this.setEventState(EventState.ENDING);
         }
-        this.setEventState(EventState.ENDING);
     }
 
     public double limit(double value, double min, double max) {

@@ -28,6 +28,7 @@ public class CountdownEvent extends BukkitRunnable {
     @Override
     public void run() {
         if (this.main.getManagerHandler().getEventManager().getEventState().equals(EventState.FREE) || this.main.getManagerHandler().getEventManager().getEventState().equals(EventState.FIGHT) || this.main.getManagerHandler().getEventManager().getEventState().equals(EventState.ENDING) || this.main.getManagerHandler().getEventManager().getEventState().equals(EventState.WAITING)) {
+            System.out.println("Coutdown Cancel at " + this.main.getManagerHandler().getEventManager().getEventState().toString());
             this.cancel();
             return;
         }

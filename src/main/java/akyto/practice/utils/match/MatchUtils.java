@@ -45,14 +45,15 @@ public class MatchUtils {
 		managerHandler.getInventoryManager().generatePreviewInventory(uuid, killer);
         if (match.getDuelType().equals(DuelType.FFA)) {
         	match.getAlives().remove(uuid);
+			final UUID winner = killer == null ? match.getAlives().stream().toList().getFirst() : killer;
             if (match.getAlives().size() == 1) {
-				managerHandler.getDuelManager().endMultiple(match.getAlives().stream().toList().getFirst());
+				managerHandler.getDuelManager().endMultiple(winner);
                 return;
             }
 
             List<UUID> allPlayers = Stream.of(match.getFirst(), match.getSecond())
                     .flatMap(Collection::stream)
-                    .collect(Collectors.toList());
+                    .toList();
 
             allPlayers.forEach(uuids -> {
                 Player player = Bukkit.getPlayer(uuids);
@@ -268,10 +269,10 @@ public class MatchUtils {
 		if (tournamentManager.getActiveDuels().isEmpty() && !tournamentEntry.isCountdownStarted()) {
 			if (tournamentEntry.getParticipants().size() <= teamSize) {
 				UUID winnerId = tournamentEntry.getParticipants().getFirst();
-				Bukkit.broadcastMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
+				Bukkit.broadcastMessage(" ");
 				final String winnerName = CoreUtils.getName(winnerId);
 				Bukkit.broadcastMessage(TournamentManager.prefix + ChatColor.RED + winnerName + ChatColor.WHITE + " won!");
-				Bukkit.broadcastMessage(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------------");
+				Bukkit.broadcastMessage(" ");
 				tournamentManager.getTournaments().remove(tournamentEntry.getId());
 				return;
 			}
@@ -292,10 +293,10 @@ public class MatchUtils {
 
 		if (entry.getParticipants().size() <= teamSize) {
 			UUID winnerId = entry.getParticipants().getFirst();
-			Bukkit.broadcastMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------");
+			Bukkit.broadcastMessage(" ");
 			final String winnerName = CoreUtils.getName(winnerId);
 			Bukkit.broadcastMessage(TournamentManager.prefix + ChatColor.RED + winnerName + ChatColor.WHITE + " won the tournament!");
-			Bukkit.broadcastMessage(ChatColor.DARK_GRAY.toString() + ChatColor.STRIKETHROUGH + "----------------------");
+			Bukkit.broadcastMessage(" ");
 			tournamentManager.getTournaments().remove(entry.getId());
 			return;
 		}
