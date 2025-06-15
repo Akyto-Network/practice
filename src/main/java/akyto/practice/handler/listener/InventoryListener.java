@@ -214,6 +214,7 @@ public class InventoryListener implements Listener {
 			}
 			if (inventory.equals(inventoryManager.getEditorInventory()[1])) {
 				for (ItemStack items : event.getWhoClicked().getInventory().getContents()) {
+					if (items == null) return;
 					if (items.getType().equals(Material.COOKED_BEEF) || items.getType().equals(Material.GRILLED_PORK) || items.getType().equals(Material.GOLDEN_CARROT)) {
 						if (event.getCurrentItem().getType().equals(Material.COOKED_BEEF)) items.setType(Material.COOKED_BEEF);
 						if (event.getCurrentItem().getType().equals(Material.GRILLED_PORK)) items.setType(Material.GRILLED_PORK);

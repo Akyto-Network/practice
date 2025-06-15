@@ -259,8 +259,10 @@ public class PlayerListener implements Listener {
 							TagUtils.clearNameTags(player);
 						}
 						Arrays.asList(new ArrayList<>(duel.getFirst()), new ArrayList<>(duel.getSecond())).forEach(uuids -> uuids.forEach(uuid -> {
-							Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + player.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
-							player.hidePlayer(Bukkit.getPlayer(uuid));
+							if (Bukkit.getPlayer(uuid) != null) {
+								Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + player.getName() + ChatColor.DARK_GRAY + " is no longer spectating your match.");
+								player.hidePlayer(Bukkit.getPlayer(uuid));
+							}
 						}));
 						profile.setProfileState(ProfileState.FREE);
 						Utils.sendToSpawn(player.getUniqueId(), true);

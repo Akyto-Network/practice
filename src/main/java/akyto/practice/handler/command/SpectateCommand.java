@@ -97,6 +97,10 @@ public class SpectateCommand implements CommandExecutor {
 
         if (profileSender.isInState(ProfileState.SPECTATE)) {
             final Duel duel = Utils.getDuelBySpectator(playerSender.getUniqueId());
+            if (duel == null) {
+                sender.sendMessage(ChatColor.RED + "You cannot do this!");
+                return false;
+            }
             if (duel.equals(Utils.getDuelByUUID(targetUUID))) {
             	sender.sendMessage(ChatColor.RED + "You are currently spectate this match.");
             	return false;
