@@ -259,6 +259,7 @@ public class MatchUtils {
 			duel.setWinner(Lists.newArrayList(tournamentEntry.getParticipants().getFirst()));
 			Bukkit.getScheduler().runTaskLater(Practice.API, () -> {
 				players.forEach(uuid -> {
+					System.out.println(Bukkit.getPlayer(uuid).getName());
 					Utils.sendToSpawn(uuid, true);
 					MatchUtils.clearDrops(uuid);
 				});

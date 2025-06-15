@@ -409,8 +409,7 @@ public class PlayerListener implements Listener {
 	@EventHandler(priority=EventPriority.LOW)
 	public void PlayerFoodChange(final FoodLevelChangeEvent event) {
 		final Profile profile = Utils.getProfiles(event.getEntity().getUniqueId());
-		final boolean inTournament = Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId()) != null;
-		if (profile.isInState(ProfileState.FIGHT) || (inTournament && Objects.requireNonNull(Utils.getTournamentByPlayerUUID(event.getEntity().getUniqueId())).getTournamentState().equals(TournamentState.STARTED))) {
+		if (profile.isInState(ProfileState.FIGHT)) {
 			final Duel duel = Utils.getDuelByUUID(event.getEntity().getUniqueId());
 			if (duel.getKit().name().equals("sumo") || duel.getKit().name().equals("soup") || duel.getKit().name().equals("boxing") || duel.getKit().name().equals("bedfight") || duel.getKit().name().equals("classic")) {
 				event.setCancelled(true);
