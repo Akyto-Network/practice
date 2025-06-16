@@ -117,7 +117,7 @@ public class DuelManager {
 	public void endSingle(final UUID winner) {
 		final Duel duel = Utils.getDuelByUUID(winner);
 		duel.setWinner(Lists.newArrayList(winner));
-		final UUID looser = duel.getFirst().contains(winner) ? new ArrayList<>(duel.getSecond()).getFirst() : new ArrayList<>(duel.getFirst()).getFirst();
+		final UUID looser = duel.getFirst().contains(winner) ? duel.getSecond().stream().toList().getFirst() : duel.getFirst().stream().toList().getFirst();
 		List<UUID> players = new ArrayList<>();
 		players.add(winner);
 		players.add(looser);

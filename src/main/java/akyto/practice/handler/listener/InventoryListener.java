@@ -301,14 +301,16 @@ public class InventoryListener implements Listener {
 				}
 				player.openInventory(inventoryManager.getTournamentSizeInventory());
 			}
-			String creatorName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getLore().get(2).replace(ChatColor.GRAY + "Creator: ", ""));
-			final UUID creatorUUID = Bukkit.getPlayer(creatorName) != null ? Bukkit.getPlayer(creatorName).getUniqueId() : Bukkit.getOfflinePlayer(creatorName).getUniqueId();
-			main.getManagerHandler().getTournamentManager().getAllTournaments().forEach(entry -> {
-				if (entry.getCreator().equals(creatorUUID)) {
-					main.getManagerHandler().getTournamentManager().joinTournament(player, entry.getId());
-				}
-			});
-			event.getWhoClicked().closeInventory();
+			if (event.getCurrentItem().getItemMeta().getLore().get(2) != null) {
+				String creatorName = ChatColor.stripColor(event.getCurrentItem().getItemMeta().getLore().get(2).replace(ChatColor.GRAY + "Creator: ", ""));
+				final UUID creatorUUID = Bukkit.getPlayer(creatorName) != null ? Bukkit.getPlayer(creatorName).getUniqueId() : Bukkit.getOfflinePlayer(creatorName).getUniqueId();
+				main.getManagerHandler().getTournamentManager().getAllTournaments().forEach(entry -> {
+					if (entry.getCreator().equals(creatorUUID)) {
+						main.getManagerHandler().getTournamentManager().joinTournament(player, entry.getId());
+					}
+				});
+				event.getWhoClicked().closeInventory();
+			}
 		}
 		if (inventoryName.contains("Spectate") && !inventoryName.contains("Settings") ) {
 			if (event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR)) return;

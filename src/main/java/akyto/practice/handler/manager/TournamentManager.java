@@ -231,7 +231,7 @@ public class TournamentManager implements Listener {
         int minToStart = teamSize > 1 ? (teamSize > 2 ? 4 : 3) : 2;
         int inTourney = entry.getParticipants().size();
 
-        if (inTourney >= minToStart && !entry.isCountdownStarted()) {
+        if (inTourney == minToStart && !entry.isCountdownStarted()) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(main, () -> {
                 entry.getCountdown().runTaskTimer(main, 20L, 20L);
             }, 120L);

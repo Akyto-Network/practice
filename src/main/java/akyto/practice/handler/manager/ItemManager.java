@@ -93,8 +93,8 @@ public class ItemManager {
 			final KitInterface kitI = (KitInterface) Utils.getDuelByUUID(uuid).getKit();
 			if (this.main.getManagerHandler().getProfileManager().getEditor().containsKey(uuid)) {
 				if (this.main.getManagerHandler().getProfileManager().getEditor().get(uuid).containsKey(kit.name())) {
-					player.getInventory().setItem(0, ItemUtils.createItems(Material.ENCHANTED_BOOK, ChatColor.DARK_GRAY + "Edited Kit."));
-					player.getInventory().setItem(8, ItemUtils.createItems(Material.BOOK, ChatColor.DARK_GRAY + "Default Kit."));
+					player.getInventory().setItem(0, ItemUtils.createItems(Material.ENCHANTED_BOOK, ChatColor.WHITE + "Edited " + ChatColor.DARK_RED + "Kit" + ChatColor.WHITE + "."));
+					player.getInventory().setItem(8, ItemUtils.createItems(Material.BOOK, ChatColor.WHITE + "Default "+ ChatColor.DARK_RED + "Kit" + ChatColor.WHITE + "."));
 				}
 				else {
 					final ItemStack[] armor = kitI.armor();
