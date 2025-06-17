@@ -35,8 +35,14 @@ public class DurationUtils {
     }
 
     public static String getFormattedDuration(final long duration) {
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(duration - TimeUnit.MINUTES.toSeconds(minutes));
+        if (duration < 0) {
+            throw new IllegalArgumentException("Duration cannot be negative");
+        }
+
+        long totalSeconds = TimeUnit.MILLISECONDS.toSeconds(duration);
+        long minutes = totalSeconds / 60;
+        long seconds = totalSeconds % 60;
+
         return String.format("%02d:%02d", minutes, seconds);
     }
 }
