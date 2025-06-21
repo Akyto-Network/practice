@@ -120,7 +120,7 @@ public class SpectateCommand implements CommandExecutor {
         players.forEach(uuids -> uuids.forEach(uuid -> {
             playerSender.showPlayer(Bukkit.getPlayer(uuid));
             Bukkit.getPlayer(uuid).hidePlayer(playerSender);
-            Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_GRAY + " is now spectating.");
+            Bukkit.getPlayer(uuid).sendMessage(ChatColor.WHITE + sender.getName() + ChatColor.DARK_RED + " is now spectating.");
         }));
 
         if (!targetDuel.getSpectators().isEmpty()) {
